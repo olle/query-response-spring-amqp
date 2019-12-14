@@ -5,22 +5,27 @@ import java.util.function.Supplier;
 
 public final class Query<T> {
 
-    private Query() {
+    private Query(String term) {
 
         // Hidden.
     }
 
     public static <T> Query<T> queryFor(String term) {
 
-        // TODO Auto-generated method stub
-        return null;
+        return new Query(term);
     }
 
 
     public Query<T> waitingFor(int millis) {
 
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return this;
     }
 
 

@@ -2,12 +2,18 @@ package com.studiomediatech;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 class QueryTest {
 
     @Test
     void ensureQueryResolvesToEmptyResult() {
 
-        Response<String> names = Query.<String>queryFor("names").waitingFor(200).orEmpty();
+        var start = System.currentTimeMillis();
+        Query.<String>queryFor("anything").waitingFor(200).orEmpty();
+
+        var end = System.currentTimeMillis();
+        assertThat(end - start).isGreaterThanOrEqualTo(200);
     }
 }
