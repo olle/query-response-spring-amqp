@@ -1,39 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.studiomediatech</groupId>
-  <artifactId>spring-query-response-amqp</artifactId>
-  <version>0.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+	<groupId>com.studiomediatech</groupId>
+	<artifactId>spring-query-response-amqp</artifactId>
+	<version>0.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-  <name>Spring Query/Response AMQP</name>
-  <description>Streaming API for Query/Response with Spring AMQP.</description>
+	<name>Spring Query/Response AMQP</name>
+	<description>Streaming API for Query/Response with Spring AMQP.</description>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>11</java.version>
-  </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>11</java.version>
+	</properties>
 
-  <parent>
-    <groupId>io.spring.platform</groupId>
-    <artifactId>platform-bom</artifactId>
-    <version>Cairo-SR7</version>
-    <relativePath/>
-  </parent>
+	<parent>
+		<groupId>io.spring.platform</groupId>
+		<artifactId>platform-bom</artifactId>
+		<version>Cairo-SR7</version>
+		<relativePath />
+	</parent>
 
-  <dependencies>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+		</dependency>
+	</dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArgs>
+						<arg>-Xlint:all,-processing</arg>
+						<arg>-Werror</arg>
+					</compilerArgs>
+					<showWarnings>true</showWarnings>
+					<!-- Most software is shit! https://issues.apache.org/jira/browse/MCOMPILER-209 -->
+					<useIncrementalCompilation>false</useIncrementalCompilation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
