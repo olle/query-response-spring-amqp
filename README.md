@@ -1,6 +1,9 @@
 Query/Response
 ==============
 
+**WIP: Driving the initial version from this README, please feel free to
+       provide feedback through issues.**
+
 Ensure decoupling of services and systems by taking an _always async_ approach
 to integration. By querying a common AMQP broker, instead of depending on
 a plethora of REST-ful microservices, developers can design with failures,
