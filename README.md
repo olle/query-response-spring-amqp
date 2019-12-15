@@ -11,6 +11,9 @@ timeouts, restarts or floodings in mind from the start, and not as a poorly
 tacked-on afterthought. This creates more resilient, available and scalable
 solutions.
 
+Queries
+-------
+
 The fluid Query/Response API, makes it easy for developers and understand and
 decide on a strategy for service integration. Timeouts are _first-class
 citizens_ in the API, and protect against surprises.
