@@ -56,3 +56,28 @@ Express constraints and react accordingly, as an option to lenient handling.
                  .orThrow(TooFewOffersConstraintException::new)
                  .collect(Collectors.toList());
 ```
+
+Responses
+---------
+
+To create responding services we provide a really effective and expressive
+fluid-API. Developers benefit from the declarative style, and won't have to
+write any boilerplate code. It is easy to understand, work with and explore.
+
+Very simple scenarios can quickly be created, for tests or proof of concept
+work.
+
+```java
+  Response.respondTo("authors")
+       .withAll()
+       .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
+```
+
+Batch responses provide developers with great options for tuning a system with
+Query/Response as a whole.
+
+```java
+  Response.respondTo("offers/monday")
+       .withBatchesOf(20)
+       .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+```
