@@ -53,14 +53,14 @@ public final class Query<T> {
     public Query<T> takingAtLeast(int count) {
 
         // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
 
     public Query<T> takingAtMost(int count) {
 
         // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
 
