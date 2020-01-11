@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QueryApiTest {
 
     @Test
-    void ensureExamplesCompiles() throws Exception {
+    void ensureExamplesCompile() throws Exception {
 
         {
             var authors = Query.queryFor("authors")
