@@ -1,21 +1,18 @@
 package app;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
-
-@EnableScheduling
 @SpringBootApplication
-public class Querying {
+class Querying implements CommandLineRunner {
 
-    @Scheduled(fixedDelay = Long.MAX_VALUE)
-    void join() {
+    @Override
+    public void run(String... args) throws Exception {
 
-        // OK
+        Thread.currentThread().join();
     }
 
 
