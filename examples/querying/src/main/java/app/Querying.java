@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.Query;
+import com.studiomediatech.Queries;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -20,7 +20,7 @@ class Querying implements CommandLineRunner {
         while (true) {
             println("Querying..");
 
-            var results = Query.queryFor("books/sci-fi")
+            var results = Queries.queryFor("books/sci-fi")
                     .waitingFor(2000)
                     .orDefaults(Collections.emptyList());
 

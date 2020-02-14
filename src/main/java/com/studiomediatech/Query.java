@@ -4,7 +4,9 @@ import java.time.Duration;
 import java.time.temporal.TemporalUnit;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
 
 public final class Query<T> {
@@ -66,28 +68,24 @@ public final class Query<T> {
 
     public Response<T> orElse(Iterable<T> defaultValue) {
 
-        // TODO Auto-generated method stub
-        return new Response<>();
+        return new Response<>(StreamSupport.stream(defaultValue.spliterator(), false));
     }
 
 
     public Response<T> orDefaults(Collection<T> defaults) {
 
-        // TODO Auto-generated method stub
-        return new Response<>();
+        return new Response<>(defaults.stream());
     }
 
 
     public Response<T> orEmpty() {
 
-        // TODO Auto-generated method stub
-        return new Response<>();
+        return new Response<>(Collections.<T>emptyList().stream());
     }
 
 
     public Response<T> orThrow(Supplier<Throwable> supplies) {
 
-        // TODO Auto-generated method stub
-        return new Response<>();
+        return new Response<>(Collections.<T>emptyList().stream(), supplies);
     }
 }

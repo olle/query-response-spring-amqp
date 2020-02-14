@@ -1,15 +1,22 @@
 package com.studiomediatech;
 
+import com.studiomediatech.responses.RespondingRegistry;
+
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
 public final class Responses<T> {
 
     private final String term;
+    private boolean all = false;
+    private boolean pairs = false;
+    private int batchSize = 0;
 
     private Responses(String term) {
+
+        Asserts.notEmpty(term);
 
         this.term = term;
     }
@@ -22,45 +29,42 @@ public final class Responses<T> {
 
     public Responses<T> withAll() {
 
-        // TODO Auto-generated method stub
+        this.all = true;
+
         return this;
     }
 
 
     public Responses<T> withPairs() {
 
-        // TODO Auto-generated method stub
+        this.pairs = true;
+
         return this;
     }
 
 
     public Responses<T> withBatchesOf(int batch) {
 
-        // TODO Auto-generated method stub
+        this.batchSize = batch;
+
         return this;
     }
 
 
     public void from(T... ts) {
 
-        // TODO Auto-generated method stub
-    }
-
-
-    public void from(Supplier<T> supplier) {
-
-        // TODO Auto-generated method stub
+        from(Arrays.asList(ts).stream());
     }
 
 
     public void from(Collection<T> set) {
 
-        // TODO Auto-generated method stub
+        from(set.stream());
     }
 
 
     public void from(Stream<T> stream) {
 
-        // TODO Auto-generated method stub
+        RespondingRegistry.register(this, stream);
     }
 }
