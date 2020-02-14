@@ -13,11 +13,12 @@ import java.util.stream.Stream;
 
 public class RespondingRegistry implements ApplicationContextAware {
 
+    // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<RespondingRegistry> instance = () -> null;
 
     public static <T> void register(Responses<T> responses, Stream<T> stream) {
 
-        RespondingRegistry registry = instance.get();
+        var registry = instance.get();
 
         if (registry == null) {
             throw new IllegalStateException("No registry is initialized.");
@@ -30,6 +31,6 @@ public class RespondingRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
-        this.instance = () -> applicationContext.getBean(RespondingRegistry.class);
+        RespondingRegistry.instance = () -> applicationContext.getBean(RespondingRegistry.class);
     }
 }
