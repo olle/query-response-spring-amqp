@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import java.time.temporal.ChronoUnit;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SuppressWarnings("unused")
-public class QueryApiTest {
+public class QueriesApiTest {
 
     @Test
     void ensureExamplesCompile() throws Exception {
@@ -54,7 +55,7 @@ public class QueryApiTest {
 
         public static Collection<Object> defaults() {
 
-            return null;
+            return Collections.emptyList();
         }
     }
 

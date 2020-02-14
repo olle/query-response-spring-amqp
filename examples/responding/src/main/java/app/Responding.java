@@ -20,19 +20,20 @@ class Responding implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        println("Responding..");
+        println("Registering responses...");
 
         Responses.respondTo("books/sci-fi")
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 
+        println("Waiting for queries! Press CTRL-C to exit.");
         Thread.currentThread().join();
     }
 
 
     private static void println(String message, Object... args) {
 
-        System.out.println(new Date() + " - " + String.format(message, args));
+        System.out.println("> " + new Date() + "\t: " + String.format(message, args));
     }
 
 

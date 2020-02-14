@@ -7,8 +7,10 @@ a setup to get some hands-on experience, we've provided a small example setup.
 Running the examples
 --------------------
 
-1. Make sure to open both the `querying/` and `responding/` directories in a
-   terminal window, next to each other.
+1. Start the RabbitMQ server container by running `make` in this directory.
 
-2. Each of the example _sides_ can be started by simply running `make`. And will
-   end by pressing `CTRL-C`.
+2. Open both the `querying/` and `responding/` directories in a terminal window,
+   next to each other.
+
+3. Each of the example _sides_ can be started by simply running `make`. And will
+   stop after pressing `CTRL-C`.

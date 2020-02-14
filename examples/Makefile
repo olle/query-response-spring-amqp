@@ -1,6 +1,6 @@
 .PHONY: start
 start:
 	docker-compose up -d
-.PHONY: start
+.PHONY: stop
 stop:
 	docker-compose down

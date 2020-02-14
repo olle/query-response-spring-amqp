@@ -67,4 +67,10 @@ public final class Responses<T> {
 
         RespondingRegistry.register(this, stream);
     }
+
+
+    public String getTerm() {
+
+        return this.term;
+    }
 }
