@@ -17,21 +17,21 @@ public class QueryApiTest {
     void ensureExamplesCompile() throws Exception {
 
         {
-            var authors = Query.queryFor("authors")
+            var authors = Queries.queryFor("authors")
                     .waitingFor(800)
                     .orEmpty()
                     .collect(Collectors.toList());
         }
 
         {
-            var authors = Query.queryFor("authors")
+            var authors = Queries.queryFor("authors")
                     .waitingFor(800)
                     .orDefaults(Authors.defaults())
                     .collect(Collectors.toList());
         }
 
         {
-            var authors = Query.queryFor("authors")
+            var authors = Queries.queryFor("authors")
                     .takingAtMost(10)
                     .waitingFor(800)
                     .orDefaults(Authors.defaults())
@@ -39,7 +39,7 @@ public class QueryApiTest {
         }
 
         {
-            var offers = Query.queryFor("offers/rental")
+            var offers = Queries.queryFor("offers/rental")
                     .takingAtLeast(10)
                     .takingAtMost(20)
                     .waitingFor(2, ChronoUnit.SECONDS)

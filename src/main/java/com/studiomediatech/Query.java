@@ -11,17 +11,10 @@ public final class Query<T> {
 
     private final String term;
 
-    // Hidden.
-    private Query(String term) {
+    protected Query(String term) {
 
         this.term = term;
     }
-
-    public static <T> Query<T> queryFor(String term) {
-
-        return new Query<>(term);
-    }
-
 
     public Query<T> waitingFor(int millis) {
 

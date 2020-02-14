@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.util.Collections;
+import java.util.Date;
 
 
 @SpringBootApplication
@@ -17,18 +18,23 @@ class Querying implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         while (true) {
-            System.out.println("Querying...");
-            queryForSciFiBooks();
+            println("Querying..");
+
+            var results = Query.queryFor("books/sci-fi")
+                    .waitingFor(2000)
+                    .orDefaults(Collections.emptyList());
+
+            println("Results were: %s", results);
+
+            println("Sleeping for 10s...");
             Thread.sleep(10000);
         }
     }
 
 
-    private void queryForSciFiBooks() {
+    private static void println(String message, Object... args) {
 
-        Query.queryFor("books/sci-fi")
-            .waitingFor(2000)
-            .orDefaults(Collections.emptyList());
+        System.out.println(new Date() + " - " + String.format(message, args));
     }
 
 

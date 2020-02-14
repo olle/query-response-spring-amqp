@@ -14,15 +14,15 @@ public class ResponseApiTest {
     @Test
     void ensureExamplesCompile() throws Exception {
 
-        Response.respondTo("authors")
+        Responses.respondTo("authors")
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 
-        Response.respondTo("cars")
+        Responses.respondTo("cars")
             .withPairs()
             .from(Set.of("volvo", "tesla", "nissan", "saab", "opel", "bmw"));
 
-        Response.respondTo("offers/monday")
+        Responses.respondTo("offers/monday")
             .withBatchesOf(20)
             .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 

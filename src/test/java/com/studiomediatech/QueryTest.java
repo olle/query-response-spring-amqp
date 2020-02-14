@@ -15,7 +15,9 @@ class QueryTest {
 
         var start = System.currentTimeMillis();
 
-        List<String> things = Query.<String>queryFor("anything").waitingFor(200).orEmpty()
+        List<String> things = Queries.<String>queryFor("anything")
+                .waitingFor(200)
+                .orEmpty()
                 .collect(Collectors.toList());
 
         var end = System.currentTimeMillis();
