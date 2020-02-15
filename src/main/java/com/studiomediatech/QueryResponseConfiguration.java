@@ -1,9 +1,12 @@
 package com.studiomediatech;
 
+import com.studiomediatech.queries.QueryingRegistry;
+
 import com.studiomediatech.responses.RespondingRegistry;
 
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,5 +39,13 @@ public class QueryResponseConfiguration {
         DirectMessageListenerContainer directMessageListenerContainer) {
 
         return new RespondingRegistry(rabbitAdmin, directMessageListenerContainer);
+    }
+
+
+    @Bean
+    QueryingRegistry queryingRegistry(RabbitAdmin rabbitAdmin,
+        DirectMessageListenerContainer directMessageListenerContainer, RabbitTemplate rabbitTemplate) {
+
+        return new QueryingRegistry(rabbitAdmin, directMessageListenerContainer, rabbitTemplate);
     }
 }

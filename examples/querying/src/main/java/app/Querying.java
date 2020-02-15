@@ -1,17 +1,22 @@
 package app;
 
 import com.studiomediatech.Queries;
+import com.studiomediatech.QueryResponseConfiguration;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+import org.springframework.context.annotation.Import;
+
 import java.util.Collections;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
+@Import(QueryResponseConfiguration.class)
 class Querying implements CommandLineRunner {
 
     @Override
@@ -22,7 +27,8 @@ class Querying implements CommandLineRunner {
 
             var results = Queries.queryFor("books/sci-fi")
                     .waitingFor(2000)
-                    .orDefaults(Collections.emptyList());
+                    .orDefaults(Collections.emptyList())
+                    .collect(Collectors.toList());
 
             println("Results were: %s", results);
 

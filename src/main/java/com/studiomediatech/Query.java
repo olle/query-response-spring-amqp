@@ -1,5 +1,7 @@
 package com.studiomediatech;
 
+import com.studiomediatech.queries.QueryingRegistry;
+
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
 
@@ -12,6 +14,7 @@ import java.util.stream.StreamSupport;
 public final class Query<T> {
 
     private final String term;
+    private Duration waitingFor;
 
     protected Query(String term) {
 
@@ -20,12 +23,7 @@ public final class Query<T> {
 
     public Query<T> waitingFor(int millis) {
 
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.waitingFor = Duration.ofMillis(millis);
 
         return this;
     }
@@ -33,13 +31,7 @@ public final class Query<T> {
 
     public Query<T> waitingFor(long duration, TemporalUnit timeUnit) {
 
-        try {
-            // TODO: Overflow!
-            Thread.sleep(Duration.of(duration, timeUnit).toMillis());
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.waitingFor = Duration.of(duration, timeUnit);
 
         return this;
     }
@@ -74,7 +66,7 @@ public final class Query<T> {
 
     public Response<T> orDefaults(Collection<T> defaults) {
 
-        return new Response<>(defaults.stream());
+        return QueryingRegistry.register(this, new Response<>(defaults.stream()));
     }
 
 

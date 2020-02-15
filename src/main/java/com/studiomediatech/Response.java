@@ -10,7 +10,7 @@ public final class Response<T> {
     private final Stream<T> stream;
     private Supplier<Throwable> supplies;
 
-    protected Response(Stream<T> stream) {
+    public Response(Stream<T> stream) {
 
         this.stream = stream;
     }

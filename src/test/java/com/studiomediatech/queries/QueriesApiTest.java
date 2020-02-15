@@ -1,6 +1,10 @@
-package com.studiomediatech;
+package com.studiomediatech.queries;
+
+import com.studiomediatech.Queries;
 
 import org.junit.jupiter.api.Test;
+
+import org.mockito.Mockito;
 
 import java.time.temporal.ChronoUnit;
 
@@ -16,6 +20,13 @@ public class QueriesApiTest {
 
     @Test
     void ensureExamplesCompile() throws Exception {
+
+        var mock = Mockito.mock(QueryingRegistry.class);
+
+        Mockito.when(mock._register(Mockito.any(), Mockito.any()))
+            .thenAnswer(call -> call.getArgument(1));
+
+        QueryingRegistry.instance = () -> mock;
 
         {
             var authors = Queries.queryFor("authors")

@@ -3,6 +3,7 @@ package com.studiomediatech.responses;
 import com.studiomediatech.Responses;
 
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
@@ -12,8 +13,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -25,8 +24,6 @@ public class RespondingRegistry implements ApplicationContextAware {
 
     private final RabbitAdmin admin;
     private final DirectMessageListenerContainer listener;
-
-    private List<Responder> responders = new ArrayList<>();
 
     public RespondingRegistry(RabbitAdmin admin, DirectMessageListenerContainer listener) {
 
@@ -50,15 +47,22 @@ public class RespondingRegistry implements ApplicationContextAware {
 
     protected <T> void _register(Responses<T> responses, Stream<T> stream) {
 
-        var exchange = ExchangeBuilder.topicExchange("queries").autoDelete().build();
-        admin.declareExchange(exchange);
-
+        var exchange = declareQueriesExchange();
         var queue = admin.declareQueue();
         var binding = BindingBuilder.bind(queue).to(exchange).with(responses.getTerm()).noargs();
         admin.declareBinding(binding);
 
         listener.addQueueNames(queue.getActualName());
         listener.setMessageListener(new Responder(queue));
+    }
+
+
+    private Exchange declareQueriesExchange() {
+
+        var exchange = ExchangeBuilder.topicExchange("queries").autoDelete().build();
+        admin.declareExchange(exchange);
+
+        return exchange;
     }
 
 
