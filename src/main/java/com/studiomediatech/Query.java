@@ -80,4 +80,16 @@ public final class Query<T> {
 
         return new Response<>(Collections.<T>emptyList().stream(), supplies);
     }
+
+
+    public String getTerm() {
+
+        return this.term;
+    }
+
+
+    public Duration getWaitingFor() {
+
+        return this.waitingFor;
+    }
 }

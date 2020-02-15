@@ -10,8 +10,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import org.springframework.context.annotation.Import;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -22,12 +22,15 @@ class Querying implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        println("About to begin querying for books/sci-fi...");
+        Thread.sleep(3000);
+
         while (true) {
-            println("Querying..");
+            println("Publishing query..");
 
             var results = Queries.queryFor("books/sci-fi")
-                    .waitingFor(2000)
-                    .orDefaults(Collections.emptyList())
+                    .waitingFor(4000)
+                    .orDefaults(List.of("Neuromancer", "I, Robot"))
                     .collect(Collectors.toList());
 
             println("Results were: %s", results);

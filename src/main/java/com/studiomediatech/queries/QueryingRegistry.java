@@ -54,21 +54,28 @@ public class QueryingRegistry implements ApplicationContextAware {
 
     protected <T> Response<T> _register(Query<T> query, Response<T> orDefault) {
 
-        var exchange = declareQueriesExchange();
-        var queue = rabbitAdmin.declareQueue();
+        declareQueriesExchange();
 
-        listener.addQueueNames(queue.getActualName());
+        String queueName = rabbitAdmin.declareQueue().getActualName();
 
-        var q = new Querent<>(query, orDefault);
-        listener.setMessageListener(q);
+        listener.addQueueNames(queueName);
 
-        return q.publish(rabbitTemplate);
+        var querent = new Querent<>(query, orDefault);
+        listener.setMessageListener(querent);
+
+        return querent.publish(rabbitTemplate, queueName,
+                () -> {
+                    if (listener.removeQueueNames(queueName)) {
+                        rabbitAdmin.deleteQueue(queueName);
+                    }
+                });
     }
 
 
     private Exchange declareQueriesExchange() {
 
         var exchange = ExchangeBuilder.topicExchange("queries").autoDelete().build();
+
         rabbitAdmin.declareExchange(exchange);
 
         return exchange;
