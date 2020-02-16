@@ -58,7 +58,7 @@ public class RespondingRegistry implements ApplicationContextAware {
 
         listener.addQueueNames(queue.getActualName());
 
-        Responding responder = new Responding(rabbitTemplate, responses);
+        Responding<T> responder = new Responding<>(rabbitTemplate, responses);
         listener.setMessageListener(responder);
     }
 
