@@ -1,11 +1,8 @@
 package com.studiomediatech;
 
-import com.studiomediatech.queries.QueryingRegistry;
-
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
@@ -61,12 +58,6 @@ public final class Query<T> {
     public Response<T> orElse(Iterable<T> defaultValue) {
 
         return new Response<>(StreamSupport.stream(defaultValue.spliterator(), false));
-    }
-
-
-    public Response<T> orDefaults(Collection<T> defaults) {
-
-        return QueryingRegistry.register(this, new Response<>(defaults.stream()));
     }
 
 

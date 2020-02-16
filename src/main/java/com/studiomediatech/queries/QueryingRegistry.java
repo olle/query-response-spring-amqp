@@ -1,7 +1,6 @@
 package com.studiomediatech.queries;
 
-import com.studiomediatech.Query;
-import com.studiomediatech.Response;
+import com.studiomediatech.Queries;
 
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
@@ -40,7 +39,7 @@ public class QueryingRegistry implements ApplicationContextAware {
     }
 
 
-    public static <T> Response<T> register(Query<T> query, Response<T> orDefault) {
+    public static <T> Results<T> register(Queries<T> queries) {
 
         var registry = instance.get();
 
@@ -48,31 +47,38 @@ public class QueryingRegistry implements ApplicationContextAware {
             throw new IllegalStateException("No registry is initialized.");
         }
 
-        return registry._register(query, orDefault);
+        return registry.registerQueries(queries);
     }
 
 
-    protected <T> Response<T> _register(Query<T> query, Response<T> orDefault) {
+    protected <T> Results<T> registerQueries(Queries<T> queries) {
 
-        declareQueriesExchange();
+        ensureDeclaredQueriesExchange();
 
-        String queueName = rabbitAdmin.declareQueue().getActualName();
-
-        listener.addQueueNames(queueName);
-
-        var querent = new Querying<>(query, orDefault);
-        listener.setMessageListener(querent);
-
-        return querent.publish(rabbitTemplate, queueName,
-                () -> {
-                    if (listener.removeQueueNames(queueName)) {
-                        rabbitAdmin.deleteQueue(queueName);
-                    }
-                });
+        return Results.empty();
     }
 
 
-    private Exchange declareQueriesExchange() {
+//    protected <T> Response<T> _register(Query<T> query, Response<T> orDefault) {
+//
+//        ensureDeclaredQueriesExchange();
+//
+//        String queueName = rabbitAdmin.declareQueue().getActualName();
+//
+//        listener.addQueueNames(queueName);
+//
+//        var querent = new Querying<>(query, orDefault);
+//        listener.setMessageListener(querent);
+//
+//        return querent.publish(rabbitTemplate, queueName,
+//                () -> {
+//                    if (listener.removeQueueNames(queueName)) {
+//                        rabbitAdmin.deleteQueue(queueName);
+//                    }
+//                });
+//    }
+
+    private Exchange ensureDeclaredQueriesExchange() {
 
         var exchange = ExchangeBuilder.topicExchange("queries").autoDelete().build();
 
