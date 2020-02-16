@@ -1,7 +1,4 @@
-package com.studiomediatech.queries;
-
-import com.studiomediatech.Query;
-import com.studiomediatech.Response;
+package com.studiomediatech.queryresponse;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -11,15 +8,15 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class Querying<T> implements MessageListener {
+class Querying<T> implements MessageListener {
 
-    private final Query<T> query;
-    private final AtomicReference<Response<T>> response;
+    private final Queries<T> queries;
+    private final AtomicReference<Results<T>> response;
 
-    public Querying(Query<T> query, Response<T> orDefault) {
+    public Querying(Queries<T> queries) {
 
-        this.query = query;
-        this.response = new AtomicReference<Response<T>>(orDefault);
+        this.queries = queries;
+        this.response = new AtomicReference<>(Results.empty());
     }
 
     @Override
@@ -29,17 +26,17 @@ public class Querying<T> implements MessageListener {
     }
 
 
-    public Response<T> publish(RabbitTemplate rabbit, String queue, Runnable onDone) {
+    public Results<T> publish(RabbitTemplate rabbit, String queue, Runnable onDone) {
 
         try {
-            rabbit.send("queries", query.getTerm(),
+            rabbit.send("queries", queries.getQueryForTerm(),
                 MessageBuilder.withBody("{}".getBytes()).setReplyTo(queue).build());
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
 
         try {
-            Thread.sleep(query.getWaitingFor().toMillis());
+            Thread.sleep(queries.getWaitingFor().toMillis());
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

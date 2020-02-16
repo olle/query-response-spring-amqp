@@ -1,6 +1,7 @@
-package com.studiomediatech.responses;
+package com.studiomediatech.queryresponse;
 
-import com.studiomediatech.Responses;
+import com.studiomediatech.queryresponse.RespondingRegistry;
+import com.studiomediatech.queryresponse.Responses;
 
 import org.junit.jupiter.api.Test;
 

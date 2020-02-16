@@ -1,6 +1,4 @@
-package com.studiomediatech;
-
-import com.studiomediatech.responses.RespondingRegistry;
+package com.studiomediatech.queryresponse;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,7 +49,7 @@ public final class Responses<T> {
     }
 
 
-    public void from(T... ts) {
+    public void from(@SuppressWarnings("unchecked") T... ts) {
 
         from(Arrays.asList(ts).stream());
     }
@@ -72,5 +70,23 @@ public final class Responses<T> {
     public String getTerm() {
 
         return this.term;
+    }
+
+
+    protected boolean isAll() {
+
+        return all;
+    }
+
+
+    protected boolean isPairs() {
+
+        return pairs;
+    }
+
+
+    protected int getBatchSize() {
+
+        return batchSize;
     }
 }

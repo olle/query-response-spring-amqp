@@ -1,6 +1,8 @@
-package com.studiomediatech;
+package com.studiomediatech.queryresponse;
 
 import org.junit.jupiter.api.Test;
+
+import com.studiomediatech.queryresponse.Queries;
 
 import java.time.Duration;
 

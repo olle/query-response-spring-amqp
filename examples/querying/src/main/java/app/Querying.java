@@ -1,7 +1,7 @@
 package app;
 
-import com.studiomediatech.Queries;
-import com.studiomediatech.QueryResponseConfiguration;
+import com.studiomediatech.queryresponse.Queries;
+import com.studiomediatech.queryresponse.QueryResponseConfiguration;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;

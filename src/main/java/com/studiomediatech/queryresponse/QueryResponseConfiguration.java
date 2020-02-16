@@ -1,8 +1,4 @@
-package com.studiomediatech;
-
-import com.studiomediatech.queries.QueryingRegistry;
-
-import com.studiomediatech.responses.RespondingRegistry;
+package com.studiomediatech.queryresponse;
 
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;

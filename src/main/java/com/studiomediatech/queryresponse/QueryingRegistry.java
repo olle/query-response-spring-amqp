@@ -1,6 +1,4 @@
-package com.studiomediatech.queries;
-
-import com.studiomediatech.Queries;
+package com.studiomediatech.queryresponse;
 
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
@@ -16,7 +14,7 @@ import org.springframework.context.ApplicationContextAware;
 import java.util.function.Supplier;
 
 
-public class QueryingRegistry implements ApplicationContextAware {
+class QueryingRegistry implements ApplicationContextAware {
 
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<QueryingRegistry> instance = () -> null;
@@ -25,11 +23,12 @@ public class QueryingRegistry implements ApplicationContextAware {
     private final DirectMessageListenerContainer listener;
     private final RabbitTemplate rabbitTemplate;
 
-    public QueryingRegistry(RabbitAdmin admin, DirectMessageListenerContainer listener, RabbitTemplate rabbit) {
+    public QueryingRegistry(RabbitAdmin rabbitAdmin, DirectMessageListenerContainer listener,
+        RabbitTemplate rabbitTemplate) {
 
-        this.rabbitAdmin = admin;
+        this.rabbitAdmin = rabbitAdmin;
         this.listener = listener;
-        this.rabbitTemplate = rabbit;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
@@ -47,36 +46,28 @@ public class QueryingRegistry implements ApplicationContextAware {
             throw new IllegalStateException("No registry is initialized.");
         }
 
-        return registry.registerQueries(queries);
+        return registry.accept(queries);
     }
 
 
-    protected <T> Results<T> registerQueries(Queries<T> queries) {
+    protected <T> Results<T> accept(Queries<T> queries) {
 
         ensureDeclaredQueriesExchange();
 
-        return Results.empty();
+        var queueName = rabbitAdmin.declareQueue().getActualName();
+        listener.addQueueNames(queueName);
+
+        var querying = new Querying<>(queries);
+        listener.setMessageListener(querying);
+
+        return querying.publish(rabbitTemplate, queueName,
+                () -> {
+                    if (listener.removeQueueNames(queueName)) {
+                        rabbitAdmin.deleteQueue(queueName);
+                    }
+                });
     }
 
-
-//    protected <T> Response<T> _register(Query<T> query, Response<T> orDefault) {
-//
-//        ensureDeclaredQueriesExchange();
-//
-//        String queueName = rabbitAdmin.declareQueue().getActualName();
-//
-//        listener.addQueueNames(queueName);
-//
-//        var querent = new Querying<>(query, orDefault);
-//        listener.setMessageListener(querent);
-//
-//        return querent.publish(rabbitTemplate, queueName,
-//                () -> {
-//                    if (listener.removeQueueNames(queueName)) {
-//                        rabbitAdmin.deleteQueue(queueName);
-//                    }
-//                });
-//    }
 
     private Exchange ensureDeclaredQueriesExchange() {
 

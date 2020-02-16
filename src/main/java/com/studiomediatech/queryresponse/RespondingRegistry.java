@@ -1,6 +1,4 @@
-package com.studiomediatech.responses;
-
-import com.studiomediatech.Responses;
+package com.studiomediatech.queryresponse;
 
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Exchange;
@@ -18,7 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
-public class RespondingRegistry implements ApplicationContextAware {
+class RespondingRegistry implements ApplicationContextAware {
 
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<RespondingRegistry> instance = () -> null;

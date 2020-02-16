@@ -1,6 +1,4 @@
-package com.studiomediatech.queries;
-
-import com.studiomediatech.Queries;
+package com.studiomediatech.queryresponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +30,7 @@ public class QueriesApiTest {
     @BeforeEach
     void setup() {
 
-        when(registry.registerQueries(any(Queries.class))).thenReturn(Results.empty());
+        when(registry.accept(any(Queries.class))).thenReturn(Results.empty());
         QueryingRegistry.instance = () -> registry;
     }
 

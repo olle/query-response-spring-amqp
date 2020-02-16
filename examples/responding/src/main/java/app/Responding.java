@@ -1,14 +1,14 @@
 package app;
 
-import com.studiomediatech.QueryResponseConfiguration;
-import com.studiomediatech.Responses;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import org.springframework.context.annotation.Import;
+
+import com.studiomediatech.queryresponse.QueryResponseConfiguration;
+import com.studiomediatech.queryresponse.Responses;
 
 import java.util.Date;
 

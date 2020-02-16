@@ -1,6 +1,4 @@
-package com.studiomediatech.responses;
-
-import com.studiomediatech.Responses;
+package com.studiomediatech.queryresponse;
 
 import org.springframework.amqp.core.Address;
 import org.springframework.amqp.core.Message;

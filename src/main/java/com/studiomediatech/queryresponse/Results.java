@@ -1,6 +1,4 @@
-package com.studiomediatech.queries;
-
-import com.studiomediatech.Queries;
+package com.studiomediatech.queryresponse;
 
 import java.util.ArrayList;
 import java.util.stream.Collector;
@@ -30,8 +28,6 @@ public class Results<T> {
 
 
     public <R, A> R collect(Collector<? super T, A, R> collector) {
-
-        System.err.println("colleting on " + this + " with elements " + this.elements);
 
         return elements.collect(collector);
     }

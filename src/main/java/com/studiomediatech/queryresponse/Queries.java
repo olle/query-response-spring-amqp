@@ -1,7 +1,4 @@
-package com.studiomediatech;
-
-import com.studiomediatech.queries.QueryingRegistry;
-import com.studiomediatech.queries.Results;
+package com.studiomediatech.queryresponse;
 
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
@@ -210,11 +207,23 @@ public class Queries<T> {
     }
 
 
+    protected Supplier<Stream<T>> getOrDefaults() {
+
+        return this.orDefaults;
+    }
+
+
     public Results<T> orThrow(Supplier<Throwable> throwable) {
 
         this.orThrows = throwable;
 
         return register();
+    }
+
+
+    protected Supplier<Throwable> getOrThrows() {
+
+        return orThrows;
     }
 
 
