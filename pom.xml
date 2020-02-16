@@ -16,7 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <java.release.version>11</java.release.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
     </properties>
 
@@ -62,10 +61,9 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <release>${java.release.version}</release>
+                    <release>${java.version}</release>
                     <compilerArgs>
                         <arg>-Xlint:all,-processing</arg>
-                        <arg>-Werror</arg>
                     </compilerArgs>
                     <showWarnings>true</showWarnings>
                 </configuration>
