@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 
-public final class Responses<T> {
+public class Responses<T> {
 
     private final String term;
     private boolean all = false;
@@ -49,7 +49,8 @@ public final class Responses<T> {
     }
 
 
-    public void from(@SuppressWarnings("unchecked") T... ts) {
+    @SafeVarargs
+    public final void from(T... ts) {
 
         from(Arrays.asList(ts).stream());
     }
