@@ -1,22 +1,33 @@
 package com.studiomediatech.responses;
 
+import com.studiomediatech.Responses;
+
+import org.springframework.amqp.core.Address;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 
-public class Responder implements MessageListener {
+public class Responder<T> implements MessageListener {
 
-    private final String actualName;
+    private final RabbitTemplate rabbitTemplate;
 
-    public Responder(Queue queue) {
+    public Responder(RabbitTemplate rabbitTemplate, Responses<T> responses) {
 
-        actualName = queue.getActualName();
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
     public void onMessage(Message message) {
 
-        System.out.println(">>>>>>>>>>>>>>>< RECEIVED MESSAGE: " + message);
+        System.out.println("|<------------------ RECEIVED QUERY: " + message);
+
+        Address replyToAddress = message.getMessageProperties().getReplyToAddress();
+
+        Message response = MessageBuilder.withBody("HELO".getBytes()).build();
+        rabbitTemplate.send(replyToAddress.getExchangeName(), replyToAddress.getRoutingKey(), response);
+
+        System.out.println("------------------>| PUBLISHED RESPONSE: " + response);
     }
 }

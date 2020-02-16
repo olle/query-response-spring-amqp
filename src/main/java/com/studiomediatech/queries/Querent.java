@@ -25,7 +25,7 @@ public class Querent<T> implements MessageListener {
     @Override
     public void onMessage(Message message) {
 
-        // TODO Auto-generated method stub
+        System.out.println("|<------------------ RECEIVED RESPONSE: " + message);
     }
 
 

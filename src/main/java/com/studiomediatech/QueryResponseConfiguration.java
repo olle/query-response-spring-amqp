@@ -36,9 +36,9 @@ public class QueryResponseConfiguration {
 
     @Bean
     RespondingRegistry respondingRegistry(RabbitAdmin rabbitAdmin,
-        DirectMessageListenerContainer directMessageListenerContainer) {
+        DirectMessageListenerContainer directMessageListenerContainer, RabbitTemplate rabbitTemplate) {
 
-        return new RespondingRegistry(rabbitAdmin, directMessageListenerContainer);
+        return new RespondingRegistry(rabbitAdmin, directMessageListenerContainer, rabbitTemplate);
     }
 
 

@@ -28,12 +28,14 @@ class Querying implements CommandLineRunner {
         while (true) {
             println("Publishing query..");
 
-            var results = Queries.queryFor("books/sci-fi")
+            var defaults = List.of("Neuromancer", "I, Robot");
+
+            var results = Queries.<String>queryFor("books/sci-fi")
                     .waitingFor(4000)
-                    .orDefaults(List.of("Neuromancer", "I, Robot"))
+                    .orDefaults(defaults)
                     .collect(Collectors.toList());
 
-            println("Results were: %s", results);
+            println("Results were: %s %s", results, results.equals(defaults) ? "(defaults)" : "");
 
             println("Sleeping for 10s...");
             Thread.sleep(10000);

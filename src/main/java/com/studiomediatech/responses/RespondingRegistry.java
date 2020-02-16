@@ -6,6 +6,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
 import org.springframework.beans.BeansException;
@@ -22,13 +23,16 @@ public class RespondingRegistry implements ApplicationContextAware {
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<RespondingRegistry> instance = () -> null;
 
-    private final RabbitAdmin admin;
+    private final RabbitAdmin rabbitAdmin;
     private final DirectMessageListenerContainer listener;
+    private final RabbitTemplate rabbitTemplate;
 
-    public RespondingRegistry(RabbitAdmin admin, DirectMessageListenerContainer listener) {
+    public RespondingRegistry(RabbitAdmin rabbitAdmin, DirectMessageListenerContainer listener,
+        RabbitTemplate rabbitTemplate) {
 
-        this.admin = admin;
+        this.rabbitAdmin = rabbitAdmin;
         this.listener = listener;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public static <T> void register(Responses<T> responses, Stream<T> stream) {
@@ -48,19 +52,21 @@ public class RespondingRegistry implements ApplicationContextAware {
     protected <T> void _register(Responses<T> responses, Stream<T> stream) {
 
         var exchange = declareQueriesExchange();
-        var queue = admin.declareQueue();
-        var binding = BindingBuilder.bind(queue).to(exchange).with(responses.getTerm()).noargs();
-        admin.declareBinding(binding);
+        var queue = rabbitAdmin.declareQueue();
+
+        rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(responses.getTerm()).noargs());
 
         listener.addQueueNames(queue.getActualName());
-        listener.setMessageListener(new Responder(queue));
+
+        Responder responder = new Responder(rabbitTemplate, responses);
+        listener.setMessageListener(responder);
     }
 
 
     private Exchange declareQueriesExchange() {
 
         var exchange = ExchangeBuilder.topicExchange("queries").autoDelete().build();
-        admin.declareExchange(exchange);
+        rabbitAdmin.declareExchange(exchange);
 
         return exchange;
     }
