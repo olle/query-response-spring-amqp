@@ -52,7 +52,7 @@ public class Responses<T> {
     @SafeVarargs
     public final void from(T... ts) {
 
-        from(Arrays.asList(ts).stream());
+        from(Arrays.asList(ts));
     }
 
 
