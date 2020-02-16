@@ -1,6 +1,8 @@
 Query/Response
 ==============
 
+![Java CI](https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg)
+
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
 
