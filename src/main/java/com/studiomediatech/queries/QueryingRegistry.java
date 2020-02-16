@@ -60,7 +60,7 @@ public class QueryingRegistry implements ApplicationContextAware {
 
         listener.addQueueNames(queueName);
 
-        var querent = new Querent<>(query, orDefault);
+        var querent = new Querying<>(query, orDefault);
         listener.setMessageListener(querent);
 
         return querent.publish(rabbitTemplate, queueName,

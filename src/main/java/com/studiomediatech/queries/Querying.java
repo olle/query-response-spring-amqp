@@ -11,12 +11,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class Querent<T> implements MessageListener {
+public class Querying<T> implements MessageListener {
 
     private final Query<T> query;
     private final AtomicReference<Response<T>> response;
 
-    public Querent(Query<T> query, Response<T> orDefault) {
+    public Querying(Query<T> query, Response<T> orDefault) {
 
         this.query = query;
         this.response = new AtomicReference<Response<T>>(orDefault);

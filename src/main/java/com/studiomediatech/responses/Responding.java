@@ -9,11 +9,11 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 
-public class Responder<T> implements MessageListener {
+public class Responding<T> implements MessageListener {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public Responder(RabbitTemplate rabbitTemplate, Responses<T> responses) {
+    public Responding(RabbitTemplate rabbitTemplate, Responses<T> responses) {
 
         this.rabbitTemplate = rabbitTemplate;
     }
