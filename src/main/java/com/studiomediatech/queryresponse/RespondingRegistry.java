@@ -1,5 +1,8 @@
 package com.studiomediatech.queryresponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
@@ -17,6 +20,8 @@ import java.util.stream.Stream;
 
 
 class RespondingRegistry implements ApplicationContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RespondingRegistry.class);
 
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<RespondingRegistry> instance = () -> null;
@@ -42,8 +47,6 @@ class RespondingRegistry implements ApplicationContextAware {
         }
 
         registry._register(responses, stream);
-
-        System.out.println("Adding responses " + responses + " to registry " + registry);
     }
 
 
@@ -58,6 +61,8 @@ class RespondingRegistry implements ApplicationContextAware {
 
         Responding<T> responder = new Responding<>(rabbitTemplate, responses);
         listener.setMessageListener(responder);
+
+        LOG.info("Added responder {} to registry {} ", responses, instance.get());
     }
 
 

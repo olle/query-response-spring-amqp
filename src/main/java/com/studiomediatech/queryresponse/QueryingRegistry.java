@@ -60,12 +60,13 @@ class QueryingRegistry implements ApplicationContextAware {
         var querying = new Querying<>(queries);
         listener.setMessageListener(querying);
 
-        return querying.publish(rabbitTemplate, queueName,
-                () -> {
-                    if (listener.removeQueueNames(queueName)) {
-                        rabbitAdmin.deleteQueue(queueName);
-                    }
-                });
+        try {
+            return querying.publish(rabbitTemplate, queueName, () -> { });
+        } finally {
+            if (listener.removeQueueNames(queueName)) {
+                rabbitAdmin.deleteQueue(queueName);
+            }
+        }
     }
 
 

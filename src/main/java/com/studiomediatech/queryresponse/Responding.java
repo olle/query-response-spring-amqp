@@ -1,6 +1,8 @@
 package com.studiomediatech.queryresponse;
 
-import org.springframework.amqp.core.Address;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
@@ -8,6 +10,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 
 public class Responding<T> implements MessageListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Responding.class);
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -19,13 +23,12 @@ public class Responding<T> implements MessageListener {
     @Override
     public void onMessage(Message message) {
 
-        System.out.println("|<------------------ RECEIVED QUERY: " + message);
+        LOG.info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
-        Address replyToAddress = message.getMessageProperties().getReplyToAddress();
+        var replyToAddress = message.getMessageProperties().getReplyToAddress();
+        var response = MessageBuilder.withBody("HELO".getBytes()).build();
 
-        Message response = MessageBuilder.withBody("HELO".getBytes()).build();
         rabbitTemplate.send(replyToAddress.getExchangeName(), replyToAddress.getRoutingKey(), response);
-
-        System.out.println("------------------>| PUBLISHED RESPONSE: " + response);
+        LOG.info("|<-- Published response: " + response);
     }
 }
