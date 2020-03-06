@@ -23,12 +23,32 @@ public class Results<T> {
 
         var empty = new ArrayList<T>();
 
-        return new Results<>(empty.stream());
+        return new EmptyResults<>(empty.stream());
     }
 
 
     public <R, A> R collect(Collector<? super T, A, R> collector) {
 
         return elements.collect(collector);
+    }
+
+
+    public Results<T> accept(Queries<T> queries) {
+
+        if (this instanceof EmptyResults) {
+            if (queries.getOrDefaults() != null) {
+                return new Results<>(queries.getOrDefaults().get());
+            }
+        }
+
+        return this;
+    }
+
+    static class EmptyResults<T> extends Results<T> {
+
+        protected EmptyResults(Stream<T> elements) {
+
+            super(elements);
+        }
     }
 }

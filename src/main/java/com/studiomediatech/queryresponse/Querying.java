@@ -63,6 +63,7 @@ class Querying<T> implements MessageListener {
 
         try {
             var message = MessageBuilder.withBody("{}".getBytes()).setReplyTo(queue).build();
+
             rabbit.send("queries", queries.getQueryForTerm(), message);
             LOG.info("|<-- Published query: {}", queries.getQueryForTerm());
         } catch (RuntimeException e) {
@@ -78,8 +79,7 @@ class Querying<T> implements MessageListener {
 
         onDone.run();
 
-        // TODO Auto-generated method stub
-        return response.get();
+        return response.get().accept(queries);
     }
 
     static class Envelope<R> {
