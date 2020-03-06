@@ -33,4 +33,18 @@ class ResponsesTest {
 
         assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("     "));
     }
+
+
+    @Test
+    void ensureThrowsForBatchSizeOfZero() throws Exception {
+
+        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withBatchesOf(0));
+    }
+
+
+    @Test
+    void ensureThrowsForNegativeBatchSize() throws Exception {
+
+        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withBatchesOf(-23));
+    }
 }

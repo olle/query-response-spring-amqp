@@ -15,10 +15,26 @@ import java.util.stream.Stream;
  */
 public class Responses<T> {
 
+    /**
+     * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
+     * the given query term. However, the query-term must conform to the AMQP routing-key rules and conventions (and is
+     * asserted as an invariant of such).
+     */
     private final String respondToTerm;
 
+    /**
+     * Whether to respond with all provided response entries, at once or not.
+     */
     private boolean all = false;
+
+    /**
+     * Whether to respond with the provided response entries as pairs, in multiple responses.
+     */
     private boolean pairs = false;
+
+    /**
+     * A specific batch-size for responses, where 0 means, no batches.
+     */
     private int batchSize = 0;
 
     private Responses(String term) {
@@ -34,6 +50,7 @@ public class Responses<T> {
 
     public Responses<T> withAll() {
 
+        this.batchSize = 0;
         this.all = true;
 
         return this;
@@ -42,15 +59,20 @@ public class Responses<T> {
 
     public Responses<T> withPairs() {
 
+        this.batchSize = 2;
         this.pairs = true;
 
         return this;
     }
 
 
-    public Responses<T> withBatchesOf(int batch) {
+    public Responses<T> withBatchesOf(int size) {
 
-        this.batchSize = batch;
+        if (size < 1) {
+            throw new IllegalArgumentException("Illegal batch size " + size + ", must be 1 or higher.");
+        }
+
+        this.batchSize = size;
 
         return this;
     }
