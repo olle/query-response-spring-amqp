@@ -2,7 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 
 /**
@@ -27,6 +26,8 @@ public class Responses<T> {
      * batch-size 0 (default) means no-batches and all responses are published at once.
      */
     private int batchSize = 0;
+
+    private Collection<T> elements;
 
     private Responses(String term) {
 
@@ -62,23 +63,27 @@ public class Responses<T> {
     @SafeVarargs
     public final void from(T... ts) {
 
+        if (ts == null || ts.length == 0) {
+            throw new IllegalArgumentException("Cannot respond from an empty (or null) array.");
+        }
+
         from(Arrays.asList(ts));
     }
 
 
-    public void from(Collection<T> set) {
+    public void from(Collection<T> ts) {
 
-        from(set.stream());
+        if (ts.contains(null)) {
+            throw new IllegalArgumentException("Responses cannot contain null elements.");
+        }
+
+        this.elements = ts;
+
+        RespondingRegistry.register(this);
     }
 
 
-    public void from(Stream<T> stream) {
-
-        RespondingRegistry.register(this, stream);
-    }
-
-
-    public String getTerm() {
+    protected String getTerm() {
 
         return this.respondToTerm;
     }
@@ -87,5 +92,11 @@ public class Responses<T> {
     protected int getBatchSize() {
 
         return batchSize;
+    }
+
+
+    protected Collection<T> getElements() {
+
+        return this.elements;
     }
 }

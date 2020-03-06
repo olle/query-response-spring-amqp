@@ -16,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 
 class RespondingRegistry implements ApplicationContextAware {
@@ -38,7 +37,7 @@ class RespondingRegistry implements ApplicationContextAware {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public static <T> void register(Responses<T> responses, Stream<T> stream) {
+    public static <T> void register(Responses<T> responses) {
 
         var registry = instance.get();
 
@@ -46,11 +45,11 @@ class RespondingRegistry implements ApplicationContextAware {
             throw new IllegalStateException("No registry is initialized.");
         }
 
-        registry._register(responses, stream);
+        registry.accept(responses);
     }
 
 
-    protected <T> void _register(Responses<T> responses, Stream<T> stream) {
+    protected <T> void accept(Responses<T> responses) {
 
         var exchange = declareQueriesExchange();
         var queue = rabbitAdmin.declareQueue();

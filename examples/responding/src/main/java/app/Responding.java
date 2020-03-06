@@ -1,14 +1,14 @@
 package app;
 
+import com.studiomediatech.queryresponse.QueryResponseConfiguration;
+import com.studiomediatech.queryresponse.Responses;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import org.springframework.context.annotation.Import;
-
-import com.studiomediatech.queryresponse.QueryResponseConfiguration;
-import com.studiomediatech.queryresponse.Responses;
 
 import java.util.Date;
 
@@ -22,7 +22,7 @@ class Responding implements CommandLineRunner {
 
         println("Registering responses...");
 
-        Responses.respondTo("books/sci-fi")
+        Responses.<String>respondTo("books/sci-fi")
             .withAll()
             .from("Neuromancer", "Snow Crash", "I, Robot", "I, Robot", "The Gods Themselves", "Pebble in the Sky");
 
