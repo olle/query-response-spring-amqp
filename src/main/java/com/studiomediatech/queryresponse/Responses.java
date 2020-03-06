@@ -23,17 +23,8 @@ public class Responses<T> {
     private final String respondToTerm;
 
     /**
-     * Whether to respond with all provided response entries, at once or not.
-     */
-    private boolean all = false;
-
-    /**
-     * Whether to respond with the provided response entries as pairs, in multiple responses.
-     */
-    private boolean pairs = false;
-
-    /**
-     * A specific batch-size for responses, where 0 means, no batches.
+     * The declared batch-size for responses. Limiting each published response to the given amount, or less. The
+     * batch-size 0 (default) means no-batches and all responses are published at once.
      */
     private int batchSize = 0;
 
@@ -51,16 +42,6 @@ public class Responses<T> {
     public Responses<T> withAll() {
 
         this.batchSize = 0;
-        this.all = true;
-
-        return this;
-    }
-
-
-    public Responses<T> withPairs() {
-
-        this.batchSize = 2;
-        this.pairs = true;
 
         return this;
     }
@@ -69,7 +50,7 @@ public class Responses<T> {
     public Responses<T> withBatchesOf(int size) {
 
         if (size < 1) {
-            throw new IllegalArgumentException("Illegal batch size " + size + ", must be 1 or higher.");
+            throw new IllegalArgumentException("Illegal batch size " + size + ", must be positive integer.");
         }
 
         this.batchSize = size;
@@ -100,18 +81,6 @@ public class Responses<T> {
     public String getTerm() {
 
         return this.respondToTerm;
-    }
-
-
-    protected boolean isAll() {
-
-        return all;
-    }
-
-
-    protected boolean isPairs() {
-
-        return pairs;
     }
 
 

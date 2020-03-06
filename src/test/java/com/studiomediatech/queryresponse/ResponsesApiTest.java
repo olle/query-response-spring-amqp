@@ -1,8 +1,5 @@
 package com.studiomediatech.queryresponse;
 
-import com.studiomediatech.queryresponse.RespondingRegistry;
-import com.studiomediatech.queryresponse.Responses;
-
 import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
@@ -10,7 +7,6 @@ import org.mockito.Mockito;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,10 +21,6 @@ public class ResponsesApiTest {
         Responses.respondTo("authors")
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
-
-        Responses.respondTo("cars")
-            .withPairs()
-            .from(Set.of("volvo", "tesla", "nissan", "saab", "opel", "bmw"));
 
         Responses.respondTo("offers/monday")
             .withBatchesOf(20)
