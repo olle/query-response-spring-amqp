@@ -114,7 +114,7 @@ Both query and response messages use the `application/json` content-type. There
 is no further content in the body, just an empty JSON object `{}`, as a
 placeholder.
 
-```json
+```
   exchange: queries
   routing-key: ${query-term}
   reply-to: ${query-response-queue}
@@ -135,7 +135,7 @@ properties. This is meta-information which provide consumers with hints on
 possible paged responses. The `elements` collection contain the actual response
 data.
 
-```json
+```
   exchange: (default)
   routing-key: ${query-response-queue}
   content-type: application/json
