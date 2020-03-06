@@ -5,18 +5,25 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 
+/**
+ * Providing the entry-point to the fluid builder for responses, through the {@link #respondTo(String)} method.
+ *
+ * <p>Building a response instance will start a long running query consumer which will respond to any matching queries,
+ * for as long as the service is running.</p>
+ *
+ * @param  <T>  the type of response entries or elements.
+ */
 public class Responses<T> {
 
-    private final String term;
+    private final String respondToTerm;
+
     private boolean all = false;
     private boolean pairs = false;
     private int batchSize = 0;
 
     private Responses(String term) {
 
-        Asserts.notEmpty(term);
-
-        this.term = term;
+        this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
     public static <T> Responses<T> respondTo(String term) {
@@ -70,7 +77,7 @@ public class Responses<T> {
 
     public String getTerm() {
 
-        return this.term;
+        return this.respondToTerm;
     }
 
 
