@@ -29,6 +29,11 @@ public class Queries<T> {
     private final String queryForTerm;
 
     /**
+     * The retained type hint for later coercion of any returned results.
+     */
+    private final Class<T> type;
+
+    /**
      * The duration to block this query before returning either the gathered results, provided defaults or throw some
      * given exception. The duration is required and must be set to at least a non-negative, non-zero duration of
      * milliseconds.
@@ -47,14 +52,15 @@ public class Queries<T> {
 
     private Supplier<Throwable> orThrows;
 
-    private Queries(String term) {
+    private Queries(String term, Class<T> type) {
 
+        this.type = type;
         this.queryForTerm = Asserts.invariantQueryTerm(term);
     }
 
-    public static <T> Queries<T> queryFor(String term) {
+    public static <T> Queries<T> queryFor(String term, Class<T> type) {
 
-        return new Queries<>(term);
+        return new Queries<>(term, type);
     }
 
 
@@ -66,6 +72,12 @@ public class Queries<T> {
     protected String getQueryForTerm() {
 
         return this.queryForTerm;
+    }
+
+
+    protected Class<T> getType() {
+
+        return this.type;
     }
 
 

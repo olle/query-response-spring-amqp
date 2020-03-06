@@ -2,8 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import org.junit.jupiter.api.Test;
 
-import com.studiomediatech.queryresponse.Queries;
-
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,42 +12,42 @@ class QueriesTest {
     @Test
     void ensureThrowsOnTooLongQueryTerm() {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("a".repeat(256)));
+        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("a".repeat(256), String.class));
     }
 
 
     @Test
     void ensureThrowsForNullQueryTerm() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor(null));
+        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor(null, String.class));
     }
 
 
     @Test
     void ensureThrowsForEmptyQueryTerm() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor(""));
+        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("", String.class));
     }
 
 
     @Test
     void ensureThrowsForWhitespaceQueryTerm() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("     "));
+        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("     ", String.class));
     }
 
 
     @Test
     void ensureThrowsForZeroDuration() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("foobar").waitingFor(0L));
+        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("foobar", String.class).waitingFor(0L));
     }
 
 
     @Test
     void ensureThrowsForNegativeDuration() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("foobar").waitingFor(-2L));
+        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("foobar", String.class).waitingFor(-2L));
     }
 
 
@@ -57,7 +55,8 @@ class QueriesTest {
     void ensureThrowsForExcessiveLongDuration() throws Exception {
 
         Duration tooLong = Duration.ofMillis(Long.MAX_VALUE).plusMillis(1);
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("foobar").waitingFor(tooLong));
+        assertThrows(IllegalArgumentException.class,
+            () -> Queries.queryFor("foobar", String.class).waitingFor(tooLong));
     }
 
 
@@ -65,14 +64,15 @@ class QueriesTest {
     void ensureThrowsForNegativeTakingAtMost() throws Exception {
 
         assertThrows(IllegalArgumentException.class,
-            () -> Queries.queryFor("foobar").waitingFor(123).takingAtMost(-1));
+            () -> Queries.queryFor("foobar", String.class).waitingFor(123).takingAtMost(-1));
     }
 
 
     @Test
     void ensureThrowsForZeroTakingAtMost() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Queries.queryFor("foobar").waitingFor(123).takingAtMost(0));
+        assertThrows(IllegalArgumentException.class,
+            () -> Queries.queryFor("foobar", String.class).waitingFor(123).takingAtMost(0));
     }
 
 
@@ -80,7 +80,7 @@ class QueriesTest {
     void ensureThrowsForNegativeTakingAtLeast() throws Exception {
 
         assertThrows(IllegalArgumentException.class,
-            () -> Queries.queryFor("foobar").waitingFor(123).takingAtLeast(-1));
+            () -> Queries.queryFor("foobar", String.class).waitingFor(123).takingAtLeast(-1));
     }
 
 
@@ -88,7 +88,7 @@ class QueriesTest {
     void ensureThrowsForZeroTakingAtLeast() throws Exception {
 
         assertThrows(IllegalArgumentException.class,
-            () -> Queries.queryFor("foobar").waitingFor(123).takingAtLeast(0));
+            () -> Queries.queryFor("foobar", String.class).waitingFor(123).takingAtLeast(0));
     }
 
 
@@ -96,7 +96,7 @@ class QueriesTest {
     void ensureThrowsForMoreTakingAtLeastThanAtMost() throws Exception {
 
         assertThrows(IllegalArgumentException.class,
-            () -> Queries.queryFor("foobar").waitingFor(123).takingAtMost(1).takingAtLeast(2));
+            () -> Queries.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(2));
     }
 
 
@@ -104,6 +104,6 @@ class QueriesTest {
     void ensureThrowsForEqualTAkingAtLeastAsAtMost() throws Exception {
 
         assertThrows(IllegalArgumentException.class,
-            () -> Queries.queryFor("foobar").waitingFor(123).takingAtMost(1).takingAtLeast(1));
+            () -> Queries.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(1));
     }
 }

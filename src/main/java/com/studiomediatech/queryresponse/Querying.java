@@ -1,5 +1,10 @@
 package com.studiomediatech.queryresponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,8 +13,10 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.io.IOException;
+
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 
 class Querying<T> implements MessageListener {
@@ -18,19 +25,37 @@ class Querying<T> implements MessageListener {
 
     private final Queries<T> queries;
     private final AtomicReference<Results<T>> response;
+    private final ObjectMapper objectMapper;
 
     public Querying(Queries<T> queries) {
 
         this.queries = queries;
         this.response = new AtomicReference<>(Results.empty());
+
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onMessage(Message message) {
 
-        LOG.info("|--> Received response: {}", message);
-        response.set(new Results(Stream.of("foo", "bar", "baz")));
+        try {
+            LOG.info("|--> Received response: {}", message);
+
+            Envelope<T> envelope = objectMapper.readValue(message.getBody(),
+                    TypeFactory.defaultInstance()
+                        .constructParametricType(Envelope.class, queries.getType()));
+
+            if (envelope.elements == null) {
+                LOG.warn("Received empty response", envelope);
+
+                return;
+            }
+
+            response.set(new Results<>(envelope.elements.stream()));
+        } catch (RuntimeException | IOException e) {
+            LOG.error("Failed to consume response", e);
+        }
     }
 
 
@@ -55,5 +80,21 @@ class Querying<T> implements MessageListener {
 
         // TODO Auto-generated method stub
         return response.get();
+    }
+
+    static class Envelope<R> {
+
+        @JsonProperty
+        public int count;
+        @JsonProperty
+        public int total;
+        @JsonProperty
+        public Collection<R> elements;
+
+        @Override
+        public String toString() {
+
+            return "Envelope [count=" + count + ", total=" + total + ", elements=" + elements + "]";
+        }
     }
 }

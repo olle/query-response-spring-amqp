@@ -24,7 +24,7 @@ class Responding implements CommandLineRunner {
 
         Responses.<String>respondTo("books/sci-fi")
             .withAll()
-            .from("Neuromancer", "Snow Crash", "I, Robot", "I, Robot", "The Gods Themselves", "Pebble in the Sky");
+            .from("Neuromancer", "Snow Crash", "I, Robot", "The Gods Themselves", "Pebble in the Sky");
 
         println("Waiting for queries! Press CTRL-C to exit.");
         Thread.currentThread().join();

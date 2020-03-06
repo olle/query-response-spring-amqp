@@ -38,7 +38,7 @@ public class QueriesApiTest {
     @Test
     void ex1() throws Exception {
 
-        var authors = Queries.queryFor("authors")
+        var authors = Queries.queryFor("authors", String.class)
                 .waitingFor(800)
                 .orEmpty()
                 .collect(Collectors.toList());
@@ -48,7 +48,7 @@ public class QueriesApiTest {
     @Test
     void ex2() throws Exception {
 
-        var authors = Queries.queryFor("authors")
+        var authors = Queries.queryFor("authors", String.class)
                 .waitingFor(800)
                 .orDefaults(Authors.defaults())
                 .collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class QueriesApiTest {
     @Test
     void ex3() throws Exception {
 
-        var authors = Queries.queryFor("authors")
+        var authors = Queries.queryFor("authors", String.class)
                 .takingAtMost(10)
                 .waitingFor(800)
                 .orDefaults(Authors.defaults())
@@ -69,7 +69,7 @@ public class QueriesApiTest {
     @Test
     void ex4() throws Exception {
 
-        var offers = Queries.queryFor("offers/rental")
+        var offers = Queries.queryFor("offers/rental", Offer.class)
                 .takingAtLeast(10)
                 .takingAtMost(20)
                 .waitingFor(2, ChronoUnit.SECONDS)
@@ -79,10 +79,15 @@ public class QueriesApiTest {
 
     private static class Authors {
 
-        public static Collection<Object> defaults() {
+        public static Collection<String> defaults() {
 
             return Collections.emptyList();
         }
+    }
+
+    private static class Offer {
+
+        // OK
     }
 
     private static class TooFewOffersConstraintException extends RuntimeException {
