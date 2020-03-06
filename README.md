@@ -21,7 +21,7 @@ decide on a strategy for service integration. Timeouts are _first-class
 citizens_ in the API, and protect against surprises.
 
 ```java
-  var authors = Queries.queryFor("authors")
+  var authors = Queries.queryFor("authors", String.class)
                   .waitingFor(800)
                   .orEmpty()
                   .collect(Collectors.toList());
@@ -31,7 +31,7 @@ Defaults are suddenly top-of-mind for developers, and either the _empty case_
 is good enough, or fallbacks can be provided.
 
 ```java
-  var authors = Queries.queryFor("authors")
+  var authors = Queries.queryFor("authors", String.class)
                   .waitingFor(800)
                   .orDefaults(Authors.defaults())
                   .collect(Collectors.toList());
@@ -41,7 +41,7 @@ Preserve resources, specific to the current needs and protect your services,
 by limiting the amount of data consumed.
 
 ```java
-  var authors = Queries.queryFor("authors")
+  var authors = Queries.queryFor("authors", String.class)
                   .takingAtMost(10)
                   .waitingFor(800)
                   .orDefaults(Authors.defaults())
@@ -51,12 +51,12 @@ by limiting the amount of data consumed.
 Express constraints and react accordingly, as an option to lenient handling.
 
 ```java
-  var offers = Queries.queryFor("offers/rental")
-                 .takingAtLeast(10)
-                 .takingAtMost(20)
-                 .waitingFor(2, ChronoUnit.SECONDS)
-                 .orThrow(TooFewOffersConstraintException::new)
-                 .collect(Collectors.toList());
+  var offers = Queries.queryFor("offers/rental", Offer.class)
+                  .takingAtLeast(10)
+                  .takingAtMost(20)
+                  .waitingFor(2, ChronoUnit.SECONDS)
+                  .orThrow(TooFewOffersConstraintException::new)
+                  .collect(Collectors.toList());
 ```
 
 Responses
