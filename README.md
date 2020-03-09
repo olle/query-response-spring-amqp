@@ -23,8 +23,7 @@ citizens_ in the API, and protect against surprises.
 ```java
   var authors = Queries.queryFor("authors", String.class)
                   .waitingFor(800)
-                  .orEmpty()
-                  .collect(Collectors.toList());
+                  .orEmpty();
 ```
 
 Defaults are suddenly top-of-mind for developers, and either the _empty case_
@@ -33,8 +32,7 @@ is good enough, or fallbacks can be provided.
 ```java
   var authors = Queries.queryFor("authors", String.class)
                   .waitingFor(800)
-                  .orDefaults(Authors.defaults())
-                  .collect(Collectors.toList());
+                  .orDefaults(Authors.defaults());
 ```
 
 Preserve resources, specific to the current needs and protect your services,
@@ -44,8 +42,7 @@ by limiting the amount of data consumed.
   var authors = Queries.queryFor("authors", String.class)
                   .takingAtMost(10)
                   .waitingFor(800)
-                  .orDefaults(Authors.defaults())
-                  .collect(Collectors.toList());
+                  .orDefaults(Authors.defaults());
 ```
 
 Express constraints and react accordingly, as an option to lenient handling.
@@ -55,8 +52,17 @@ Express constraints and react accordingly, as an option to lenient handling.
                   .takingAtLeast(10)
                   .takingAtMost(20)
                   .waitingFor(2, ChronoUnit.SECONDS)
-                  .orThrow(TooFewOffersConstraintException::new)
-                  .collect(Collectors.toList());
+                  .orThrow(TooFewOffersConstraintException::new);
+```
+
+Optional capabilities, to handle exceptions and errors are built-in and very
+easy to use.
+
+```java
+  var offers = Queries.queryFor("offers/rental", NewOffer.class)
+                  .waitingFor(400)
+                  .onError(error -> LOG.error("Failed!", error))
+                  .orEmpty();
 ```
 
 Responses
