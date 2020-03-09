@@ -1,7 +1,7 @@
 package com.studiomediatech.queryresponse;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
@@ -33,7 +33,6 @@ class Querying<T> implements MessageListener {
         this.response = new AtomicReference<>(Results.empty());
 
         this.objectMapper = new ObjectMapper();
-        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
@@ -82,6 +81,7 @@ class Querying<T> implements MessageListener {
         return response.get().accept(queries);
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     static class Envelope<R> {
 
         @JsonProperty

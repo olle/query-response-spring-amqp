@@ -22,7 +22,7 @@ class Responding implements CommandLineRunner {
 
         println("Registering responses...");
 
-        Responses.<String>respondTo("books/sci-fi")
+        Responses.respondTo("books/sci-fi")
             .withAll()
             .from("Neuromancer", "Snow Crash", "I, Robot", "The Gods Themselves", "Pebble in the Sky");
 

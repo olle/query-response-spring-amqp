@@ -30,7 +30,7 @@ class Querying implements CommandLineRunner {
 
             var defaults = List.of("Neuromancer", "I, Robot");
 
-            var results = Queries.<String>queryFor("books/sci-fi", String.class)
+            var results = Queries.queryFor("books/sci-fi", String.class)
                     .waitingFor(4000)
                     .orDefaults(defaults)
                     .collect(Collectors.toList());
