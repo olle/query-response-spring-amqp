@@ -11,6 +11,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 
@@ -38,7 +39,7 @@ class QueryingRegistry implements ApplicationContextAware {
     }
 
 
-    public static <T> Results<T> register(Queries<T> queries) {
+    public static <T> Collection<T> register(Queries<T> queries) {
 
         var registry = instance.get();
 
@@ -50,7 +51,7 @@ class QueryingRegistry implements ApplicationContextAware {
     }
 
 
-    protected <T> Results<T> accept(Queries<T> queries) {
+    protected <T> Collection<T> accept(Queries<T> queries) {
 
         ensureDeclaredQueriesExchange();
 
@@ -61,7 +62,7 @@ class QueryingRegistry implements ApplicationContextAware {
         listener.setMessageListener(querying);
 
         try {
-            return querying.publish(rabbitTemplate, queueName, () -> { });
+            return querying.publish(rabbitTemplate, queueName);
         } finally {
             if (listener.removeQueueNames(queueName)) {
                 rabbitAdmin.deleteQueue(queueName);

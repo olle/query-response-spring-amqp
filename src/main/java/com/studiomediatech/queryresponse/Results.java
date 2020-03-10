@@ -1,8 +1,7 @@
 package com.studiomediatech.queryresponse;
 
-import java.util.ArrayList;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.Collections;
 
 
 /**
@@ -12,41 +11,34 @@ import java.util.stream.Stream;
  */
 public class Results<T> {
 
-    private final Stream<T> elements;
+    private final Collection<T> elements;
 
-    protected Results(Stream<T> elements) {
+    protected Results(Collection<T> elements) {
 
         this.elements = elements;
     }
 
     public static <T> Results<T> empty() {
 
-        var empty = new ArrayList<T>();
-
-        return new EmptyResults<>(empty.stream());
+        return new EmptyResults<>(Collections.emptyList());
     }
 
 
-    public <R, A> R collect(Collector<? super T, A, R> collector) {
-
-        return elements.collect(collector);
-    }
-
-
-    public Results<T> accept(Queries<T> queries) {
+    public Collection<T> accept(Queries<T> queries) {
 
         if (this instanceof EmptyResults) {
             if (queries.getOrDefaults() != null) {
-                return new Results<>(queries.getOrDefaults().get());
+                return queries.getOrDefaults().get();
             }
+            // TODO: Or throws, etc.
         }
 
-        return this;
+        return this.elements;
     }
 
     static class EmptyResults<T> extends Results<T> {
 
-        protected EmptyResults(Stream<T> elements) {
+        protected EmptyResults(Collection<T> elements) {
 
             super(elements);
         }

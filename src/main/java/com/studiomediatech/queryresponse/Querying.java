@@ -51,14 +51,14 @@ class Querying<T> implements MessageListener {
                 return;
             }
 
-            response.set(new Results<>(envelope.elements.stream()));
+            response.set(new Results<>(envelope.elements));
         } catch (RuntimeException | IOException e) {
             LOG.error("Failed to consume response", e);
         }
     }
 
 
-    public Results<T> publish(RabbitTemplate rabbit, String queue, Runnable onDone) {
+    public Collection<T> publish(RabbitTemplate rabbit, String queue) {
 
         try {
             var message = MessageBuilder.withBody("{}".getBytes()).setReplyTo(queue).build();
@@ -66,17 +66,16 @@ class Querying<T> implements MessageListener {
             rabbit.send("queries", queries.getQueryForTerm(), message);
             LOG.info("|<-- Published query: {}", queries.getQueryForTerm());
         } catch (RuntimeException e) {
+            // TODO: Apply to provided onError-handler
             e.printStackTrace();
         }
 
         try {
             Thread.sleep(queries.getWaitingFor().toMillis());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+            // TODO: Apply to provided onError-handler
             e.printStackTrace();
         }
-
-        onDone.run();
 
         return response.get().accept(queries);
     }

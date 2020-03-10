@@ -8,11 +8,15 @@ import org.mockito.Mock;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.temporal.ChronoUnit;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -23,6 +27,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class QueriesApiTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(QueriesApiTest.class);
+
     @Mock
     QueryingRegistry registry;
 
@@ -30,7 +36,7 @@ public class QueriesApiTest {
     @BeforeEach
     void setup() {
 
-        when(registry.accept(any(Queries.class))).thenReturn(Results.empty());
+        when(registry.accept(any(Queries.class))).thenReturn(Collections.emptyList());
         QueryingRegistry.instance = () -> registry;
     }
 
@@ -40,8 +46,7 @@ public class QueriesApiTest {
 
         var authors = Queries.queryFor("authors", String.class)
                 .waitingFor(800)
-                .orEmpty()
-                .collect(Collectors.toList());
+                .orEmpty();
     }
 
 
@@ -50,8 +55,7 @@ public class QueriesApiTest {
 
         var authors = Queries.queryFor("authors", String.class)
                 .waitingFor(800)
-                .orDefaults(Authors.defaults())
-                .collect(Collectors.toList());
+                .orDefaults(Authors.defaults());
     }
 
 
@@ -61,8 +65,7 @@ public class QueriesApiTest {
         var authors = Queries.queryFor("authors", String.class)
                 .takingAtMost(10)
                 .waitingFor(800)
-                .orDefaults(Authors.defaults())
-                .collect(Collectors.toList());
+                .orDefaults(Authors.defaults());
     }
 
 
@@ -73,8 +76,18 @@ public class QueriesApiTest {
                 .takingAtLeast(10)
                 .takingAtMost(20)
                 .waitingFor(2, ChronoUnit.SECONDS)
-                .orThrow(TooFewOffersConstraintException::new)
-                .collect(Collectors.toList());
+                .orThrow(TooFewOffersConstraintException::new);
+    }
+
+
+    @Test
+    void ex5() throws Exception {
+
+        var offers = Queries.queryFor("offers/rental", NewOffer.class)
+                .takingAtLeast(3)
+                .waitingFor(400)
+                .onError(error -> LOG.error("Failure!", error))
+                .orThrow(TooFewOffersConstraintException::new);
     }
 
     private static class Authors {
@@ -86,6 +99,11 @@ public class QueriesApiTest {
     }
 
     private static class Offer {
+
+        // OK
+    }
+
+    private static class NewOffer {
 
         // OK
     }

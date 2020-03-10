@@ -6,8 +6,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 
 /**
@@ -44,7 +44,7 @@ public class Queries<T> {
      * Optionally supplies a stream of default result entries or elements. The defaults are assumed to be lazily
      * supplied, and therefore wrapped in a supplier, which may return {@code null}, here.
      */
-    private Supplier<Stream<T>> orDefaults;
+    private Supplier<Collection<T>> orDefaults;
 
     private Integer takingAtMost;
 
@@ -184,27 +184,34 @@ public class Queries<T> {
     }
 
 
-    public Results<T> orEmpty() {
+    public Queries<T> onError(Consumer<Throwable> handler) {
+
+        // TODO Auto-generated method stub
+        return this;
+    }
+
+
+    public Collection<T> orEmpty() {
 
         return orDefaults(Collections.emptyList());
     }
 
 
-    public Results<T> orDefaults(Collection<T> defaults) {
+    public Collection<T> orDefaults(Collection<T> defaults) {
 
-        this.orDefaults = defaults::stream;
+        this.orDefaults = () -> defaults;
 
         return register();
     }
 
 
-    protected Supplier<Stream<T>> getOrDefaults() {
+    protected Supplier<Collection<T>> getOrDefaults() {
 
         return this.orDefaults;
     }
 
 
-    public Results<T> orThrow(Supplier<Throwable> throwable) {
+    public Collection<T> orThrow(Supplier<Throwable> throwable) {
 
         this.orThrows = throwable;
 
@@ -218,7 +225,7 @@ public class Queries<T> {
     }
 
 
-    private Results<T> register() {
+    private Collection<T> register() {
 
         // TODO: Assert query state, and pre-process for registering
         assertTakingAtMostAndAtLeast();
