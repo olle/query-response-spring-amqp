@@ -1,17 +1,15 @@
-Query/Response
-==============
+Query/Response for Spring® AMQP
+===============================
 
 ![Java CI](https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg)
 
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
 
-Ensure decoupling of services and systems by taking an _always async_ approach
-to integration. By querying a common AMQP broker, instead of depending on
-a plethora of REST-ful microservices, developers can design with failures,
-timeouts, restarts or floodings in mind from the start, and not as a poorly
-tacked-on afterthought. This creates more resilient, available and scalable
-solutions.
+Build safer and more resilient microservices. Get the benefits of an _always
+async_ approach to data exchange. Ensure decoupling of components. Be better
+prepared for system evolution. Create more scalable solutions. Change the way
+you think and design, by using Query/Response for Spring AMQP.
 
 Queries
 -------
@@ -23,8 +21,7 @@ citizens_ in the API, and protect against surprises.
 ```java
   var authors = Queries.queryFor("authors", String.class)
                   .waitingFor(800)
-                  .orEmpty()
-                  .collect(Collectors.toList());
+                  .orEmpty();
 ```
 
 Defaults are suddenly top-of-mind for developers, and either the _empty case_
@@ -33,8 +30,7 @@ is good enough, or fallbacks can be provided.
 ```java
   var authors = Queries.queryFor("authors", String.class)
                   .waitingFor(800)
-                  .orDefaults(Authors.defaults())
-                  .collect(Collectors.toList());
+                  .orDefaults(Authors.defaults());
 ```
 
 Preserve resources, specific to the current needs and protect your services,
@@ -44,19 +40,29 @@ by limiting the amount of data consumed.
   var authors = Queries.queryFor("authors", String.class)
                   .takingAtMost(10)
                   .waitingFor(800)
-                  .orDefaults(Authors.defaults())
-                  .collect(Collectors.toList());
+                  .orDefaults(Authors.defaults());
 ```
 
-Express constraints and react accordingly, as an option to lenient handling.
+Express constraints and react accordingly, throwing on an unfulfilled query, as
+an option to lenient handling with defaults.
 
 ```java
   var offers = Queries.queryFor("offers/rental", Offer.class)
                   .takingAtLeast(10)
                   .takingAtMost(20)
                   .waitingFor(2, ChronoUnit.SECONDS)
-                  .orThrow(TooFewOffersConstraintException::new)
-                  .collect(Collectors.toList());
+                  .orThrow(TooFewOffersConstraintException::new);
+```
+
+Optional capabilities, to handle exceptions and errors are built-in and very
+easy to use.
+
+```java
+  var offers = Queries.queryFor("offers/rental", NewOffer.class)
+                  .takingAtLeast(3)
+                  .waitingFor(400)
+                  .onError(error -> LOG.error("Failure!", error))
+                  .orThrow(TooFewOffersConstraintException::new);
 ```
 
 Responses
@@ -75,8 +81,8 @@ work.
        .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 ```
 
-Batch responses provide developers with great options for tuning a system with
-Query/Response as a whole.
+Batch responses provide developers with more options to tune and throttle a
+system using Query/Response across many services.
 
 ```java
   Responses.respondTo("offers/monday")
@@ -146,3 +152,7 @@ data.
     elements: [...]
   }
 ```
+
+---
+
+Spring is a trademark of Pivotal Software, Inc. in the U.S. and other countries.
