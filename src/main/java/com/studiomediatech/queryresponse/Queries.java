@@ -17,9 +17,9 @@ import java.util.function.Supplier;
  * command-pattern object, providing all the properties required in order to publish the query, await responses and
  * return the results.</p>
  *
- * @param  <T>  the <em>coerced</em> type of the query result's entries or elements.
+ * @param  <T>  the <em>coerced</em> type of the query's response element {@link Collection collection}.
  */
-public class Queries<T> {
+public final class Queries<T> {
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -29,12 +29,12 @@ public class Queries<T> {
     private final String queryForTerm;
 
     /**
-     * The retained type hint for later coercion of any returned results.
+     * The retained type hint, used later for coercion of any returned results.
      */
     private final Class<T> type;
 
     /**
-     * The duration to block this query before returning either the gathered results, provided defaults or throw some
+     * The duration to block a query before returning either the gathered results, provided defaults or throw some
      * given exception. The duration is required and must be set to at least a non-negative, non-zero duration of
      * milliseconds.
      */
@@ -42,15 +42,30 @@ public class Queries<T> {
 
     /**
      * Optionally supplies a stream of default result entries or elements. The defaults are assumed to be lazily
-     * supplied, and therefore wrapped in a supplier, which may return {@code null}, here.
+     * supplied, and therefore wrapped in a supplier.
      */
     private Supplier<Collection<T>> orDefaults;
 
+    /**
+     * Optionally supplies a throwable, that is emitted if the query is not fulfilled.
+     */
+    private Supplier<Throwable> orThrows;
+
+    /**
+     * Defines the lower bounds predicate for a query, may be {@code null}.
+     */
     private Integer takingAtMost;
 
+    /**
+     * Defines the upper bounds predicate for a query, may be {@code null}.
+     */
     private Integer takingAtLeast;
 
-    private Supplier<Throwable> orThrows;
+    /**
+     * An optional consumer of throwables, allowing clients to inspect any failures occurring during a query
+     * life-cycle.
+     */
+    private Consumer<OnErrorThrowable> onError;
 
     private Queries(String term, Class<T> type) {
 
@@ -58,6 +73,16 @@ public class Queries<T> {
         this.queryForTerm = Asserts.invariantQueryTerm(term);
     }
 
+    /**
+     * Creates a query-builder for the given term with an expected, and type coerced, collection of results to be
+     * returned.
+     *
+     * @param  <T>  type of the result elements.
+     * @param  term  to query for
+     * @param  type  expected to be coerced from responses into collection elements
+     *
+     * @return  a new queries builder, never {@code null}
+     */
     public static <T> Queries<T> queryFor(String term, Class<T> type) {
 
         return new Queries<>(term, type);
@@ -65,77 +90,170 @@ public class Queries<T> {
 
 
     /**
-     * Retrieves the query term.
+     * Set the duration, in milliseconds, to block for when issuing a query.
      *
-     * @return  the query term string value, never {@code null}, empty or blank.
+     * @param  millis  duration to block on the calling thread
+     *
+     * @return  the query builder, for chaining further calls
      */
-    protected String getQueryForTerm() {
-
-        return this.queryForTerm;
-    }
-
-
-    protected Class<T> getType() {
-
-        return this.type;
-    }
-
-
     public Queries<T> waitingFor(long millis) {
 
-        this.waitingFor = invariantDuration(Duration.ofMillis(millis));
+        this.waitingFor = Asserts.invariantDuration(Duration.ofMillis(millis));
 
         return this;
-    }
-
-
-    public Queries<T> waitingFor(long amount, TemporalUnit timeUnit) {
-
-        this.waitingFor = invariantDuration(Duration.of(amount, timeUnit));
-
-        return this;
-    }
-
-
-    public Queries<T> waitingFor(Duration duration) {
-
-        this.waitingFor = invariantDuration(duration);
-
-        return this;
-    }
-
-
-    private Duration invariantDuration(Duration duration) {
-
-        if (duration.isNegative() || duration.isZero()) {
-            throw new IllegalArgumentException("Waiting duration must not be negative or 0");
-        }
-
-        if (duration.compareTo(Duration.ofMillis(Long.MAX_VALUE)) > 0) {
-            throw new IllegalArgumentException("Duration too long, cannot be greater than Long.MAX_VALUE millis");
-        }
-
-        return duration;
     }
 
 
     /**
-     * Retrieves the await/blocking timeout duration.
+     * Set the duration and temporal unit, to block for when issuing a query.
      *
-     * @return  the duration to wait/block for this query, may be {@code null}.
+     * @param  amount  the amount of the duration to block on the calling thread
+     * @param  timeUnit  the unit of the blocking duration
+     *
+     * @return  the query builder, for chaining further calls
      */
-    protected Duration getWaitingFor() {
+    public Queries<T> waitingFor(long amount, TemporalUnit timeUnit) {
 
-        return this.waitingFor;
+        this.waitingFor = Asserts.invariantDuration(Duration.of(amount, timeUnit));
+
+        return this;
     }
 
 
+    /**
+     * Set the duration to block for when issuing a query.
+     *
+     * @param  duration  to block on the calling thread
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Queries<T> waitingFor(Duration duration) {
+
+        this.waitingFor = Asserts.invariantDuration(duration);
+
+        return this;
+    }
+
+
+    /**
+     * Sets the maximum number of elements to consume from responses, effectively limiting the returned results.
+     *
+     * @param  atMost  number of elements to consume, must be greater than 0
+     *
+     * @return  the query builder, for chaining further calls
+     */
     public Queries<T> takingAtMost(int atMost) {
 
-        this.takingAtMost = invariantAtMost(atMost);
+        this.takingAtMost = Asserts.invariantAtMost(atMost);
         assertTakingAtMostAndAtLeast();
 
         return this;
+    }
+
+
+    /**
+     * Sets the required amount of result elements for the query.
+     *
+     * @param  atLeast  number of elements required, for the query to be successful, must be an amount greater than 0,
+     *                  and cannot be lower than a previous call to {@link #takingAtMost} has set as a limit
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Queries<T> takingAtLeast(int atLeast) {
+
+        this.takingAtLeast = Asserts.invariantAtLeast(atLeast);
+        assertTakingAtMostAndAtLeast();
+
+        return this;
+    }
+
+
+    /**
+     * Sets a handler, to receive any errors raised during execution of the query.
+     *
+     * @param  handler  to receive the {@link OnErrorThrowable error}
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Queries<T> onError(Consumer<OnErrorThrowable> handler) {
+
+        this.onError = handler;
+
+        return this;
+    }
+
+
+    /**
+     * Set the default results, for a failing query, to be an empty collection.
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Collection<T> orEmpty() {
+
+        this.orDefaults = Collections::emptyList;
+
+        return register();
+    }
+
+
+    /**
+     * Sets the default results to use, for a failing query.
+     *
+     * @param  defaults  collection of results to use for a failing query
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Collection<T> orDefaults(Collection<T> defaults) {
+
+        this.orDefaults = () -> defaults;
+
+        return register();
+    }
+
+
+    /**
+     * Sets the default results provider to use, for a failing query. The supplier is only invoked if the query fails.
+     *
+     * @param  defaults  collection provider, for results to use if the query fails
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Collection<T> orDefaults(Supplier<Collection<T>> defaults) {
+
+        this.orDefaults = defaults;
+
+        return register();
+    }
+
+
+    /**
+     * Sets a {@link Throwable throwable} supplier, to be invoked in case the query fails.
+     *
+     * @param  throwable  supplier, invoked to get a throwable to throw in case the query fails
+     *
+     * @return  the query builder, for chaining further calls
+     */
+    public Collection<T> orThrow(Supplier<Throwable> throwable) {
+
+        this.orThrows = throwable;
+
+        return register();
+    }
+
+
+    /*
+     * NOTE: Callers of this method are explicit, and not wrapped or overload in
+     *       calls to themselves, in order to show developers which methods
+     *       represent terminal-state in the fluid builder API.
+     *
+     *       See for yourself. Lookup calling methods.
+     */
+    private Collection<T> register() {
+
+        // TODO: Assert query state, and pre-process for registering
+        assertTakingAtMostAndAtLeast();
+
+        return QueryingRegistry.register(this);
     }
 
 
@@ -155,81 +273,40 @@ public class Queries<T> {
     }
 
 
-    private int invariantAtMost(int atMost) {
+    // PACKAGE SCOPED ACCESSORS ------------------------------------------------
 
-        if (atMost < 1) {
-            throw new IllegalArgumentException("Taking at most cannot be less than 1");
-        }
+    String getQueryForTerm() {
 
-        return atMost;
+        return this.queryForTerm;
     }
 
 
-    public Queries<T> takingAtLeast(int atLeast) {
+    Class<T> getType() {
 
-        this.takingAtLeast = invariantAtLeast(atLeast);
-        assertTakingAtMostAndAtLeast();
-
-        return this;
+        return this.type;
     }
 
 
-    private int invariantAtLeast(int atLeast) {
+    Duration getWaitingFor() {
 
-        if (atLeast < 1) {
-            throw new IllegalArgumentException("Taking at least cannot be less than 1");
-        }
-
-        return atLeast;
+        return this.waitingFor;
     }
 
 
-    public Queries<T> onError(Consumer<Throwable> handler) {
+    Consumer<OnErrorThrowable> getOnError() {
 
-        // TODO Auto-generated method stub
-        return this;
+        return this.onError;
     }
 
 
-    public Collection<T> orEmpty() {
-
-        return orDefaults(Collections.emptyList());
-    }
-
-
-    public Collection<T> orDefaults(Collection<T> defaults) {
-
-        this.orDefaults = () -> defaults;
-
-        return register();
-    }
-
-
-    protected Supplier<Collection<T>> getOrDefaults() {
+    Supplier<Collection<T>> getOrDefaults() {
 
         return this.orDefaults;
     }
 
 
-    public Collection<T> orThrow(Supplier<Throwable> throwable) {
-
-        this.orThrows = throwable;
-
-        return register();
-    }
-
-
-    protected Supplier<Throwable> getOrThrows() {
+    Supplier<Throwable> getOrThrows() {
 
         return orThrows;
-    }
-
-
-    private Collection<T> register() {
-
-        // TODO: Assert query state, and pre-process for registering
-        assertTakingAtMostAndAtLeast();
-
-        return QueryingRegistry.register(this);
     }
 }
