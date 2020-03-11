@@ -5,9 +5,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.studiomediatech</groupId>
-	<artifactId>querying-example</artifactId>
+	<artifactId>query-response-ui</artifactId>
 	<version>0</version>
-	<name>Querying Example</name>
+	<name>Querying/Response Monitoring UI</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
