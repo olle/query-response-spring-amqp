@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.queryresponse.Queries;
+import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.QueryResponseConfiguration;
 
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ class Querying implements CommandLineRunner {
 
         var defaults = List.of("Neuromancer", "I, Robot");
 
-        var results = Queries.queryFor("books/sci-fi", String.class)
+        var results = QueryBuilder.queryFor("books/sci-fi", String.class)
                 .waitingFor(888)
                 .orDefaults(defaults);
 
@@ -55,7 +55,7 @@ class Querying implements CommandLineRunner {
 
         LOG.info("Querying for authors...");
 
-        var authors = Queries.queryFor("authors", Author.class)
+        var authors = QueryBuilder.queryFor("authors", Author.class)
                 .takingAtLeast(3)
                 .waitingFor(888)
                 .orEmpty();

@@ -23,9 +23,9 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unused")
 @ExtendWith(MockitoExtension.class)
-public class QueriesApiTest {
+public class QueryBuilderApiTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QueriesApiTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueryBuilderApiTest.class);
 
     @Mock
     QueryRegistry registry;
@@ -34,7 +34,7 @@ public class QueriesApiTest {
     @BeforeEach
     void setup() {
 
-        when(registry.accept(any(Queries.class))).thenReturn(Collections.emptyList());
+        when(registry.accept(any(QueryBuilder.class))).thenReturn(Collections.emptyList());
         QueryRegistry.instance = () -> registry;
     }
 
@@ -42,7 +42,7 @@ public class QueriesApiTest {
     @Test
     void ex1() {
 
-        var authors = Queries.queryFor("authors", String.class)
+        var authors = QueryBuilder.queryFor("authors", String.class)
                 .waitingFor(800)
                 .orEmpty();
     }
@@ -51,7 +51,7 @@ public class QueriesApiTest {
     @Test
     void ex2() {
 
-        var authors = Queries.queryFor("authors", String.class)
+        var authors = QueryBuilder.queryFor("authors", String.class)
                 .waitingFor(800)
                 .orDefaults(Authors.defaults());
     }
@@ -60,7 +60,7 @@ public class QueriesApiTest {
     @Test
     void ex3() {
 
-        var authors = Queries.queryFor("authors", String.class)
+        var authors = QueryBuilder.queryFor("authors", String.class)
                 .takingAtMost(10)
                 .waitingFor(800)
                 .orDefaults(Authors.defaults());
@@ -70,10 +70,9 @@ public class QueriesApiTest {
     @Test
     void ex4() {
 
-        var offers = Queries.queryFor("offers/rental", Offer.class)
+        var offers = QueryBuilder.queryFor("offers/rental", Offer.class)
                 .takingAtLeast(10)
-                .takingAtMost(20)
-                .waitingFor(2, ChronoUnit.SECONDS)
+                .takingAtMost(20).waitingFor(2, ChronoUnit.SECONDS)
                 .orThrow(TooFewOffersConstraintException::new);
     }
 
@@ -81,9 +80,8 @@ public class QueriesApiTest {
     @Test
     void ex5() {
 
-        var offers = Queries.queryFor("offers/rental", NewOffer.class)
-                .takingAtLeast(3)
-                .waitingFor(400)
+        var offers = QueryBuilder.queryFor("offers/rental", NewOffer.class)
+                .takingAtLeast(3).waitingFor(400)
                 .onError(error -> LOG.error("Failure!", error))
                 .orThrow(TooFewOffersConstraintException::new);
     }

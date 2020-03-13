@@ -13,13 +13,13 @@ import java.util.function.Supplier;
 /**
  * Providing the entry-point to the fluid builder for queries, through the {@link #queryFor} method.
  *
- * <p>A {@link Queries queries-instance} is a container for a composed or configured query. It is is much like a
- * command-pattern object, providing all the properties required in order to publish the query, await responses and
- * return the results.</p>
+ * <p>A {@link QueryBuilder queryBuilder-instance} is a container for a composed or configured query. It is is much
+ * like a command-pattern object, providing all the properties required in order to publish the query, await responses
+ * and return the results.</p>
  *
  * @param  <T>  the <em>coerced</em> type of the query's response element {@link Collection collection}.
  */
-public final class Queries<T> {
+public final class QueryBuilder<T> {
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -68,7 +68,7 @@ public final class Queries<T> {
     private Consumer<Throwable> onError;
 
     // Declared protected, for access in unit tests.
-    protected Queries(String term, Class<T> type) {
+    protected QueryBuilder(String term, Class<T> type) {
 
         this.type = type;
         this.queryForTerm = Asserts.invariantQueryTerm(term);
@@ -84,9 +84,9 @@ public final class Queries<T> {
      *
      * @return  a new queries builder, never {@code null}
      */
-    public static <T> Queries<T> queryFor(String term, Class<T> type) {
+    public static <T> QueryBuilder<T> queryFor(String term, Class<T> type) {
 
-        return new Queries<>(term, type);
+        return new QueryBuilder<>(term, type);
     }
 
 
@@ -97,7 +97,7 @@ public final class Queries<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> waitingFor(long millis) {
+    public QueryBuilder<T> waitingFor(long millis) {
 
         this.waitingFor = Asserts.invariantDuration(Duration.ofMillis(millis));
 
@@ -113,7 +113,7 @@ public final class Queries<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> waitingFor(long amount, TemporalUnit timeUnit) {
+    public QueryBuilder<T> waitingFor(long amount, TemporalUnit timeUnit) {
 
         this.waitingFor = Asserts.invariantDuration(Duration.of(amount, timeUnit));
 
@@ -128,7 +128,7 @@ public final class Queries<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> waitingFor(Duration duration) {
+    public QueryBuilder<T> waitingFor(Duration duration) {
 
         this.waitingFor = Asserts.invariantDuration(duration);
 
@@ -143,7 +143,7 @@ public final class Queries<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> takingAtMost(int atMost) {
+    public QueryBuilder<T> takingAtMost(int atMost) {
 
         this.takingAtMost = Asserts.invariantAtMost(atMost);
         assertTakingAtMostAndAtLeast();
@@ -160,7 +160,7 @@ public final class Queries<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> takingAtLeast(int atLeast) {
+    public QueryBuilder<T> takingAtLeast(int atLeast) {
 
         this.takingAtLeast = Asserts.invariantAtLeast(atLeast);
         assertTakingAtMostAndAtLeast();
@@ -176,7 +176,7 @@ public final class Queries<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> onError(Consumer<Throwable> handler) {
+    public QueryBuilder<T> onError(Consumer<Throwable> handler) {
 
         this.onError = handler;
 

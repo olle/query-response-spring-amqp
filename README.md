@@ -19,7 +19,7 @@ decide on a strategy for service integration. Timeouts are _first-class
 citizens_ in the API, and protect against surprises.
 
 ```java
-  var authors = Queries.queryFor("authors", String.class)
+  var authors = QueryBuilder.queryFor("authors", String.class)
                   .waitingFor(800)
                   .orEmpty();
 ```
@@ -28,7 +28,7 @@ Defaults are suddenly top-of-mind for developers, and either the _empty case_
 is good enough, or fallbacks can be provided.
 
 ```java
-  var authors = Queries.queryFor("authors", String.class)
+  var authors = QueryBuilder.queryFor("authors", String.class)
                   .waitingFor(800)
                   .orDefaults(Authors.defaults());
 ```
@@ -37,7 +37,7 @@ Preserve resources, specific to the current needs and protect your services,
 by limiting the amount of data consumed.
 
 ```java
-  var authors = Queries.queryFor("authors", String.class)
+  var authors = QueryBuilder.queryFor("authors", String.class)
                   .takingAtMost(10)
                   .waitingFor(800)
                   .orDefaults(Authors.defaults());
@@ -47,7 +47,7 @@ Express constraints and react accordingly, throwing on an unfulfilled query, as
 an option to lenient handling with defaults.
 
 ```java
-  var offers = Queries.queryFor("offers/rental", Offer.class)
+  var offers = QueryBuilder.queryFor("offers/rental", Offer.class)
                   .takingAtLeast(10)
                   .takingAtMost(20)
                   .waitingFor(2, ChronoUnit.SECONDS)
@@ -58,7 +58,7 @@ Optional capabilities, to handle exceptions and errors are built-in and very
 easy to use.
 
 ```java
-  var offers = Queries.queryFor("offers/rental", NewOffer.class)
+  var offers = QueryBuilder.queryFor("offers/rental", NewOffer.class)
                   .takingAtLeast(3)
                   .waitingFor(400)
                   .onError(error -> LOG.error("Failure!", error))

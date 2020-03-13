@@ -58,7 +58,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
      * registered as a message listener and executed.
      *
      * @param  <T>  the type of elements in the returned collection
-     * @param  queries  configuration to use when initializing the {@link Query query} to register
+     * @param  queryBuilder  configuration to use when initializing the {@link Query query} to register
      *
      * @return  the collection of results from the executed query, which may be empty based on the configuration, but
      *          it never returns {@code null}
@@ -67,7 +67,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
      *                     {@link IllegalStateException} if the query registry could not be resolved, at the time of
      *                     the call.
      */
-    static <T> Collection<T> register(Queries<T> queries) {
+    static <T> Collection<T> register(QueryBuilder<T> queryBuilder) {
 
         var registry = instance.get();
 
@@ -75,21 +75,21 @@ class QueryRegistry implements ApplicationContextAware, Logging {
             throw new IllegalStateException("No registry is initialized.");
         }
 
-        return registry.accept(queries);
+        return registry.accept(queryBuilder);
     }
 
 
     /*
      * Declared protected, for access in unit-tests.
      */
-    protected <T> Collection<T> accept(Queries<T> queries) {
+    protected <T> Collection<T> accept(QueryBuilder<T> queryBuilder) {
 
         ensureDeclaredQueriesExchange();
 
         var queueName = declareQueryResponseQueue();
 
         try {
-            var query = Query.valueOf(queries);
+            var query = Query.from(queryBuilder);
 
             return query.publish(rabbitTemplate, queueName, listener);
         } finally {

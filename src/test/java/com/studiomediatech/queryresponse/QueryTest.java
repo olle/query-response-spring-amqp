@@ -40,7 +40,7 @@ class QueryTest {
     @Test
     void ensureQueryIsPublished() {
 
-        var sut = Query.valueOf(Queries.queryFor("term", String.class).waitingFor(42));
+        var sut = Query.from(QueryBuilder.queryFor("term", String.class).waitingFor(42));
         sut.orDefaults = Collections::emptyList;
 
         sut.publish(rabbit, "queue-name", listener);
@@ -53,7 +53,7 @@ class QueryTest {
     @Test
     void ensureResponseIsConsumed() {
 
-        var sut = Query.valueOf(Queries.queryFor("term", String.class).waitingFor(42));
+        var sut = Query.from(QueryBuilder.queryFor("term", String.class).waitingFor(42));
 
         var response = MessageBuilder.withBody(("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build();
@@ -68,7 +68,7 @@ class QueryTest {
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        var sut = Query.valueOf(Queries.queryFor("term", Foo.class)
+        var sut = Query.from(QueryBuilder.queryFor("term", Foo.class)
                 .waitingFor(42)
                 .onError(err -> {
                     assertThat(err).isInstanceOf(IllegalArgumentException.class);
