@@ -16,10 +16,13 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 
 import java.io.IOException;
 
+import java.time.Duration;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 
 /**
@@ -32,13 +35,17 @@ class Query<T> implements MessageListener, Logging {
 
     private static final ObjectReader reader = new ObjectMapper().reader();
 
-    private final Queries<T> queries;
+    // TODO: Concurrency and aggregation, perhaps rather use a queue.
     private final AtomicReference<Collection<T>> results;
 
-    // Declared protected, for access in unit tests.
-    protected Query(Queries<T> queries) {
+    protected String queryTerm;
+    protected Class<T> responseType;
+    protected Duration waitingFor;
+    protected Supplier<Collection<T>> orDefaults;
 
-        this.queries = queries;
+    // Declared protected, for access in unit tests.
+    protected Query() {
+
         this.results = new AtomicReference<>(Collections.emptyList());
     }
 
@@ -53,9 +60,12 @@ class Query<T> implements MessageListener, Logging {
     private ConsumedResponseEnvelope<T> parseMessage(Message message) {
 
         try {
-            return reader.forType(TypeFactory.defaultInstance()
-                        .constructParametricType(ConsumedResponseEnvelope.class, queries.getType()))
-                .readValue(message.getBody());
+            ConsumedResponseEnvelope<T> response = reader.forType(TypeFactory.defaultInstance()
+                        .constructParametricType(ConsumedResponseEnvelope.class, responseType))
+                    .readValue(message.getBody());
+            log().debug("Received response: {}", response);
+
+            return response;
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -83,15 +93,15 @@ class Query<T> implements MessageListener, Logging {
         publishQuery(rabbit, queue);
 
         try {
-            Thread.sleep(queries.getWaitingFor().toMillis());
+            Thread.sleep(this.waitingFor.toMillis());
         } catch (InterruptedException e) {
             // TODO: Apply to provided onError-handler
             e.printStackTrace();
         }
 
         if (results.get().isEmpty()) {
-            if (queries.getOrDefaults() != null) {
-                return queries.getOrDefaults().get();
+            if (this.orDefaults != null) {
+                return this.orDefaults.get();
             }
             // TODO: Or throws, etc.
         }
@@ -105,8 +115,8 @@ class Query<T> implements MessageListener, Logging {
         try {
             var message = MessageBuilder.withBody("{}".getBytes()).setReplyTo(queue).build();
 
-            rabbit.send("queries", queries.getQueryForTerm(), message);
-            log().info("|<-- Published query: {}", queries.getQueryForTerm());
+            rabbit.send("queries", this.queryTerm, message);
+            log().info("|<-- Published query: {}", this.queryTerm);
         } catch (RuntimeException e) {
             // TODO: Apply to provided onError-handler
             e.printStackTrace();
@@ -116,8 +126,14 @@ class Query<T> implements MessageListener, Logging {
 
     static <T> Query<T> valueOf(Queries<T> queries) {
 
-        // TODO Flesh-out this static factory method.
-        return new Query<>(queries);
+        Query<T> query = new Query<>();
+
+        query.queryTerm = queries.getQueryForTerm();
+        query.responseType = queries.getType();
+        query.waitingFor = queries.getWaitingFor();
+        query.orDefaults = queries.getOrDefaults();
+
+        return query;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
