@@ -58,11 +58,11 @@ class QueryingRegistry implements ApplicationContextAware {
         var queueName = rabbitAdmin.declareQueue().getActualName();
         listener.addQueueNames(queueName);
 
-        var querying = new Querying<>(queries);
-        listener.setMessageListener(querying);
+        var query = Query.build(queries);
+        listener.setMessageListener(query);
 
         try {
-            return querying.publish(rabbitTemplate, queueName);
+            return query.publish(rabbitTemplate, queueName);
         } finally {
             if (listener.removeQueueNames(queueName)) {
                 rabbitAdmin.deleteQueue(queueName);

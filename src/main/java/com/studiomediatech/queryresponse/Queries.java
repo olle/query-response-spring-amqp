@@ -52,22 +52,25 @@ public final class Queries<T> {
     private Supplier<Throwable> orThrows;
 
     /**
-     * Defines the lower bounds predicate for a query, may be {@code null}.
+     * Defines the upper bounds predicate for a query, may be {@code null}.
      */
     private Integer takingAtMost;
 
     /**
-     * Defines the upper bounds predicate for a query, may be {@code null}.
+     * Defines the lower bounds predicate for a query, may be {@code null}.
      */
     private Integer takingAtLeast;
 
     /**
-     * An optional consumer of throwables, allowing clients to inspect any failures occurring during a query
-     * life-cycle.
+     * An optional consumer of an {@link OnErrorThrowable throwable}, allowing clients to inspect any failures
+     * occurring during a query life-cycle.
      */
     private Consumer<OnErrorThrowable> onError;
 
-    private Queries(String term, Class<T> type) {
+    /*
+     * Declared protected, for access in unit tests.
+     */
+    protected Queries(String term, Class<T> type) {
 
         this.type = type;
         this.queryForTerm = Asserts.invariantQueryTerm(term);
