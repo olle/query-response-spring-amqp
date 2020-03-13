@@ -20,13 +20,29 @@ class QueryRegistryTest {
     RabbitFacade facade;
 
     @Test
-    void ensureThrowsOnMissingRegistryBean() throws Exception {
+    void ensureThrowsOnMissingBean() throws Exception {
 
         assertThrows(IllegalStateException.class,
             () -> {
                 QueryRegistry.instance = () -> null;
                 QueryRegistry.register(new QueryBuilder<>("foobar", String.class));
             });
+    }
+
+
+    @SuppressWarnings("static-access")
+    @Test
+    void ensureInstanceIsInvokedOnRegister() throws Exception {
+
+        var mock = Mockito.mock(QueryRegistry.class);
+        QueryRegistry.instance = () -> mock;
+
+        var queryBuilder = new QueryBuilder<>("foobar", String.class);
+        new QueryRegistry(null).register(queryBuilder);
+
+        verify(mock).accept(queryBuilder);
+
+        QueryRegistry.instance = () -> null;
     }
 
 

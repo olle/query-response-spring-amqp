@@ -42,7 +42,7 @@ class ResponseRegistryTest {
 
 
     @Test
-    void ensureThrowsOnMissingRegistryBean() throws Exception {
+    void ensureThrowsOnMissingBean() throws Exception {
 
         assertThrows(IllegalStateException.class,
             () -> {
