@@ -1,5 +1,6 @@
 package app;
 
+import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.QueryResponseConfiguration;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 
 @SpringBootApplication
-@Import(QueryResponseConfiguration.class)
+@EnableQueryResponse
 class Querying implements CommandLineRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(Querying.class);
