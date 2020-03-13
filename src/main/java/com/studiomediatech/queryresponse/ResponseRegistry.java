@@ -32,7 +32,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
     }
 
 
-    public static <T> void register(Responses<T> responses) {
+    public static <T> void register(ResponseBuilder<T> responses) {
 
         var registry = instance.get();
 
@@ -44,7 +44,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
     }
 
 
-    protected <T> void accept(Responses<T> responses) {
+    protected <T> void accept(ResponseBuilder<T> responses) {
 
         var response = Response.valueOf(responses);
 
