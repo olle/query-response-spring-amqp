@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import static org.mockito.Mockito.verify;
 
 
@@ -16,6 +18,17 @@ class QueryRegistryTest {
 
     @Mock
     RabbitFacade facade;
+
+    @Test
+    void ensureThrowsOnMissingRegistryBean() throws Exception {
+
+        assertThrows(IllegalStateException.class,
+            () -> {
+                QueryRegistry.instance = () -> null;
+                QueryRegistry.register(new QueryBuilder<>("foobar", String.class));
+            });
+    }
+
 
     @Test
     void ensureAcceptResponses() throws Exception {
