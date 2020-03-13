@@ -1,14 +1,23 @@
 package com.studiomediatech.queryresponse;
 
+import com.studiomediatech.queryresponse.util.Logging;
+
+import org.springframework.amqp.core.ExchangeBuilder;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 
 /**
@@ -19,23 +28,17 @@ import org.springframework.context.annotation.Configuration;
  * importing it in the application starter class.</p>
  *
  * <pre>
-      {@literal @}SpringBootApplication
-      {@literal @}Import(QueryResponseConfiguration.class)
-      public class MyApplication {
-          // ...
-      }
+   {@literal @}SpringBootApplication
+   {@literal @}Import(QueryResponseConfiguration.class)
+   public class MyApplication {
+   // ...
+   }
  * </pre>
  */
 @Configuration
-public class QueryResponseConfiguration {
-
-    @Bean
-    @ConditionalOnMissingBean
-    RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
-
-        return new RabbitAdmin(connectionFactory);
-    }
-
+@ConditionalOnClass(RabbitAutoConfiguration.class)
+@Import(RabbitAutoConfiguration.class)
+public class QueryResponseConfiguration implements Logging {
 
     @Bean
     @ConditionalOnMissingBean
@@ -46,9 +49,17 @@ public class QueryResponseConfiguration {
 
 
     @Bean
-    RabbitFacade rabbitFacade(RabbitAdmin admin, RabbitTemplate template, DirectMessageListenerContainer listener) {
+    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate template,
+        DirectMessageListenerContainer listener, TopicExchange queriesExchange) {
 
-        return new RabbitFacade(admin, template, listener);
+        return new RabbitFacade(rabbitAdmin, template, listener, queriesExchange);
+    }
+
+
+    @Bean
+    TopicExchange queriesExchange(@Value("${queryresponse.exchange.name:queries}") String name) {
+
+        return log(ExchangeBuilder.topicExchange(name).autoDelete().build());
     }
 
 

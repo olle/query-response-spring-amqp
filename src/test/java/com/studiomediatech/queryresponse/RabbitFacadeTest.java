@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
@@ -40,7 +41,7 @@ class RabbitFacadeTest {
     @Test
     void ensureDeclaresQueueForQuery() {
 
-        var sut = new RabbitFacade(admin, template, listener);
+        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
         var query = new Query<>();
         sut.declareQueue(query);
@@ -57,7 +58,7 @@ class RabbitFacadeTest {
     @Test
     void ensureAddsListenerForQuery() {
 
-        var sut = new RabbitFacade(admin, template, listener);
+        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
         var query = new Query<>();
         sut.addListener(query);
@@ -70,9 +71,9 @@ class RabbitFacadeTest {
 
 
     @Test
-    void ensureRemovesListenerForQuery() throws Exception {
+    void ensureRemovesListenerForQuery() {
 
-        var sut = new RabbitFacade(admin, template, listener);
+        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
         var query = new Query<>();
         sut.removeListener(query);
@@ -85,7 +86,7 @@ class RabbitFacadeTest {
     @Test
     void ensureDeclaresQueueForResponse() {
 
-        var sut = new RabbitFacade(admin, template, listener);
+        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
         sut.declareQueue(new Response<>(new Responses<>("some-term")));
 
@@ -98,9 +99,9 @@ class RabbitFacadeTest {
 
 
     @Test
-    void ensureDeclaresBindingForResponse() throws Exception {
+    void ensureDeclaresBindingForResponse() {
 
-        var sut = new RabbitFacade(admin, template, listener);
+        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
         var response = new Response<>(new Responses<>("some-term"));
         sut.declareBinding(response);
@@ -116,7 +117,7 @@ class RabbitFacadeTest {
     @Test
     void ensureAddsListenerForResponse() {
 
-        var sut = new RabbitFacade(admin, template, listener);
+        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
         var response = new Response<>(new Responses<>("some-term"));
         sut.addListener(response);
