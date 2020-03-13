@@ -1,23 +1,70 @@
 package com.studiomediatech.queryresponse;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collection;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
 class ResponsesTest {
 
+    @Mock
+    ResponseRegistry registry;
+
+    @Captor
+    ArgumentCaptor<Responses<String>> responses;
+
     @BeforeEach
     void setup() {
 
-        ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
+        ResponseRegistry.instance = () -> registry;
+    }
+
+
+    @SuppressWarnings("static-access")
+    @Test
+    @DisplayName("responses with all sets batch size to 0")
+    void ensureConfiguresBuilderCorrectlyForAll() throws Exception {
+
+        Responses.respondTo("foobar").withAll().from("foo", "bar", "baz");
+        verify(registry).register(responses.capture());
+
+        Responses<String> r = responses.getValue();
+        assertThat(r).isNotNull();
+        assertThat(r.getBatchSize()).isEqualTo(0);
+        assertThat(r.getTerm()).isEqualTo("foobar");
+        assertThat(r.getElements()).containsExactlyInAnyOrder("foo", "bar", "baz");
+    }
+
+
+    @SuppressWarnings("static-access")
+    @Test
+    @DisplayName("responses with batch size is correctly set")
+    void ensureConfiguresBuilderCorrectlyForBatches() throws Exception {
+
+        Responses.respondTo("foobar").withBatchesOf(2).from("foo", "bar", "baz");
+        verify(registry).register(responses.capture());
+
+        Responses<String> r = responses.getValue();
+        assertThat(r).isNotNull();
+        assertThat(r.getBatchSize()).isEqualTo(2);
+        assertThat(r.getTerm()).isEqualTo("foobar");
+        assertThat(r.getElements()).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 
 
@@ -66,7 +113,8 @@ class ResponsesTest {
     @Test
     void ensureThrowsForEmptyVarargsArray() throws Exception {
 
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withAll().from(new Object[] {}));
+        assertThrows(IllegalArgumentException.class,
+            () -> Responses.respondTo("foobar").withAll().from(new Object[] {}));
     }
 
 
@@ -83,5 +131,14 @@ class ResponsesTest {
 
         assertThrows(IllegalArgumentException.class,
             () -> Responses.respondTo("foobar").withAll().from("hello", null, "fake"));
+    }
+
+
+    @Test
+    void ensureThrowsForNullResponseCollection() throws Exception {
+
+        Collection<String> nope = (Collection<String>) null;
+
+        assertThrows(IllegalArgumentException.class, () -> Responses.<String>respondTo("foobar").withAll().from(nope));
     }
 }
