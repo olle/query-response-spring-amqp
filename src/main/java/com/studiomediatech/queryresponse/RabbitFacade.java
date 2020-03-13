@@ -89,9 +89,8 @@ public class RabbitFacade implements Logging {
 
     public void removeListener(Query<?> query) {
 
-        if (listener.removeQueueNames(query.getQueueName())) {
-            admin.deleteQueue(query.getQueueName());
-        }
+        listener.removeQueueNames(query.getQueueName());
+        admin.deleteQueue(query.getQueueName());
     }
 
 
