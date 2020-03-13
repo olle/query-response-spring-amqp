@@ -2,6 +2,8 @@ package com.studiomediatech.queryresponse;
 
 import java.time.Duration;
 
+import java.util.Collection;
+
 
 final class Asserts {
 
@@ -10,10 +12,18 @@ final class Asserts {
         // Hidden
     }
 
-    public static void notEmpty(String s) {
+    public static void notNullOrEmpty(String s) {
 
         if (s == null || s.isEmpty() || s.isBlank()) {
             throw new IllegalArgumentException("The given string argument must not be null, empty or blank.");
+        }
+    }
+
+
+    public static <T> void notNullOrEmpty(T[] a) {
+
+        if (a == null || a.length == 0) {
+            throw new IllegalArgumentException("The given array must not null or empty.");
         }
     }
 
@@ -70,5 +80,25 @@ final class Asserts {
         }
 
         return atMost;
+    }
+
+
+    public static int invariantBatchSize(int size) {
+
+        if (size < 1) {
+            throw new IllegalArgumentException("Illegal batch size " + size + ", must be positive integer.");
+        }
+
+        return size;
+    }
+
+
+    public static <T> Collection<T> invariantResponseCollection(Collection<T> ts) {
+
+        if (ts.contains(null)) {
+            throw new IllegalArgumentException("Responses cannot contain null elements.");
+        }
+
+        return ts;
     }
 }

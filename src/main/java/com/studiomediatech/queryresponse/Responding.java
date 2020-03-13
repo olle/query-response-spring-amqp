@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
@@ -18,9 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 
-public class Responding<T> implements MessageListener {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Responding.class);
+public class Responding<T> implements MessageListener, Logging {
 
     private final RabbitTemplate rabbitTemplate;
     private final Responses<T> responses;
@@ -38,7 +33,7 @@ public class Responding<T> implements MessageListener {
     public void onMessage(Message message) {
 
         try {
-            LOG.info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
+            log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
             var replyToAddress = message.getMessageProperties().getReplyToAddress();
 
@@ -55,9 +50,9 @@ public class Responding<T> implements MessageListener {
                     .build();
 
             rabbitTemplate.send(replyToAddress.getExchangeName(), replyToAddress.getRoutingKey(), responseMessage);
-            LOG.info("|<-- Published response: " + responseMessage);
+            log().info("|<-- Published response: " + responseMessage);
         } catch (RuntimeException | JsonProcessingException e) {
-            LOG.error("Failed to publish response message", e);
+            log().error("Failed to publish response message", e);
         }
     }
 

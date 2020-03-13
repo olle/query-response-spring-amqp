@@ -50,11 +50,7 @@ public class Responses<T> {
 
     public Responses<T> withBatchesOf(int size) {
 
-        if (size < 1) {
-            throw new IllegalArgumentException("Illegal batch size " + size + ", must be positive integer.");
-        }
-
-        this.batchSize = size;
+        this.batchSize = Asserts.invariantBatchSize(size);
 
         return this;
     }
@@ -63,39 +59,41 @@ public class Responses<T> {
     @SafeVarargs
     public final void from(T... ts) {
 
-        if (ts == null || ts.length == 0) {
-            throw new IllegalArgumentException("Cannot respond from an empty (or null) array.");
-        }
+        Asserts.notNullOrEmpty(ts);
 
-        from(Arrays.asList(ts));
+        this.elements = Asserts.invariantResponseCollection(Arrays.asList(ts));
+
+        register();
     }
 
 
     public void from(Collection<T> ts) {
 
-        if (ts.contains(null)) {
-            throw new IllegalArgumentException("Responses cannot contain null elements.");
-        }
+        this.elements = Asserts.invariantResponseCollection(ts);
 
-        this.elements = ts;
+        register();
+    }
+
+
+    private void register() {
 
         RespondingRegistry.register(this);
     }
 
 
-    protected String getTerm() {
+    String getTerm() {
 
         return this.respondToTerm;
     }
 
 
-    protected int getBatchSize() {
+    int getBatchSize() {
 
         return batchSize;
     }
 
 
-    protected Collection<T> getElements() {
+    Collection<T> getElements() {
 
         return this.elements;
     }
