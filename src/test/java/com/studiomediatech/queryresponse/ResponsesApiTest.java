@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ResponsesApiTest {
 
     @Test
-    void ensureExamplesCompile() throws Exception {
+    void ensureExamplesCompile() {
 
         ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
 

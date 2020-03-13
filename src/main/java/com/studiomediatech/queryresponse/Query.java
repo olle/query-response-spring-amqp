@@ -62,16 +62,16 @@ class Query<T> implements MessageListener, Logging {
     private ConsumedResponseEnvelope<T> parseMessage(Message message) {
 
         try {
-            ConsumedResponseEnvelope<T> response = reader.forType(TypeFactory.defaultInstance()
-                        .constructParametricType(ConsumedResponseEnvelope.class, responseType))
-                    .readValue(message.getBody());
+            var type = TypeFactory.defaultInstance()
+                    .constructParametricType(ConsumedResponseEnvelope.class, responseType);
+            ConsumedResponseEnvelope<T> response = reader.forType(type).readValue(message.getBody());
             log().debug("Received response: {}", response);
 
             return response;
         } catch (IOException ex) {
             if (onError != null) {
-                onError.accept(new IllegalArgumentException(
-                        "Failed to parse response to elements of type " + responseType.getSimpleName(), ex));
+                var errorMessage = "Failed to parse response to elements of type " + responseType.getSimpleName();
+                onError.accept(new IllegalArgumentException(errorMessage, ex));
             }
 
             log().error("Failed to parse received response.", ex);
@@ -84,7 +84,7 @@ class Query<T> implements MessageListener, Logging {
     void handleResponseEnvelope(ConsumedResponseEnvelope<T> envelope) {
 
         if (envelope.elements.isEmpty()) {
-            log().warn("Received empty response", envelope);
+            log().warn("Received empty response: {}", envelope);
 
             return;
         }

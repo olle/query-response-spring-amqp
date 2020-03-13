@@ -16,8 +16,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.mockito.Mockito.when;
@@ -42,7 +40,7 @@ public class QueriesApiTest {
 
 
     @Test
-    void ex1() throws Exception {
+    void ex1() {
 
         var authors = Queries.queryFor("authors", String.class)
                 .waitingFor(800)
@@ -51,7 +49,7 @@ public class QueriesApiTest {
 
 
     @Test
-    void ex2() throws Exception {
+    void ex2() {
 
         var authors = Queries.queryFor("authors", String.class)
                 .waitingFor(800)
@@ -60,7 +58,7 @@ public class QueriesApiTest {
 
 
     @Test
-    void ex3() throws Exception {
+    void ex3() {
 
         var authors = Queries.queryFor("authors", String.class)
                 .takingAtMost(10)
@@ -70,7 +68,7 @@ public class QueriesApiTest {
 
 
     @Test
-    void ex4() throws Exception {
+    void ex4() {
 
         var offers = Queries.queryFor("offers/rental", Offer.class)
                 .takingAtLeast(10)
@@ -81,7 +79,7 @@ public class QueriesApiTest {
 
 
     @Test
-    void ex5() throws Exception {
+    void ex5() {
 
         var offers = Queries.queryFor("offers/rental", NewOffer.class)
                 .takingAtLeast(3)

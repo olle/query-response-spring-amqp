@@ -39,7 +39,7 @@ class QueryResponseConfigurationTest {
 
     @Test
     @DisplayName("response registry bean is created")
-    void ensureConfiguresResponseRegistry() throws Exception {
+    void ensureConfiguresResponseRegistry() {
 
         contextRunner.run(ctx -> assertThat(ctx.getBean(ResponseRegistry.class)).isNotNull());
     }

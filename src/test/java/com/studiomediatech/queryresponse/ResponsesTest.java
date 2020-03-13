@@ -40,7 +40,7 @@ class ResponsesTest {
     @SuppressWarnings("static-access")
     @Test
     @DisplayName("responses with all sets batch size to 0")
-    void ensureConfiguresBuilderCorrectlyForAll() throws Exception {
+    void ensureConfiguresBuilderCorrectlyForAll() {
 
         Responses.respondTo("foobar").withAll().from("foo", "bar", "baz");
         verify(registry).register(responses.capture());
@@ -55,7 +55,7 @@ class ResponsesTest {
     @SuppressWarnings("static-access")
     @Test
     @DisplayName("responses with batch size is correctly set")
-    void ensureConfiguresBuilderCorrectlyForBatches() throws Exception {
+    void ensureConfiguresBuilderCorrectlyForBatches() {
 
         Responses.respondTo("foobar").withBatchesOf(2).from("foo", "bar", "baz");
         verify(registry).register(responses.capture());
@@ -75,50 +75,49 @@ class ResponsesTest {
 
 
     @Test
-    void ensureThrowsForNullQueryTerm() throws Exception {
+    void ensureThrowsForNullQueryTerm() {
 
         assertThrows(IllegalArgumentException.class, () -> Responses.respondTo(null));
     }
 
 
     @Test
-    void ensureThrowsForEmptyQueryTerm() throws Exception {
+    void ensureThrowsForEmptyQueryTerm() {
 
         assertThrows(IllegalArgumentException.class, () -> Responses.respondTo(""));
     }
 
 
     @Test
-    void ensureThrowsForWhitespaceQueryTerm() throws Exception {
+    void ensureThrowsForWhitespaceQueryTerm() {
 
         assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("     "));
     }
 
 
     @Test
-    void ensureThrowsForBatchSizeOfZero() throws Exception {
+    void ensureThrowsForBatchSizeOfZero() {
 
         assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withBatchesOf(0));
     }
 
 
     @Test
-    void ensureThrowsForNegativeBatchSize() throws Exception {
+    void ensureThrowsForNegativeBatchSize() {
 
         assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withBatchesOf(-23));
     }
 
 
     @Test
-    void ensureThrowsForEmptyVarargsArray() throws Exception {
+    void ensureThrowsForEmptyVarargsArray() {
 
-        assertThrows(IllegalArgumentException.class,
-            () -> Responses.respondTo("foobar").withAll().from(new Object[] {}));
+        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withAll().from());
     }
 
 
     @Test
-    void ensureThrowsForNullVarargsArray() throws Exception {
+    void ensureThrowsForNullVarargsArray() {
 
         assertThrows(IllegalArgumentException.class,
             () -> Responses.respondTo("foobar").withAll().from((Object[]) null));
@@ -126,7 +125,7 @@ class ResponsesTest {
 
 
     @Test
-    void ensureThrowsForNullElementsInVarargs() throws Exception {
+    void ensureThrowsForNullElementsInVarargs() {
 
         assertThrows(IllegalArgumentException.class,
             () -> Responses.respondTo("foobar").withAll().from("hello", null, "fake"));
@@ -134,15 +133,15 @@ class ResponsesTest {
 
 
     @Test
-    void ensureThrowsForNullResponseCollection() throws Exception {
+    void ensureThrowsForNullResponseCollection() {
 
-        Collection<String> nope = (Collection<String>) null;
+        Collection<String> nope = null;
         assertThrows(IllegalArgumentException.class, () -> Responses.<String>respondTo("foobar").withAll().from(nope));
     }
 
 
     @Test
-    void ensureThrowsForNullInResponseCollection() throws Exception {
+    void ensureThrowsForNullInResponseCollection() {
 
         assertThrows(IllegalArgumentException.class,
             () -> Responses.respondTo("foobar").withAll().from(Arrays.asList("foo", null, "bar")));

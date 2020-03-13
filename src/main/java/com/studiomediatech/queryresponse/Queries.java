@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 
 /**
- * Providing the entry-point to the fluid builder for queries, through the {@link #queryFor(String)} method.
+ * Providing the entry-point to the fluid builder for queries, through the {@link #queryFor} method.
  *
  * <p>A {@link Queries queries-instance} is a container for a composed or configured query. It is is much like a
  * command-pattern object, providing all the properties required in order to publish the query, await responses and
@@ -260,16 +260,16 @@ public final class Queries<T> {
 
     private void assertTakingAtMostAndAtLeast() {
 
-        var atLeast = Optional.ofNullable(takingAtLeast).orElse(0);
-        var atMost = Optional.ofNullable(takingAtMost).orElse(0);
+        int atLeast = Optional.ofNullable(takingAtLeast).orElse(0);
+        int atMost = Optional.ofNullable(takingAtMost).orElse(0);
 
         if (atLeast != 0 && atLeast > atMost && atMost != 0) {
             throw new IllegalArgumentException("Cannot require more than limit. "
                 + "atLeast: " + atLeast + ", atMost: " + atMost);
         }
 
-        if (atLeast != 0 && atLeast == atMost && atMost != 0) {
-            throw new IllegalArgumentException("Unecessary to require same amount as limit");
+        if (atLeast != 0 && atLeast == atMost) {
+            throw new IllegalArgumentException("Unnecessary to require same amount as limit");
         }
     }
 

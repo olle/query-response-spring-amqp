@@ -51,7 +51,7 @@ class QueryTest {
 
 
     @Test
-    void ensureResponseIsConsumed() throws Exception {
+    void ensureResponseIsConsumed() {
 
         var sut = Query.valueOf(Queries.queryFor("term", String.class).waitingFor(42));
 
@@ -68,7 +68,9 @@ class QueryTest {
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        var sut = Query.valueOf(Queries.queryFor("term", Foo.class).waitingFor(42).onError(err -> {
+        var sut = Query.valueOf(Queries.queryFor("term", Foo.class)
+                .waitingFor(42)
+                .onError(err -> {
                     assertThat(err).isInstanceOf(IllegalArgumentException.class);
                     assertThat(err.getMessage()).contains("Failed to parse response to elements of type Foo");
                     latch.countDown();
