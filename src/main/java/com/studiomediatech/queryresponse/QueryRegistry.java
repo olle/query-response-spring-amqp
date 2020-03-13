@@ -11,6 +11,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.studiomediatech.queryresponse.util.Logging;
+
 import java.util.Collection;
 import java.util.function.Supplier;
 

@@ -1,4 +1,4 @@
-package com.studiomediatech.queryresponse;
+package com.studiomediatech.queryresponse.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

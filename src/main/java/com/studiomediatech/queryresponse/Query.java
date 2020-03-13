@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -15,6 +16,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -29,12 +31,12 @@ class Query<T> implements MessageListener, Logging {
     private static final ObjectReader reader = new ObjectMapper().reader();
 
     private final Queries<T> queries;
-    private final AtomicReference<Results<T>> response;
+    private final AtomicReference<Collection<T>> results;
 
     public Query(Queries<T> queries) {
 
         this.queries = queries;
-        this.response = new AtomicReference<>(Results.empty());
+        this.results = new AtomicReference<>(Collections.emptyList());
     }
 
     @Override
@@ -68,7 +70,7 @@ class Query<T> implements MessageListener, Logging {
             return;
         }
 
-        response.set(new Results<>(envelope.elements));
+        results.set(envelope.elements);
     }
 
 
@@ -83,7 +85,14 @@ class Query<T> implements MessageListener, Logging {
             e.printStackTrace();
         }
 
-        return response.get().accept(queries);
+        if (results.get().isEmpty()) {
+            if (queries.getOrDefaults() != null) {
+                return queries.getOrDefaults().get();
+            }
+            // TODO: Or throws, etc.
+        }
+
+        return results.get();
     }
 
 
