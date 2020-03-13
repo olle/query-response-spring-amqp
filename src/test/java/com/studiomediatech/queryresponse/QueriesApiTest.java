@@ -30,14 +30,14 @@ public class QueriesApiTest {
     private static final Logger LOG = LoggerFactory.getLogger(QueriesApiTest.class);
 
     @Mock
-    QueryingRegistry registry;
+    QueryRegistry registry;
 
     @SuppressWarnings("unchecked")
     @BeforeEach
     void setup() {
 
         when(registry.accept(any(Queries.class))).thenReturn(Collections.emptyList());
-        QueryingRegistry.instance = () -> registry;
+        QueryRegistry.instance = () -> registry;
     }
 
 

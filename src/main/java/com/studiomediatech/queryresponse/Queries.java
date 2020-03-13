@@ -256,7 +256,7 @@ public final class Queries<T> {
         // TODO: Assert query state, and pre-process for registering
         assertTakingAtMostAndAtLeast();
 
-        return QueryingRegistry.register(this);
+        return QueryRegistry.register(this);
     }
 
 
