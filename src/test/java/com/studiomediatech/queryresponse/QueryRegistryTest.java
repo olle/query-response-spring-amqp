@@ -20,7 +20,7 @@ class QueryRegistryTest {
     @Test
     void ensureAcceptResponses() throws Exception {
 
-        var queries = new Queries<>("foobar", String.class);
+        var queries = new QueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
 
         new QueryRegistry(facade).accept(queries);
