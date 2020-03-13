@@ -3,6 +3,7 @@ package com.studiomediatech.queryresponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -12,21 +13,26 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.nio.charset.StandardCharsets;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class Responding<T> implements MessageListener, Logging {
+/**
+ * Represents a declared and registered response to some {@link Query query}, an active message listener.
+ *
+ * @param  <T>  type of the provided response elements.
+ */
+class Response<T> implements MessageListener, Logging {
+
+    private static final ObjectWriter writer = new ObjectMapper().writer();
 
     private final RabbitTemplate rabbitTemplate;
     private final Responses<T> responses;
-    private final ObjectMapper objectMapper;
 
-    public Responding(RabbitTemplate rabbitTemplate, Responses<T> responses) {
+    public Response(RabbitTemplate rabbitTemplate, Responses<T> responses) {
 
         this.rabbitTemplate = rabbitTemplate;
         this.responses = responses;
-
-        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -35,35 +41,44 @@ public class Responding<T> implements MessageListener, Logging {
         try {
             log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
-            var replyToAddress = message.getMessageProperties().getReplyToAddress();
+            var response = new PublishedResponseEnvelope<>(responses.getElements());
 
-            var response = new ResponseV1();
-            response.elements = responses.getElements();
-            response.count = response.elements.size();
-            response.total = response.elements.size();
-
-            byte[] body = objectMapper.writeValueAsBytes(response);
+            byte[] body = writer.writeValueAsBytes(response);
 
             var responseMessage = MessageBuilder.withBody(body)
                     .setContentEncoding(StandardCharsets.UTF_8.name())
                     .setContentType(MessageProperties.CONTENT_TYPE_JSON)
                     .build();
 
-            rabbitTemplate.send(replyToAddress.getExchangeName(), replyToAddress.getRoutingKey(), responseMessage);
+            var replyToAddress = message.getMessageProperties().getReplyToAddress();
+            var exchangeName = replyToAddress.getExchangeName();
+            var routingKey = replyToAddress.getRoutingKey();
+
+            rabbitTemplate.send(exchangeName, routingKey, responseMessage);
             log().info("|<-- Published response: " + responseMessage);
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
         }
     }
 
-    static class ResponseV1 {
+    class PublishedResponseEnvelope<R extends T> {
 
         @JsonProperty
         public int count;
         @JsonProperty
         public int total;
-        @SuppressWarnings("rawtypes")
         @JsonProperty
-        public Collection elements;
+        public Collection<R> elements = new ArrayList<>();
+
+        PublishedResponseEnvelope(Collection<R> elements) {
+
+            this.elements = elements;
+        }
+
+        @Override
+        public String toString() {
+
+            return "PublishedResponseEnvelope [count=" + count + ", total=" + total + "]";
+        }
     }
 }

@@ -1,8 +1,5 @@
 package com.studiomediatech.queryresponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
@@ -18,18 +15,19 @@ import org.springframework.context.ApplicationContextAware;
 import java.util.function.Supplier;
 
 
-class RespondingRegistry implements ApplicationContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RespondingRegistry.class);
+/**
+ * Provides a way to create and register responses.
+ */
+class ResponseRegistry implements ApplicationContextAware, Logging {
 
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
-    protected static Supplier<RespondingRegistry> instance = () -> null;
+    protected static Supplier<ResponseRegistry> instance = () -> null;
 
     private final RabbitAdmin rabbitAdmin;
     private final DirectMessageListenerContainer listener;
     private final RabbitTemplate rabbitTemplate;
 
-    public RespondingRegistry(RabbitAdmin rabbitAdmin, DirectMessageListenerContainer listener,
+    public ResponseRegistry(RabbitAdmin rabbitAdmin, DirectMessageListenerContainer listener,
         RabbitTemplate rabbitTemplate) {
 
         this.rabbitAdmin = rabbitAdmin;
@@ -58,10 +56,10 @@ class RespondingRegistry implements ApplicationContextAware {
 
         listener.addQueueNames(queue.getActualName());
 
-        Responding<T> responder = new Responding<>(rabbitTemplate, responses);
+        Response<T> responder = new Response<>(rabbitTemplate, responses);
         listener.setMessageListener(responder);
 
-        LOG.info("Added responder {} to registry {} ", responses, instance.get());
+        log().info("Added responder {} to registry {} ", responses, instance.get());
     }
 
 
@@ -77,6 +75,6 @@ class RespondingRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
-        RespondingRegistry.instance = () -> applicationContext.getBean(RespondingRegistry.class);
+        ResponseRegistry.instance = () -> applicationContext.getBean(ResponseRegistry.class);
     }
 }

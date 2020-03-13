@@ -16,7 +16,7 @@ public class ResponsesApiTest {
     @Test
     void ensureExamplesCompile() throws Exception {
 
-        RespondingRegistry.instance = () -> Mockito.mock(RespondingRegistry.class);
+        ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
 
         Responses.respondTo("authors")
             .withAll()

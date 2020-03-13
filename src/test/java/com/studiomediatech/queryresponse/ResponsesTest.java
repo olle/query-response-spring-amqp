@@ -17,7 +17,7 @@ class ResponsesTest {
     @BeforeEach
     void setup() {
 
-        RespondingRegistry.instance = () -> Mockito.mock(RespondingRegistry.class);
+        ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
     }
 
 

@@ -77,7 +77,7 @@ public class Responses<T> {
 
     private void register() {
 
-        RespondingRegistry.register(this);
+        ResponseRegistry.register(this);
     }
 
 

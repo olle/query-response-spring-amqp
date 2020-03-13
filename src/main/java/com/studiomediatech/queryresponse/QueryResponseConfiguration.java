@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configures the required components for a Query/Response client, ensuring the availability of the necessary AMQP
- * resources as well as a {@link QueryRegistry} and a {@link RespondingRegistry}.
+ * resources as well as a {@link QueryRegistry} and a {@link ResponseRegistry}.
  *
  * <p>This configuration can be used to enable Query/Response in Spring and Spring Boot applications, simply by
  * importing it in the application starter class.</p>
@@ -46,10 +46,10 @@ public class QueryResponseConfiguration {
 
 
     @Bean
-    RespondingRegistry respondingRegistry(RabbitAdmin rabbitAdmin,
+    ResponseRegistry respondingRegistry(RabbitAdmin rabbitAdmin,
         DirectMessageListenerContainer directMessageListenerContainer, RabbitTemplate rabbitTemplate) {
 
-        return new RespondingRegistry(rabbitAdmin, directMessageListenerContainer, rabbitTemplate);
+        return new ResponseRegistry(rabbitAdmin, directMessageListenerContainer, rabbitTemplate);
     }
 
 

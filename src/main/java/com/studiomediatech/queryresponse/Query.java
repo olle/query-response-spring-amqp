@@ -45,21 +45,22 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    private Envelope<T> parseMessage(Message message) {
+    private ConsumedResponseEnvelope<T> parseMessage(Message message) {
 
         try {
             return reader.forType(TypeFactory.defaultInstance()
-                        .constructParametricType(Envelope.class, queries.getType())).readValue(message.getBody());
+                        .constructParametricType(ConsumedResponseEnvelope.class, queries.getType()))
+                .readValue(message.getBody());
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        return Envelope.empty();
+        return ConsumedResponseEnvelope.empty();
     }
 
 
-    void handleResponseEnvelope(Envelope<T> envelope) {
+    void handleResponseEnvelope(ConsumedResponseEnvelope<T> envelope) {
 
         if (envelope.elements.isEmpty()) {
             log().warn("Received empty response", envelope);
@@ -107,7 +108,7 @@ class Query<T> implements MessageListener, Logging {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    static class Envelope<R> {
+    static class ConsumedResponseEnvelope<R> {
 
         @JsonProperty
         public int count;
@@ -116,16 +117,16 @@ class Query<T> implements MessageListener, Logging {
         @JsonProperty
         public Collection<R> elements = new ArrayList<>();
 
-        @Override
-        public String toString() {
+        public static <R> ConsumedResponseEnvelope<R> empty() {
 
-            return "Envelope [count=" + count + ", total=" + total + ", elements=" + elements + "]";
+            return new ConsumedResponseEnvelope<>();
         }
 
 
-        public static <R> Envelope<R> empty() {
+        @Override
+        public String toString() {
 
-            return new Envelope<>();
+            return "ConsumedResponseEnvelope [count=" + count + ", total=" + total + "]";
         }
     }
 }
