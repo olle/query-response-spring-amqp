@@ -130,15 +130,15 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Query<T> valueOf(Queries<T> queries) {
+    static <T> Query<T> from(QueryBuilder<T> queryBuilder) {
 
         Query<T> query = new Query<>();
 
-        query.queryTerm = queries.getQueryForTerm();
-        query.responseType = queries.getType();
-        query.waitingFor = queries.getWaitingFor();
-        query.orDefaults = queries.getOrDefaults();
-        query.onError = queries.getOnError();
+        query.queryTerm = queryBuilder.getQueryForTerm();
+        query.responseType = queryBuilder.getType();
+        query.waitingFor = queryBuilder.getWaitingFor();
+        query.orDefaults = queryBuilder.getOrDefaults();
+        query.onError = queryBuilder.getOnError();
 
         return query;
     }
