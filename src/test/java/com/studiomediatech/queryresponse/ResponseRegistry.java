@@ -1,5 +1,7 @@
 package com.studiomediatech.queryresponse;
 
+import com.studiomediatech.queryresponse.util.Logging;
+
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
@@ -11,8 +13,6 @@ import org.springframework.beans.BeansException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import com.studiomediatech.queryresponse.util.Logging;
 
 import java.util.function.Supplier;
 
@@ -55,13 +55,12 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
         var queue = rabbitAdmin.declareQueue();
 
         rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(responses.getTerm()).noargs());
-
         listener.addQueueNames(queue.getActualName());
 
-        Response<T> responder = new Response<>(rabbitTemplate, responses);
-        listener.setMessageListener(responder);
+        var response = Response.create(responses);
+        response.subscribe(rabbitTemplate, listener);
 
-        log().info("Added responder {} to registry {} ", responses, instance.get());
+        log().info("Registered response {}", response);
     }
 
 

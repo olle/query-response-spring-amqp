@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 import java.io.IOException;
 
@@ -33,7 +35,8 @@ class Query<T> implements MessageListener, Logging {
     private final Queries<T> queries;
     private final AtomicReference<Collection<T>> results;
 
-    public Query(Queries<T> queries) {
+    // Declared protected, for access in unit tests.
+    protected Query(Queries<T> queries) {
 
         this.queries = queries;
         this.results = new AtomicReference<>(Collections.emptyList());
@@ -74,8 +77,9 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    public Collection<T> publish(RabbitTemplate rabbit, String queue) {
+    Collection<T> publish(RabbitTemplate rabbit, String queue, AbstractMessageListenerContainer listener) {
 
+        listener.setMessageListener(this);
         publishQuery(rabbit, queue);
 
         try {
@@ -110,7 +114,7 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Query<T> build(Queries<T> queries) {
+    static <T> Query<T> valueOf(Queries<T> queries) {
 
         // TODO Flesh-out this static factory method.
         return new Query<>(queries);

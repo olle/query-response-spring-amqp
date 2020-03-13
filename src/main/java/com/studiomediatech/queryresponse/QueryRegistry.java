@@ -1,5 +1,7 @@
 package com.studiomediatech.queryresponse;
 
+import com.studiomediatech.queryresponse.util.Logging;
+
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -10,8 +12,6 @@ import org.springframework.beans.BeansException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import com.studiomediatech.queryresponse.util.Logging;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -88,11 +88,10 @@ class QueryRegistry implements ApplicationContextAware, Logging {
 
         var queueName = declareQueryResponseQueue();
 
-        var query = Query.build(queries);
-        listener.setMessageListener(query);
-
         try {
-            return query.publish(rabbitTemplate, queueName);
+            var query = Query.valueOf(queries);
+
+            return query.publish(rabbitTemplate, queueName, listener);
         } finally {
             if (listener.removeQueueNames(queueName)) {
                 rabbitAdmin.deleteQueue(queueName);

@@ -67,9 +67,7 @@ public final class Queries<T> {
      */
     private Consumer<OnErrorThrowable> onError;
 
-    /*
-     * Declared protected, for access in unit tests.
-     */
+    // Declared protected, for access in unit tests.
     protected Queries(String term, Class<T> type) {
 
         this.type = type;

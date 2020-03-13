@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.core.Message;
@@ -11,6 +12,7 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 import java.nio.charset.StandardCharsets;
 
@@ -27,12 +29,11 @@ class Response<T> implements MessageListener, Logging {
 
     private static final ObjectWriter writer = new ObjectMapper().writer();
 
-    private final RabbitTemplate rabbitTemplate;
     private final Responses<T> responses;
+    private RabbitTemplate rabbitTemplate;
 
-    public Response(RabbitTemplate rabbitTemplate, Responses<T> responses) {
+    protected Response(Responses<T> responses) {
 
-        this.rabbitTemplate = rabbitTemplate;
         this.responses = responses;
     }
 
@@ -43,6 +44,7 @@ class Response<T> implements MessageListener, Logging {
             log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
             var response = new PublishedResponseEnvelope<>(responses.getElements());
+            log().debug("Prepared response {}", response);
 
             byte[] body = writer.writeValueAsBytes(response);
 
@@ -60,6 +62,19 @@ class Response<T> implements MessageListener, Logging {
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
         }
+    }
+
+
+    static <T> Response<T> create(Responses<T> responses) {
+
+        return new Response<>(responses);
+    }
+
+
+    void subscribe(RabbitTemplate rabbitTemplate, AbstractMessageListenerContainer listener) {
+
+        this.rabbitTemplate = rabbitTemplate;
+        listener.setMessageListener(this);
     }
 
     class PublishedResponseEnvelope<R extends T> {

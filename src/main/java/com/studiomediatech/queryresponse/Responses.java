@@ -29,7 +29,8 @@ public class Responses<T> {
 
     private Collection<T> elements;
 
-    private Responses(String term) {
+    // Declared protected, for access in unit tests.
+    protected Responses(String term) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
