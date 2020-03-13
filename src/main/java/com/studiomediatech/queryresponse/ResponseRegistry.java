@@ -57,7 +57,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
         rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(responses.getTerm()).noargs());
         listener.addQueueNames(queue.getActualName());
 
-        var response = Response.create(responses);
+        var response = Response.valueOf(responses);
         response.subscribe(rabbitTemplate, listener);
 
         log().info("Registered response {}", response);

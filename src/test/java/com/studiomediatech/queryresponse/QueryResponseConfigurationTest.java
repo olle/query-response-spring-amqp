@@ -1,5 +1,6 @@
 package com.studiomediatech.queryresponse;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -16,6 +17,7 @@ class QueryResponseConfigurationTest {
                 RabbitAutoConfiguration.class));
 
     @Test
+    @DisplayName("query registry bean is created")
     void ensureConfiguresQueryRegistry() {
 
         contextRunner.run(ctx -> assertThat(ctx.getBean(QueryRegistry.class)).isNotNull());
@@ -23,8 +25,35 @@ class QueryResponseConfigurationTest {
 
 
     @Test
+    @DisplayName("query registry bean is provided as instance")
+    void ensureConfiguresQueryRegistryAndSelfInjects() {
+
+        contextRunner.run(ctx -> {
+            QueryRegistry bean = ctx.getBean(QueryRegistry.class);
+
+            assertThat(bean).isNotNull();
+            assertThat(QueryRegistry.instance.get()).isEqualTo(bean);
+        });
+    }
+
+
+    @Test
+    @DisplayName("response registry bean is created")
     void ensureConfiguresResponseRegistry() throws Exception {
 
         contextRunner.run(ctx -> assertThat(ctx.getBean(ResponseRegistry.class)).isNotNull());
+    }
+
+
+    @Test
+    @DisplayName("response registry bean is provided as instance")
+    void ensureConfiguresResponseRegistryAndSelfInjects() {
+
+        contextRunner.run(ctx -> {
+            ResponseRegistry bean = ctx.getBean(ResponseRegistry.class);
+
+            assertThat(bean).isNotNull();
+            assertThat(ResponseRegistry.instance.get()).isEqualTo(bean);
+        });
     }
 }

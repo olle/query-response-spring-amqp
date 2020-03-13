@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
@@ -42,6 +43,7 @@ class Query<T> implements MessageListener, Logging {
     protected Class<T> responseType;
     protected Duration waitingFor;
     protected Supplier<Collection<T>> orDefaults;
+    protected Consumer<Throwable> onError;
 
     // Declared protected, for access in unit tests.
     protected Query() {
@@ -66,9 +68,13 @@ class Query<T> implements MessageListener, Logging {
             log().debug("Received response: {}", response);
 
             return response;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException ex) {
+            if (onError != null) {
+                onError.accept(new IllegalArgumentException(
+                        "Failed to parse response to elements of type " + responseType.getSimpleName(), ex));
+            }
+
+            log().error("Failed to parse received response.", ex);
         }
 
         return ConsumedResponseEnvelope.empty();
@@ -132,6 +138,7 @@ class Query<T> implements MessageListener, Logging {
         query.responseType = queries.getType();
         query.waitingFor = queries.getWaitingFor();
         query.orDefaults = queries.getOrDefaults();
+        query.onError = queries.getOnError();
 
         return query;
     }

@@ -65,7 +65,7 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Response<T> create(Responses<T> responses) {
+    static <T> Response<T> valueOf(Responses<T> responses) {
 
         return new Response<>(responses);
     }

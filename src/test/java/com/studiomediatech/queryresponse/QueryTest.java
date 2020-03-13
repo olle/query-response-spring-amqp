@@ -15,6 +15,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,5 +60,30 @@ class QueryTest {
         sut.onMessage(response);
 
         assertThat(sut.publish(rabbit, "queue-name", listener)).containsExactlyInAnyOrder("foo", "bar", "baz");
+    }
+
+
+    @Test
+    void ensureInvokesOnErrorHandler() throws Exception {
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        var sut = Query.valueOf(Queries.queryFor("term", Foo.class).waitingFor(42).onError(err -> {
+                    assertThat(err).isInstanceOf(IllegalArgumentException.class);
+                    assertThat(err.getMessage()).contains("Failed to parse response to elements of type Foo");
+                    latch.countDown();
+                }));
+
+        var response = MessageBuilder.withBody(("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build();
+        sut.onMessage(response);
+
+        assertThat(latch.await(3L, TimeUnit.SECONDS)).isTrue();
+    }
+
+    static class Foo {
+
+        public String one;
+        public int two;
     }
 }
