@@ -62,10 +62,10 @@ public final class Queries<T> {
     private Integer takingAtLeast;
 
     /**
-     * An optional consumer of an {@link OnErrorThrowable throwable}, allowing clients to inspect any failures
-     * occurring during a query life-cycle.
+     * An optional consumer of an {@link Throwable throwable}, allowing clients to inspect any failures occurring
+     * during a query life-cycle.
      */
-    private Consumer<OnErrorThrowable> onError;
+    private Consumer<Throwable> onError;
 
     // Declared protected, for access in unit tests.
     protected Queries(String term, Class<T> type) {
@@ -172,11 +172,11 @@ public final class Queries<T> {
     /**
      * Sets a handler, to receive any errors raised during execution of the query.
      *
-     * @param  handler  to receive the {@link OnErrorThrowable error}
+     * @param  handler  to receive the {@link Throwable error}
      *
      * @return  the query builder, for chaining further calls
      */
-    public Queries<T> onError(Consumer<OnErrorThrowable> handler) {
+    public Queries<T> onError(Consumer<Throwable> handler) {
 
         this.onError = handler;
 
@@ -294,7 +294,7 @@ public final class Queries<T> {
     }
 
 
-    Consumer<OnErrorThrowable> getOnError() {
+    Consumer<Throwable> getOnError() {
 
         return this.onError;
     }

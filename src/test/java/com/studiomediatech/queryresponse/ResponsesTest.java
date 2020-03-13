@@ -11,6 +11,7 @@ import org.mockito.Mock;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,11 +45,10 @@ class ResponsesTest {
         Responses.respondTo("foobar").withAll().from("foo", "bar", "baz");
         verify(registry).register(responses.capture());
 
-        Responses<String> r = responses.getValue();
-        assertThat(r).isNotNull();
-        assertThat(r.getBatchSize()).isEqualTo(0);
-        assertThat(r.getTerm()).isEqualTo("foobar");
-        assertThat(r.getElements()).containsExactlyInAnyOrder("foo", "bar", "baz");
+        assertThat(responses.getValue()).isNotNull();
+        assertThat(responses.getValue().getBatchSize()).isEqualTo(0);
+        assertThat(responses.getValue().getTerm()).isEqualTo("foobar");
+        assertThat(responses.getValue().getElements()).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 
 
@@ -60,11 +60,10 @@ class ResponsesTest {
         Responses.respondTo("foobar").withBatchesOf(2).from("foo", "bar", "baz");
         verify(registry).register(responses.capture());
 
-        Responses<String> r = responses.getValue();
-        assertThat(r).isNotNull();
-        assertThat(r.getBatchSize()).isEqualTo(2);
-        assertThat(r.getTerm()).isEqualTo("foobar");
-        assertThat(r.getElements()).containsExactlyInAnyOrder("foo", "bar", "baz");
+        assertThat(responses.getValue()).isNotNull();
+        assertThat(responses.getValue().getBatchSize()).isEqualTo(2);
+        assertThat(responses.getValue().getTerm()).isEqualTo("foobar");
+        assertThat(responses.getValue().getElements()).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 
 
@@ -138,7 +137,14 @@ class ResponsesTest {
     void ensureThrowsForNullResponseCollection() throws Exception {
 
         Collection<String> nope = (Collection<String>) null;
-
         assertThrows(IllegalArgumentException.class, () -> Responses.<String>respondTo("foobar").withAll().from(nope));
+    }
+
+
+    @Test
+    void ensureThrowsForNullInResponseCollection() throws Exception {
+
+        assertThrows(IllegalArgumentException.class,
+            () -> Responses.respondTo("foobar").withAll().from(Arrays.asList("foo", null, "bar")));
     }
 }
