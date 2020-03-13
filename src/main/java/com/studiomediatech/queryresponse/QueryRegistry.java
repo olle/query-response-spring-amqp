@@ -2,12 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.ExchangeBuilder;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
-
 import org.springframework.beans.BeansException;
 
 import org.springframework.context.ApplicationContext;
@@ -22,28 +16,14 @@ import java.util.function.Supplier;
  */
 class QueryRegistry implements ApplicationContextAware, Logging {
 
-    /**
-     * The current implementation version of Query/Response declares the globally common exchange name here, as a
-     * convention.
-     *
-     * <p>NOTE: In a future version, the intent is of course to allow users to modify this by some means of
-     * configuration.</p>
-     */
-    private static final String QUERIES_EXCHANGE = "queries";
-
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<QueryRegistry> instance = () -> null;
 
-    private final RabbitAdmin rabbitAdmin;
-    private final DirectMessageListenerContainer listener;
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitFacade facade;
 
-    public QueryRegistry(RabbitAdmin rabbitAdmin, DirectMessageListenerContainer listener,
-        RabbitTemplate rabbitTemplate) {
+    public QueryRegistry(RabbitFacade facade) {
 
-        this.rabbitAdmin = rabbitAdmin;
-        this.listener = listener;
-        this.rabbitTemplate = rabbitTemplate;
+        this.facade = facade;
     }
 
     @Override
@@ -84,36 +64,15 @@ class QueryRegistry implements ApplicationContextAware, Logging {
      */
     protected <T> Collection<T> accept(QueryBuilder<T> queryBuilder) {
 
-        ensureDeclaredQueriesExchange();
+        var query = Query.from(queryBuilder);
 
-        var queueName = declareQueryResponseQueue();
+        facade.declareQueue(query);
+        facade.addListener(query);
 
         try {
-            var query = Query.from(queryBuilder);
-
-            return query.publish(rabbitTemplate, queueName, listener);
+            return query.accept(facade);
         } finally {
-            if (listener.removeQueueNames(queueName)) {
-                rabbitAdmin.deleteQueue(queueName);
-            }
+            facade.removeListener(query);
         }
-    }
-
-
-    private String declareQueryResponseQueue() {
-
-        var queueName = rabbitAdmin.declareQueue().getActualName();
-        listener.addQueueNames(queueName);
-
-        return queueName;
-    }
-
-
-    private Exchange ensureDeclaredQueriesExchange() {
-
-        Exchange exchange = log(ExchangeBuilder.topicExchange(QUERIES_EXCHANGE).autoDelete().build());
-        rabbitAdmin.declareExchange(exchange);
-
-        return exchange;
     }
 }

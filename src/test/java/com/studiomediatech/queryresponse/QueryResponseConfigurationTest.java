@@ -17,6 +17,13 @@ class QueryResponseConfigurationTest {
                 RabbitAutoConfiguration.class));
 
     @Test
+    void ensureConfiguresRabbitFacade() throws Exception {
+
+        contextRunner.run(ctx -> assertThat(ctx.getBean(RabbitFacade.class)).isNotNull());
+    }
+
+
+    @Test
     @DisplayName("query registry bean is created")
     void ensureConfiguresQueryRegistry() {
 

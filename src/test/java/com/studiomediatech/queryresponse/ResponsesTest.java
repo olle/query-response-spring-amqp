@@ -68,72 +68,7 @@ class ResponsesTest {
 
 
     @Test
-    void ensureThrowsOnTooLongTerm() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("a".repeat(256)));
-    }
-
-
-    @Test
-    void ensureThrowsForNullQueryTerm() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo(null));
-    }
-
-
-    @Test
-    void ensureThrowsForEmptyQueryTerm() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo(""));
-    }
-
-
-    @Test
-    void ensureThrowsForWhitespaceQueryTerm() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("     "));
-    }
-
-
-    @Test
-    void ensureThrowsForBatchSizeOfZero() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withBatchesOf(0));
-    }
-
-
-    @Test
-    void ensureThrowsForNegativeBatchSize() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withBatchesOf(-23));
-    }
-
-
-    @Test
-    void ensureThrowsForEmptyVarargsArray() {
-
-        assertThrows(IllegalArgumentException.class, () -> Responses.respondTo("foobar").withAll().from());
-    }
-
-
-    @Test
-    void ensureThrowsForNullVarargsArray() {
-
-        assertThrows(IllegalArgumentException.class,
-            () -> Responses.respondTo("foobar").withAll().from((Object[]) null));
-    }
-
-
-    @Test
-    void ensureThrowsForNullElementsInVarargs() {
-
-        assertThrows(IllegalArgumentException.class,
-            () -> Responses.respondTo("foobar").withAll().from("hello", null, "fake"));
-    }
-
-
-    @Test
-    void ensureThrowsForNullResponseCollection() {
+    void ensureThrowsForNullResponseCollection() throws Exception {
 
         Collection<String> nope = null;
         assertThrows(IllegalArgumentException.class, () -> Responses.<String>respondTo("foobar").withAll().from(nope));

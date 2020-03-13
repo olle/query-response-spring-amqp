@@ -1,6 +1,5 @@
 package com.studiomediatech.queryresponse;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 
@@ -60,9 +59,7 @@ public class Responses<T> {
     @SafeVarargs
     public final void from(T... ts) {
 
-        Asserts.notNullOrEmpty(ts);
-
-        this.elements = Asserts.invariantResponseCollection(Arrays.asList(ts));
+        this.elements = Asserts.invariantResponseVarargsArray(ts);
 
         register();
     }

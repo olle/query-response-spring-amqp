@@ -46,17 +46,22 @@ public class QueryResponseConfiguration {
 
 
     @Bean
-    ResponseRegistry respondingRegistry(RabbitAdmin rabbitAdmin,
-        DirectMessageListenerContainer directMessageListenerContainer, RabbitTemplate rabbitTemplate) {
+    RabbitFacade rabbitFacade(RabbitAdmin admin, RabbitTemplate template, DirectMessageListenerContainer listener) {
 
-        return new ResponseRegistry(rabbitAdmin, directMessageListenerContainer, rabbitTemplate);
+        return new RabbitFacade(admin, template, listener);
     }
 
 
     @Bean
-    QueryRegistry queryingRegistry(RabbitAdmin rabbitAdmin,
-        DirectMessageListenerContainer directMessageListenerContainer, RabbitTemplate rabbitTemplate) {
+    ResponseRegistry respondingRegistry(RabbitFacade facade) {
 
-        return new QueryRegistry(rabbitAdmin, directMessageListenerContainer, rabbitTemplate);
+        return new ResponseRegistry(facade);
+    }
+
+
+    @Bean
+    QueryRegistry queryingRegistry(RabbitFacade facade) {
+
+        return new QueryRegistry(facade);
     }
 }

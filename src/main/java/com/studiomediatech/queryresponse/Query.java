@@ -12,7 +12,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 import java.io.IOException;
 
@@ -21,6 +20,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -38,6 +38,7 @@ class Query<T> implements MessageListener, Logging {
 
     // TODO: Concurrency and aggregation, perhaps rather use a queue.
     private final AtomicReference<Collection<T>> results;
+    private final String queueName;
 
     protected String queryTerm;
     protected Class<T> responseType;
@@ -49,6 +50,7 @@ class Query<T> implements MessageListener, Logging {
     protected Query() {
 
         this.results = new AtomicReference<>(Collections.emptyList());
+        this.queueName = UUID.randomUUID().toString();
     }
 
     @Override
@@ -93,10 +95,9 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    Collection<T> publish(RabbitTemplate rabbit, String queue, AbstractMessageListenerContainer listener) {
+    Collection<T> publish(RabbitTemplate rabbit) {
 
-        listener.setMessageListener(this);
-        publishQuery(rabbit, queue);
+        publishQuery(rabbit);
 
         try {
             Thread.sleep(this.waitingFor.toMillis());
@@ -116,16 +117,19 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    private void publishQuery(RabbitTemplate rabbit, String queue) {
+    private void publishQuery(RabbitTemplate rabbit) {
 
         try {
-            var message = MessageBuilder.withBody("{}".getBytes()).setReplyTo(queue).build();
+            var message = MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build();
 
             rabbit.send("queries", this.queryTerm, message);
             log().info("|<-- Published query: {}", this.queryTerm);
-        } catch (RuntimeException e) {
-            // TODO: Apply to provided onError-handler
-            e.printStackTrace();
+        } catch (RuntimeException ex) {
+            if (this.onError != null) {
+                this.onError.accept(ex);
+            }
+
+            log().error("Failed to publish query message", ex);
         }
     }
 
@@ -141,6 +145,18 @@ class Query<T> implements MessageListener, Logging {
         query.onError = queryBuilder.getOnError();
 
         return query;
+    }
+
+
+    public String getQueueName() {
+
+        return this.queueName;
+    }
+
+
+    public Collection<T> accept(RabbitFacade facade) {
+
+        return publish(facade.getRabbitTemplate());
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

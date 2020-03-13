@@ -14,6 +14,8 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
+import java.time.Duration;
+
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -40,13 +42,13 @@ class QueryTest {
     @Test
     void ensureQueryIsPublished() {
 
-        var sut = Query.from(QueryBuilder.queryFor("term", String.class).waitingFor(42));
+        var sut = new Query<>();
+        sut.queryTerm = "term";
+        sut.waitingFor = Duration.ofMillis(123);
         sut.orDefaults = Collections::emptyList;
 
-        sut.publish(rabbit, "queue-name", listener);
-
+        sut.publish(rabbit);
         verify(rabbit).send(eq("queries"), eq("term"), message.capture());
-        assertThat(message.getValue().getMessageProperties().getReplyTo()).isEqualTo("queue-name");
     }
 
 
@@ -59,7 +61,7 @@ class QueryTest {
                         .replaceAll("'", "\"").getBytes()).build();
         sut.onMessage(response);
 
-        assertThat(sut.publish(rabbit, "queue-name", listener)).containsExactlyInAnyOrder("foo", "bar", "baz");
+        assertThat(sut.publish(rabbit)).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 
 

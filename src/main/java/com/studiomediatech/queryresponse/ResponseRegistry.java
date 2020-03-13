@@ -2,13 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.ExchangeBuilder;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
-
 import org.springframework.beans.BeansException;
 
 import org.springframework.context.ApplicationContext;
@@ -25,17 +18,19 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<ResponseRegistry> instance = () -> null;
 
-    private final RabbitAdmin rabbitAdmin;
-    private final DirectMessageListenerContainer listener;
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitFacade facade;
 
-    public ResponseRegistry(RabbitAdmin rabbitAdmin, DirectMessageListenerContainer listener,
-        RabbitTemplate rabbitTemplate) {
+    public ResponseRegistry(RabbitFacade facade) {
 
-        this.rabbitAdmin = rabbitAdmin;
-        this.listener = listener;
-        this.rabbitTemplate = rabbitTemplate;
+        this.facade = facade;
     }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+
+        ResponseRegistry.instance = () -> applicationContext.getBean(getClass());
+    }
+
 
     public static <T> void register(Responses<T> responses) {
 
@@ -51,31 +46,14 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
 
     protected <T> void accept(Responses<T> responses) {
 
-        var exchange = declareQueriesExchange();
-        var queue = rabbitAdmin.declareQueue();
-
-        rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(responses.getTerm()).noargs());
-        listener.addQueueNames(queue.getActualName());
-
         var response = Response.valueOf(responses);
-        response.subscribe(rabbitTemplate, listener);
+
+        facade.declareQueue(response);
+        facade.declareBinding(response);
+        facade.addListener(response);
+
+        response.accept(facade);
 
         log().info("Registered response {}", response);
-    }
-
-
-    private Exchange declareQueriesExchange() {
-
-        var exchange = ExchangeBuilder.topicExchange("queries").autoDelete().build();
-        rabbitAdmin.declareExchange(exchange);
-
-        return exchange;
-    }
-
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
-        ResponseRegistry.instance = () -> applicationContext.getBean(ResponseRegistry.class);
     }
 }

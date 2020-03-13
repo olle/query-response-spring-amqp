@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 
 /**
@@ -29,12 +30,17 @@ class Response<T> implements MessageListener, Logging {
 
     private static final ObjectWriter writer = new ObjectMapper().writer();
 
-    private final Responses<T> responses;
+    private final Collection<T> elements;
+    private final String queueName;
+    private final String routingKey;
+
     private RabbitTemplate rabbitTemplate;
 
     protected Response(Responses<T> responses) {
 
-        this.responses = responses;
+        this.elements = responses.getElements();
+        this.queueName = UUID.randomUUID().toString();
+        this.routingKey = responses.getTerm();
     }
 
     @Override
@@ -43,7 +49,7 @@ class Response<T> implements MessageListener, Logging {
         try {
             log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
-            var response = new PublishedResponseEnvelope<>(responses.getElements());
+            var response = new PublishedResponseEnvelope<>(this.elements);
             log().debug("Prepared response {}", response);
 
             byte[] body = writer.writeValueAsBytes(response);
@@ -57,7 +63,7 @@ class Response<T> implements MessageListener, Logging {
             var exchangeName = replyToAddress.getExchangeName();
             var routingKey = replyToAddress.getRoutingKey();
 
-            rabbitTemplate.send(exchangeName, routingKey, responseMessage);
+            this.rabbitTemplate.send(exchangeName, routingKey, responseMessage);
             log().info("|<-- Published response: " + responseMessage);
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
@@ -75,6 +81,24 @@ class Response<T> implements MessageListener, Logging {
 
         this.rabbitTemplate = rabbitTemplate;
         listener.setMessageListener(this);
+    }
+
+
+    public void accept(RabbitFacade facade) {
+
+        this.rabbitTemplate = facade.getRabbitTemplate();
+    }
+
+
+    public String getQueueName() {
+
+        return this.queueName;
+    }
+
+
+    public String getRoutingKey() {
+
+        return this.routingKey;
     }
 
     class PublishedResponseEnvelope<R extends T> {

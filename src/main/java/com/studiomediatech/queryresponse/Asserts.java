@@ -2,6 +2,7 @@ package com.studiomediatech.queryresponse;
 
 import java.time.Duration;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 
@@ -11,22 +12,6 @@ final class Asserts {
 
         // Hidden
     }
-
-    public static void notNullOrEmpty(String s) {
-
-        if (s == null || s.isEmpty() || s.isBlank()) {
-            throw new IllegalArgumentException("The given string argument must not be null, empty or blank.");
-        }
-    }
-
-
-    public static <T> void notNullOrEmpty(T[] a) {
-
-        if (a == null || a.length == 0) {
-            throw new IllegalArgumentException("The given array must not null or empty.");
-        }
-    }
-
 
     public static String invariantQueryTerm(String term) {
 
@@ -100,5 +85,15 @@ final class Asserts {
         }
 
         return ts;
+    }
+
+
+    public static <T> Collection<T> invariantResponseVarargsArray(T[] ts) {
+
+        if (ts == null || ts.length == 0) {
+            throw new IllegalArgumentException("The given array of varargs must not null or empty.");
+        }
+
+        return invariantResponseCollection(Arrays.asList(ts));
     }
 }
