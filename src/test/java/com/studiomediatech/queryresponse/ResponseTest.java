@@ -37,7 +37,7 @@ class ResponseTest {
     @DisplayName("after consuming a query message, a response is published")
     void ensurePublishesResponseOnConsumedQueryMessage() {
 
-        var sut = Response.valueOf(new Responses<>("query-term"));
+        var sut = Response.valueOf(new ResponseBuilder<>("query-term"));
         sut.subscribe(rabbit, listener);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();

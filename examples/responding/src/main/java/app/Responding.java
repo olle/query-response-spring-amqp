@@ -1,7 +1,7 @@
 package app;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
-import com.studiomediatech.queryresponse.Responses;
+import com.studiomediatech.queryresponse.ResponseBuilder;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
@@ -20,7 +20,7 @@ class Responding implements CommandLineRunner {
 
         println("Registering responses...");
 
-        Responses.respondTo("books/sci-fi")
+        ResponseBuilder.respondTo("books/sci-fi")
             .withAll()
             .from("Neuromancer", "Snow Crash", "I, Robot", "The Gods Themselves", "Pebble in the Sky");
 

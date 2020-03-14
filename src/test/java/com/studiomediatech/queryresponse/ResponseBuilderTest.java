@@ -22,13 +22,13 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
-class ResponsesTest {
+class ResponseBuilderTest {
 
     @Mock
     ResponseRegistry registry;
 
     @Captor
-    ArgumentCaptor<Responses<String>> responses;
+    ArgumentCaptor<ResponseBuilder<String>> responses;
 
     @BeforeEach
     void setup() {
@@ -42,7 +42,7 @@ class ResponsesTest {
     @DisplayName("responses with all sets batch size to 0")
     void ensureConfiguresBuilderCorrectlyForAll() {
 
-        Responses.respondTo("foobar").withAll().from("foo", "bar", "baz");
+        ResponseBuilder.respondTo("foobar").withAll().from("foo", "bar", "baz");
         verify(registry).register(responses.capture());
 
         assertThat(responses.getValue()).isNotNull();
@@ -57,7 +57,7 @@ class ResponsesTest {
     @DisplayName("responses with batch size is correctly set")
     void ensureConfiguresBuilderCorrectlyForBatches() {
 
-        Responses.respondTo("foobar").withBatchesOf(2).from("foo", "bar", "baz");
+        ResponseBuilder.respondTo("foobar").withBatchesOf(2).from("foo", "bar", "baz");
         verify(registry).register(responses.capture());
 
         assertThat(responses.getValue()).isNotNull();
@@ -71,7 +71,7 @@ class ResponsesTest {
     void ensureThrowsForNullResponseCollection() throws Exception {
 
         Collection<String> nope = null;
-        assertThrows(IllegalArgumentException.class, () -> Responses.<String>respondTo("foobar").withAll().from(nope));
+        assertThrows(IllegalArgumentException.class, () -> ResponseBuilder.<String>respondTo("foobar").withAll().from(nope));
     }
 
 
@@ -79,6 +79,6 @@ class ResponsesTest {
     void ensureThrowsForNullInResponseCollection() {
 
         assertThrows(IllegalArgumentException.class,
-            () -> Responses.respondTo("foobar").withAll().from(Arrays.asList("foo", null, "bar")));
+            () -> ResponseBuilder.respondTo("foobar").withAll().from(Arrays.asList("foo", null, "bar")));
     }
 }

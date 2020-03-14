@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @param  <T>  the type of response entries or elements.
  */
-public class Responses<T> {
+public class ResponseBuilder<T> {
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -29,18 +29,18 @@ public class Responses<T> {
     private Collection<T> elements;
 
     // Declared protected, for access in unit tests.
-    protected Responses(String term) {
+    protected ResponseBuilder(String term) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
-    public static <T> Responses<T> respondTo(String term) {
+    public static <T> ResponseBuilder<T> respondTo(String term) {
 
-        return new Responses<>(term);
+        return new ResponseBuilder<>(term);
     }
 
 
-    public Responses<T> withAll() {
+    public ResponseBuilder<T> withAll() {
 
         this.batchSize = 0;
 
@@ -48,7 +48,7 @@ public class Responses<T> {
     }
 
 
-    public Responses<T> withBatchesOf(int size) {
+    public ResponseBuilder<T> withBatchesOf(int size) {
 
         this.batchSize = Asserts.invariantBatchSize(size);
 

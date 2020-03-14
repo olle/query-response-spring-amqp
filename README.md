@@ -76,18 +76,18 @@ Very simple scenarios can quickly be created, for tests or proof of concept
 work.
 
 ```java
-  Responses.respondTo("authors")
-       .withAll()
-       .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
+  ResponseBuilder.respondTo("authors")
+      .withAll()
+      .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 ```
 
 Batch responses provide developers with more options to tune and throttle a
 system using Query/Response across many services.
 
 ```java
-  Responses.respondTo("offers/monday")
-       .withBatchesOf(20)
-       .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+  ResponseBuilder.respondTo("offers/monday")
+      .withBatchesOf(20)
+      .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 ```
 
 AMQP Resources & Formats

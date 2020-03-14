@@ -47,7 +47,7 @@ class ResponseRegistryTest {
         assertThrows(IllegalStateException.class,
             () -> {
                 ResponseRegistry.instance = () -> null;
-                ResponseRegistry.register(new Responses<>("foobar"));
+                ResponseRegistry.register(new ResponseBuilder<>("foobar"));
             });
     }
 
@@ -59,7 +59,7 @@ class ResponseRegistryTest {
         var mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
 
-        Responses<Object> responses = new Responses<>("foobar");
+        ResponseBuilder<Object> responses = new ResponseBuilder<>("foobar");
         new ResponseRegistry(null).register(responses);
 
         verify(mock).accept(responses);
@@ -71,7 +71,7 @@ class ResponseRegistryTest {
     @Test
     void ensureAcceptResponses() throws Exception {
 
-        new ResponseRegistry(facade).accept(new Responses<>("some-term"));
+        new ResponseRegistry(facade).accept(new ResponseBuilder<>("some-term"));
 
         verify(facade).declareQueue(Mockito.isA(Response.class));
         verify(facade).declareBinding(Mockito.isA(Response.class));

@@ -88,7 +88,7 @@ class RabbitFacadeTest {
 
         var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
-        sut.declareQueue(new Response<>(new Responses<>("some-term")));
+        sut.declareQueue(new Response<>(new ResponseBuilder<>("some-term")));
 
         verify(admin).declareQueue(queue.capture());
 
@@ -103,7 +103,7 @@ class RabbitFacadeTest {
 
         var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
-        var response = new Response<>(new Responses<>("some-term"));
+        var response = new Response<>(new ResponseBuilder<>("some-term"));
         sut.declareBinding(response);
 
         verify(admin).declareBinding(binding.capture());
@@ -119,7 +119,7 @@ class RabbitFacadeTest {
 
         var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
 
-        var response = new Response<>(new Responses<>("some-term"));
+        var response = new Response<>(new ResponseBuilder<>("some-term"));
         sut.addListener(response);
 
         verify(listener).addQueueNames(queueName.capture());

@@ -11,18 +11,18 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class ResponsesApiTest {
+public class ResponseBuilderApiTest {
 
     @Test
     void ensureExamplesCompile() {
 
         ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
 
-        Responses.respondTo("authors")
+        ResponseBuilder.respondTo("authors")
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 
-        Responses.respondTo("offers/monday")
+        ResponseBuilder.respondTo("offers/monday")
             .withBatchesOf(20)
             .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 

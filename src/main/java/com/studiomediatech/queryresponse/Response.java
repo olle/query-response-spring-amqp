@@ -36,7 +36,7 @@ class Response<T> implements MessageListener, Logging {
 
     private RabbitTemplate rabbitTemplate;
 
-    protected Response(Responses<T> responses) {
+    protected Response(ResponseBuilder<T> responses) {
 
         this.elements = responses.getElements();
         this.queueName = UUID.randomUUID().toString();
@@ -71,7 +71,7 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Response<T> valueOf(Responses<T> responses) {
+    static <T> Response<T> valueOf(ResponseBuilder<T> responses) {
 
         return new Response<>(responses);
     }
