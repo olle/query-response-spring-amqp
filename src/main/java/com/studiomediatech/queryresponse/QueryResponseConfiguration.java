@@ -23,17 +23,6 @@ import org.springframework.context.annotation.Import;
 /**
  * Configures the required components for a Query/Response client, ensuring the availability of the necessary AMQP
  * resources as well as a {@link QueryRegistry} and a {@link ResponseRegistry}.
- *
- * <p>This configuration can be used to enable Query/Response in Spring and Spring Boot applications, simply by
- * importing it in the application starter class.</p>
- *
- * <pre>
-   {@literal @}SpringBootApplication
-   {@literal @}Import(QueryResponseConfiguration.class)
-   public class MyApplication {
-   // ...
-   }
- * </pre>
  */
 @Configuration
 @ConditionalOnClass(RabbitAutoConfiguration.class)
