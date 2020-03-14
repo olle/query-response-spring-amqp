@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.queryresponse.QueryResponseConfiguration;
+import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.ResponseBuilder;
 
 import org.springframework.boot.CommandLineRunner;
@@ -8,13 +8,11 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import org.springframework.context.annotation.Import;
-
 import java.util.Date;
 
 
 @SpringBootApplication
-@Import(QueryResponseConfiguration.class)
+@EnableQueryResponse
 class Responding implements CommandLineRunner {
 
     @Override
