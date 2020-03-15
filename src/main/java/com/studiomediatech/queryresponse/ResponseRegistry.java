@@ -50,7 +50,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
 
         facade.declareQueue(response);
         facade.declareBinding(response);
-        facade.addListener(response);
+        facade.createMessageListenerContainer(response);
 
         response.accept(facade);
 

@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
@@ -14,17 +15,17 @@ import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 public class RabbitFacade implements Logging {
 
     private final RabbitAdmin admin;
+    private final ConnectionFactory connectionFactory;
     private final RabbitTemplate template;
-    private final DirectMessageListenerContainer listener;
 
     private TopicExchange queriesExchange;
 
-    public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, DirectMessageListenerContainer listener,
+    public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, ConnectionFactory connectionFactory,
         TopicExchange queriesExchange) {
 
         this.admin = admin;
         this.template = template;
-        this.listener = listener;
+        this.connectionFactory = connectionFactory;
         this.queriesExchange = queriesExchange;
     }
 
@@ -54,25 +55,36 @@ public class RabbitFacade implements Logging {
     }
 
 
-    public void addListener(Response<?> response) {
+    private DirectMessageListenerContainer createNewListenerContainer() {
 
-        // TODO: Multiple responses per container (app/context)
+        return new DirectMessageListenerContainer(connectionFactory);
+    }
+
+
+    public DirectMessageListenerContainer createMessageListenerContainer(Response<?> response) {
+
+        var listener = createNewListenerContainer();
         listener.addQueueNames(response.getQueueName());
         listener.setMessageListener(response);
+        listener.start();
+
+        return listener;
     }
 
 
-    public void addListener(Query<?> query) {
+    public DirectMessageListenerContainer createMessageListenerContainer(Query<?> query) {
 
-        // TODO: Multiple queries per container (app/context)
+        var listener = createNewListenerContainer();
         listener.addQueueNames(query.getQueueName());
         listener.setMessageListener(query);
+        listener.start();
+
+        return listener;
     }
 
 
-    public void removeListener(Query<?> query) {
+    public void removeQueue(Query<?> query) {
 
-        listener.removeQueueNames(query.getQueueName());
         admin.deleteQueue(query.getQueueName());
     }
 

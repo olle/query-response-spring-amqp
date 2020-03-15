@@ -7,13 +7,11 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,18 +28,10 @@ import org.springframework.context.annotation.Import;
 public class QueryResponseConfiguration implements Logging {
 
     @Bean
-    @ConditionalOnMissingBean
-    DirectMessageListenerContainer directMessageListenerContainer(ConnectionFactory connectionFactory) {
+    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate template, ConnectionFactory connectionFactory,
+        TopicExchange queriesExchange) {
 
-        return new DirectMessageListenerContainer(connectionFactory);
-    }
-
-
-    @Bean
-    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate template,
-        DirectMessageListenerContainer listener, TopicExchange queriesExchange) {
-
-        return new RabbitFacade(rabbitAdmin, template, listener, queriesExchange);
+        return new RabbitFacade(rabbitAdmin, template, connectionFactory, queriesExchange);
     }
 
 

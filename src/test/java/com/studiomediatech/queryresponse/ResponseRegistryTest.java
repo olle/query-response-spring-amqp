@@ -42,7 +42,7 @@ class ResponseRegistryTest {
 
 
     @Test
-    void ensureThrowsOnMissingBean() throws Exception {
+    void ensureThrowsOnMissingBean() {
 
         assertThrows(IllegalStateException.class,
             () -> {
@@ -54,7 +54,7 @@ class ResponseRegistryTest {
 
     @SuppressWarnings("static-access")
     @Test
-    void ensureInstanceIsInvokedOnRegister() throws Exception {
+    void ensureInstanceIsInvokedOnRegister() {
 
         var mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
@@ -69,12 +69,12 @@ class ResponseRegistryTest {
 
 
     @Test
-    void ensureAcceptResponses() throws Exception {
+    void ensureAcceptResponses() {
 
         new ResponseRegistry(facade).accept(new ResponseBuilder<>("some-term"));
 
         verify(facade).declareQueue(Mockito.isA(Response.class));
         verify(facade).declareBinding(Mockito.isA(Response.class));
-        verify(facade).addListener(Mockito.isA(Response.class));
+        verify(facade).createMessageListenerContainer(Mockito.isA(Response.class));
     }
 }
