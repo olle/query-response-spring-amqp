@@ -20,7 +20,7 @@ class QueryRegistryTest {
     RabbitFacade facade;
 
     @Test
-    void ensureThrowsOnMissingBean() throws Exception {
+    void ensureThrowsOnMissingBean() {
 
         assertThrows(IllegalStateException.class,
             () -> {
@@ -32,7 +32,7 @@ class QueryRegistryTest {
 
     @SuppressWarnings("static-access")
     @Test
-    void ensureInstanceIsInvokedOnRegister() throws Exception {
+    void ensureInstanceIsInvokedOnRegister() {
 
         var mock = Mockito.mock(QueryRegistry.class);
         QueryRegistry.instance = () -> mock;
@@ -47,7 +47,7 @@ class QueryRegistryTest {
 
 
     @Test
-    void ensureAcceptResponses() throws Exception {
+    void ensureAcceptResponses() {
 
         var queries = new QueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
