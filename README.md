@@ -1,9 +1,7 @@
 Query/Response for Spring® AMQP
 ===============================
 
-![Java CI](https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg)
-
-[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/olle/query-response-spring-amqp.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/olle/query-response-spring-amqp/context:java)
+![Java CI](https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg) [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/olle/query-response-spring-amqp.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/olle/query-response-spring-amqp/context:java)
 
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
