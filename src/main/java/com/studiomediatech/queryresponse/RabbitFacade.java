@@ -6,6 +6,8 @@ import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
@@ -125,9 +127,11 @@ public class RabbitFacade implements Logging {
 
     public void publishResponse(String exchange, String routingKey, Message message) {
 
+        var m = MessageBuilder.fromMessage(message).setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT).build();
+
         try {
-            this.template.send(exchange, routingKey, message);
-            log().info("|<-- Published response: " + message);
+            this.template.send(exchange, routingKey, m);
+            log().info("|<-- Published response: " + m);
         } catch (RuntimeException e) {
             log().error("Failed to publish response", e);
         }
