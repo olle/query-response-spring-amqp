@@ -11,14 +11,14 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 
 /**
@@ -30,15 +30,20 @@ class Response<T> implements MessageListener, Logging {
 
     private static final ObjectWriter writer = new ObjectMapper().writer();
 
-    private final Collection<T> elements;
+    private final Collection<T> elementsCollection;
+    private final Iterator<T> elementsIterator;
+    private final Supplier<Integer> totalSupplier;
+
     private final String queueName;
     private final String routingKey;
 
-    private RabbitTemplate rabbitTemplate;
+    private RabbitFacade facade;
 
     protected Response(ResponseBuilder<T> responses) {
 
-        this.elements = responses.getElements();
+        this.elementsCollection = responses.getElementsCollection();
+        this.elementsIterator = responses.getElementsIterator();
+        this.totalSupplier = responses.getTotalSupplier();
         this.queueName = UUID.randomUUID().toString();
         this.routingKey = responses.getTerm();
     }
@@ -49,7 +54,7 @@ class Response<T> implements MessageListener, Logging {
         try {
             log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
-            var response = new PublishedResponseEnvelope<>(this.elements);
+            var response = buildResponse();
             log().debug("Prepared response {}", response);
 
             byte[] body = writer.writeValueAsBytes(response);
@@ -63,11 +68,31 @@ class Response<T> implements MessageListener, Logging {
             var exchangeName = replyToAddress.getExchangeName();
             var routingKey = replyToAddress.getRoutingKey();
 
-            this.rabbitTemplate.send(exchangeName, routingKey, responseMessage);
-            log().info("|<-- Published response: " + responseMessage);
+            this.facade.publishResponse(exchangeName, routingKey, responseMessage);
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
         }
+    }
+
+
+    private Response<T>.PublishedResponseEnvelope<T> buildResponse() {
+
+        var response = new PublishedResponseEnvelope<T>();
+
+        if (this.elementsIterator != null) {
+            while (this.elementsIterator.hasNext()) {
+                response.elements.add(this.elementsIterator.next());
+            }
+        }
+
+        if (this.elementsCollection != null) {
+            response.elements.addAll(this.elementsCollection);
+        }
+
+        response.count = response.elements.size();
+        response.total = this.totalSupplier.get();
+
+        return response;
     }
 
 
@@ -77,16 +102,9 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    void subscribe(RabbitTemplate rabbitTemplate, AbstractMessageListenerContainer listener) {
-
-        this.rabbitTemplate = rabbitTemplate;
-        listener.setMessageListener(this);
-    }
-
-
     public void accept(RabbitFacade facade) {
 
-        this.rabbitTemplate = facade.getRabbitTemplate();
+        this.facade = facade;
     }
 
 
@@ -110,17 +128,9 @@ class Response<T> implements MessageListener, Logging {
         @JsonProperty
         public Collection<R> elements = new ArrayList<>();
 
-        PublishedResponseEnvelope(Collection<R> elements) {
+        PublishedResponseEnvelope() {
 
-            this.elements.addAll(elements);
-
-            /*
-             * TODO: When supporting batch-responses, the total and count must
-             *       of course reflect the expected total amount of published
-             *       response elements, and the count the current batch size.
-             */
-            this.count = this.elements.size();
-            this.total = this.elements.size();
+            // OK
         }
 
         @Override

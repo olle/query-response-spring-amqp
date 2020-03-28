@@ -38,19 +38,28 @@ public class ResponseBuilder<T> {
     private Collection<T> elementsCollection;
     private Iterator<T> elementsIterator;
 
-    // Declared protected, for access in unit tests.
+    // For testing
     protected ResponseBuilder(String term) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
 
-    // Declared protected, for access in unit tests.
+    // For testing
     protected ResponseBuilder(String term, Collection<T> ts) {
 
         this(term);
         this.elementsCollection = ts;
         this.totalSupplier = this.elementsCollection::size;
+    }
+
+
+    // For testing
+    protected ResponseBuilder(String term, Iterator<T> it, Supplier<Integer> total) {
+
+        this(term);
+        this.elementsIterator = it;
+        this.totalSupplier = total;
     }
 
     public static <T> ResponseBuilder<T> respondTo(String term) {
