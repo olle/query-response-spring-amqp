@@ -11,7 +11,6 @@ import com.studiomediatech.queryresponse.util.Logging;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.io.IOException;
 
@@ -95,45 +94,6 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    Collection<T> publish(RabbitTemplate rabbit) {
-
-        publishQuery(rabbit);
-
-        try {
-            Thread.sleep(this.waitingFor.toMillis());
-        } catch (InterruptedException e) {
-            // TODO: Apply to provided onError-handler
-            e.printStackTrace();
-        }
-
-        if (results.get().isEmpty()) {
-            if (this.orDefaults != null) {
-                return this.orDefaults.get();
-            }
-            // TODO: Or throws, etc.
-        }
-
-        return results.get();
-    }
-
-
-    private void publishQuery(RabbitTemplate rabbit) {
-
-        try {
-            var message = MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build();
-
-            rabbit.send("queries", this.queryTerm, message);
-            log().info("|<-- Published query: {}", this.queryTerm);
-        } catch (RuntimeException ex) {
-            if (this.onError != null) {
-                this.onError.accept(ex);
-            }
-
-            log().error("Failed to publish query message", ex);
-        }
-    }
-
-
     static <T> Query<T> from(QueryBuilder<T> queryBuilder) {
 
         Query<T> query = new Query<>();
@@ -156,7 +116,37 @@ class Query<T> implements MessageListener, Logging {
 
     public Collection<T> accept(RabbitFacade facade) {
 
-        return publish(facade.getRabbitTemplate());
+        publishQuery(facade);
+
+        try {
+            Thread.sleep(this.waitingFor.toMillis());
+        } catch (InterruptedException e) {
+            // TODO: Apply to provided onError-handler
+            e.printStackTrace();
+        }
+
+        if (results.get().isEmpty()) {
+            if (this.orDefaults != null) {
+                return this.orDefaults.get();
+            }
+            // TODO: Or throws, etc.
+        }
+
+        return results.get();
+    }
+
+
+    private void publishQuery(RabbitFacade facade) {
+
+        try {
+            facade.publishQuery(this.queryTerm, MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
+        } catch (RuntimeException ex) {
+            if (this.onError != null) {
+                this.onError.accept(ex);
+            }
+
+            log().error("Failed to publish query message", ex);
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

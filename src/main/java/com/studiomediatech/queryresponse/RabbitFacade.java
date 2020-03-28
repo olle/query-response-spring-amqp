@@ -119,12 +119,32 @@ public class RabbitFacade implements Logging {
     }
 
 
-    public RabbitTemplate getRabbitTemplate() {
+    /**
+     * Publishes a query to the Query/Response exchange, with the given routing key and message.
+     *
+     * @param  routingKey  query, or query-term to publish
+     * @param  message  to publish
+     *
+     * @throws  RuntimeException  if publishing failed
+     */
+    public void publishQuery(String routingKey, Message message) {
 
-        return this.template;
+        var m = MessageBuilder.fromMessage(message).setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT).build();
+
+        this.template.send(queriesExchange.getName(), routingKey, m);
+        log().info("|<-- Published query: {} - {}", routingKey, m);
     }
 
 
+    /**
+     * Publishes a response to the given exchange and routing key, with the provided response message.
+     *
+     * <p>Any {@link RuntimeException} failures are caught, logged and ignored.</p>
+     *
+     * @param  exchange  address
+     * @param  routingKey  address
+     * @param  message  to publish
+     */
     public void publishResponse(String exchange, String routingKey, Message message) {
 
         var m = MessageBuilder.fromMessage(message).setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT).build();

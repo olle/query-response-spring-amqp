@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 import java.time.Duration;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.verify;
 class QueryTest {
 
     @Mock
-    RabbitTemplate rabbit;
+    RabbitFacade facade;
 
     @Mock
     AbstractMessageListenerContainer listener;
@@ -47,8 +46,10 @@ class QueryTest {
         sut.waitingFor = Duration.ofMillis(123);
         sut.orDefaults = Collections::emptyList;
 
-        sut.publish(rabbit);
-        verify(rabbit).send(eq("queries"), eq("term"), message.capture());
+        sut.accept(facade);
+        verify(facade).publishQuery(eq("term"), message.capture());
+
+        assertThat(message.getValue()).isNotNull();
     }
 
 
@@ -61,7 +62,7 @@ class QueryTest {
                         .replaceAll("'", "\"").getBytes()).build();
         sut.onMessage(response);
 
-        assertThat(sut.publish(rabbit)).containsExactlyInAnyOrder("foo", "bar", "baz");
+        assertThat(sut.accept(facade)).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 
 
