@@ -47,7 +47,7 @@ class QueryRegistryTest {
 
 
     @Test
-    void ensureAcceptResponses() {
+    void ensureAcceptQueries() {
 
         var queries = new QueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
@@ -55,6 +55,6 @@ class QueryRegistryTest {
         new QueryRegistry(facade).accept(queries);
 
         verify(facade).declareQueue(Mockito.isA(Query.class));
-        verify(facade).addListener(Mockito.isA(Query.class));
+        verify(facade).createMessageListenerContainer(Mockito.isA(Query.class));
     }
 }

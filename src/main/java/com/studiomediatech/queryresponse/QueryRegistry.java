@@ -2,12 +2,16 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
+import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
+
 import org.springframework.beans.BeansException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 
@@ -20,6 +24,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
     protected static Supplier<QueryRegistry> instance = () -> null;
 
     private final RabbitFacade facade;
+    protected final Map<String, DirectMessageListenerContainer> containers = new HashMap<>();
 
     public QueryRegistry(RabbitFacade facade) {
 
@@ -67,12 +72,21 @@ class QueryRegistry implements ApplicationContextAware, Logging {
         var query = Query.from(queryBuilder);
 
         facade.declareQueue(query);
-        facade.addListener(query);
+
+        var listenerContainer = facade.createMessageListenerContainer(query);
+        containers.put(query.getQueueName(), listenerContainer);
 
         try {
             return query.accept(facade);
         } finally {
-            facade.removeListener(query);
+            removeListener(query);
         }
+    }
+
+
+    private <T> void removeListener(Query<T> query) {
+
+        containers.remove(query.getQueueName());
+        facade.removeQueue(query);
     }
 }

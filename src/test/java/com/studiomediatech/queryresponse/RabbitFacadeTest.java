@@ -12,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,19 +29,17 @@ class RabbitFacadeTest {
     @Mock
     RabbitTemplate template;
     @Mock
-    DirectMessageListenerContainer listener;
+    ConnectionFactory connectionFactory;
 
     @Captor
     ArgumentCaptor<Queue> queue;
-    @Captor
-    ArgumentCaptor<String> queueName;
     @Captor
     ArgumentCaptor<Binding> binding;
 
     @Test
     void ensureDeclaresQueueForQuery() {
 
-        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var query = new Query<>();
         sut.declareQueue(query);
@@ -58,27 +56,23 @@ class RabbitFacadeTest {
     @Test
     void ensureAddsListenerForQuery() {
 
-        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var query = new Query<>();
-        sut.addListener(query);
-
-        verify(listener).addQueueNames(queueName.capture());
-        assertThat(queueName.getValue()).isEqualTo(query.getQueueName());
-
-        verify(listener).setMessageListener(query);
+        var listenerContainer = sut.createMessageListenerContainer(query);
+        assertThat(listenerContainer.getQueueNames()).contains(query.getQueueName());
+        assertThat(listenerContainer.getMessageListener()).isSameAs(query);
     }
 
 
     @Test
     void ensureRemovesListenerForQuery() {
 
-        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var query = new Query<>();
-        sut.removeListener(query);
+        sut.removeQueue(query);
 
-        verify(listener).removeQueueNames(query.getQueueName());
         verify(admin).deleteQueue(query.getQueueName());
     }
 
@@ -86,7 +80,7 @@ class RabbitFacadeTest {
     @Test
     void ensureDeclaresQueueForResponse() {
 
-        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         sut.declareQueue(new Response<>(new ResponseBuilder<>("some-term")));
 
@@ -101,7 +95,7 @@ class RabbitFacadeTest {
     @Test
     void ensureDeclaresBindingForResponse() {
 
-        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var response = new Response<>(new ResponseBuilder<>("some-term"));
         sut.declareBinding(response);
@@ -117,14 +111,11 @@ class RabbitFacadeTest {
     @Test
     void ensureAddsListenerForResponse() {
 
-        var sut = new RabbitFacade(admin, template, listener, new TopicExchange("queries"));
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var response = new Response<>(new ResponseBuilder<>("some-term"));
-        sut.addListener(response);
-
-        verify(listener).addQueueNames(queueName.capture());
-        assertThat(queueName.getValue()).isEqualTo(response.getQueueName());
-
-        verify(listener).setMessageListener(response);
+        var listenerContainer = sut.createMessageListenerContainer(response);
+        assertThat(listenerContainer.getQueueNames()).contains(response.getQueueName());
+        assertThat(listenerContainer.getMessageListener()).isSameAs(response);
     }
 }
