@@ -1,6 +1,8 @@
 package com.studiomediatech.queryresponse;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 
 /**
@@ -26,7 +28,15 @@ public class ResponseBuilder<T> {
      */
     private int batchSize = 0;
 
-    private Collection<T> elements;
+    /**
+     * The supplier of a total count of elements that a responder may be able to respond with. Can either be explicitly
+     * provided during build-time, in order to allow for lazily supplied responses. For known collections the supplier
+     * provides {@link Collection#size()}.
+     */
+    private Supplier<Integer> totalSupplier;
+
+    private Collection<T> elementsCollection;
+    private Iterator<T> elementsIterator;
 
     // Declared protected, for access in unit tests.
     protected ResponseBuilder(String term) {
@@ -39,7 +49,8 @@ public class ResponseBuilder<T> {
     protected ResponseBuilder(String term, Collection<T> ts) {
 
         this(term);
-        this.elements = ts;
+        this.elementsCollection = ts;
+        this.totalSupplier = this.elementsCollection::size;
     }
 
     public static <T> ResponseBuilder<T> respondTo(String term) {
@@ -74,7 +85,8 @@ public class ResponseBuilder<T> {
             return;
         }
 
-        this.elements = Asserts.invariantResponseVarargsArray(ts);
+        this.elementsCollection = Asserts.invariantResponseVarargsArray(ts);
+        this.totalSupplier = this.elementsCollection::size;
 
         register();
     }
@@ -82,7 +94,17 @@ public class ResponseBuilder<T> {
 
     public void from(Collection<T> ts) {
 
-        this.elements = Asserts.invariantResponseCollection(ts);
+        this.elementsCollection = Asserts.invariantResponseCollection(ts);
+        this.totalSupplier = this.elementsCollection::size;
+
+        register();
+    }
+
+
+    public void from(Iterator<T> it, Supplier<Integer> total) {
+
+        this.elementsIterator = it;
+        this.totalSupplier = total;
 
         register();
     }
@@ -102,12 +124,24 @@ public class ResponseBuilder<T> {
 
     int getBatchSize() {
 
-        return batchSize;
+        return this.batchSize;
     }
 
 
-    Collection<T> getElements() {
+    Supplier<Integer> getTotalSupplier() {
 
-        return this.elements;
+        return this.totalSupplier;
+    }
+
+
+    Collection<T> getElementsCollection() {
+
+        return this.elementsCollection;
+    }
+
+
+    Iterator<T> getElementsIterator() {
+
+        return this.elementsIterator;
     }
 }
