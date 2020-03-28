@@ -46,7 +46,7 @@ class Responding implements CommandLineRunner {
 
         var authors = List.of(tolkien, lewis, asimov, gibson);
 
-        ResponseBuilder.respondTo("authors").withAll().from(authors);
+        ResponseBuilder.<Author>respondTo("authors").withAll().from(authors.iterator(), authors::size);
     }
 
 
