@@ -2,14 +2,19 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
+import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class RabbitFacade implements Logging {
@@ -19,6 +24,8 @@ public class RabbitFacade implements Logging {
     private final RabbitTemplate template;
 
     private TopicExchange queriesExchange;
+
+    protected final Map<String, DirectMessageListenerContainer> containers = new ConcurrentHashMap<>();
 
     public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, ConnectionFactory connectionFactory,
         TopicExchange queriesExchange) {
@@ -57,29 +64,49 @@ public class RabbitFacade implements Logging {
 
     private DirectMessageListenerContainer createNewListenerContainer() {
 
-        return new DirectMessageListenerContainer(connectionFactory);
+        DirectMessageListenerContainer container = new DirectMessageListenerContainer(connectionFactory);
+        container.setConsumersPerQueue(1);
+        container.setAcknowledgeMode(AcknowledgeMode.NONE);
+
+        return container;
     }
 
 
-    public DirectMessageListenerContainer createMessageListenerContainer(Response<?> response) {
+    public void addListener(Response<?> response) {
 
-        var listener = createNewListenerContainer();
-        listener.addQueueNames(response.getQueueName());
-        listener.setMessageListener(response);
-        listener.start();
-
-        return listener;
+        createMessageListenerContainer(response, response.getQueueName());
     }
 
 
-    public DirectMessageListenerContainer createMessageListenerContainer(Query<?> query) {
+    public void addListener(Query<?> query) {
 
-        var listener = createNewListenerContainer();
-        listener.addQueueNames(query.getQueueName());
-        listener.setMessageListener(query);
-        listener.start();
+        createMessageListenerContainer(query, query.getQueueName());
+    }
 
-        return listener;
+
+    public void removeListener(Query<?> query) {
+
+        DirectMessageListenerContainer container = containers.remove(query.getQueueName());
+
+        if (container != null) {
+            container.removeQueueNames(query.getQueueName());
+            container.stop();
+        }
+    }
+
+
+    private DirectMessageListenerContainer createMessageListenerContainer(MessageListener listener, String queueName) {
+
+        return containers.computeIfAbsent(queueName,
+                key -> {
+                    var container = createNewListenerContainer();
+
+                    container.addQueueNames(key);
+                    container.setMessageListener(listener);
+                    container.start();
+
+                    return container;
+                });
     }
 
 

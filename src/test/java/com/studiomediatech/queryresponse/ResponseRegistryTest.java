@@ -75,6 +75,6 @@ class ResponseRegistryTest {
 
         verify(facade).declareQueue(Mockito.isA(Response.class));
         verify(facade).declareBinding(Mockito.isA(Response.class));
-        verify(facade).createMessageListenerContainer(Mockito.isA(Response.class));
+        verify(facade).addListener(Mockito.isA(Response.class));
     }
 }

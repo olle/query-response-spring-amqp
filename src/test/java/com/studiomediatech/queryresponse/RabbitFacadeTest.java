@@ -59,9 +59,26 @@ class RabbitFacadeTest {
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var query = new Query<>();
-        var listenerContainer = sut.createMessageListenerContainer(query);
-        assertThat(listenerContainer.getQueueNames()).contains(query.getQueueName());
+        sut.addListener(query);
+
+        String queueName = query.getQueueName();
+        assertThat(sut.containers.containsKey(queueName));
+
+        var listenerContainer = sut.containers.get(queueName);
+        assertThat(listenerContainer.getQueueNames()).contains(queueName);
         assertThat(listenerContainer.getMessageListener()).isSameAs(query);
+    }
+
+
+    @Test
+    void ensureRemovesQueue() throws Exception {
+
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
+
+        var query = new Query<>();
+        sut.removeQueue(query);
+
+        verify(admin).deleteQueue(query.getQueueName());
     }
 
 
@@ -71,9 +88,15 @@ class RabbitFacadeTest {
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var query = new Query<>();
-        sut.removeQueue(query);
+        sut.addListener(query);
 
-        verify(admin).deleteQueue(query.getQueueName());
+        String queueName = query.getQueueName();
+        assertThat(sut.containers.containsKey(queueName));
+
+        sut.removeListener(query);
+        sut.removeListener(query); // Idempotent!
+
+        assertThat(!sut.containers.containsKey(queueName));
     }
 
 
@@ -114,8 +137,13 @@ class RabbitFacadeTest {
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
         var response = new Response<>(new ResponseBuilder<>("some-term"));
-        var listenerContainer = sut.createMessageListenerContainer(response);
-        assertThat(listenerContainer.getQueueNames()).contains(response.getQueueName());
+        sut.addListener(response);
+
+        String queueName = response.getQueueName();
+		assertThat(sut.containers.containsKey(queueName));
+
+        var listenerContainer = sut.containers.get(queueName);
+        assertThat(listenerContainer.getQueueNames()).contains(queueName);
         assertThat(listenerContainer.getMessageListener()).isSameAs(response);
     }
 }
