@@ -1,5 +1,7 @@
 package app;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
 
@@ -76,6 +78,7 @@ class Querying implements CommandLineRunner {
         new SpringApplicationBuilder(Querying.class).web(WebApplicationType.NONE).run(args);
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     static class Author {
 
         public String name;
