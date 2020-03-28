@@ -16,6 +16,8 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.Mockito.verify;
@@ -37,7 +39,7 @@ class ResponseTest {
     @DisplayName("after consuming a query message, a response is published")
     void ensurePublishesResponseOnConsumedQueryMessage() {
 
-        var sut = Response.valueOf(new ResponseBuilder<>("query-term"));
+        var sut = Response.valueOf(new ResponseBuilder<>("query-term", List.of("foo", "bar", "baz")));
         sut.subscribe(rabbit, listener);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();

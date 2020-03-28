@@ -34,6 +34,14 @@ public class ResponseBuilder<T> {
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
+
+    // Declared protected, for access in unit tests.
+    protected ResponseBuilder(String term, Collection<T> ts) {
+
+        this(term);
+        this.elements = ts;
+    }
+
     public static <T> ResponseBuilder<T> respondTo(String term) {
 
         return new ResponseBuilder<>(term);
@@ -56,8 +64,15 @@ public class ResponseBuilder<T> {
     }
 
 
+    @SuppressWarnings("unchecked")
     @SafeVarargs
     public final void from(T... ts) {
+
+        if (ts.length == 1 && ts[0] instanceof Collection) {
+            from((Collection<T>) ts[0]);
+
+            return;
+        }
 
         this.elements = Asserts.invariantResponseVarargsArray(ts);
 
