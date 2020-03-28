@@ -34,6 +34,14 @@ public class ResponseBuilder<T> {
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
+
+    // Declared protected, for access in unit tests.
+    protected ResponseBuilder(String term, Collection<T> ts) {
+
+        this(term);
+        this.elements = ts;
+    }
+
     public static <T> ResponseBuilder<T> respondTo(String term) {
 
         return new ResponseBuilder<>(term);

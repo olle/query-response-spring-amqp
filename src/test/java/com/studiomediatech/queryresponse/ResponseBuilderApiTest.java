@@ -31,9 +31,14 @@ public class ResponseBuilderApiTest {
 
     private static class Offers {
 
-        public static Collection<?> findAllOffersByDayOfWeek(int dayOfWeek) {
+        public static Collection<Offer> findAllOffersByDayOfWeek(int dayOfWeek) {
 
             return Collections.emptyList();
         }
+    }
+
+    static class Offer {
+
+        // OK
     }
 }

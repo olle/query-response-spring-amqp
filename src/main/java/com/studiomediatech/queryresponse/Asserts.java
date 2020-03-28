@@ -80,8 +80,14 @@ final class Asserts {
 
     public static <T> Collection<T> invariantResponseCollection(Collection<T> ts) {
 
-        if (ts == null || ts.contains(null)) {
+        if (ts == null) {
             throw new IllegalArgumentException("Responses cannot be null or contain null elements.");
+        }
+
+        for (T t : ts) {
+            if (t == null) {
+                throw new IllegalArgumentException("Responses cannot contain null elements.");
+            }
         }
 
         return ts;

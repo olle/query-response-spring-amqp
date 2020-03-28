@@ -112,7 +112,15 @@ class Response<T> implements MessageListener, Logging {
 
         PublishedResponseEnvelope(Collection<R> elements) {
 
-            this.elements = elements;
+            this.elements.addAll(elements);
+
+            /*
+             * TODO: When supporting batch-responses, the total and count must
+             *       of course reflect the expected total amount of published
+             *       response elements, and the count the current batch size.
+             */
+            this.count = this.elements.size();
+            this.total = this.elements.size();
         }
 
         @Override
