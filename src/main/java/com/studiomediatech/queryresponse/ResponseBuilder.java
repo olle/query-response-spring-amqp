@@ -56,8 +56,15 @@ public class ResponseBuilder<T> {
     }
 
 
+    @SuppressWarnings("unchecked")
     @SafeVarargs
     public final void from(T... ts) {
+
+        if (ts.length == 1 && ts[0] instanceof Collection) {
+            from((Collection<T>) ts[0]);
+
+            return;
+        }
 
         this.elements = Asserts.invariantResponseVarargsArray(ts);
 
