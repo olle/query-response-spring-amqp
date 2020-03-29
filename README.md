@@ -153,6 +153,8 @@ data.
   }
 ```
 
+Happy hacking!
+
 ---
 
 Spring is a trademark of Pivotal Software, Inc. in the U.S. and other countries.
