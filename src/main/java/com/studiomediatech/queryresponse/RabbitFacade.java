@@ -20,7 +20,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class RabbitFacade implements Logging {
+/**
+ * Provides an abstraction between the use of RabbitMQ and the capabilities in Spring Boot AMQP, and the client code in
+ * this library.
+ */
+class RabbitFacade implements Logging {
 
     private final RabbitAdmin admin;
     private final ConnectionFactory connectionFactory;

@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnClass(RabbitAutoConfiguration.class)
 @Import(RabbitAutoConfiguration.class)
-public class QueryResponseConfiguration implements Logging {
+class QueryResponseConfiguration implements Logging {
 
     @Bean
     RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate template, ConnectionFactory connectionFactory,
