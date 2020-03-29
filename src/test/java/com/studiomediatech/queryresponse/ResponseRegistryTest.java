@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.context.ApplicationContext;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,10 +46,17 @@ class ResponseRegistryTest {
     @Test
     void ensureThrowsOnMissingBean() {
 
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ResponseBuilder.<String>respondTo("some-query")
+            .withSink(capture::set)
+            .withAll()
+            .from("foo", "bar", "baz");
+
         assertThrows(IllegalStateException.class,
             () -> {
                 ResponseRegistry.instance = () -> null;
-                ResponseRegistry.register(new ResponseBuilder<>("foobar"));
+                ResponseRegistry.register(capture.get());
             });
     }
 
@@ -56,13 +65,19 @@ class ResponseRegistryTest {
     @Test
     void ensureInstanceIsInvokedOnRegister() {
 
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ResponseBuilder.<String>respondTo("some-query")
+            .withSink(capture::set)
+            .withAll()
+            .from("foo", "bar", "baz");
+
         var mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
 
-        ResponseBuilder<Object> responses = new ResponseBuilder<>("foobar");
-        new ResponseRegistry(null).register(responses);
+        new ResponseRegistry(null).register(capture.get());
 
-        verify(mock).accept(responses);
+        verify(mock).accept(capture.get());
 
         ResponseRegistry.instance = () -> null;
     }
@@ -71,7 +86,14 @@ class ResponseRegistryTest {
     @Test
     void ensureAcceptResponses() {
 
-        new ResponseRegistry(facade).accept(new ResponseBuilder<>("some-term"));
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ResponseBuilder.<String>respondTo("some-query")
+            .withSink(capture::set)
+            .withAll()
+            .from("foo", "bar", "baz");
+
+        new ResponseRegistry(facade).accept(capture.get());
 
         verify(facade).declareQueue(Mockito.isA(Response.class));
         verify(facade).declareBinding(Mockito.isA(Response.class));

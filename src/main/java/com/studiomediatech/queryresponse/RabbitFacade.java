@@ -9,6 +9,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -133,7 +134,7 @@ class RabbitFacade implements Logging {
      */
     public void publishQuery(String routingKey, Message message) {
 
-        var m = MessageBuilder.fromMessage(message).setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT).build();
+        var m = decorateMessage(message);
 
         this.template.send(queriesExchange.getName(), routingKey, m);
         log().info("|<-- Published query: {} - {}", routingKey, m);
@@ -151,7 +152,7 @@ class RabbitFacade implements Logging {
      */
     public void publishResponse(String exchange, String routingKey, Message message) {
 
-        var m = MessageBuilder.fromMessage(message).setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT).build();
+        var m = decorateMessage(message);
 
         try {
             this.template.send(exchange, routingKey, m);
@@ -159,5 +160,15 @@ class RabbitFacade implements Logging {
         } catch (RuntimeException e) {
             log().error("Failed to publish response", e);
         }
+    }
+
+
+    private Message decorateMessage(Message message) {
+
+        return MessageBuilder.fromMessage(message)
+            .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
+            .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+            .setContentLength(message.getBody().length)
+            .build();
     }
 }

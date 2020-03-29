@@ -2,6 +2,7 @@ package com.studiomediatech.queryresponse;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
@@ -14,6 +15,26 @@ import java.util.function.Supplier;
  * @param  <T>  the type of response entries or elements.
  */
 public class ResponseBuilder<T> {
+
+    enum Type {
+
+        /**
+         * Invariant type, for when the builder is not determined, in our case the default type after initialization.
+         */
+        UNKNOWN,
+
+        /**
+         * The direct response builder type, will provide and encapsulate the response elements in a collection that
+         * can be used <em>directly</em>. The available collection can be used over and over again, when publishing
+         * responses. Most typically this means use of heap-space. It is simple and works.
+         */
+        DIRECT;
+    }
+
+    /**
+     * Describes the type of this builder.
+     */
+    private Type type = Type.UNKNOWN;
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -38,28 +59,23 @@ public class ResponseBuilder<T> {
     private Collection<T> elementsCollection;
     private Iterator<T> elementsIterator;
 
-    // For testing
-    protected ResponseBuilder(String term) {
+    /**
+     * The protected sink, for this builder, allows us to apply our own consumer, for testing scenarios.
+     */
+    protected Consumer<ResponseBuilder<T>> sink = ResponseRegistry::register;
+
+    /**
+     * Constructs a response builder, with the given term to respond to.
+     *
+     * <p>NOTE: This is the only available constructor for a response builder. It is desirable to only provide the
+     * builder API, also for use in testing. Developers can use the {@link #withSink(Consumer)} method, to capture the
+     * builder, and avoid the call to the registry.</p>
+     *
+     * @param  term  to respond to
+     */
+    private ResponseBuilder(String term) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
-    }
-
-
-    // For testing
-    protected ResponseBuilder(String term, Collection<T> ts) {
-
-        this(term);
-        this.elementsCollection = ts;
-        this.totalSupplier = this.elementsCollection::size;
-    }
-
-
-    // For testing
-    protected ResponseBuilder(String term, Iterator<T> it, Supplier<Integer> total) {
-
-        this(term);
-        this.elementsIterator = it;
-        this.totalSupplier = total;
     }
 
     public static <T> ResponseBuilder<T> respondTo(String term) {
@@ -96,6 +112,7 @@ public class ResponseBuilder<T> {
 
         this.elementsCollection = Asserts.invariantResponseVarargsArray(ts);
         this.totalSupplier = this.elementsCollection::size;
+        this.type = Type.DIRECT;
 
         register();
     }
@@ -105,11 +122,21 @@ public class ResponseBuilder<T> {
 
         this.elementsCollection = Asserts.invariantResponseCollection(ts);
         this.totalSupplier = this.elementsCollection::size;
+        this.type = Type.DIRECT;
 
         register();
     }
 
 
+    /*
+     * This was a bad idea. The wrong idea. That was good to learn.
+     *
+     * Using an iterator, will only work for one-shot responses, since that API
+     * does not allow for the iterator to be reset on successive calls. The
+     * intent here is to support some mode (type) with less claim on the heap.
+     *
+     * Probably a suppler/provider mode.
+     */
     public void from(Iterator<T> it, Supplier<Integer> total) {
 
         this.elementsIterator = it;
@@ -121,11 +148,11 @@ public class ResponseBuilder<T> {
 
     private void register() {
 
-        ResponseRegistry.register(this);
+        sink.accept(this);
     }
 
 
-    String getTerm() {
+    String getRespondToTerm() {
 
         return this.respondToTerm;
     }
@@ -152,5 +179,40 @@ public class ResponseBuilder<T> {
     Iterator<T> getElementsIterator() {
 
         return this.elementsIterator;
+    }
+
+
+    Type getType() {
+
+        return this.type;
+    }
+
+
+    /**
+     * Replaces the current sink for this builder, effectively removing the {@link ResponseRegistry registry} and
+     * instead making the terminal operation to apply the builder on the given sink. For example:
+     *
+     * <pre>
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ResponseBuilder.respondTo("foobar")
+            .withSink(capture::set)
+            .withAll()
+            .from("hello", "world!");
+
+        assertThat(capture.get()).isNotNull();
+     * </pre>
+     *
+     * <p>This method is protected, in order to reduce visibility and only make it available to tests.</p>
+     *
+     * @param  sink  to consume this builder, in the terminal operation call to any {@code from(...)} method.
+     *
+     * @return  this builder, for chaining.
+     */
+    protected ResponseBuilder<T> withSink(Consumer<ResponseBuilder<T>> sink) {
+
+        this.sink = sink;
+
+        return this;
     }
 }

@@ -30,22 +30,30 @@ class Response<T> implements MessageListener, Logging {
 
     private static final ObjectWriter writer = new ObjectMapper().writer();
 
-    private final Collection<T> elementsCollection;
-    private final Iterator<T> elementsIterator;
-    private final Supplier<Integer> totalSupplier;
-
     private final String queueName;
     private final String routingKey;
 
+    private Collection<T> elementsCollection;
+    private Iterator<T> elementsIterator;
+    private Supplier<Integer> totalSupplier;
     private RabbitFacade facade;
 
+    // Visible to tests
+    protected Response(String queueName, String routingKey) {
+
+        this.queueName = queueName;
+        this.routingKey = routingKey;
+    }
+
+
+    // Visible to tests
     protected Response(ResponseBuilder<T> responses) {
+
+        this(UUID.randomUUID().toString(), responses.getRespondToTerm());
 
         this.elementsCollection = responses.getElementsCollection();
         this.elementsIterator = responses.getElementsIterator();
         this.totalSupplier = responses.getTotalSupplier();
-        this.queueName = UUID.randomUUID().toString();
-        this.routingKey = responses.getTerm();
     }
 
     @Override

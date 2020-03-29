@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,17 +17,14 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.ArgumentMatchers.eq;
 
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +40,14 @@ class ResponseTest {
     @DisplayName("after consuming a query message, a response is published")
     void ensurePublishesResponseOnConsumedQueryMessage() throws JSONException {
 
-        var sut = Response.valueOf(new ResponseBuilder<>("query-term", List.of("foo", "bar", "baz")));
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ResponseBuilder.<String>respondTo("some-query")
+            .withSink(capture::set)
+            .withAll()
+            .from("foo", "bar", "baz");
+
+        var sut = Response.valueOf(capture.get());
         sut.accept(facade);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
@@ -68,21 +71,18 @@ class ResponseTest {
     @DisplayName("response is built from iterator after a query message is consumed")
     void ensureCallsElementsIteratorAfterQueryConsumed() throws Exception {
 
-        var it = Mockito.mock(Iterator.class);
-        when(it.hasNext()).thenReturn(true, true, false);
-        when(it.next()).thenReturn("foo", "bar");
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        @SuppressWarnings("unchecked")
-        var sut = Response.valueOf(new ResponseBuilder<>("foo", it, () -> 42));
+        ResponseBuilder.<String>respondTo("some-query")
+            .withSink(capture::set)
+            .withAll()
+            .from(List.of("foo", "bar").iterator(), () -> 42);
+
+        var sut = Response.valueOf(capture.get());
         sut.accept(facade);
-
-        verifyNoInteractions(it);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
         sut.onMessage(query);
-
-        verify(it, atLeast(3)).hasNext();
-        verify(it, atLeast(2)).next();
 
         verify(facade).publishResponse(eq(""), eq("reply-to"), message.capture());
 
