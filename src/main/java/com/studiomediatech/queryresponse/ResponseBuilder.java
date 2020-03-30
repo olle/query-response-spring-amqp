@@ -16,15 +16,15 @@ import java.util.function.Supplier;
  */
 public class ResponseBuilder<T> {
 
-    enum Type {
+    enum Mode {
 
         /**
-         * Invariant type, for when the builder is not determined, in our case the default type after initialization.
+         * Invariant mode, for when the builder is not determined, in our case the default type after initialization.
          */
         UNKNOWN,
 
         /**
-         * The direct response builder type, will provide and encapsulate the response elements in a collection that
+         * The direct response builder mode, will provide and encapsulate the response elements in a collection that
          * can be used <em>directly</em>. The available collection can be used over and over again, when publishing
          * responses. Most typically this means use of heap-space. It is simple and works.
          */
@@ -32,9 +32,9 @@ public class ResponseBuilder<T> {
     }
 
     /**
-     * Describes the type of this builder.
+     * Describes the mode of this builder.
      */
-    private Type type = Type.UNKNOWN;
+    private Mode mode = Mode.UNKNOWN;
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -112,7 +112,7 @@ public class ResponseBuilder<T> {
 
         this.elementsCollection = Asserts.invariantResponseVarargsArray(ts);
         this.totalSupplier = this.elementsCollection::size;
-        this.type = Type.DIRECT;
+        this.mode = Mode.DIRECT;
 
         register();
     }
@@ -122,7 +122,7 @@ public class ResponseBuilder<T> {
 
         this.elementsCollection = Asserts.invariantResponseCollection(ts);
         this.totalSupplier = this.elementsCollection::size;
-        this.type = Type.DIRECT;
+        this.mode = Mode.DIRECT;
 
         register();
     }
@@ -182,9 +182,9 @@ public class ResponseBuilder<T> {
     }
 
 
-    Type getType() {
+    Mode getMode() {
 
-        return this.type;
+        return this.mode;
     }
 
 

@@ -56,7 +56,7 @@ class ResponseBuilderTest {
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(0);
         assertThat(b.getTotalSupplier().get()).isEqualTo(3);
-        assertThat(b.getType()).isEqualTo(ResponseBuilder.Type.DIRECT);
+        assertThat(b.getMode()).isEqualTo(ResponseBuilder.Mode.DIRECT);
     }
 
 
@@ -76,7 +76,7 @@ class ResponseBuilderTest {
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(0);
         assertThat(b.getTotalSupplier().get()).isEqualTo(3);
-        assertThat(b.getType()).isEqualTo(ResponseBuilder.Type.DIRECT);
+        assertThat(b.getMode()).isEqualTo(ResponseBuilder.Mode.DIRECT);
     }
 
 
@@ -96,7 +96,7 @@ class ResponseBuilderTest {
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(0);
         assertThat(b.getTotalSupplier().get()).isEqualTo(1);
-        assertThat(b.getType()).isEqualTo(ResponseBuilder.Type.DIRECT);
+        assertThat(b.getMode()).isEqualTo(ResponseBuilder.Mode.DIRECT);
     }
 
 
@@ -118,7 +118,7 @@ class ResponseBuilderTest {
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(0);
         assertThat(b.getTotalSupplier().get()).isEqualTo(3);
-        assertThat(b.getType()).isEqualTo(ResponseBuilder.Type.DIRECT);
+        assertThat(b.getMode()).isEqualTo(ResponseBuilder.Mode.DIRECT);
     }
 
 
@@ -138,7 +138,7 @@ class ResponseBuilderTest {
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(3);
         assertThat(b.getTotalSupplier().get()).isEqualTo(3);
-        assertThat(b.getType()).isEqualTo(ResponseBuilder.Type.DIRECT);
+        assertThat(b.getMode()).isEqualTo(ResponseBuilder.Mode.DIRECT);
     }
 
 
