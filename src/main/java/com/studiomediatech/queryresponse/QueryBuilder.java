@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -66,6 +67,11 @@ public final class QueryBuilder<T> {
      * during a query life-cycle.
      */
     private Consumer<Throwable> onError;
+
+    /**
+     * The target function, applied in the terminal method. Can be modified by {@link #withSink(Consumer)}.
+     */
+    private Function<QueryBuilder<T>, Collection<T>> sink = QueryRegistry::register;
 
     // Declared protected, for access in unit tests.
     protected QueryBuilder(String term, Class<T> type) {
@@ -254,7 +260,7 @@ public final class QueryBuilder<T> {
         // TODO: Assert query state, and pre-process for registering
         assertTakingAtMostAndAtLeast();
 
-        return QueryRegistry.register(this);
+        return sink.apply(this);
     }
 
 
@@ -309,5 +315,54 @@ public final class QueryBuilder<T> {
     Supplier<Throwable> getOrThrows() {
 
         return orThrows;
+    }
+
+
+    Integer getTakingAtMost() {
+
+        return takingAtMost;
+    }
+
+
+    Integer getTakingAtLeast() {
+
+        return takingAtLeast;
+    }
+
+
+    /**
+     * Replaces the current sink for this builder, effectively removing the {@link QueryRegistry registry} and instead
+     * making the terminal operation apply this builder on the provided consumer. Calling this method will
+     * short-circuit, and always return {@code null}. However the builder can be captured for tests, as in the example
+     * below:
+     *
+     * <pre>
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(123)
+            .orEmpty();
+
+        assertThat(capture.get()).isNotNull();
+     * </pre>
+     *
+     * <p>This method is protected, in order to reduce visibility and only make it available to tests.</p>
+     *
+     * @param  sink  to consume this builder, in the terminal operation call to any {@code orXYZ(..)} methods, and
+     *               return the results {@code null}.
+     *
+     * @return  this builder, for chaining.
+     */
+    protected QueryBuilder<T> withSink(Consumer<QueryBuilder<T>> sink) {
+
+        this.sink =
+            builder -> {
+            sink.accept(builder);
+
+            return null;
+        };
+
+        return this;
     }
 }

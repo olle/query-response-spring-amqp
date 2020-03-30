@@ -60,9 +60,9 @@ public class ResponseBuilder<T> {
     private Iterator<T> elementsIterator;
 
     /**
-     * The protected sink, for this builder, allows us to apply our own consumer, for testing scenarios.
+     * The target, used in the terminal operation. Can be modified from {@link #withSink(Consumer)}.
      */
-    protected Consumer<ResponseBuilder<T>> sink = ResponseRegistry::register;
+    private Consumer<ResponseBuilder<T>> sink = ResponseRegistry::register;
 
     /**
      * Constructs a response builder, with the given term to respond to.
