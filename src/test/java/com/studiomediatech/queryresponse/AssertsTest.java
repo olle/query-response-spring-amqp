@@ -137,4 +137,11 @@ class AssertsTest {
         assertThrows(IllegalArgumentException.class,
             () -> Asserts.invariantResponseVarargsArray(new String[] { "hello", null, "fake" }));
     }
+
+
+    @Test
+    void ensureThrowsOnNullSupplier() throws Exception {
+
+        assertThrows(IllegalArgumentException.class, () -> Asserts.invariantSupplier(null));
+    }
 }

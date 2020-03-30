@@ -76,7 +76,7 @@ class ResponseTest {
         ResponseBuilder.<String>respondTo("some-query")
             .withSink(capture::set)
             .withAll()
-            .from(List.of("foo", "bar").iterator(), () -> 42);
+            .from(() -> List.of("foo", "bar").iterator(), () -> 42);
 
         var sut = Response.valueOf(capture.get());
         sut.accept(facade);

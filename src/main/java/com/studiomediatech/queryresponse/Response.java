@@ -33,10 +33,10 @@ class Response<T> implements MessageListener, Logging {
     private final String queueName;
     private final String routingKey;
 
-    private Collection<T> elementsCollection;
-    private Iterator<T> elementsIterator;
-    private Supplier<Integer> totalSupplier;
     private RabbitFacade facade;
+
+    private Supplier<Iterator<T>> elements;
+    private Supplier<Integer> total;
 
     // Visible to tests
     protected Response(String queueName, String routingKey) {
@@ -51,9 +51,8 @@ class Response<T> implements MessageListener, Logging {
 
         this(UUID.randomUUID().toString(), responses.getRespondToTerm());
 
-        this.elementsCollection = responses.getElementsCollection();
-        this.elementsIterator = responses.getElementsIterator();
-        this.totalSupplier = responses.getTotalSupplier();
+        this.elements = responses.elements();
+        this.total = responses.total();
     }
 
     @Override
@@ -87,18 +86,14 @@ class Response<T> implements MessageListener, Logging {
 
         var response = new PublishedResponseEnvelope<T>();
 
-        if (this.elementsIterator != null) {
-            while (this.elementsIterator.hasNext()) {
-                response.elements.add(this.elementsIterator.next());
-            }
-        }
+        Iterator<T> it = this.elements.get();
 
-        if (this.elementsCollection != null) {
-            response.elements.addAll(this.elementsCollection);
+        while (it.hasNext()) {
+            response.elements.add(it.next());
         }
 
         response.count = response.elements.size();
-        response.total = this.totalSupplier.get();
+        response.total = this.total.get();
 
         return response;
     }

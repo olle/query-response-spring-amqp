@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 
 final class Asserts {
@@ -101,5 +102,15 @@ final class Asserts {
         }
 
         return invariantResponseCollection(Arrays.asList(ts));
+    }
+
+
+    public static <T> Supplier<T> invariantSupplier(Supplier<T> it) {
+
+        if (it == null) {
+            throw new IllegalArgumentException("Supplier cannot be null.");
+        }
+
+        return it;
     }
 }

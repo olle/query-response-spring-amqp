@@ -16,26 +16,6 @@ import java.util.function.Supplier;
  */
 public class ResponseBuilder<T> {
 
-    enum Mode {
-
-        /**
-         * Invariant mode, for when the builder is not determined, in our case the default type after initialization.
-         */
-        UNKNOWN,
-
-        /**
-         * The direct response builder mode, will provide and encapsulate the response elements in a collection that
-         * can be used <em>directly</em>. The available collection can be used over and over again, when publishing
-         * responses. Most typically this means use of heap-space. It is simple and works.
-         */
-        DIRECT;
-    }
-
-    /**
-     * Describes the mode of this builder.
-     */
-    private Mode mode = Mode.UNKNOWN;
-
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
      * the given query term. However, the query-term must conform to the AMQP routing-key rules and conventions (and is
@@ -54,10 +34,14 @@ public class ResponseBuilder<T> {
      * provided during build-time, in order to allow for lazily supplied responses. For known collections the supplier
      * provides {@link Collection#size()}.
      */
-    private Supplier<Integer> totalSupplier;
+    private Supplier<Integer> total;
 
-    private Collection<T> elementsCollection;
-    private Iterator<T> elementsIterator;
+    /**
+     * The supplier of the iterator, that provides elements for the built response. As the iterator may be lazily
+     * provided, it may be that neither the builder or the created response has any control over the collection backing
+     * the response.
+     */
+    private Supplier<Iterator<T>> elements;
 
     /**
      * The target, used in the terminal operation. Can be modified from {@link #withSink(Consumer)}.
@@ -110,9 +94,10 @@ public class ResponseBuilder<T> {
             return;
         }
 
-        this.elementsCollection = Asserts.invariantResponseVarargsArray(ts);
-        this.totalSupplier = this.elementsCollection::size;
-        this.mode = Mode.DIRECT;
+        var elements = Asserts.invariantResponseVarargsArray(ts);
+
+        this.elements = elements::iterator;
+        this.total = elements::size;
 
         register();
     }
@@ -120,27 +105,19 @@ public class ResponseBuilder<T> {
 
     public void from(Collection<T> ts) {
 
-        this.elementsCollection = Asserts.invariantResponseCollection(ts);
-        this.totalSupplier = this.elementsCollection::size;
-        this.mode = Mode.DIRECT;
+        var elements = Asserts.invariantResponseCollection(ts);
+
+        this.elements = elements::iterator;
+        this.total = elements::size;
 
         register();
     }
 
 
-    /*
-     * This was a bad idea. The wrong idea. That was good to learn.
-     *
-     * Using an iterator, will only work for one-shot responses, since that API
-     * does not allow for the iterator to be reset on successive calls. The
-     * intent here is to support some mode (type) with less claim on the heap.
-     *
-     * Probably a suppler/provider mode.
-     */
-    public void from(Iterator<T> it, Supplier<Integer> total) {
+    public void from(Supplier<Iterator<T>> elements, Supplier<Integer> total) {
 
-        this.elementsIterator = it;
-        this.totalSupplier = total;
+        this.elements = Asserts.invariantSupplier(elements);
+        this.total = Asserts.invariantSupplier(total);
 
         register();
     }
@@ -164,27 +141,15 @@ public class ResponseBuilder<T> {
     }
 
 
-    Supplier<Integer> getTotalSupplier() {
+    Supplier<Integer> total() {
 
-        return this.totalSupplier;
+        return this.total;
     }
 
 
-    Collection<T> getElementsCollection() {
+    Supplier<Iterator<T>> elements() {
 
-        return this.elementsCollection;
-    }
-
-
-    Iterator<T> getElementsIterator() {
-
-        return this.elementsIterator;
-    }
-
-
-    Mode getMode() {
-
-        return this.mode;
+        return this.elements;
     }
 
 
