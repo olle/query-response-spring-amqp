@@ -16,8 +16,10 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 import java.time.Duration;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,11 +58,17 @@ class QueryTest {
     @Test
     void ensureResponseIsConsumed() {
 
-        var sut = Query.from(QueryBuilder.queryFor("term", String.class).waitingFor(42));
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        var response = MessageBuilder.withBody(("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
-                        .replaceAll("'", "\"").getBytes()).build();
-        sut.onMessage(response);
+        QueryBuilder.queryFor("term", String.class)
+            .withSink(capture::set)
+            .waitingFor(1)
+            .orEmpty();
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
 
         assertThat(sut.accept(facade)).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
@@ -69,21 +77,69 @@ class QueryTest {
     @Test
     void ensureInvokesOnErrorHandler() throws Exception {
 
+        AtomicReference<QueryBuilder<Foo>> capture = new AtomicReference<>(null);
+
         CountDownLatch latch = new CountDownLatch(1);
 
-        var sut = Query.from(QueryBuilder.queryFor("term", Foo.class)
-                .waitingFor(42)
-                .onError(err -> {
+        QueryBuilder.queryFor("term", Foo.class)
+            .withSink(capture::set)
+            .waitingFor(42)
+            .onError(err -> {
                     assertThat(err).isInstanceOf(IllegalArgumentException.class);
                     assertThat(err.getMessage()).contains("Failed to parse response to elements of type Foo");
                     latch.countDown();
-                }));
+                })
+            .orEmpty();
 
-        var response = MessageBuilder.withBody(("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
-                        .replaceAll("'", "\"").getBytes()).build();
-        sut.onMessage(response);
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(latch.await(3L, TimeUnit.SECONDS)).isTrue();
+        assertThat(latch.await(123L, TimeUnit.MILLISECONDS)).isTrue();
+    }
+
+
+    @Test
+    void ensureReturnsDefaultsForLessThanAtLeast() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(1)
+            .takingAtLeast(5)
+            .orDefaults(List.of("hello", "world"));
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        assertThat(sut.accept(facade)).containsExactlyInAnyOrder("hello", "world");
+    }
+
+
+    @Test
+    void ensureReturnsOnlyAtMostWhenConsumed() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(1234)
+            .takingAtMost(3)
+            .orEmpty();
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        assertThat(sut.accept(facade)).containsExactly("hello", "world", "again");
     }
 
     static class Foo {

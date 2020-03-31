@@ -18,9 +18,8 @@ import java.time.Duration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -33,23 +32,26 @@ import java.util.function.Supplier;
  */
 class Query<T> implements MessageListener, Logging {
 
+    private static final long ONE_MILLIS = 1L;
+
     private static final ObjectReader reader = new ObjectMapper().reader();
 
-    // TODO: Concurrency and aggregation, perhaps rather use a queue.
-    private final AtomicReference<Collection<T>> results;
     private final String queueName;
+    private final List<T> elements;
 
     protected String queryTerm;
     protected Class<T> responseType;
     protected Duration waitingFor;
     protected Supplier<Collection<T>> orDefaults;
     protected Consumer<Throwable> onError;
+    protected Integer atLeast;
+    protected Integer atMost;
 
     // Declared protected, for access in unit tests.
     protected Query() {
 
-        this.results = new AtomicReference<>(Collections.emptyList());
         this.queueName = UUID.randomUUID().toString();
+        this.elements = new ArrayList<>();
     }
 
     @Override
@@ -90,7 +92,7 @@ class Query<T> implements MessageListener, Logging {
             return;
         }
 
-        results.set(envelope.elements);
+        elements.addAll(envelope.elements);
     }
 
 
@@ -103,6 +105,8 @@ class Query<T> implements MessageListener, Logging {
         query.waitingFor = queryBuilder.getWaitingFor();
         query.orDefaults = queryBuilder.getOrDefaults();
         query.onError = queryBuilder.getOnError();
+        query.atLeast = queryBuilder.getTakingAtLeast();
+        query.atMost = queryBuilder.getTakingAtMost();
 
         return query;
     }
@@ -118,28 +122,45 @@ class Query<T> implements MessageListener, Logging {
 
         publishQuery(facade);
 
-        try {
-            Thread.sleep(this.waitingFor.toMillis());
-        } catch (InterruptedException e) {
-            // TODO: Apply to provided onError-handler
-            e.printStackTrace();
+        var wait = this.waitingFor.toMillis();
+
+        while (wait-- > 0) {
+            if (atMost != null && atMost > 0 && elements.size() >= atMost) {
+                return this.elements.subList(0, atMost);
+            }
+
+            try {
+                Thread.sleep(ONE_MILLIS);
+            } catch (InterruptedException e) {
+                if (onError != null) {
+                    onError.accept(new IllegalArgumentException(e));
+                }
+            }
         }
 
-        if (results.get().isEmpty()) {
+        if (elements.isEmpty()) {
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
             }
             // TODO: Or throws, etc.
         }
 
-        return results.get();
+        if (atLeast != null && atLeast > 0 && elements.size() < atLeast) {
+            if (this.orDefaults != null) {
+                return this.orDefaults.get();
+            }
+            // TODO: Or throws, etc.
+        }
+
+        return elements;
     }
 
 
     private void publishQuery(RabbitFacade facade) {
 
         try {
-            facade.publishQuery(this.queryTerm, MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
+            facade.publishQuery(this.queryTerm,
+                MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
         } catch (RuntimeException ex) {
             if (this.onError != null) {
                 this.onError.accept(ex);

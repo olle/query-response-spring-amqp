@@ -42,7 +42,7 @@ class Querying implements CommandLineRunner {
         var defaults = List.of("Neuromancer", "I, Robot");
 
         var results = QueryBuilder.queryFor("books/sci-fi", String.class)
-                .waitingFor(888)
+                .waitingFor(2000)
                 .orDefaults(defaults);
 
         LOG.info("Results were: {} {}", results, results.equals(defaults) ? "(defaults)" : "");
