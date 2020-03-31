@@ -154,7 +154,10 @@ class Query<T> implements MessageListener, Logging {
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
             }
-            // TODO: Or throws, etc.
+
+            if (this.orThrows != null) {
+                throw this.orThrows.get();
+            }
         }
 
         return elements;
