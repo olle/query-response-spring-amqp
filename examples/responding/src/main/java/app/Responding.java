@@ -9,7 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 
 @SpringBootApplication
@@ -46,7 +50,16 @@ class Responding implements CommandLineRunner {
 
         var authors = List.of(tolkien, lewis, asimov, gibson);
 
-        ResponseBuilder.<Author>respondTo("authors").withAll().from(authors::iterator, authors::size);
+        AtomicInteger total = new AtomicInteger(authors.size());
+
+        Supplier<Iterator<Author>> it = () -> {
+            var as = authors.subList(0, ThreadLocalRandom.current().nextInt(1, authors.size()));
+            total.set(as.size());
+
+            return as.iterator();
+        };
+
+        ResponseBuilder.<Author>respondTo("authors").withAll().from(it, total::get);
     }
 
 
