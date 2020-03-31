@@ -1,5 +1,6 @@
 package com.studiomediatech.queryresponse;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -101,7 +102,7 @@ class QueryTest {
 
 
     @Test
-    void ensureReturnsDefaultsForLessThanAtLeast() throws Exception {
+    void ensureReturnsDefaultsForLessThanAtLeast() {
 
         AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
 
@@ -121,7 +122,7 @@ class QueryTest {
 
 
     @Test
-    void ensureReturnsOnlyAtMostWhenConsumed() throws Exception {
+    void ensureReturnsOnlyAtMostWhenConsumed() {
 
         AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
 
@@ -140,6 +141,27 @@ class QueryTest {
                         .replaceAll("'", "\"").getBytes()).build());
 
         assertThat(sut.accept(facade)).containsExactly("hello", "world", "again");
+    }
+
+
+    @Test
+    void ensureThrowsWhenOrThrowsIsSet() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(1)
+            .orThrow(TimeoutOrThrowsException::new);
+
+        var sut = Query.from(capture.get());
+
+        Assertions.assertThrows(TimeoutOrThrowsException.class, () -> sut.accept(facade));
+    }
+
+    static class TimeoutOrThrowsException extends RuntimeException {
+
+        private static final long serialVersionUID = 1L;
     }
 
     static class Foo {

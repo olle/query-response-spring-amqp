@@ -46,6 +46,7 @@ class Query<T> implements MessageListener, Logging {
     protected Consumer<Throwable> onError;
     protected Integer atLeast;
     protected Integer atMost;
+    protected Supplier<RuntimeException> orThrows;
 
     // Declared protected, for access in unit tests.
     protected Query() {
@@ -107,6 +108,7 @@ class Query<T> implements MessageListener, Logging {
         query.onError = queryBuilder.getOnError();
         query.atLeast = queryBuilder.getTakingAtLeast();
         query.atMost = queryBuilder.getTakingAtMost();
+        query.orThrows = queryBuilder.getOrThrows();
 
         return query;
     }
@@ -118,7 +120,7 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    public Collection<T> accept(RabbitFacade facade) {
+    public Collection<T> accept(RabbitFacade facade) throws RuntimeException {
 
         publishQuery(facade);
 
@@ -142,7 +144,10 @@ class Query<T> implements MessageListener, Logging {
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
             }
-            // TODO: Or throws, etc.
+
+            if (this.orThrows != null) {
+                throw this.orThrows.get();
+            }
         }
 
         if (atLeast != null && atLeast > 0 && elements.size() < atLeast) {

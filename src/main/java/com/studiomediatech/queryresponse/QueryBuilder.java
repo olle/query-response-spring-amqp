@@ -50,7 +50,7 @@ public final class QueryBuilder<T> {
     /**
      * Optionally supplies a throwable, that is emitted if the query is not fulfilled.
      */
-    private Supplier<Throwable> orThrows;
+    private Supplier<RuntimeException> orThrows;
 
     /**
      * Defines the upper bounds predicate for a query, may be {@code null}.
@@ -240,7 +240,7 @@ public final class QueryBuilder<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public Collection<T> orThrow(Supplier<Throwable> throwable) {
+    public Collection<T> orThrow(Supplier<RuntimeException> throwable) {
 
         this.orThrows = throwable;
 
@@ -312,7 +312,7 @@ public final class QueryBuilder<T> {
     }
 
 
-    Supplier<Throwable> getOrThrows() {
+    Supplier<RuntimeException> getOrThrows() {
 
         return orThrows;
     }

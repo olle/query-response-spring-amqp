@@ -141,7 +141,7 @@ class QueryBuilderTest {
 
         AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        Supplier<Throwable> throwable = RuntimeException::new;
+        Supplier<RuntimeException> throwable = RuntimeException::new;
 
         QueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)

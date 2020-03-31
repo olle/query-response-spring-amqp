@@ -62,7 +62,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
     /*
      * Declared protected, for access in unit-tests.
      */
-    protected <T> Collection<T> accept(QueryBuilder<T> queryBuilder) {
+    protected <T> Collection<T> accept(QueryBuilder<T> queryBuilder) throws RuntimeException {
 
         var query = Query.from(queryBuilder);
 
