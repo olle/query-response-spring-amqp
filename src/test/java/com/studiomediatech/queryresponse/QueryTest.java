@@ -164,6 +164,49 @@ class QueryTest {
 
 
     @Test
+    void ensureReturnsOnlyExactlyAtMostWhenConsumed() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(1234)
+            .takingAtMost(6)
+            .orEmpty();
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        assertThat(sut.accept(facade)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
+    }
+
+
+    @Test
+    void ensureReturnsAllBelowAtMost() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(1)
+            .takingAtMost(6)
+            .orEmpty();
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        assertThat(sut.accept(facade)).containsExactly("hello", "world");
+    }
+
+
+    @Test
     void ensureThrowsWhenOrThrowsIsSetAndTimeout() throws Exception {
 
         AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
@@ -199,6 +242,29 @@ class QueryTest {
                         .replaceAll("'", "\"").getBytes()).build());
 
         Assertions.assertThrows(AtLeastOrThrowsException.class, () -> sut.accept(facade));
+    }
+
+
+    @Test
+    void ensureSuccessWhenMoreThanAtLeastConsumed() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(123)
+            .takingAtLeast(5)
+            .orThrow(AtLeastOrThrowsException::new);
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        assertThat(sut.accept(facade)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
     }
 
     static class TimeoutOrThrowsException extends RuntimeException {

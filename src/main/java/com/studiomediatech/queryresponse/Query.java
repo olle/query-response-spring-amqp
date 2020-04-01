@@ -140,22 +140,13 @@ class Query<T> implements MessageListener, Logging {
             }
         }
 
-        if (elements.isEmpty()) {
+        boolean noResponses = elements.isEmpty();
+        boolean notEnoughResponses = atLeast > 0 && elements.size() < atLeast;
+
+        if (noResponses || notEnoughResponses) {
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
-            }
-
-            if (this.orThrows != null) {
-                throw this.orThrows.get();
-            }
-        }
-
-        if (atLeast > 0 && elements.size() < atLeast) {
-            if (this.orDefaults != null) {
-                return this.orDefaults.get();
-            }
-
-            if (this.orThrows != null) {
+            } else if (this.orThrows != null) {
                 throw this.orThrows.get();
             }
         }
