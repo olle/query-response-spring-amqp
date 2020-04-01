@@ -112,11 +112,12 @@ class RabbitFacadeTest {
 
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
-        sut.declareQueue(new Response<>("some-queue-name", "some-routing-key"));
+        Response<Object> response = new Response<>("some-routing-key");
+        sut.declareQueue(response);
 
         verify(admin).declareQueue(queue.capture());
 
-        assertThat(queue.getValue().getName()).isEqualTo("some-queue-name");
+        assertThat(queue.getValue().getName()).isEqualTo(response.getQueueName());
         assertThat(queue.getValue().isDurable()).isFalse();
         assertThat(queue.getValue().isExclusive()).isTrue();
         assertThat(queue.getValue().isAutoDelete()).isTrue();
@@ -128,7 +129,7 @@ class RabbitFacadeTest {
 
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
-        var response = new Response<>("queue-name", "some-term");
+        var response = new Response<>("some-term");
         sut.declareBinding(response);
 
         verify(admin).declareBinding(binding.capture());
@@ -144,7 +145,7 @@ class RabbitFacadeTest {
 
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
-        var response = new Response<>("some-queue", "some-term");
+        var response = new Response<>("some-term");
         sut.addListener(response);
 
         String queueName = response.getQueueName();

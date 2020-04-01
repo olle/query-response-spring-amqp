@@ -46,7 +46,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
 
     protected <T> void accept(ResponseBuilder<T> responses) {
 
-        var response = Response.valueOf(responses);
+        var response = Response.from(responses);
 
         facade.declareQueue(response);
         facade.declareBinding(response);

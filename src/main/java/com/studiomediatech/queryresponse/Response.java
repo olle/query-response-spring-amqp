@@ -39,20 +39,10 @@ class Response<T> implements MessageListener, Logging {
     private Supplier<Integer> total;
 
     // Visible to tests
-    protected Response(String queueName, String routingKey) {
+    protected Response(String routingKey) {
 
-        this.queueName = queueName;
+        this.queueName = UUID.randomUUID().toString();
         this.routingKey = routingKey;
-    }
-
-
-    // Visible to tests
-    protected Response(ResponseBuilder<T> responses) {
-
-        this(UUID.randomUUID().toString(), responses.getRespondToTerm());
-
-        this.elements = responses.elements();
-        this.total = responses.total();
     }
 
     @Override
@@ -99,9 +89,14 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Response<T> valueOf(ResponseBuilder<T> responses) {
+    static <T> Response<T> from(ResponseBuilder<T> responses) {
 
-        return new Response<>(responses);
+        Response<T> response = new Response<>(responses.getRespondToTerm());
+
+        response.elements = responses.elements();
+        response.total = responses.total();
+
+        return response;
     }
 
 

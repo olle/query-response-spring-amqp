@@ -47,7 +47,7 @@ class ResponseTest {
             .withAll()
             .from("foo", "bar", "baz");
 
-        var sut = Response.valueOf(capture.get());
+        var sut = Response.from(capture.get());
         sut.accept(facade);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
@@ -78,7 +78,7 @@ class ResponseTest {
             .withAll()
             .from(() -> List.of("foo", "bar").iterator(), () -> 42);
 
-        var sut = Response.valueOf(capture.get());
+        var sut = Response.from(capture.get());
         sut.accept(facade);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
