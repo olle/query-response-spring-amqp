@@ -55,12 +55,12 @@ public final class QueryBuilder<T> {
     /**
      * Defines the upper bounds predicate for a query, may be {@code null}.
      */
-    private Integer takingAtMost;
+    private int takingAtMost;
 
     /**
      * Defines the lower bounds predicate for a query, may be {@code null}.
      */
-    private Integer takingAtLeast;
+    private int takingAtLeast;
 
     /**
      * An optional consumer of an {@link Throwable throwable}, allowing clients to inspect any failures occurring
@@ -318,13 +318,13 @@ public final class QueryBuilder<T> {
     }
 
 
-    Integer getTakingAtMost() {
+    int getTakingAtMost() {
 
         return takingAtMost;
     }
 
 
-    Integer getTakingAtLeast() {
+    int getTakingAtLeast() {
 
         return takingAtLeast;
     }

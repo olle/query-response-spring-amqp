@@ -44,8 +44,8 @@ class Query<T> implements MessageListener, Logging {
     protected Duration waitingFor;
     protected Supplier<Collection<T>> orDefaults;
     protected Consumer<Throwable> onError;
-    protected Integer atLeast;
-    protected Integer atMost;
+    protected int atLeast;
+    protected int atMost;
     protected Supplier<RuntimeException> orThrows;
 
     // Declared protected, for access in unit tests.
@@ -127,7 +127,7 @@ class Query<T> implements MessageListener, Logging {
         var wait = this.waitingFor.toMillis();
 
         while (wait-- > 0) {
-            if (atMost != null && atMost > 0 && elements.size() >= atMost) {
+            if (atMost > 0 && elements.size() >= atMost) {
                 return this.elements.subList(0, atMost);
             }
 
@@ -150,7 +150,7 @@ class Query<T> implements MessageListener, Logging {
             }
         }
 
-        if (atLeast != null && atLeast > 0 && elements.size() < atLeast) {
+        if (atLeast > 0 && elements.size() < atLeast) {
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
             }

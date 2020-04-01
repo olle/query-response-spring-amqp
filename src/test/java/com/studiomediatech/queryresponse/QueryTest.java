@@ -102,6 +102,25 @@ class QueryTest {
 
 
     @Test
+    void ensureIgnoresErrorIfNoHandler() throws Exception {
+
+        AtomicReference<QueryBuilder<Foo>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("term", Foo.class)
+            .withSink(capture::set)
+            .waitingFor(1)
+            .orEmpty();
+
+        var sut = Query.from(capture.get());
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        assertThat(sut.accept(facade)).isEmpty();
+    }
+
+
+    @Test
     void ensureReturnsDefaultsForLessThanAtLeast() {
 
         AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
