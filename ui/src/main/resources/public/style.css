@@ -11,28 +11,32 @@ html {
   --bg: #f3f2eb;
   --bg-hover: rgba(123, 154, 255, 0.07);
   --fg: rgba(0, 0, 0, 0.8);
+  --fg-light: rgba(0, 0, 0, 0.4);
   --link: rgba(50, 121, 187, 0.925);
   --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
-  --border: rgba(0, 0, 0, 0.2);
-  --success: #73b89d;
+  --border: rgba(182, 182, 182, 0.424);
+  --success: #64ac90;
   --warning: #ffba4c;
   --error: #fc4979;
   --bold: 600;
-  --bold-letter-spacing: .1rem;
+  --thin: 400;
+  --bold-letter-spacing: 0.1rem;
 }
 
 [data-theme="dark"] {
-  --bg: hsl(312, 8%, 24%);
+  --bg: hsl(330, 10%, 23%);
   --bg-hover: rgba(212, 222, 255, 0.07);
   --fg: rgba(255, 255, 250, 0.9);
+  --fg-light: rgba(255, 255, 250, 0.5);
   --link: rgba(50, 121, 187, 0.925);
-  --link-high-contrast: rgb(95, 165, 231);
-  --panel: hsl(180, 1%, 38%);
-  --border: rgba(0, 0, 0, 0.5);
+  --link-high-contrast: rgb(104, 176, 243);
+  --panel: hsl(30, 1%, 38%);
+  --border: rgba(0, 0, 0, 0.3);
   --error: #f04f7a;
   --bold: 400;
-  --bold-letter-spacing: .127rem;
+  --thin: 300;
+  --bold-letter-spacing: 0.127rem;
 }
 
 [data-theme="dark"] .icon-tabler {
@@ -54,6 +58,8 @@ a {
   color: var(--link);
 }
 
+/* LAYOUT ------------------------------------------------------------------- */
+
 nav {
   position: fixed;
   z-index: 2;
@@ -68,6 +74,18 @@ nav {
   justify-content: space-between;
   overflow-y: auto;
 }
+
+main {
+  position: fixed;
+  left: 5rem;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.2rem;
+  overflow-y: scroll;
+}
+
+/* NAVIGATION --------------------------------------------------------------- */
 
 nav > ul {
   width: 100%;
@@ -96,16 +114,12 @@ nav > ul > li.active {
   fill: var(--link-high-contrast);
 }
 nav > ul > li > h2 {
-  font-size: .5rem;
+  font-size: 0.5rem;
   text-transform: uppercase;
   font-weight: 600;
 }
 
-main {
-  position: relative;
-  padding-left: 5rem;
-  margin: 1.2rem;
-}
+/* COLOR DEMO --------------------------------------------------------------- */
 
 .color {
   display: inline-block;
@@ -114,7 +128,6 @@ main {
   border-radius: 50%;
   margin: 0.3rem;
 }
-
 .color-fg {
   background: var(--fg);
 }
@@ -135,6 +148,7 @@ main {
 }
 
 /* TYPOGRAPHY --------------------------------------------------------------- */
+
 h1,
 h2,
 h3,
@@ -142,7 +156,7 @@ h4,
 h5,
 h6 {
   margin-top: 0;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-weight: normal;
 }
 
@@ -152,6 +166,48 @@ h1 {
   letter-spacing: var(--bold-letter-spacing);
   font-weight: var(--bold);
 }
-h2, h3, h4, h5, h6 {
-  font-size: 1rem;
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: var(--bold);
+}
+
+h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: var(--thin);
+  color: var(--fg-light);
+  letter-spacing: var(--bold-letter-spacing);
+  margin-bottom: 0.2rem;
+}
+
+h4,
+h5,
+h6 {
+  font-size: 0.9rem;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+/* SECTIONS ----------------------------------------------------------------- */
+
+main > article > section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 1rem;
+}
+
+main > article > section > data,
+main > article > section > time {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--success);
+}
+main > article > section > data.big,
+main > article > section > time.big {
+  font-size: 2rem;
+  font-weight: var(--bold);
 }
