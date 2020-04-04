@@ -15,7 +15,7 @@ html {
   --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
   --border: rgba(0, 0, 0, 0.2);
-  --success: #73B89D;
+  --success: #73b89d;
   --warning: #ffba4c;
   --error: #fc4979;
 }
@@ -28,7 +28,11 @@ html {
   --link-high-contrast: rgb(95, 165, 231);
   --panel: hsl(180, 1%, 38%);
   --border: rgba(0, 0, 0, 0.5);
-  --error: #f04f7a;  
+  --error: #f04f7a;
+}
+
+[data-theme="dark"] .icon-tabler {
+  stroke-width: 1.6;
 }
 
 body {
@@ -83,6 +87,10 @@ nav > ul > li:active {
   color: var(--link-high-contrast);
   fill: var(--link-high-contrast);
 }
+nav > ul > li.active {
+  color: var(--link-high-contrast);
+  fill: var(--link-high-contrast);
+}
 
 main {
   position: relative;
@@ -115,4 +123,16 @@ main {
 }
 .color-error {
   background: var(--error);
+}
+
+/* TYPOGRAPHY --------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-weight: normal;
 }

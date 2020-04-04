@@ -32,13 +32,17 @@ Query/Response UI application is served at http://localhost:8080 by default.
 > * `SPRING_RABBITMQ_USERNAME`
 > * `SPRING_RABBITMQ_PASSWORD`.
 
-Developing
-----------
+Development
+-----------
 
 The Query/Response UI is mostly a _thick client_ or Single Page Application
 SPA. However, at the time of writing, it is built using HTML, CSS and ES6 JS.
 To access the client you can use the `make dev` target, and browse to
 http://localhost:3000. The resources are in `src/main/resources/public`.
+
+![Light Theme](light.png)
+
+![Dark Theme](dark.png)
 
 Happy hacking!
 
