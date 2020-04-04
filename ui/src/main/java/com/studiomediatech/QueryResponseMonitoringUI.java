@@ -1,28 +1,32 @@
 package com.studiomediatech;
 
-import com.studiomediatech.queryresponse.QueryResponseConfiguration;
+import com.studiomediatech.queryresponse.EnableQueryResponse;
+import com.studiomediatech.queryresponse.QueryBuilder;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 
 @SpringBootApplication
-@Import(QueryResponseConfiguration.class)
-class QueryResponseMonitoringUI implements CommandLineRunner {
-
-    @Override
-    public void run(String... args) throws Exception {
-
-        System.out.println("BYE!");
-    }
-
+@EnableQueryResponse
+@EnableScheduling
+class QueryResponseMonitoringUI {
 
     public static void main(String[] args) {
 
-        new SpringApplicationBuilder(QueryResponseMonitoringUI.class).web(WebApplicationType.NONE).run(args);
+        SpringApplication.run(QueryResponseMonitoringUI.class);
+    }
+
+
+    @Scheduled(fixedDelay = 1000 * 20)
+    void query() {
+
+        QueryBuilder.queryFor("query-response/stats", Object.class)
+            .waitingFor(6000)
+            .orEmpty()
+            .forEach(obj -> System.out.println("Got this: " + obj));
     }
 }
