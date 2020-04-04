@@ -9,23 +9,29 @@ html {
 
 :root {
   --bg: #f3f2eb;
-  --fg: rgba(0, 0, 0, .8);
+  --fg: rgba(0, 0, 0, 0.8);
   --link: hsla(221, 69%, 51%, 1);
+  --link-high-contrast: var(--link);
   --panel: #fff;
-  --border: rgba(0, 0, 0, .1);
+  --border: rgba(0, 0, 0, 0.1);
+  --success: rgb(57, 179, 114);
+  --warning: hsl(37, 100%, 56%);
+  --error: rgb(243, 33, 103);
 }
 
 [data-theme="dark"] {
   --bg: hsl(312, 8%, 24%);
-  --fg: rgba(255, 255, 250, .9);
+  --fg: rgba(255, 255, 250, 0.9);
   --link: rgb(82, 129, 230);
+  --link-high-contrast: rgb(117, 187, 251);
   --panel: hsl(180, 1%, 38%);
-  --border: rgba(0, 0, 0, .5);
+  --border: rgba(0, 0, 0, 0.5);
 }
 
 body {
   background: var(--bg);
   color: var(--fg);
+  fill: var(--fg);
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -65,10 +71,44 @@ nav > ul > li {
   padding: 1rem;
   text-align: center;
   cursor: pointer;
+  color: var(--fg);
+  fill: var(--fg);
+}
+nav > ul > li:hover,
+nav > ul > li:active {
+  color: var(--link-high-contrast);
+  fill: var(--link-high-contrast);
 }
 
 main {
   position: relative;
   padding-left: 5rem;
   margin: 1.2rem;
+}
+
+.color {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  margin: 0.3rem;
+}
+
+.color-fg {
+  background: var(--fg);
+}
+.color-link {
+  background: var(--link);
+}
+.color-link-hi-c {
+  background: var(--link-high-contrast);
+}
+.color-success {
+  background: var(--success);
+}
+.color-warning {
+  background: var(--warning);
+}
+.color-error {
+  background: var(--error);
 }
