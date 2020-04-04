@@ -52,6 +52,7 @@ body {
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   font-size: 130%;
+  overflow-x: scroll;
 }
 
 a {
@@ -168,17 +169,17 @@ h1 {
 }
 
 h2 {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: var(--bold);
 }
 
 h3 {
-  font-size: 0.9rem;
+  font-size: 0.76rem;
   text-transform: uppercase;
   font-weight: var(--thin);
   color: var(--fg-light);
   letter-spacing: var(--bold-letter-spacing);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0;
 }
 
 h4,
@@ -197,13 +198,12 @@ p {
 main > article > section {
   background: var(--panel);
   border: 1px solid var(--border);
-  padding: 1rem;
+  padding: 0.8rem 1rem;
 }
 
 main > article > section > data,
 main > article > section > time {
   display: inline-block;
-  margin-bottom: 1rem;
   color: var(--success);
 }
 main > article > section > data.big,
@@ -211,3 +211,49 @@ main > article > section > time.big {
   font-size: 2rem;
   font-weight: var(--bold);
 }
+
+/* OVERVIEW ----------------------------------------------------------------- */
+
+section.overview {
+  min-width: 37rem;
+  display: grid;
+  grid-template-columns: 5rem 2fr 2rem 2fr 5rem 2fr;
+  column-gap: 2rem;
+  grid-template-rows: 1.7rem 3rem repeat(3, 2rem);
+  grid-template-areas:
+    ". . . . . ."
+    ". . . . . ."
+    "l1a v1a l2a v2a l3a v3a"
+    "l1b v1b l2b v2b l3b v3b"
+    "l1c v1c . . . ."
+  ;
+}
+section.overview > h2 {
+  grid-row-start: 1;
+  grid-column-start: span 2;
+  white-space: nowrap;
+}
+section.overview > .big {
+  grid-row-start: 2;
+  grid-column-start: span 2;
+}
+section.overview > h3,
+section.overview > data:not(.big),
+section.overview > time:not(.big) {
+  align-self: center;
+}
+section.overview > h3:nth-of-type(1) { grid-area: l1a; }
+section.overview > h3:nth-of-type(2) { grid-area: l1b; }
+section.overview > h3:nth-of-type(3) { grid-area: l1c; }
+section.overview > h3:nth-of-type(4) { grid-area: l2a; }
+section.overview > h3:nth-of-type(5) { grid-area: l2b; }
+section.overview > h3:nth-of-type(6) { grid-area: l3a; }
+section.overview > h3:nth-of-type(7) { grid-area: l3b; }
+
+section.overview > data:nth-of-type(2) { grid-area: v1a; }
+section.overview > data:nth-of-type(3) { grid-area: v1b; }
+section.overview > data:nth-of-type(4) { grid-area: v1c; }
+section.overview > time:nth-of-type(2) { grid-area: v2a; }
+section.overview > time:nth-of-type(3) { grid-area: v2b; }
+section.overview > data:nth-of-type(6) { grid-area: v3a; }
+section.overview > data:nth-of-type(7) { grid-area: v3b; }
