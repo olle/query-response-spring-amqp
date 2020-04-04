@@ -52,6 +52,14 @@ if (window.localStorage.getItem("theme")) {
   clearDarkTheme(HTML, TOGGLE);
 }
 
+window.matchMedia("(prefers-color-scheme: dark)").addListener(evt => {
+  if (evt.matches) {
+    setDarkTheme(HTML, TOGGLE);
+  } else {
+    clearDarkTheme(HTML, TOGGLE);
+  }
+});
+
 // EXPORTS --------------------------------------------------------------------
 
 var toggle = toggleTheme;
