@@ -53,7 +53,7 @@ class Responding implements CommandLineRunner {
         AtomicInteger total = new AtomicInteger(authors.size());
 
         Supplier<Iterator<Author>> it = () -> {
-            var as = authors.subList(0, ThreadLocalRandom.current().nextInt(1, authors.size()));
+            var as = authors.subList(0, ThreadLocalRandom.current().nextInt(1, authors.size() + 1));
             total.set(as.size());
 
             return as.iterator();

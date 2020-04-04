@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
@@ -43,7 +44,10 @@ class Querying implements CommandLineRunner {
 
         var results = QueryBuilder.queryFor("books/sci-fi", String.class)
                 .waitingFor(2000)
-                .orDefaults(defaults);
+                .orDefaults(defaults)
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
 
         LOG.info("Results were: {} {}", results, results.equals(defaults) ? "(defaults)" : "");
 
@@ -58,7 +62,10 @@ class Querying implements CommandLineRunner {
         var authors = QueryBuilder.queryFor("authors", Author.class)
                 .takingAtLeast(3)
                 .waitingFor(888)
-                .orEmpty();
+                .orEmpty()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
 
         LOG.info("Results were: {} {}", authors, authors.isEmpty() ? "(not enough)" : "");
 
@@ -112,6 +119,28 @@ class Querying implements CommandLineRunner {
         public String toString() {
 
             return "Author [name=" + name + ", country=" + country + "]";
+        }
+
+
+        @Override
+        public int hashCode() {
+
+            return name.hashCode();
+        }
+
+
+        @Override
+        public boolean equals(Object obj) {
+
+            if (this == obj) {
+                return true;
+            }
+
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+
+            return ((Author) obj).name.equals(this.name);
         }
     }
 }
