@@ -1,4 +1,4 @@
-const TOGGLE = document.querySelector("li.toggle-theme");
+const TOGGLE = document.querySelector("li[onclick*='toggleDarkTheme']");
 
 const toggleTheme = source => {
   if (($html = document.querySelector("html[data-theme]"))) {
@@ -28,6 +28,8 @@ const h2e = html => {
   template.innerHTML = html;
   return template.content.firstChild;
 };
+
+// SVG ICONS ------------------------------------------------------------------
 
 const SUN = h2e(`
 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -62,4 +64,4 @@ window.matchMedia("(prefers-color-scheme: dark)").addListener(evt => {
 
 // EXPORTS --------------------------------------------------------------------
 
-var toggle = toggleTheme;
+var toggleDarkTheme = toggleTheme;

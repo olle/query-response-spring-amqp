@@ -9,23 +9,26 @@ html {
 
 :root {
   --bg: #f3f2eb;
+  --bg-hover: rgba(123, 154, 255, 0.07);
   --fg: rgba(0, 0, 0, 0.8);
-  --link: hsla(221, 69%, 51%, 1);
-  --link-high-contrast: var(--link);
+  --link: rgba(50, 121, 187, 0.925);
+  --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
-  --border: rgba(0, 0, 0, 0.1);
-  --success: rgb(57, 179, 114);
-  --warning: hsl(37, 100%, 56%);
-  --error: rgb(243, 33, 103);
+  --border: rgba(0, 0, 0, 0.2);
+  --success: #73B89D;
+  --warning: #ffba4c;
+  --error: #fc4979;
 }
 
 [data-theme="dark"] {
   --bg: hsl(312, 8%, 24%);
+  --bg-hover: rgba(212, 222, 255, 0.07);
   --fg: rgba(255, 255, 250, 0.9);
-  --link: rgb(82, 129, 230);
-  --link-high-contrast: rgb(117, 187, 251);
+  --link: rgba(50, 121, 187, 0.925);
+  --link-high-contrast: rgb(95, 165, 231);
   --panel: hsl(180, 1%, 38%);
   --border: rgba(0, 0, 0, 0.5);
+  --error: #f04f7a;  
 }
 
 body {
@@ -76,6 +79,7 @@ nav > ul > li {
 }
 nav > ul > li:hover,
 nav > ul > li:active {
+  background: var(--bg-hover);
   color: var(--link-high-contrast);
   fill: var(--link-high-contrast);
 }
