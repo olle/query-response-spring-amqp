@@ -1,5 +1,5 @@
 const TOGGLE = document.querySelector("li[onclick*='toggleDarkTheme']");
-const HOME = document.querySelector("li[onclick*='home']");
+const HOME = document.querySelector("li[onclick*='overview']");
 
 const toggleTheme = source => {
   if (($html = document.querySelector("html[data-theme]"))) {
@@ -30,6 +30,11 @@ const h2e = html => {
   return template.content.firstChild;
 };
 
+const addNavigation = (el, icon, title) => {
+  el.appendChild(icon);
+  el.appendChild(h2e(`<h2>${title}</h2>`));
+};
+
 // SVG ICONS ------------------------------------------------------------------
 
 const SUN_ICON = h2e(`
@@ -55,6 +60,8 @@ const HOME_ICON = h2e(`
 
 // MAIN -----------------------------------------------------------------------
 
+addNavigation(HOME, HOME_ICON, "Overview");
+
 const HTML = document.querySelector("html");
 
 if (window.localStorage.getItem("theme")) {
@@ -70,8 +77,6 @@ window.matchMedia("(prefers-color-scheme: dark)").addListener(evt => {
     clearDarkTheme(HTML, TOGGLE);
   }
 });
-
-HOME.appendChild(HOME_ICON);
 
 // EXPORTS --------------------------------------------------------------------
 

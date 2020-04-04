@@ -18,6 +18,7 @@ html {
   --success: #73b89d;
   --warning: #ffba4c;
   --error: #fc4979;
+  --bold: 600;
 }
 
 [data-theme="dark"] {
@@ -29,6 +30,7 @@ html {
   --panel: hsl(180, 1%, 38%);
   --border: rgba(0, 0, 0, 0.5);
   --error: #f04f7a;
+  --bold: 400;
 }
 
 [data-theme="dark"] .icon-tabler {
@@ -91,6 +93,11 @@ nav > ul > li.active {
   color: var(--link-high-contrast);
   fill: var(--link-high-contrast);
 }
+nav > ul > li > h2 {
+  font-size: .5rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
 
 main {
   position: relative;
@@ -135,4 +142,14 @@ h6 {
   margin-top: 0;
   margin-bottom: .5rem;
   font-weight: normal;
+}
+
+h1 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  font-weight: var(--bold);
+}
+h2, h3, h4, h5, h6 {
+  font-size: 1rem;
 }
