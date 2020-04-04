@@ -19,6 +19,7 @@ html {
   --warning: #ffba4c;
   --error: #fc4979;
   --bold: 600;
+  --bold-letter-spacing: .1rem;
 }
 
 [data-theme="dark"] {
@@ -31,6 +32,7 @@ html {
   --border: rgba(0, 0, 0, 0.5);
   --error: #f04f7a;
   --bold: 400;
+  --bold-letter-spacing: .127rem;
 }
 
 [data-theme="dark"] .icon-tabler {
@@ -147,7 +149,7 @@ h6 {
 h1 {
   font-size: 1.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.1rem;
+  letter-spacing: var(--bold-letter-spacing);
   font-weight: var(--bold);
 }
 h2, h3, h4, h5, h6 {
