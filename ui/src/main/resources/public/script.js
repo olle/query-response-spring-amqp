@@ -102,7 +102,7 @@ const clearDarkTheme = ($html, $toggle) => {
   $html.removeAttribute("data-theme");
   $toggle.firstChild && $toggle.removeChild($toggle.firstChild);
   $toggle.appendChild($MOON_ICON);
-  window.localStorage.removeItem("theme");
+  window.localStorage.setItem("theme", "light");
 };
 
 const setDarkTheme = ($html, $toggle) => {
@@ -112,7 +112,12 @@ const setDarkTheme = ($html, $toggle) => {
   window.localStorage.setItem("theme", "dark");
 };
 
-if (window.localStorage.getItem("theme")) {
+let theme = window.localStorage.getItem("theme");
+if (theme === "dark") {
+  setDarkTheme($HTML, $TOGGLE);
+} else if (theme === "light") {
+  clearDarkTheme($HTML, $TOGGLE);
+} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   setDarkTheme($HTML, $TOGGLE);
 } else {
   clearDarkTheme($HTML, $TOGGLE);
