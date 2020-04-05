@@ -18,7 +18,7 @@ html {
   --panel: #fff;
   --border: 1px solid rgba(182, 182, 182, 0.424);
   --success: #64ac90;
-  --warning: #ffba4c;
+  --warning: hsl(37, 100%, 55%);
   --error: #fc4979;
   --bold: 600;
   --thin: 400;
@@ -36,6 +36,7 @@ html {
   --panel: hsl(30, 1%, 38%);
   --border: 1px solid rgba(0, 0, 0, 0.3);
   --success: hsl(157, 30%, 63%);
+  --warning: #ffba4c;
   --error: #f04f7a;
   --bold: 400;
   --thin: 300;
@@ -330,14 +331,21 @@ section.overview > data:nth-of-type(7) {
   grid-area: v3b;
 }
 
-/* NODES -------------------------------------------------------------------- */
+/* TABLES ------------------------------------------------------------------- */
 
-table.nodes {
+table {
   width: 100%;
   background: var(--panel);
   border: var(--border);
   border-collapse: collapse;
 }
+table > thead,
+table > tbody {
+  overflow-x: scroll;
+}
+
+/* NODES -------------------------------------------------------------------- */
+
 table.nodes > caption {
   padding: 0.8rem 1rem;
   border: var(--border);
@@ -389,4 +397,18 @@ table.nodes > tbody > tr > td > small > data::before {
 table.nodes > tbody > tr > td > small > time:not(:first-child),
 table.nodes > tbody > tr > td > small > data:not(:first-child) {
   margin-left: 0.2rem;
+}
+
+/* COLOR SEMANTICS ---------------------------------------------------------- */
+
+.warning {
+  color: var(--warning);
+  fill: var(--warning);
+}
+
+.error,
+.danger,
+.failure {
+  color: var(--error);
+  fill: var(--error);
 }
