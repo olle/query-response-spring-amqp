@@ -10,12 +10,13 @@ html {
 :root {
   --bg: #f3f2eb;
   --bg-hover: rgba(123, 154, 255, 0.07);
+  --bg-even: hsla(226, 10%, 50%, 0.07);
   --fg: rgba(0, 0, 0, 0.8);
   --fg-light: rgba(0, 0, 0, 0.4);
   --link: rgba(50, 121, 187, 0.925);
   --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
-  --border: rgba(182, 182, 182, 0.424);
+  --border: 1px solid rgba(182, 182, 182, 0.424);
   --success: #64ac90;
   --warning: #ffba4c;
   --error: #fc4979;
@@ -27,12 +28,14 @@ html {
 [data-theme="dark"] {
   --bg: hsl(330, 10%, 23%);
   --bg-hover: rgba(212, 222, 255, 0.07);
-  --fg: rgba(255, 255, 250, 0.9);
+  --bg-even: hsla(225, 10%, 62%, 0.164);
+  --fg: hsla(266, 100%, 99%, 0.99);
   --fg-light: rgba(255, 255, 250, 0.5);
   --link: rgba(50, 121, 187, 0.925);
   --link-high-contrast: rgb(104, 176, 243);
   --panel: hsl(30, 1%, 38%);
-  --border: rgba(0, 0, 0, 0.3);
+  --border: 1px solid rgba(0, 0, 0, 0.3);
+  --success: hsl(157, 30%, 63%);
   --error: #f04f7a;
   --bold: 400;
   --thin: 300;
@@ -65,7 +68,7 @@ nav {
   position: fixed;
   z-index: 2;
   background: var(--panel);
-  border-right: 1px solid var(--border);
+  border-right: var(--border);
   width: 5rem;
   top: 0;
   left: 0;
@@ -115,7 +118,7 @@ nav > ul > li.active {
   fill: var(--link-high-contrast);
 }
 nav > ul > li.disabled {
-  opacity: .2;
+  opacity: 0.2;
 }
 nav > ul > li > h2 {
   font-size: 0.5rem;
@@ -154,17 +157,24 @@ nav > ul > li > h2 {
 /* TYPOGRAPHY --------------------------------------------------------------- */
 
 h1,
+.h1,
 h2,
+.h2,
 h3,
+.h3,
 h4,
+.h4,
 h5,
-h6 {
+.h5,
+h6,
+.h6 {
   margin-top: 0;
   margin-bottom: 0.5rem;
   font-weight: normal;
 }
 
-h1 {
+h1,
+.h1 {
   font-size: 1.5rem;
   text-transform: uppercase;
   letter-spacing: var(--bold-letter-spacing);
@@ -172,12 +182,14 @@ h1 {
   margin-bottom: 1rem;
 }
 
-h2 {
+h2,
+.h2 {
   font-size: 1.15rem;
   font-weight: var(--bold);
 }
 
-h3 {
+h3,
+.h3 {
   font-size: 0.76rem;
   text-transform: uppercase;
   font-weight: var(--thin);
@@ -187,8 +199,11 @@ h3 {
 }
 
 h4,
+.h4,
 h5,
-h6 {
+.h5,
+h6,
+.h6 {
   font-size: 0.9rem;
 }
 
@@ -197,18 +212,22 @@ p {
   margin-bottom: 0.6rem;
 }
 
+data,
+time {
+  color: var(--success);
+}
+
 /* SECTIONS ----------------------------------------------------------------- */
 
 main > article > section {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: var(--border);
   padding: 0.8rem 1rem;
 }
 
 main > article > section > data,
 main > article > section > time {
   display: inline-block;
-  color: var(--success);
 }
 main > article > section > data.big,
 main > article > section > time.big {
@@ -229,8 +248,8 @@ section.overview {
     ". . . . . ."
     "l1a v1a l2a v2a l3a v3a"
     "l1b v1b l2b v2b l3b v3b"
-    "l1c v1c . . . ."
-  ;
+    "l1c v1c . . . .";
+  margin-bottom: 1rem;
 }
 section.overview > h2 {
   grid-row-start: 1;
@@ -246,18 +265,106 @@ section.overview > data:not(.big),
 section.overview > time:not(.big) {
   align-self: center;
 }
-section.overview > h3:nth-of-type(1) { grid-area: l1a; }
-section.overview > h3:nth-of-type(2) { grid-area: l1b; }
-section.overview > h3:nth-of-type(3) { grid-area: l1c; }
-section.overview > h3:nth-of-type(4) { grid-area: l2a; }
-section.overview > h3:nth-of-type(5) { grid-area: l2b; }
-section.overview > h3:nth-of-type(6) { grid-area: l3a; }
-section.overview > h3:nth-of-type(7) { grid-area: l3b; }
+section.overview > h3:nth-of-type(1) {
+  grid-area: l1a;
+}
+section.overview > h3:nth-of-type(2) {
+  grid-area: l1b;
+}
+section.overview > h3:nth-of-type(3) {
+  grid-area: l1c;
+}
+section.overview > h3:nth-of-type(4) {
+  grid-area: l2a;
+}
+section.overview > h3:nth-of-type(5) {
+  grid-area: l2b;
+}
+section.overview > h3:nth-of-type(6) {
+  grid-area: l3a;
+}
+section.overview > h3:nth-of-type(7) {
+  grid-area: l3b;
+}
+section.overview > data:nth-of-type(2) {
+  grid-area: v1a;
+}
+section.overview > data:nth-of-type(3) {
+  grid-area: v1b;
+}
+section.overview > data:nth-of-type(4) {
+  grid-area: v1c;
+}
+section.overview > time:nth-of-type(2) {
+  grid-area: v2a;
+}
+section.overview > time:nth-of-type(3) {
+  grid-area: v2b;
+}
+section.overview > data:nth-of-type(6) {
+  grid-area: v3a;
+}
+section.overview > data:nth-of-type(7) {
+  grid-area: v3b;
+}
 
-section.overview > data:nth-of-type(2) { grid-area: v1a; }
-section.overview > data:nth-of-type(3) { grid-area: v1b; }
-section.overview > data:nth-of-type(4) { grid-area: v1c; }
-section.overview > time:nth-of-type(2) { grid-area: v2a; }
-section.overview > time:nth-of-type(3) { grid-area: v2b; }
-section.overview > data:nth-of-type(6) { grid-area: v3a; }
-section.overview > data:nth-of-type(7) { grid-area: v3b; }
+/* NODES -------------------------------------------------------------------- */
+
+table.nodes {
+  width: 100%;
+  background: var(--panel);
+  border: var(--border);
+  border-collapse: collapse;
+}
+table.nodes > caption {
+  padding: 0.8rem 1rem;
+  border: var(--border);
+  border-bottom: none;
+  text-align: left;
+  background: inherit;
+  margin: 0;
+}
+table.nodes > thead > tr > th,
+table.nodes > tbody > tr > td {
+  padding: 0.8rem 1rem;
+  border: var(--border);
+}
+table.nodes > tbody > tr:nth-child(even) {
+  background-color: var(--bg-even);
+}
+table.nodes > thead > tr > th {
+  text-align: left;
+  font-weight: var(--bold);
+}
+table.nodes > tbody > tr > td {
+  font-size: 0.9rem;
+}
+table.nodes > tbody > tr > td:nth-of-type(3) {
+  white-space: nowrap;
+}
+table.nodes > tbody > tr > td:nth-of-type(2),
+table.nodes > tbody > tr > td:nth-of-type(5),
+table.nodes > tbody > tr > td:nth-of-type(6),
+table.nodes > tbody > tr > td:nth-of-type(7) {
+  text-align: right;
+}
+table.nodes > tbody > tr > td > small {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.6rem;
+  color: var(--fg-light);
+}
+table.nodes > tbody > tr > td > small {
+  white-space: nowrap;
+}
+table.nodes > tbody > tr > td > small > time::before,
+table.nodes > tbody > tr > td > small > data::before {
+  content: attr(data-abbr) ": ";
+  text-transform: uppercase;
+  color: var(--fg-light);
+}
+table.nodes > tbody > tr > td > small > time:not(:first-child),
+table.nodes > tbody > tr > td > small > data:not(:first-child) {
+  margin-left: .2rem;
+}
+
