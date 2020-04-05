@@ -104,8 +104,8 @@ nav > ul > li {
   color: var(--fg);
   fill: var(--fg);
 }
-nav > ul > li:hover,
-nav > ul > li:active {
+nav > ul > li:not(.disabled):hover,
+nav > ul > li:not(.disabled):active {
   background: var(--bg-hover);
   color: var(--link-high-contrast);
   fill: var(--link-high-contrast);
@@ -113,6 +113,9 @@ nav > ul > li:active {
 nav > ul > li.active {
   color: var(--link-high-contrast);
   fill: var(--link-high-contrast);
+}
+nav > ul > li.disabled {
+  opacity: .2;
 }
 nav > ul > li > h2 {
   font-size: 0.5rem;
@@ -166,6 +169,7 @@ h1 {
   text-transform: uppercase;
   letter-spacing: var(--bold-letter-spacing);
   font-weight: var(--bold);
+  margin-bottom: 1rem;
 }
 
 h2 {

@@ -9,8 +9,12 @@
     <nav>
       <ul>
         <li class="active" onclick="overview()"></li>
+        <li class="disabled" onclick="live()"></li>
+        <li class="disabled" onclick="topology()"></li>
+        <li class="disabled" onclick="logging()"></li>
       </ul>
       <ul>
+        <li class="disabled" onclick="settings()"></li>
         <li onclick="toggleDarkTheme()"></li>
       </ul>
     </nav>
@@ -34,7 +38,7 @@
             <h3>Max</h3>
             <time>332ms</time>
 
-            <h2>Throughput</h2>
+            <h2>Throughput (Avg)</h2>
             <data class="big">32K/s</data>
             <h3>Queries</h3>
             <data>2K/s</data>
