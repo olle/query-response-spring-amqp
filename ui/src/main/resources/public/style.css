@@ -37,7 +37,7 @@ html {
   --border: 1px solid rgba(0, 0, 0, 0.3);
   --success: hsl(157, 30%, 63%);
   --warning: #ffba4c;
-  --error: #f04f7a;
+  --error: hsl(344, 84%, 67%);
   --bold: 400;
   --thin: 300;
   --bold-letter-spacing: 0.127rem;
