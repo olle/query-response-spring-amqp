@@ -131,6 +131,44 @@ window.matchMedia("(prefers-color-scheme: dark)").addListener(evt => {
   }
 });
 
+// METRICS --------------------------------------------------------------------
+
+let metrics = {
+  success: {
+    rate: 0,
+    grade: 0.0,
+    queries: 0,
+    responses: 0,
+    fallbacks: 0
+  },
+  latency: {
+    average: 0,
+    unit: "ms",
+    grade: 0.0
+  },
+  throughput: {
+    average: 0,
+    unit: "s",
+    queries: 0,
+    responses: 0,
+    fallbacks: 0
+  }
+};
+
+const n2t = num => {
+  if (typeof num !== "number" || num < 1) {
+    return "0";
+  } else if (num > 99999999999999999999) {
+    return ">100E";
+  }
+  let i = Math.floor(Math.log(num) / Math.log(1000));
+  let q = 10 ** Math.min(3, i);
+  let value = Math.round((num / 1000 ** i + Number.EPSILON) * q) / q;
+  let suffix = ["", "k", "M", "G", "T", "P", "E"][i];
+  return `${value}${suffix}`;
+};
+
 // EXPORTS --------------------------------------------------------------------
 
 window.toggleDarkTheme = toggleTheme;
+window.n2t = n2t;
