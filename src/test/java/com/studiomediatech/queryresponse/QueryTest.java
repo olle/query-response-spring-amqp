@@ -267,6 +267,48 @@ class QueryTest {
         assertThat(sut.accept(facade)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
     }
 
+
+    @Test
+    void ensureThrowsProvidedWhenInterruptedDuringWait() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(123)
+            .orThrow(AtLeastOrThrowsException::new);
+
+        var sut = Query.from(capture.get());
+        sut.fail = n -> n > 100 ? true : false;
+
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        Assertions.assertThrows(AtLeastOrThrowsException.class, () -> sut.accept(facade));
+    }
+
+
+    @Test
+    void ensureInvokesOnErrorHandlerWhenInterruptedDuringWait() throws Exception {
+
+        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+
+        QueryBuilder.queryFor("foobar", String.class)
+            .withSink(capture::set)
+            .waitingFor(123)
+            .onError(err -> { assertThat(err).isInstanceOf(InterruptedException.class); })
+            .orEmpty();
+
+        var sut = Query.from(capture.get());
+        sut.fail = n -> n > 100 ? true : false;
+        sut.onMessage(MessageBuilder.withBody(
+                    ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
+                        .replaceAll("'", "\"").getBytes()).build());
+
+        sut.accept(facade);
+    }
+
     static class TimeoutOrThrowsException extends RuntimeException {
 
         private static final long serialVersionUID = 1L;

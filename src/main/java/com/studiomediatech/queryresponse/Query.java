@@ -21,11 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
 /**
- * Represents an active published query, as the registered message listener for any responses, handling aggregation,
+ * Represents an active published query, and the registered message listener for any responses, handling aggregation,
  * fallback, failure delegation and throwing, all depending on the configuration of this query.
  *
  * @param  <T>  expected type of the coerced result elements.
@@ -37,8 +38,8 @@ class Query<T> implements MessageListener, Logging {
     private static final ObjectReader reader = new ObjectMapper().reader();
 
     private final String queueName;
-    private final List<T> elements;
 
+    protected List<T> elements;
     protected String queryTerm;
     protected Class<T> responseType;
     protected Duration waitingFor;
@@ -47,6 +48,13 @@ class Query<T> implements MessageListener, Logging {
     protected int atLeast;
     protected int atMost;
     protected Supplier<RuntimeException> orThrows;
+
+    /*
+     * A protected boolean function, tested with an integer, and always
+     * returning false, by default. This enables testability, as it's protected
+     * and may compute other results.
+     */
+    protected Function<Long, Boolean> fail = l -> false;
 
     // Declared protected, for access in unit tests.
     protected Query() {
@@ -106,8 +114,27 @@ class Query<T> implements MessageListener, Logging {
         query.waitingFor = queryBuilder.getWaitingFor();
         query.orDefaults = queryBuilder.getOrDefaults();
         query.onError = queryBuilder.getOnError();
+
         query.atLeast = queryBuilder.getTakingAtLeast();
+
+        /*
+         * If there's an lower limit, we scale the elements list using a fix
+         * pad, and maybe we prevent growing.
+         */
+        if (query.atLeast > 0) {
+            query.elements = new ArrayList<>(query.atLeast + 42);
+        }
+
         query.atMost = queryBuilder.getTakingAtMost();
+
+        /*
+         * If there's an upper limit, we can also limit the aggregate list, and
+         * allow for overrun. This may prevent growing of the list.
+         */
+        if (query.atMost > 0) {
+            query.elements = new ArrayList<>(query.atMost + 7);
+        }
+
         query.orThrows = queryBuilder.getOrThrows();
 
         return query;
@@ -120,30 +147,84 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
+    /**
+     * Accepts the RabbitMQ facade, in order to start the life-cycle, and publish this query to the broker. This method
+     * always blocks on the calling thread, and the query configuration requires users (programmers) to <strong>
+     * always</strong> declare a timeout.
+     *
+     * @param  facade  to the broker methods, used for publishing, never {@code null}
+     *
+     * @return  the consumed response elements collection. May be empty, if the query was configured that way, but this
+     *          method call never returns {@code null}.
+     *
+     * @throws  RuntimeException  if the query was configured that way. Please note that the internals of query
+     *                            publishing, and response consumption <strong>never throws</strong>. Exceptions or
+     *                            failures will be caught and logged.
+     */
     public Collection<T> accept(RabbitFacade facade) throws RuntimeException {
 
         publishQuery(facade);
 
+        /*
+         * In this iteration of the Query/Response library, we block on the
+         * calling thread. This is the most simple thing I could think of.
+         */
         var wait = this.waitingFor.toMillis();
 
+        /*
+         * We yield on the thread only to check if the consuming side, has
+         * filled up our collection. If we have to bail for other reasons, that
+         * could be added to this loop.
+         */
         while (wait-- > 0) {
+            /*
+             * Check the current aggregate. Shady thread safety on the elements
+             * collection, but we know it's append only and we pick out the
+             * sub-list even if overrun in size.
+             */
             if (atMost > 0 && elements.size() >= atMost) {
                 return this.elements.subList(0, atMost);
             }
 
             try {
-                Thread.sleep(ONE_MILLIS);
-            } catch (InterruptedException e) {
-                if (onError != null) {
-                    onError.accept(new IllegalArgumentException(e));
+                if (this.fail.apply(wait)) {
+                    throw new InterruptedException();
+                } else {
+                    Thread.sleep(ONE_MILLIS);
                 }
+            } catch (InterruptedException e) {
+                // Soft handler for the exception, may be informed.
+                if (this.onError != null) {
+                    onError.accept(e);
+                }
+
+                // Reset interrupted state, before moving on.
+                log().error("Sleep interrupted with still " + wait + "ms to go", e);
+                Thread.currentThread().interrupt();
+
+                /*
+                 * If we're configured for it, we may throw an unchecked runtime
+                 * exception.
+                 */
+                if (this.orThrows != null) {
+                    throw this.orThrows.get();
+                }
+
+                // Otherwise we break and accept this as a failure.
+                break;
             }
         }
 
-        boolean noResponses = elements.isEmpty();
+        /*
+         * Enforced only if set to a positive integer, and not 0.
+         */
         boolean notEnoughResponses = atLeast > 0 && elements.size() < atLeast;
 
-        if (noResponses || notEnoughResponses) {
+        /*
+         * Queries always either returns with the collected response elements,
+         * defaults or throws by configuration of the user.
+         */
+        if (elements.isEmpty() || notEnoughResponses) {
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
             } else if (this.orThrows != null) {
