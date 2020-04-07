@@ -91,7 +91,8 @@ addNavigation($SETTINGS, $SETTINGS_ICON, "Settings");
 const $HTML = document.querySelector("html");
 
 const toggleTheme = source => {
-  if (($htmlWithDarkTheme = document.querySelector("html[data-theme]"))) {
+  let $htmlWithDarkTheme = document.querySelector("html[data-theme]");
+  if ($htmlWithDarkTheme) {
     clearDarkTheme($htmlWithDarkTheme, $TOGGLE);
   } else {
     setDarkTheme($HTML, $TOGGLE);
