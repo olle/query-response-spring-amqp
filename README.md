@@ -6,10 +6,10 @@ Query/Response for Spring® AMQP
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
 
-Build safer and more resilient microservices. Get the benefits of an _always
-async_ approach to data exchange. Ensure decoupling of components. Be better
-prepared for system evolution. Create more scalable solutions. Change the way
-you think and design, by using Query/Response for Spring AMQP.
+Build safer and more resilient distributed services. Get the benefits of an
+_always async_ approach to data exchange. Ensure decoupling of components. Be
+better prepared for system evolution. Create more scalable solutions. Change the
+way you think and design, by using Query/Response for Spring AMQP.
 
 Queries
 -------
