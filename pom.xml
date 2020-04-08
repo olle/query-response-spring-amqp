@@ -114,6 +114,8 @@
                                         </limit>
                                     </limits>
                                 <excludes>
+                                    <exclude>com.studiomediatech.queryresponse.QueryResponseConfiguration</exclude>
+                                    <exclude>com.studiomediatech.queryresponse.Statistics</exclude>
                                     <exclude>com.studiomediatech.queryresponse.util.*</exclude>
                                     <exclude>com.studiomediatech.queryresponse.Query.ConsumedResponseEnvelope</exclude>
                                     <exclude>com.studiomediatech.queryresponse.Response.PublishedResponseEnvelope</exclude>
