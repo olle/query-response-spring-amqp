@@ -54,4 +54,11 @@ class QueryResponseConfiguration implements Logging {
 
         return new QueryRegistry(facade);
     }
+
+
+    @Bean
+    Statistics statistics() {
+
+        return new Statistics();
+    }
 }
