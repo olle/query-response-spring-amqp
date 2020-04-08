@@ -63,12 +63,4 @@ class QueryResponseConfigurationTest {
             assertThat(ResponseRegistry.instance.get()).isEqualTo(bean);
         });
     }
-
-
-    @Test
-    @DisplayName("a statistics component bean is wired by the configuration")
-    void ensureWiresStatisticsComponent() throws Exception {
-
-        contextRunner.run(ctx -> assertThat(ctx.getBean(Statistics.class)).isNotNull());
-    }
 }
