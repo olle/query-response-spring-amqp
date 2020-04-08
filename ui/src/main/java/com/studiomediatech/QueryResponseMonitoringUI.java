@@ -25,7 +25,7 @@ class QueryResponseMonitoringUI {
     void query() {
 
         QueryBuilder.queryFor("query-response/stats", Object.class)
-            .waitingFor(6000)
+            .waitingFor(1000)
             .orEmpty()
             .forEach(obj -> System.out.println("Got this: " + obj));
     }
