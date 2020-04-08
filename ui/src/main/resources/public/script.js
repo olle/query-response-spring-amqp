@@ -6,6 +6,7 @@ const selectLiByOnClick = fun =>
 const $TOGGLE = selectLiByOnClick("toggleDarkTheme");
 const $HOME = selectLiByOnClick("overview");
 const $LIVE = selectLiByOnClick("live");
+const $QUERIES = selectLiByOnClick("queries");
 const $TOPOLOGY = selectLiByOnClick("topology");
 const $LOGGING = selectLiByOnClick("logging");
 const $SETTINGS = selectLiByOnClick("settings");
@@ -48,6 +49,14 @@ const $LIVE_ICON = h2e(`
   <polyline points="21 12 17 12 14 20 10 4 7 12 3 12" />
 </svg>`);
 
+const $QUERIES_ICON = h2e(`
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M12 20l-3 -3h-2a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-2l-3 3" />
+  <line x1="8" y1="9" x2="16" y2="9" />
+  <line x1="8" y1="13" x2="14" y2="13" />
+</svg>`);
+
 const $TOPOLOGY_ICON = h2e(`
 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-route" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -81,7 +90,8 @@ const addNavigation = ($el, icon, title) => {
 };
 
 addNavigation($HOME, $HOME_ICON, "Overview");
-addNavigation($LIVE, $LIVE_ICON, "Live Activity");
+addNavigation($LIVE, $LIVE_ICON, "Activity");
+addNavigation($QUERIES, $QUERIES_ICON, "Queries Insight");
 addNavigation($TOPOLOGY, $TOPOLOGY_ICON, "Q/R Topology");
 addNavigation($LOGGING, $LOGGING_ICON, "Logging");
 addNavigation($SETTINGS, $SETTINGS_ICON, "Settings");
