@@ -13,9 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import org.springframework.core.env.Environment;
 
 
 /**
@@ -57,8 +60,8 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    Statistics statistics() {
+    Statistics statistics(Environment env, ApplicationContext ctx) {
 
-        return new Statistics();
+        return new Statistics(env, ctx);
     }
 }
