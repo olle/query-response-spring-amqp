@@ -6,24 +6,26 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <nav>
-      <ul>
-        <li class="active" onclick="overview()"></li>
-        <li class="disabled" onclick="live()"></li>
-        <li class="disabled" onclick="queries()"></li>
-        <li class="disabled" onclick="topology()"></li>
-        <li class="disabled" onclick="logging()"></li>
-      </ul>
-      <ul>
-        <li class="disabled" onclick="settings()"></li>
-        <li onclick="toggleDarkTheme()"></li>
-      </ul>
-    </nav>
-    <main>
-      <article id="overview">
-        <h1>Query/Response System Overview</h1>
-
-        <section class="overview">
+    <div id="app"></div>
+    <!--
+      <nav>
+        <ul>
+          <li class="active" onclick="overview()"></li>
+          <li class="disabled" onclick="live()"></li>
+          <li class="disabled" onclick="queries()"></li>
+          <li class="disabled" onclick="topology()"></li>
+          <li class="disabled" onclick="logging()"></li>
+        </ul>
+        <ul>
+          <li class="disabled" onclick="settings()"></li>
+          <li onclick="toggleDarkTheme()"></li>
+        </ul>
+      </nav>
+      <main>
+        <article id="overview">
+          <h1>Query/Response System Overview</h1>
+          
+          <section class="overview">
             <h2>Success Rate</h2>
             <data class="big one">94%</data>
             <h3>Queries</h3>
@@ -32,25 +34,25 @@
             <data>3.11M</data>
             <h3>Fallback</h3>
             <data>72K</data>
-
+            
             <h2>Latency (Avg)</h2>
             <time class="big two">32ms</time>
             <h3>Min</h3>
             <time>4ms</time>
             <h3>Max</h3>
             <time>332ms</time>
-
+            
             <h2>Throughput (Avg)</h2>
             <data class="big three">32K/s</data>
             <h3>Queries</h3>
             <data>2K/s</data>
             <h3>Responses</h3>
             <data>30k/s</data>
-        </section>
-
-        <table class="nodes">
-          <caption class="h2">Live Nodes</caption>
-          <thead>
+          </section>
+          
+          <table class="nodes">
+            <caption class="h2">Live Nodes</caption>
+            <thead>
               <tr>
                 <th class="h3">Name</th>
                 <th class="h3">Index</th>
@@ -60,8 +62,8 @@
                 <th class="h3">Latency (Avg)</th>
                 <th class="h3">Throughput (Avg)</th>
               </tr>  
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
               <tr>
                 <td>jembo</td>
                 <td>0</td>
@@ -202,8 +204,8 @@
                   </small>
                 </td>
               </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
       </article>
       <br />
       <br />
@@ -220,6 +222,7 @@
       <div class="color color-warning"></div>
       <div class="color color-error"></div>
     </aside>
+  -->
   </body>
   <script src="script.js"></script>
-</html>
+  </html>
