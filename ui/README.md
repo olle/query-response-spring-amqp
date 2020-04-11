@@ -18,9 +18,9 @@ Getting started
 The Query/Response UI joins the messaging network, and is _eating its own dog
 food_ by using queries to gather information about the current system.
 
-The simplest way to start the UI is to run it locally using `make`, or start
-the Spring Boot® application by running `mvn spring-boot:run`. The
-Query/Response UI application is served at http://localhost:8080 by default.
+The simplest way to start the UI is to run it locally by issuing `make`. This
+will start the Spring Boot® application. The Query/Response UI application is
+served at http://localhost:8080 by default.
 
 > The default Spring AMQP configuration will attempt to connect to a local
 > broker on port 5672 with `guest/guest`. To use another RabbitMQ or other
@@ -40,9 +40,10 @@ Development
 -----------
 
 The Query/Response UI is mostly a _thick client_ or Single Page Application
-SPA. However, at the time of writing, it is built using HTML, CSS and ES6 JS.
-To access the client you can use the `make dev` target, and browse to
-http://localhost:3000. The resources are in `src/main/resources/public`.
+(SPA). It is built using HTML, CSS and ES6 JavaScript. To build and run the
+client you can use the `make dev` target, and browse to http://localhost:3000.
+
+The SPA source file can be found in `src/main/web`.
 
 Happy hacking!
 

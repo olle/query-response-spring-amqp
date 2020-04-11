@@ -1,7 +1,18 @@
-.PHONY: run
-run:
+.PHONY: run dev dist clean
+
+run: node_modules
+	npm run build
 	mvn spring-boot:run
 
-.PHONY: dev
-dev:
-	php -S localhost:3000 -t src/main/resources/public
+dev: node_modules
+	npm run serve
+
+dist: node_modules
+	npm run build
+
+node_modules:
+	npm install
+
+clean:
+	rm -rf target/
+	rm -rf node_modules/
