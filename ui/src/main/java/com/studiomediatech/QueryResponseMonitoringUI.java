@@ -19,7 +19,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @SpringBootApplication
 @EnableQueryResponse
 @EnableScheduling
-class QueryResponseMonitoringUI {
+public class QueryResponseMonitoringUI {
 
     public static void main(String[] args) {
 
