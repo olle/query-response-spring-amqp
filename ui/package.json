@@ -5,6 +5,7 @@
     "parcel-bundler": "^1.12.4"
   },
   "scripts": {
+    "serve": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "build": "parcel build --out-dir target/classes/public src/main/web/index.html"
   }
 }
