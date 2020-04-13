@@ -78,51 +78,6 @@ window.addEventListener("popstate", () => {
 // addNavigation($LOGGING, $LOGGING_ICON, "Logging");
 // addNavigation($SETTINGS, $SETTINGS_ICON, "Settings");
 
-// // DARK/LIGHT MODE ------------------------------------------------------------
-
-// const $HTML = document.querySelector("html");
-
-// const toggleTheme = (source) => {
-//   let $htmlWithDarkTheme = document.querySelector("html[data-theme]");
-//   if ($htmlWithDarkTheme) {
-//     clearDarkTheme($htmlWithDarkTheme, $TOGGLE);
-//   } else {
-//     setDarkTheme($HTML, $TOGGLE);
-//   }
-// };
-
-// const clearDarkTheme = ($html, $toggle) => {
-//   $html.removeAttribute("data-theme");
-//   $toggle.firstChild && $toggle.removeChild($toggle.firstChild);
-//   $toggle.appendChild($MOON_ICON);
-//   window.localStorage.setItem("theme", "light");
-// };
-
-// const setDarkTheme = ($html, $toggle) => {
-//   $html.setAttribute("data-theme", "dark");
-//   $toggle.firstChild && $toggle.removeChild($toggle.firstChild);
-//   $toggle.appendChild($SUN_ICON);
-//   window.localStorage.setItem("theme", "dark");
-// };
-
-// let theme = window.localStorage.getItem("theme");
-// if (theme === "dark") {
-//   setDarkTheme($HTML, $TOGGLE);
-// } else if (theme === "light") {
-//   clearDarkTheme($HTML, $TOGGLE);
-// } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-//   setDarkTheme($HTML, $TOGGLE);
-// } else {
-//   clearDarkTheme($HTML, $TOGGLE);
-// }
-
-// window.matchMedia("(prefers-color-scheme: dark)").addListener((evt) => {
-//   if (evt.matches) {
-//     setDarkTheme($HTML, $TOGGLE);
-//   } else {
-//     clearDarkTheme($HTML, $TOGGLE);
-//   }
-// });
 
 // // METRICS --------------------------------------------------------------------
 

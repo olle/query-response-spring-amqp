@@ -1,7 +1,7 @@
 <template>
-  <li>
-    <moon-icon v-if="currentColorScheme === 'light'"></moon-icon>
-    <sun-icon v-if="currentColorScheme === 'dark'"></sun-icon>
+  <li v-on:click="theme = theme === 'light' ? 'dark' : 'light'">
+    <moon-icon v-if="theme === 'light'"></moon-icon>
+    <sun-icon v-if="theme === 'dark'"></sun-icon>
   </li>
 </template>
 
@@ -11,8 +11,27 @@ import MoonIcon from "./MoonIcon.vue";
 
 export default {
   name: "qr-color-scheme-toggle",
-  computed: {
-    currentColorScheme: () => "light"
+  created: function() {
+    let storedTheme = window.localStorage.getItem("theme");
+    if (storedTheme) {
+      this.theme = storedTheme;
+    } else {
+      this.theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+    window.matchMedia("(prefers-color-scheme: dark)").addListener(evt => {
+      this.theme = evt.matches ? "dark" : "light";
+    });
+  },
+  data: () => ({
+    theme: "light"
+  }),
+  watch: {
+    theme: theme => {
+      window.localStorage.setItem("theme", theme);
+      document.querySelector("body").setAttribute("data-theme", theme);
+    }
   },
   components: {
     SunIcon,
