@@ -9,30 +9,37 @@
     <div id="app">
       <nav>
         <ul>
-          <qr-nav active title="Overview">
-            <home-icon />
-          </qr-nav>
-          <qr-nav disabled title="Live">
-            <live-icon />
-          </qr-nav>
-          <qr-nav disabled title="Queries Insight">
-            <queries-icon />
-          </qr-nav>
-          <qr-nav disabled title="Q/R Topology">
-            <topology-icon />
-          </qr-nav>
-          <qr-nav disabled title="Logs">
-            <logging-icon />
+          <router-link to="/" tag="li">
+            <home-icon></home-icon>
+            <h2>Overview</h2>
+          </router-link>
+          <router-link class="disabled" to="/live" tag="li">
+            <live-icon></live-icon>
+            <h2>Live</h2>
+          </router-link>
+          <router-link class="disabled" to="queries" tag="li">
+            <queries-icon></queries-icon>
+            <h2>Queries Insight</h2>
+          </router-link>
+          <router-link class="disabled" to="topology" tag="li">
+            <topology-icon></topology-icon>
+            <h2>Q/R Topology</h2>
+          </router-link>
+          <router-link class="disabled" to="logs" tag="li">
+            <logging-icon></logging-icon>
+            <h2>Logs</h2>
+          </router-link>
         </ul>
         <ul>
-          <qr-nav disabled title="Settings">
+          <router-link class="disabled" to="settings" tag="li">
             <settings-icon></settings-icon>
-          </qr-nav>
+            <h2>Settings</h2>
+          </router-link>
           <qr-color-scheme-toggle />
         </ul>
       </nav>
       <main>
-        <!-- TODO: Stuff here! -->
+        <router-view></router-view>
       </main>
     </div>
     <aside style="float: right; padding: 1rem 2rem 0 0;">
@@ -46,4 +53,4 @@
   </body>
   <script src="script.js"></script>
   <noscript>Sorry! But there's no Query/Response UI without </noscript>
-  </html>
+</html>

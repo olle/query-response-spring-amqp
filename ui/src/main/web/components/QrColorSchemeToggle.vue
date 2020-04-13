@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import SunIcon from "./SunIcon.vue";
-import MoonIcon from "./MoonIcon.vue";
+import SunIcon from "../icons/SunIcon.vue";
+import MoonIcon from "../icons/MoonIcon.vue";
 
 export default {
   name: "qr-color-scheme-toggle",

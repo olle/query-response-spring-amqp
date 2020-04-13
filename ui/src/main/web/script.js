@@ -1,83 +1,63 @@
 import Vue from "vue";
-//import App from "./App.vue";
-// NAVIGATION
-import QrNav from "./components/QrNav.vue";
+import VueRouter from "vue-router";
+
+// Components
 import QrColorSchemeToggle from "./components/QrColorSchemeToggle.vue";
-// PAGES
-import Overview from "./Overview.vue";
-import Live from "./Live.vue";
+
+// Icons
+import HomeIcon from "./icons/HomeIcon.vue";
+import LiveIcon from "./icons/LiveIcon.vue";
+import QueriesIcon from "./icons/QueriesIcon.vue";
+import TopologyIcon from "./icons/TopologyIcon.vue";
+import LoggingIcon from "./icons/LoggingIcon.vue";
+import SettingsIcon from "./icons/SettingsIcon.vue";
+Vue.component("home-icon", HomeIcon);
+Vue.component("live-icon", LiveIcon);
+Vue.component("queries-icon", QueriesIcon);
+Vue.component("topology-icon", TopologyIcon);
+Vue.component("logging-icon", LoggingIcon);
+Vue.component("settings-icon", SettingsIcon);
+
+// Pages
+import Overview from "./pages/Overview.vue";
+import Live from "./pages/Live.vue";
 // import Queries from "./Queries.vue";
 // import Topology from "./Topology.vue";
 // import Logging from "./Logging.vue";
 // import Settings from "./Settings.vue";
 
-const routes = {
-  "/": Overview,
-  "/live": Live,
-  // '/queries': Queries,
-  // '/topology': Topology,
-  // '/logging': Logging,
-  // '/settings': Settings,
-};
+const DEFAULT_PAGE_TITLE = "Query/Response";
 
+// Router
+Vue.use(VueRouter);
+const router = new VueRouter({
+  linkActiveClass: "",
+  linkExactActiveClass: "active",
+  routes: [
+    {
+      path: "/",
+      component: Overview,
+      meta: { title: `${DEFAULT_PAGE_TITLE} | Overview` },
+    },
+    {
+      path: "/live",
+      component: Live,
+      meta: { title: `${DEFAULT_PAGE_TITLE} | Live` },
+    },
+  ],
+});
+
+// App Init.
 const app = new Vue({
   el: "#app",
-  data: {
-    currentRoute: window.location.pathname,
-  },
-  computed: {
-    currentPage: () => {
-      console.log(this.currentRoute);
-      return routes[this.currentRoute] || routes["/"];
+  router,
+  watch: {
+    $route(to, _from) {
+      document.title = to.meta.title || DEFAULT_PAGE_TITLE;
     },
   },
-  components: {
-    QrNav,
-    QrColorSchemeToggle,
-  },
+  components: { QrColorSchemeToggle },
 });
-
-// Connect Browser History to the app routing
-window.addEventListener("popstate", () => {
-  app.currentRoute = window.location.pathname;
-});
-
-// // ELEMENTS -------------------------------------------------------------------
-
-// const selectLiByOnClick = (fun) =>
-//   document.querySelector(`li[onclick*='${fun}']`);
-
-// const $TOGGLE = selectLiByOnClick("toggleDarkTheme");
-// const $HOME = selectLiByOnClick("overview");
-// const $LIVE = selectLiByOnClick("live");
-// const $QUERIES = selectLiByOnClick("queries");
-// const $TOPOLOGY = selectLiByOnClick("topology");
-// const $LOGGING = selectLiByOnClick("logging");
-// const $SETTINGS = selectLiByOnClick("settings");
-
-// // HTML/DOM UTILS -------------------------------------------------------------
-
-// const h2e = (html) => {
-//   var template = document.createElement("template");
-//   html = html.trim();
-//   template.innerHTML = html;
-//   return template.content.firstChild;
-// };
-
-// // NAVIGATION -----------------------------------------------------------------
-
-// const addNavigation = ($el, icon, title) => {
-//   $el.appendChild(icon);
-//   $el.appendChild(h2e(`<h2>${title}</h2>`));
-// };
-
-// addNavigation($HOME, $HOME_ICON, "Overview");
-// addNavigation($LIVE, $LIVE_ICON, "Activity");
-// addNavigation($QUERIES, $QUERIES_ICON, "Queries Insight");
-// addNavigation($TOPOLOGY, $TOPOLOGY_ICON, "Q/R Topology");
-// addNavigation($LOGGING, $LOGGING_ICON, "Logging");
-// addNavigation($SETTINGS, $SETTINGS_ICON, "Settings");
-
 
 // // METRICS --------------------------------------------------------------------
 
@@ -115,8 +95,3 @@ window.addEventListener("popstate", () => {
 //   let suffix = ["", "k", "M", "G", "T", "P", "E"][i];
 //   return `${value}${suffix}`;
 // };
-
-// // EXPORTS --------------------------------------------------------------------
-
-// window.toggleDarkTheme = toggleTheme;
-// window.n2t = n2t;
