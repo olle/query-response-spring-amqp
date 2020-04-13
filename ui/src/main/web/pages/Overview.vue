@@ -3,6 +3,7 @@
     <h1>Query/Response System Overview</h1>
 
     <section class="overview">
+      <!-- TODO: This needs fragments, to make sense. Looking at vue-fragment. -->
       <h2>Success Rate</h2>
       <data class="big one">94%</data>
       <h3>Queries</h3>
