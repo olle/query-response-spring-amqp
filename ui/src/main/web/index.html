@@ -9,49 +9,40 @@
     <div id="app">
       <nav>
         <ul>
-          <li class="active" onclick="overview()">
-            <home-icon></home-icon>
-            <h2>Overview</h2>
-          </li>
-          <li class="disabled" onclick="live()">
-            <live-icon></live-icon>
-            <h2>Live</h2>
-          </li>
-          <li class="disabled" onclick="queries()">
-            <queries-icon></queries-icon>
-            <h2>Queries Insight</h2>
-          </li>
-          <li class="disabled" onclick="topology()">
-            <topology-icon></topology-icon>
-            <h2>Q/R Topology</h2>
-          </li>
-          <li class="disabled" onclick="logging()">
-            <logging-icon></logging-icon>
-            <h2>Logs</h2>
-          </li>
+          <qr-nav active title="Overview">
+            <home-icon />
+          </qr-nav>
+          <qr-nav disabled title="Live">
+            <live-icon />
+          </qr-nav>
+          <qr-nav disabled title="Queries Insight">
+            <queries-icon />
+          </qr-nav>
+          <qr-nav disabled title="Q/R Topology">
+            <topology-icon />
+          </qr-nav>
+          <qr-nav disabled title="Logs">
+            <logging-icon />
         </ul>
         <ul>
-          <li class="disabled" onclick="settings()">
+          <qr-nav disabled title="Settings">
             <settings-icon></settings-icon>
-            <h2>Settings</h2>
-          </li>
-          <li onclick="toggleDarkTheme()">
-            <moon-icon></moon-icon>
-          </li>
+          </qr-nav>
+          <qr-color-scheme-toggle />
         </ul>
       </nav>
       <main>
         <!-- TODO: Stuff here! -->
       </main>
     </div>
-    <!-- <aside style="float: right; padding: 1rem 2rem 0 0;">
+    <aside style="float: right; padding: 1rem 2rem 0 0;">
       <div class="color color-fg"></div>
       <div class="color color-link"></div>
       <div class="color color-link-hi-c"></div>
       <div class="color color-success"></div>
       <div class="color color-warning"></div>
       <div class="color color-error"></div>
-    </aside> -->
+    </aside>
   </body>
   <script src="script.js"></script>
   <noscript>Sorry! But there's no Query/Response UI without </noscript>

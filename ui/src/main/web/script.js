@@ -1,17 +1,9 @@
 import Vue from "vue";
 //import App from "./App.vue";
-
+// NAVIGATION
 import QrNav from "./components/QrNav.vue";
-
-import HomeIcon from "./components/HomeIcon.vue";
-import SunIcon from "./components/SunIcon.vue";
-import MoonIcon from "./components/MoonIcon.vue";
-import LiveIcon from "./components/LiveIcon.vue";
-import QueriesIcon from "./components/QueriesIcon.vue";
-import TopologyIcon from "./components/TopologyIcon.vue";
-import LoggingIcon from "./components/LoggingIcon.vue";
-import SettingsIcon from "./components/SettingsIcon.vue";
-
+import QrColorSchemeToggle from "./components/QrColorSchemeToggle.vue";
+// PAGES
 import Overview from "./Overview.vue";
 import Live from "./Live.vue";
 // import Queries from "./Queries.vue";
@@ -40,14 +32,8 @@ const app = new Vue({
     },
   },
   components: {
-    HomeIcon,
-    SunIcon,
-    MoonIcon,
-    LiveIcon,
-    QueriesIcon,
-    TopologyIcon,
-    LoggingIcon,
-    SettingsIcon,
+    QrNav,
+    QrColorSchemeToggle,
   },
 });
 
