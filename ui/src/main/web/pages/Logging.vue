@@ -1,9 +1,9 @@
 <template>
-  <h1>Live Publishers &amp; Consumers</h1>
+  <h1>Logging &amp; Messages</h1>
 </template>
 
 <script>
 export default {
-  name: "Live"
+  name: "Logging"
 };
 </script>

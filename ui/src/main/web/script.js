@@ -21,29 +21,31 @@ Vue.component("settings-icon", SettingsIcon);
 // Pages
 import Overview from "./pages/Overview.vue";
 import Live from "./pages/Live.vue";
-// import Queries from "./Queries.vue";
-// import Topology from "./Topology.vue";
-// import Logging from "./Logging.vue";
-// import Settings from "./Settings.vue";
+import Queries from "./pages/Queries.vue";
+import Topology from "./pages/Topology.vue";
+import Logging from "./pages/Logging.vue";
+import Settings from "./pages/Settings.vue";
+
+// Router ---------------------------------------------------------------------
+
+Vue.use(VueRouter);
 
 const DEFAULT_PAGE_TITLE = "Query/Response";
 
-// Router
-Vue.use(VueRouter);
+const meta = (label) => ({
+  meta: { title: `${DEFAULT_PAGE_TITLE} | ${label}` },
+});
+
 const router = new VueRouter({
   linkActiveClass: "",
   linkExactActiveClass: "active",
   routes: [
-    {
-      path: "/",
-      component: Overview,
-      meta: { title: `${DEFAULT_PAGE_TITLE} | Overview` },
-    },
-    {
-      path: "/live",
-      component: Live,
-      meta: { title: `${DEFAULT_PAGE_TITLE} | Live` },
-    },
+    { path: "/", component: Overview, ...meta("Overview") },
+    { path: "/live", component: Live, ...meta("Live") },
+    { path: "/queries", component: Queries, ...meta("Queries Insight") },
+    { path: "/topology", component: Topology, ...meta("Q/R Topology") },
+    { path: "/logging", component: Logging, ...meta("Logging") },
+    { path: "/settings", component: Settings, ...meta("Settings") },
   ],
 });
 

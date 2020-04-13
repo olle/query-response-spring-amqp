@@ -1,9 +1,9 @@
 <template>
-  <h1>Live Publishers &amp; Consumers</h1>
+  <h1>Query/Response System Topology</h1>
 </template>
 
 <script>
 export default {
-  name: "Live"
+  name: "Topology"
 };
 </script>
