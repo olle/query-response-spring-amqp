@@ -1,11 +1,22 @@
 {
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "vue": "^2.6.11",
+    "vue-hot-reload-api": "^2.3.4",
+    "vue-router": "^3.1.6"
+  },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "@vue/component-compiler-utils": "^3.1.2",
+    "parcel-bundler": "^1.12.4",
+    "vue-template-compiler": "^2.6.11"
   },
   "scripts": {
     "serve": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
+    "watch": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "build": "parcel build --out-dir target/classes/public src/main/web/index.html"
+  },
+  "alias": {
+    "vue": "./node_modules/vue/dist/vue.common.js",
+    "vue-router": "./node_modules/vue-router/dist/vue-router.common.js"
   }
 }

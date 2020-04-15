@@ -5,7 +5,7 @@ run: node_modules
 	mvn spring-boot:run
 
 dev: node_modules
-	npm run serve
+	npm run watch
 
 dist: node_modules
 	npm run build
