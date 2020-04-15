@@ -50,8 +50,7 @@ const router = new VueRouter({
 });
 
 // App Init.
-const app = new Vue({
-  el: "#app",
+new Vue({
   router,
   watch: {
     $route(to, _from) {
@@ -59,7 +58,7 @@ const app = new Vue({
     },
   },
   components: { QrColorSchemeToggle },
-});
+}).$mount("#app");
 
 // // METRICS --------------------------------------------------------------------
 
