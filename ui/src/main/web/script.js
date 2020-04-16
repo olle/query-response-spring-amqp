@@ -66,18 +66,3 @@ new Vue({
   },
   components: { QrColorSchemeToggle },
 });
-
-// // METRICS --------------------------------------------------------------------
-
-// const n2t = (num) => {
-//   if (typeof num !== "number" || num < 1) {
-//     return "0";
-//   } else if (num > 99999999999999999999) {
-//     return ">100E";
-//   }
-//   let i = Math.floor(Math.log(num) / Math.log(1000));
-//   let q = 10 ** Math.min(3, i);
-//   let value = Math.round((num / 1000 ** i + Number.EPSILON) * q) / q;
-//   let suffix = ["", "k", "M", "G", "T", "P", "E"][i];
-//   return `${value}${suffix}`;
-// };
