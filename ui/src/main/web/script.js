@@ -1,4 +1,5 @@
 import Vue from "vue";
+import Vuex from "vuex";
 import VueRouter from "vue-router";
 
 // Components
@@ -26,8 +27,12 @@ import Topology from "./pages/Topology.vue";
 import Logging from "./pages/Logging.vue";
 import Settings from "./pages/Settings.vue";
 
+// Store
+import store from "./store.js";
+
 // Router ---------------------------------------------------------------------
 
+Vue.use(Vuex);
 Vue.use(VueRouter);
 
 const DEFAULT_PAGE_TITLE = "Query/Response";
@@ -51,6 +56,8 @@ const router = new VueRouter({
 
 // App Init.
 new Vue({
+  el: "#app",
+  store,
   router,
   watch: {
     $route(to, _from) {
@@ -58,31 +65,9 @@ new Vue({
     },
   },
   components: { QrColorSchemeToggle },
-}).$mount("#app");
+});
 
 // // METRICS --------------------------------------------------------------------
-
-// let metrics = {
-//   success: {
-//     rate: 0,
-//     grade: 0.0,
-//     queries: 0,
-//     responses: 0,
-//     fallbacks: 0,
-//   },
-//   latency: {
-//     average: 0,
-//     unit: "ms",
-//     grade: 0.0,
-//   },
-//   throughput: {
-//     average: 0,
-//     unit: "s",
-//     queries: 0,
-//     responses: 0,
-//     fallbacks: 0,
-//   },
-// };
 
 // const n2t = (num) => {
 //   if (typeof num !== "number" || num < 1) {

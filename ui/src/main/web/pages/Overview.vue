@@ -5,7 +5,7 @@
     <section class="overview">
       <!-- TODO: This needs fragments, to make sense. Looking at vue-fragment. -->
       <h2>Success Rate</h2>
-      <data class="big one">94%</data>
+      <data class="big one">{{ successRate }}%</data>
       <h3>Queries</h3>
       <data>3.83M</data>
       <h3>Responses</h3>
@@ -190,7 +190,15 @@
 </template>
 
 <script>
+import store from "../store.js";
+
 export default {
-  name: "Overview"
+  name: "Overview",
+  computed: {
+    successRate() {
+      return store.state.metrics.success.rate;
+    },
+  },
+  store,
 };
 </script>

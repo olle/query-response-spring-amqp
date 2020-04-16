@@ -18,6 +18,7 @@
   },
   "alias": {
     "vue": "./node_modules/vue/dist/vue.common.js",
+    "vuex": "./node_modules/vuex/dist/vuex.common.js",
     "vue-router": "./node_modules/vue-router/dist/vue-router.common.js"
   }
 }
