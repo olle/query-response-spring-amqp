@@ -2,31 +2,7 @@
   <article id="overview">
     <h1>Query/Response System Overview</h1>
 
-    <section class="overview">
-      <!-- TODO: This needs fragments, to make sense. Looking at vue-fragment. -->
-      <h2>Success Rate</h2>
-      <data class="big one">{{ successRate }}%</data>
-      <h3>Queries</h3>
-      <data>3.83M</data>
-      <h3>Responses</h3>
-      <data>3.11M</data>
-      <h3>Fallback</h3>
-      <data>72K</data>
-
-      <h2>Latency (Avg)</h2>
-      <time class="big two">32ms</time>
-      <h3>Min</h3>
-      <time>4ms</time>
-      <h3>Max</h3>
-      <time>332ms</time>
-
-      <h2>Throughput (Avg)</h2>
-      <data class="big three">32K/s</data>
-      <h3>Queries</h3>
-      <data>2K/s</data>
-      <h3>Responses</h3>
-      <data>30k/s</data>
-    </section>
+    <qr-metrics></qr-metrics>
 
     <table class="nodes">
       <caption class="h2">
@@ -190,15 +166,12 @@
 </template>
 
 <script>
-import store from "../store.js";
+import QrMetrics from "../components/QrMetrics.vue";
 
 export default {
   name: "Overview",
-  computed: {
-    successRate() {
-      return store.state.metrics.success.rate;
-    },
+  components: {
+    QrMetrics,
   },
-  store,
 };
 </script>

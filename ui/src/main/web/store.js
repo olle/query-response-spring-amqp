@@ -4,27 +4,25 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  strict: process.env.NODE_ENV !== "production",
   state: {
+    // @see QrMetrics.vue
     metrics: {
-      success: {
-        rate: 0,
-        grade: 0.0,
-        queries: 0,
-        responses: 0,
-        fallbacks: 0,
-      },
-      latency: {
-        average: 0,
-        unit: "ms",
-        grade: 0.0,
-      },
-      throughput: {
-        average: 0,
-        unit: "s",
-        queries: 0,
-        responses: 0,
-        fallbacks: 0,
-      },
+      success_rate: 0,
+      success_rate_rank: 0.0,
+      count_queries: 0,
+      count_responses: 0,
+      count_fallbacks: 0,
+      avg_latency: 0,
+      avg_latency_unit: "ms",
+      avg_latency_rank: 0.0,
+      min_latency: 0,
+      max_latency: 0,
+      avg_throughput: 0,
+      avg_throughput_unit: "s",
+      avg_throughput_rank: 0.0,
+      throughput_queries: 0,
+      throughput_responses: 0,
     },
   },
 });
