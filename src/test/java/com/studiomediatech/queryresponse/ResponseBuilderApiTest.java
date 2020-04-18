@@ -16,31 +16,26 @@ public class ResponseBuilderApiTest {
 
         ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
 
+        Offers offers = new Offers();
+        UserTokens userTokenService = new UserTokens();
+
+        // EXAMPLES --------
+
         ResponseBuilder.respondTo("authors", String.class)
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
-    }
-
-
-    @Test
-    void ex2() throws Exception {
-
-        Offers offers = new Offers();
 
         ResponseBuilder.respondTo("offers/monday", Offer.class)
             .withBatchesOf(20)
             .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
-    }
-
-
-    @Test
-    void ex3() throws Exception {
-
-        UserTokens userTokenService = new UserTokens();
 
         ResponseBuilder.respondTo("users/current", Token.class)
             .withBatchesOf(256)
             .suppliedBy(userTokenService::findAllCurrentUserTokens);
+
+        // CLEANUP --------
+
+        ResponseRegistry.instance = () -> null;
     }
 
     private static class Offers {

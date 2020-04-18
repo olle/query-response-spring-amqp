@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 
 import java.time.Duration;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 
@@ -30,11 +31,12 @@ class Statistics implements Logging {
 
         ResponseBuilder.respondTo("query-response/stats", String.class)
             .withAll()
-            .from( // NOSNAR
-                getApplicationNameOrDefault("app"), // NOSONAR
-                getHostnameOrDefault("unknown"), // NOSONAR
-                getPidOrDefault("-"), // NOSONAR
-                getUptimeOrDefault("-"));
+            .suppliedBy(() ->
+                    List.of( // NOSNAR
+                        getApplicationNameOrDefault("app"), // NOSONAR
+                        getHostnameOrDefault("unknown"), // NOSONAR
+                        getPidOrDefault("-"), // NOSONAR
+                        getUptimeOrDefault("-")));
     }
 
     private String getUptimeOrDefault(String defaults) {
