@@ -27,6 +27,12 @@ import java.util.stream.Stream;
 
 class Statistics implements Logging {
 
+    private static final String STAT_UPTIME = "uptime";
+    private static final String STAT_PID = "pid";
+    private static final String STAT_HOSTNAME = "hostname";
+    private static final String STAT_NAME = "name";
+    private static final String STAT_COUNT_QUERIES = "count_queries";
+
     private final Environment env;
     private final ApplicationContext ctx;
 
@@ -45,11 +51,11 @@ class Statistics implements Logging {
     private Collection<Stat> getStats() {
 
         return List.of( // NOSONAR
-                Stat.of("queries_count", this.queriesCount.get()), // NOSONAR
-                Stat.of("name", getApplicationNameOrDefault("application")), // NOSONAR
-                Stat.of("hostname", getHostnameOrDefault("unknown")), // NOSONAR
-                Stat.of("pid", getPidOrDefault("-")), // NOSONAR
-                Stat.of("uptime", getUptimeOrDefault("-")) // NOSONAR
+                Stat.of(STAT_COUNT_QUERIES, this.queriesCount.get()), // NOSONAR
+                Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
+                Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
+                Stat.of(STAT_PID, getPidOrDefault("-")), // NOSONAR
+                Stat.of(STAT_UPTIME, getUptimeOrDefault("-")) // NOSONAR
                 );
     }
 
