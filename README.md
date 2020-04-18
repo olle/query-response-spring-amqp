@@ -76,7 +76,7 @@ Very simple scenarios can quickly be created, for tests or proof of concept
 work.
 
 ```java
-  ResponseBuilder.respondTo("authors")
+  ResponseBuilder.respondTo("authors", String.class)
       .withAll()
       .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 ```
@@ -85,9 +85,18 @@ Batch responses provide developers with more options to tune and throttle a
 system using Query/Response across many services.
 
 ```java
-  ResponseBuilder.respondTo("offers/monday")
+  ResponseBuilder.respondTo("offers/monday", Offer.class)
       .withBatchesOf(20)
-      .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+      .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+```
+
+Dynamic responses are easy to build, with an API that fits modern Java, using
+lazy calls to data sources.
+
+```java
+  ResponseBuilder.respondTo("users/current", Token.class)
+      .withBatchesOf(128)
+      .suppliedBy(userTokenService::findAllCurrentUserTokens);
 ```
 
 AMQP Resources & Formats
