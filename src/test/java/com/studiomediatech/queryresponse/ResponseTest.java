@@ -42,7 +42,7 @@ class ResponseTest {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -73,7 +73,7 @@ class ResponseTest {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from(() -> List.of("foo", "bar").iterator(), () -> 42);

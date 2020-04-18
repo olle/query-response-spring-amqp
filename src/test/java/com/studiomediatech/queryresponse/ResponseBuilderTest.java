@@ -36,7 +36,7 @@ class ResponseBuilderTest {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("foobar")
+        ResponseBuilder.<String>respondTo("foobar", String.class)
             .withSink(capture::set)
             .withAll()
             .from("hello", "world!");
@@ -67,7 +67,7 @@ class ResponseBuilderTest {
 
         List<String> elements = List.of("foo", "bar", "baz");
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from(elements);
@@ -88,7 +88,7 @@ class ResponseBuilderTest {
 
         var capture = new AtomicReference<ResponseBuilder<String>>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -111,7 +111,7 @@ class ResponseBuilderTest {
         Supplier<Iterator<String>> elements = List.of("foo", "bar", "baz")::iterator;
         Supplier<Integer> total = () -> 42;
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from(elements, total);
@@ -130,7 +130,7 @@ class ResponseBuilderTest {
 
         var builder = new AtomicReference<ResponseBuilder<String>>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(builder::set)
             .withAll()
             .from("foobar");
@@ -153,7 +153,7 @@ class ResponseBuilderTest {
 
         var list = List.of("foo", "bar", "baz");
 
-        ResponseBuilder.respondTo("some-query")
+        ResponseBuilder.respondTo("some-query", String.class)
             .withSink(builder::set)
             .withAll()
             .from(list);
@@ -175,7 +175,7 @@ class ResponseBuilderTest {
 
         var builder = new AtomicReference<ResponseBuilder<?>>(null);
 
-        ResponseBuilder.respondTo("some-query")
+        ResponseBuilder.respondTo("some-query", String.class)
             .withSink(builder::set)
             .withBatchesOf(3)
             .from("foo", "bar", "baz");
@@ -195,7 +195,7 @@ class ResponseBuilderTest {
         try {
             ResponseRegistry.instance = () -> registry;
 
-            ResponseBuilder.respondTo("foobar")
+            ResponseBuilder.respondTo("foobar", String.class)
                 .withAll()
                 .from("foo", "bar", "baz");
 

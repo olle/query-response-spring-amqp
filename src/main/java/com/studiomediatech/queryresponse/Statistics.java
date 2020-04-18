@@ -28,7 +28,7 @@ class Statistics implements Logging {
         this.env = env;
         this.ctx = ctx;
 
-        ResponseBuilder.respondTo("query-response/stats")
+        ResponseBuilder.respondTo("query-response/stats", String.class)
             .withAll()
             .from( // NOSNAR
                 getApplicationNameOrDefault("app"), // NOSONAR

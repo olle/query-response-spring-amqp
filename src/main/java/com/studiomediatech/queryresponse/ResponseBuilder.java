@@ -57,14 +57,14 @@ public class ResponseBuilder<T> {
      *
      * @param  term  to respond to
      */
-    private ResponseBuilder(String term) {
+    private ResponseBuilder(String term, Class<T> type) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
-    public static <T> ResponseBuilder<T> respondTo(String term) {
+    public static <T> ResponseBuilder<T> respondTo(String term, Class<T> type) {
 
-        return new ResponseBuilder<>(term);
+        return new ResponseBuilder<>(term, type);
     }
 
 
@@ -120,6 +120,12 @@ public class ResponseBuilder<T> {
         this.total = Asserts.invariantSupplier(total);
 
         register();
+    }
+
+
+    public void suppliedBy(Supplier<Collection<T>> supplier) {
+
+        this.elements = () -> (Iterator<T>) supplier.get().iterator();
     }
 
 

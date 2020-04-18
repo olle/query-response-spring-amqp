@@ -48,7 +48,7 @@ class ResponseRegistryTest {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -67,7 +67,7 @@ class ResponseRegistryTest {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -88,7 +88,7 @@ class ResponseRegistryTest {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query")
+        ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
