@@ -8,36 +8,58 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class ResponseBuilderApiTest {
 
     @Test
-    void ensureExamplesCompile() {
+    void ex1() {
 
         ResponseRegistry.instance = () -> Mockito.mock(ResponseRegistry.class);
 
-        ResponseBuilder.respondTo("authors")
+        Offers offers = new Offers();
+        UserTokens userTokenService = new UserTokens();
+
+        // EXAMPLES --------
+
+        ResponseBuilder.respondTo("authors", String.class)
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 
-        ResponseBuilder.respondTo("offers/monday")
+        ResponseBuilder.respondTo("offers/monday", Offer.class)
             .withBatchesOf(20)
-            .from(Offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+            .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 
-        assertThat("no problems").isNotEmpty();
+        ResponseBuilder.respondTo("users/current", Token.class)
+            .withBatchesOf(256)
+            .suppliedBy(userTokenService::findAllCurrentUserTokens);
+
+        // CLEANUP --------
+
+        ResponseRegistry.instance = () -> null;
     }
 
     private static class Offers {
 
-        public static Collection<Offer> findAllOffersByDayOfWeek(int dayOfWeek) {
+        public Collection<Offer> findAllOffersByDayOfWeek(int dayOfWeek) {
 
             return Collections.emptyList();
         }
     }
 
     static class Offer {
+
+        // OK
+    }
+
+    private static class UserTokens {
+
+        public Collection<Token> findAllCurrentUserTokens() {
+
+            return Collections.emptyList();
+        }
+    }
+
+    static class Token {
 
         // OK
     }
