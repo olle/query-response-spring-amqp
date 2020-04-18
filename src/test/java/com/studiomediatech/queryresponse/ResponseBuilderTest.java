@@ -131,7 +131,7 @@ class ResponseBuilderTest {
         ResponseBuilder<String> builder = capture.get();
         assertThat(builder).isNotNull();
 
-        assertThat(builder.total().get()).isEqualTo(3);
+        assertThat(builder.total()).isNull();
         assertThat(builder.elements()).isNotNull();
         assertThat(asList(builder.elements().get())).containsExactly("foo", "bar", "baz");
     }

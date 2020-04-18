@@ -126,7 +126,7 @@ public class ResponseBuilder<T> {
     public void suppliedBy(Supplier<Collection<T>> supplier) {
 
         this.elements = () -> (Iterator<T>) supplier.get().iterator();
-        this.total = () -> supplier.get().size();
+        this.total = null;
 
         register();
     }

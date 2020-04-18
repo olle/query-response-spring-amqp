@@ -83,7 +83,7 @@ class Response<T> implements MessageListener, Logging {
         }
 
         response.count = response.elements.size();
-        response.total = this.total.get();
+        response.total = this.total != null ? this.total.get() : response.elements.size();
 
         return response;
     }
@@ -94,7 +94,10 @@ class Response<T> implements MessageListener, Logging {
         Response<T> response = new Response<>(responses.getRespondToTerm());
 
         response.elements = responses.elements();
-        response.total = responses.total();
+
+        if (responses.total() != null) {
+            response.total = responses.total();
+        }
 
         return response;
     }
