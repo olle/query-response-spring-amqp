@@ -1,6 +1,10 @@
 package com.studiomediatech.queryresponse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.studiomediatech.queryresponse.util.Logging;
+
+import io.micrometer.core.instrument.MeterRegistry;
 
 import org.springframework.context.ApplicationContext;
 
@@ -15,6 +19,7 @@ import java.net.UnknownHostException;
 
 import java.time.Duration;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,20 +29,29 @@ class Statistics implements Logging {
     private final Environment env;
     private final ApplicationContext ctx;
 
-    public Statistics(Environment env, ApplicationContext ctx) {
+    private long queriesCount;
+
+    public Statistics(Environment env, ApplicationContext ctx, MeterRegistry meters) {
 
         this.env = env;
         this.ctx = ctx;
 
-        ResponseBuilder.respondTo("query-response/stats", String.class)
+        ResponseBuilder.respondTo("query-response/stats", Stat.class)
             .withAll()
-            .suppliedBy(() ->
-                    List.of( // NOSNAR
-                        getApplicationNameOrDefault("app"), // NOSONAR
-                        getHostnameOrDefault("unknown"), // NOSONAR
-                        getPidOrDefault("-"), // NOSONAR
-                        getUptimeOrDefault("-")));
+            .suppliedBy(this::getStats);
     }
+
+    private Collection<Stat> getStats() {
+
+        return List.of( // NOSONAR
+                Stat.of("queries_count", this.queriesCount), // NOSONAR
+                Stat.of("name", getApplicationNameOrDefault("application")), // NOSONAR
+                Stat.of("hostname", getHostnameOrDefault("unknown")), // NOSONAR
+                Stat.of("pid", getPidOrDefault("-")), // NOSONAR
+                Stat.of("uptime", getUptimeOrDefault("-")) // NOSONAR
+                );
+    }
+
 
     private String getUptimeOrDefault(String defaults) {
 
@@ -84,5 +98,24 @@ class Statistics implements Logging {
             .filter(StringUtils::hasText)
             .findFirst()
             .orElse(defaults);
+    }
+
+    public static final class Stat {
+
+        @JsonProperty
+        public String key;
+        @JsonProperty
+        public Object value;
+
+        private Stat(String key, Object value) {
+
+            this.key = key;
+            this.value = value;
+        }
+
+        public static Stat of(String key, Object value) {
+
+            return new Stat(key, value);
+        }
     }
 }

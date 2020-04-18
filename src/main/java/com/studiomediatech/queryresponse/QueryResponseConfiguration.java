@@ -2,6 +2,9 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -60,8 +64,16 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    Statistics statistics(Environment env, ApplicationContext ctx) {
+    @ConditionalOnMissingBean
+    MeterRegistry meterRegistry() {
 
-        return new Statistics(env, ctx);
+        return new SimpleMeterRegistry();
+    }
+
+
+    @Bean
+    Statistics statistics(Environment env, ApplicationContext ctx, MeterRegistry meters) {
+
+        return new Statistics(env, ctx, meters);
     }
 }
