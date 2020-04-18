@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.amqp.core.Message;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.mockito.Mockito.verify;
@@ -18,6 +20,8 @@ class QueryRegistryTest {
 
     @Mock
     RabbitFacade facade;
+    @Mock
+    Statistics stats;
 
     @Test
     void ensureThrowsOnMissingBean() {
@@ -38,7 +42,7 @@ class QueryRegistryTest {
         QueryRegistry.instance = () -> mock;
 
         var queryBuilder = new QueryBuilder<>("foobar", String.class);
-        new QueryRegistry(null).register(queryBuilder);
+        new QueryRegistry(null, null).register(queryBuilder);
 
         verify(mock).accept(queryBuilder);
 
@@ -52,9 +56,11 @@ class QueryRegistryTest {
         var queries = new QueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
 
-        new QueryRegistry(facade).accept(queries);
+        new QueryRegistry(facade, stats).accept(queries);
 
         verify(facade).declareQueue(Mockito.isA(Query.class));
         verify(facade).addListener(Mockito.isA(Query.class));
+        verify(facade).publishQuery(Mockito.eq("foobar"), Mockito.isA(Message.class));
+        verify(stats).incrementQueriesCounter();
     }
 }

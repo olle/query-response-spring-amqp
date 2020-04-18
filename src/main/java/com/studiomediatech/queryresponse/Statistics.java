@@ -21,6 +21,7 @@ import java.time.Duration;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 
@@ -29,7 +30,7 @@ class Statistics implements Logging {
     private final Environment env;
     private final ApplicationContext ctx;
 
-    private long queriesCount;
+    private AtomicLong queriesCount = new AtomicLong(0);
 
     public Statistics(Environment env, ApplicationContext ctx, MeterRegistry meters) {
 
@@ -44,7 +45,7 @@ class Statistics implements Logging {
     private Collection<Stat> getStats() {
 
         return List.of( // NOSONAR
-                Stat.of("queries_count", this.queriesCount), // NOSONAR
+                Stat.of("queries_count", this.queriesCount.get()), // NOSONAR
                 Stat.of("name", getApplicationNameOrDefault("application")), // NOSONAR
                 Stat.of("hostname", getHostnameOrDefault("unknown")), // NOSONAR
                 Stat.of("pid", getPidOrDefault("-")), // NOSONAR
@@ -98,6 +99,12 @@ class Statistics implements Logging {
             .filter(StringUtils::hasText)
             .findFirst()
             .orElse(defaults);
+    }
+
+
+    public void incrementQueriesCounter() {
+
+        this.queriesCount.incrementAndGet();
     }
 
     public static final class Stat {

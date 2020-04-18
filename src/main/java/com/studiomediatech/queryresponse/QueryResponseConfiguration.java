@@ -57,9 +57,9 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    QueryRegistry queryingRegistry(RabbitFacade facade) {
+    QueryRegistry queryingRegistry(RabbitFacade facade, Statistics stats) {
 
-        return new QueryRegistry(facade);
+        return new QueryRegistry(facade, stats);
     }
 
 

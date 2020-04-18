@@ -20,10 +20,12 @@ class QueryRegistry implements ApplicationContextAware, Logging {
     protected static Supplier<QueryRegistry> instance = () -> null;
 
     private final RabbitFacade facade;
+    private final Statistics stats;
 
-    public QueryRegistry(RabbitFacade facade) {
+    public QueryRegistry(RabbitFacade facade, Statistics stats) {
 
         this.facade = facade;
+        this.stats = stats;
     }
 
     @Override
@@ -70,6 +72,8 @@ class QueryRegistry implements ApplicationContextAware, Logging {
         facade.addListener(query);
 
         try {
+            stats.incrementQueriesCounter();
+
             return query.accept(facade);
         } finally {
             facade.removeListener(query);
