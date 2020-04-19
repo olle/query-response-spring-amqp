@@ -17,7 +17,7 @@ const shovel = (store) => {
   if (metrics) {
     store.commit("metrics", JSON.parse(metrics));
   }
-  setTimeout(() => shovel(store), 1234);
+  setTimeout(() => shovel(store), 789);
 };
 
 export default new Vuex.Store({
@@ -55,12 +55,23 @@ export default new Vuex.Store({
   actions: {
     initialize: function() {
       initializeMetrics(this);
-      setTimeout(() => shovel(this), 1234);
+      setTimeout(() => shovel(this), 1);
     },
   },
 });
 
 const RECONNECT_DELAY = 5000;
+
+const updateMetrics = (data) => {
+  let prev = JSON.parse(localStorage.getItem("query-response/metrics"));
+  localStorage.setItem(
+    "query-response/metrics",
+    JSON.stringify({
+      ...prev,
+      ...data,
+    })
+  );
+};
 
 const connectSocket = () => {
   // Web socket URL, resolved from current location
@@ -97,6 +108,7 @@ const connectSocket = () => {
       try {
         var message = JSON.parse(msg.data);
         console.log("got message", message);
+        updateMetrics(message);
       } catch (err) {
         console.error("unexpected payload", msg.data);
       }

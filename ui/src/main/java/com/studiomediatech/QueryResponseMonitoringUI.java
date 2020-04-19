@@ -94,7 +94,7 @@ public class QueryResponseMonitoringUI {
             this.handler = handler;
         }
 
-        @Scheduled(fixedDelay = 1000 * 20)
+        @Scheduled(fixedDelay = 1000 * 11)
         void query() {
 
             long countQueriesSum = QueryBuilder.queryFor("query-response/stats", Stat.class)
