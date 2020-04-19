@@ -21,6 +21,6 @@
 
 <script>
 export default {
-  name: "sun-icon"
+  name: "sun-icon",
 };
 </script>
