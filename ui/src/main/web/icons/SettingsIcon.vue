@@ -21,6 +21,6 @@
 
 <script>
 export default {
-  name: "settings-icon"
+  name: "settings-icon",
 };
 </script>

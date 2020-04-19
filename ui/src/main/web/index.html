@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
+<head>
+    <meta charset="utf-8"/>
     <title>Query/Response | Overview</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div id="app">
-      <nav>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="app">
+    <nav>
         <ul>
-          <router-link to="/" tag="li">
-            <home-icon></home-icon>
-            <h2>Overview</h2>
-          </router-link>
-          <router-link class="disabled" to="/live" tag="li">
-            <live-icon></live-icon>
-            <h2>Live</h2>
-          </router-link>
-          <router-link class="disabled" to="queries" tag="li">
-            <queries-icon></queries-icon>
-            <h2>Queries Insight</h2>
-          </router-link>
-          <router-link class="disabled" to="topology" tag="li">
-            <topology-icon></topology-icon>
-            <h2>Q/R Topology</h2>
-          </router-link>
-          <router-link class="disabled" to="logging" tag="li">
-            <logging-icon></logging-icon>
-            <h2>Logs</h2>
-          </router-link>
+            <router-link to="/" tag="li">
+                <home-icon></home-icon>
+                <h2>Overview</h2>
+            </router-link>
+            <router-link class="disabled" to="/live" tag="li">
+                <live-icon></live-icon>
+                <h2>Live</h2>
+            </router-link>
+            <router-link class="disabled" to="queries" tag="li">
+                <queries-icon></queries-icon>
+                <h2>Queries Insight</h2>
+            </router-link>
+            <router-link class="disabled" to="topology" tag="li">
+                <topology-icon></topology-icon>
+                <h2>Q/R Topology</h2>
+            </router-link>
+            <router-link class="disabled" to="logging" tag="li">
+                <logging-icon></logging-icon>
+                <h2>Logs</h2>
+            </router-link>
         </ul>
         <ul>
-          <router-link class="disabled" to="settings" tag="li">
-            <settings-icon></settings-icon>
-            <h2>Settings</h2>
-          </router-link>
-          <qr-color-scheme-toggle />
+            <router-link class="disabled" to="settings" tag="li">
+                <settings-icon></settings-icon>
+                <h2>Settings</h2>
+            </router-link>
+            <qr-color-scheme-toggle/>
         </ul>
-      </nav>
-      <main>
+    </nav>
+    <main>
         <router-view></router-view>
-      </main>
-    </div>
-    <aside style="float: right; padding: 1rem 2rem 0 0;">
-      <div class="color color-fg"></div>
-      <div class="color color-link"></div>
-      <div class="color color-link-hi-c"></div>
-      <div class="color color-success"></div>
-      <div class="color color-warning"></div>
-      <div class="color color-error"></div>
-    </aside>
-  </body>
-  <script src="script.js"></script>
-  <noscript>Sorry! But there's no Query/Response UI without JavaScript.</noscript>
+    </main>
+</div>
+<aside style="float: right; padding: 1rem 2rem 0 0;">
+    <div class="color color-fg"></div>
+    <div class="color color-link"></div>
+    <div class="color color-link-hi-c"></div>
+    <div class="color color-success"></div>
+    <div class="color color-warning"></div>
+    <div class="color color-error"></div>
+</aside>
+</body>
+<script src="script.js"></script>
+<noscript>Sorry! But there's no Query/Response UI without JavaScript.</noscript>
 </html>
