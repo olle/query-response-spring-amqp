@@ -3,21 +3,21 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const initializeMetrics = (store) => {
+const initializeMetrics = (state) => {
   if (!localStorage.getItem("query-response/metrics")) {
     localStorage.setItem(
       "query-response/metrics",
-      JSON.stringify(store.state.metrics)
+      JSON.stringify(state.metrics)
     );
   }
 };
 
-const shovel = (store) => {
+const shovel = (commit) => {
   let metrics = localStorage.getItem("query-response/metrics");
   if (metrics) {
-    store.commit("metrics", JSON.parse(metrics));
+    commit("metrics", JSON.parse(metrics));
   }
-  setTimeout(() => shovel(store), 789);
+  setTimeout(() => shovel(commit), 789);
 };
 
 export default new Vuex.Store({
@@ -52,9 +52,9 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    initialize: function() {
-      initializeMetrics(this);
-      setTimeout(() => shovel(this), 1);
+    initialize ({state, commit}) {
+      initializeMetrics(state);
+      setTimeout(() => shovel(commit), 1);
     },
   },
 });
