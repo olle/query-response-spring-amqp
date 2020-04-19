@@ -1,4 +1,4 @@
-.PHONY: run dev dist clean
+.PHONY: run dev dist clean test lint
 
 run: node_modules
 	npm run build
@@ -12,6 +12,9 @@ dist: node_modules
 
 node_modules:
 	npm install
+
+test:
+	npm run test
 
 clean:
 	rm -rf target/
