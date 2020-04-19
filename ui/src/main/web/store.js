@@ -3,6 +3,24 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
+const initializeMetrics = (store) => {
+  if (!localStorage.getItem("query-response/metrics")) {
+    localStorage.setItem(
+      "query-response/metrics",
+      JSON.stringify(store.state.metrics)
+    );
+  }
+};
+
+const shovel = (store) => {
+  console.log("SHOVELING!", store);
+  let metrics = localStorage.getItem("query-response/metrics");
+  if (metrics) {
+    store.commit("metrics", JSON.parse(metrics));
+  }
+  setTimeout(() => shovel(store), 1234);
+};
+
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== "production",
   state: {
@@ -27,6 +45,18 @@ export default new Vuex.Store({
       throughput_queries_unit: "s",
       throughput_responses: 0,
       throughput_responses_unit: "s",
+    },
+  },
+  mutations: {
+    metrics: function(state, payload) {
+      state.metrics = payload;
+      return state;
+    },
+  },
+  actions: {
+    initialize: function() {
+      initializeMetrics(this);
+      setTimeout(() => shovel(this), 1234);
     },
   },
 });

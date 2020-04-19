@@ -59,6 +59,9 @@ new Vue({
   el: "#app",
   store,
   router,
+  created: function() {
+    this.$store.dispatch("initialize");
+  },
   watch: {
     $route(to, _from) {
       document.title = to.meta.title || DEFAULT_PAGE_TITLE;
