@@ -31,6 +31,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 
+import java.nio.charset.StandardCharsets;
+
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -97,16 +100,23 @@ public class QueryResponseMonitoringUI {
         @Scheduled(fixedDelay = 1000 * 11)
         void query() {
 
-            long countQueriesSum = QueryBuilder.queryFor("query-response/stats", Stat.class)
+            Collection<Stat> stats = QueryBuilder.queryFor("query-response/stats", Stat.class)
                     .waitingFor(1000)
-                    .orEmpty()
+                    .orEmpty();
+
+            long countQueriesSum = stats
                     .stream()
-                    .peek(stat -> System.out.println("GOT: " + stat))
                     .filter(stat -> "count_queries".equals(stat.key))
                     .mapToInt(stat -> (int) stat.value)
                     .sum();
 
-            handler.handleCountQueries(countQueriesSum);
+            long countResponsesSum = stats
+                    .stream()
+                    .filter(stat -> "count_responses".equals(stat.key))
+                    .mapToInt(stat -> (int) stat.value)
+                    .sum();
+
+            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum);
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -135,7 +145,6 @@ public class QueryResponseMonitoringUI {
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-            System.out.println("FUNNY THERE YOU ARE! " + session);
             sessions.add(session);
         }
 
@@ -143,21 +152,22 @@ public class QueryResponseMonitoringUI {
         @Override
         public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-            System.out.println("SAD TO SEE YOU GO! " + session);
             sessions.remove(session);
         }
 
 
-        public void handleCountQueries(long sum) {
+        public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum) {
 
-            var message = String.format("{\"count_queries\": %d}", sum);
-            System.out.println("HANDLING QUERIES COUNT: " + message);
+            var json = String.format("{"
+                    + "\"count_queries\": %d,"
+                    + "\"count_responses\": %d"
+                    + "}", countQueriesSum, countResponsesSum);
 
-            TextMessage textMessage = new TextMessage(message.getBytes());
+            var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 
             for (WebSocketSession s : sessions) {
                 try {
-                    s.sendMessage(textMessage);
+                    s.sendMessage(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

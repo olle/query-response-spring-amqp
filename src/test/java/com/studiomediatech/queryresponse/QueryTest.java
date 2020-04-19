@@ -34,6 +34,8 @@ class QueryTest {
 
     @Mock
     RabbitFacade facade;
+    @Mock
+    Statistics stats;
 
     @Mock
     AbstractMessageListenerContainer listener;
@@ -49,7 +51,7 @@ class QueryTest {
         sut.waitingFor = Duration.ofMillis(123);
         sut.orDefaults = Collections::emptyList;
 
-        sut.accept(facade);
+        sut.accept(facade, stats);
         verify(facade).publishQuery(eq("term"), message.capture());
 
         assertThat(message.getValue()).isNotNull();
@@ -71,7 +73,7 @@ class QueryTest {
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).containsExactlyInAnyOrder("foo", "bar", "baz");
+        assertThat(sut.accept(facade, stats)).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 
 
@@ -116,7 +118,7 @@ class QueryTest {
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).isEmpty();
+        assertThat(sut.accept(facade, stats)).isEmpty();
     }
 
 
@@ -136,7 +138,7 @@ class QueryTest {
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).containsExactlyInAnyOrder("hello", "world");
+        assertThat(sut.accept(facade, stats)).containsExactlyInAnyOrder("hello", "world");
     }
 
 
@@ -159,7 +161,7 @@ class QueryTest {
                     ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).containsExactly("hello", "world", "again");
+        assertThat(sut.accept(facade, stats)).containsExactly("hello", "world", "again");
     }
 
 
@@ -182,7 +184,7 @@ class QueryTest {
                     ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
+        assertThat(sut.accept(facade, stats)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
     }
 
 
@@ -202,7 +204,7 @@ class QueryTest {
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).containsExactly("hello", "world");
+        assertThat(sut.accept(facade, stats)).containsExactly("hello", "world");
     }
 
 
@@ -218,7 +220,7 @@ class QueryTest {
 
         var sut = Query.from(capture.get());
 
-        Assertions.assertThrows(TimeoutOrThrowsException.class, () -> sut.accept(facade));
+        Assertions.assertThrows(TimeoutOrThrowsException.class, () -> sut.accept(facade, stats));
     }
 
 
@@ -241,7 +243,7 @@ class QueryTest {
                     ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        Assertions.assertThrows(AtLeastOrThrowsException.class, () -> sut.accept(facade));
+        Assertions.assertThrows(AtLeastOrThrowsException.class, () -> sut.accept(facade, stats));
     }
 
 
@@ -264,7 +266,7 @@ class QueryTest {
                     ("{'count': 4, 'total': 4, 'elements': ['again', 'foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        assertThat(sut.accept(facade)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
+        assertThat(sut.accept(facade, stats)).containsExactly("hello", "world", "again", "foo", "bar", "baz");
     }
 
 
@@ -285,7 +287,7 @@ class QueryTest {
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        Assertions.assertThrows(AtLeastOrThrowsException.class, () -> sut.accept(facade));
+        Assertions.assertThrows(AtLeastOrThrowsException.class, () -> sut.accept(facade, stats));
     }
 
 
@@ -306,7 +308,7 @@ class QueryTest {
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
 
-        sut.accept(facade);
+        sut.accept(facade, stats);
     }
 
     static class TimeoutOrThrowsException extends RuntimeException {

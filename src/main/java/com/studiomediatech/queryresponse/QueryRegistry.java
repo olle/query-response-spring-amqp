@@ -72,9 +72,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
         facade.addListener(query);
 
         try {
-            stats.incrementQueriesCounter();
-
-            return query.accept(facade);
+            return query.accept(facade, stats);
         } finally {
             facade.removeListener(query);
             facade.removeQueue(query);

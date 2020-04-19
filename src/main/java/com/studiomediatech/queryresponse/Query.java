@@ -153,6 +153,7 @@ class Query<T> implements MessageListener, Logging {
      * always</strong> declare a timeout.
      *
      * @param  facade  to the broker methods, used for publishing, never {@code null}
+     * @param  stats  service, allows reporting of success or failure to queries and response.
      *
      * @return  the consumed response elements collection. May be empty, if the query was configured that way, but this
      *          method call never returns {@code null}.
@@ -161,9 +162,9 @@ class Query<T> implements MessageListener, Logging {
      *                            publishing, and response consumption <strong>never throws</strong>. Exceptions or
      *                            failures will be caught and logged.
      */
-    public Collection<T> accept(RabbitFacade facade) throws RuntimeException {
+    public Collection<T> accept(RabbitFacade facade, Statistics stats) throws RuntimeException {
 
-        publishQuery(facade);
+        publishQuery(facade, stats);
 
         /*
          * In this iteration of the Query/Response library, we block on the
@@ -183,6 +184,8 @@ class Query<T> implements MessageListener, Logging {
              * sub-list even if overrun in size.
              */
             if (atMost > 0 && elements.size() >= atMost) {
+                stats.incrementResponsesCounter();
+
                 return this.elements.subList(0, atMost);
             }
 
@@ -232,15 +235,18 @@ class Query<T> implements MessageListener, Logging {
             }
         }
 
+        stats.incrementResponsesCounter();
+
         return elements;
     }
 
 
-    private void publishQuery(RabbitFacade facade) {
+    private void publishQuery(RabbitFacade facade, Statistics stats) {
 
         try {
             facade.publishQuery(this.queryTerm,
                 MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
+            stats.incrementQueriesCounter();
         } catch (RuntimeException ex) {
             if (this.onError != null) {
                 this.onError.accept(ex);
