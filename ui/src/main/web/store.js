@@ -13,7 +13,6 @@ const initializeMetrics = (store) => {
 };
 
 const shovel = (store) => {
-  console.log("SHOVELING!", store);
   let metrics = localStorage.getItem("query-response/metrics");
   if (metrics) {
     store.commit("metrics", JSON.parse(metrics));
@@ -60,3 +59,51 @@ export default new Vuex.Store({
     },
   },
 });
+
+const RECONNECT_DELAY = 5000;
+
+const connectSocket = () => {
+  // Web socket URL, resolved from current location
+  var protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  var hostname = window.location.host;
+  var url = `${protocol}://${hostname}/ws`;
+
+  try {
+    var sock = new WebSocket(url);
+
+    sock.onopen = () => {
+      console.log("websocket opened");
+    };
+
+    let handleClosed = () => {
+      console.log("websocket closed, reconnecting…");
+      setTimeout(connectSocket, RECONNECT_DELAY);
+    };
+
+    sock.onclose = (e) => {
+      if (e.code === 1000) {
+        console.log("websocket closed gracefully");
+        return;
+      }
+      handleClosed();
+    };
+
+    sock.onerror = (event) => {
+      console.error("websocket error:", event);
+      sock.close();
+    };
+
+    sock.onmessage = (msg) => {
+      try {
+        var message = JSON.parse(msg.data);
+        console.log("got message", message);
+      } catch (err) {
+        console.error("unexpected payload", msg.data);
+      }
+    };
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+connectSocket();

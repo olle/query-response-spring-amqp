@@ -6,17 +6,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
 
+import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import org.springframework.core.env.Environment;
+
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
@@ -29,6 +39,7 @@ import java.util.Set;
 @SpringBootApplication
 @EnableQueryResponse
 @EnableScheduling
+@EnableWebSocket
 public class QueryResponseMonitoringUI {
 
     public static void main(String[] args) {
@@ -36,18 +47,42 @@ public class QueryResponseMonitoringUI {
         SpringApplication.run(QueryResponseMonitoringUI.class);
     }
 
+    @Configuration
+    static class Config implements WebSocketConfigurer {
 
-    @Bean
-    Handler handler() {
+        @Bean
+        ConnectionNameStrategy connectionNameStrategy(Environment env) {
 
-        return new Handler();
-    }
+            return connectionFactory -> env.getProperty("spring.application.name", "query-response-ui");
+        }
 
 
-    @Bean
-    Querier querier(Handler handler) {
+        @Bean
+        TaskScheduler taskScheduler() {
 
-        return new Querier(handler);
+            return new ThreadPoolTaskScheduler();
+        }
+
+
+        @Override
+        public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+
+            registry.addHandler(handler(), "/ws");
+        }
+
+
+        @Bean
+        Handler handler() {
+
+            return new Handler();
+        }
+
+
+        @Bean
+        Querier querier(Handler handler) {
+
+            return new Querier(handler);
+        }
     }
 
     static class Querier {
