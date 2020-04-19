@@ -51,7 +51,7 @@ class Statistics implements Logging {
     private Collection<Stat> getStats() {
 
         return List.of( // NOSONAR
-                Stat.of(STAT_COUNT_QUERIES, this.queriesCount.getAndSet(0)), // NOSONAR
+                Stat.of(STAT_COUNT_QUERIES, this.queriesCount.get()), // NOSONAR
                 Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
                 Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
                 Stat.of(STAT_PID, getPidOrDefault("-")), // NOSONAR
