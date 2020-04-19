@@ -28,7 +28,7 @@
     "serve": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "watch": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "build": "parcel build --out-dir target/classes/public src/main/web/index.html",
-    "lint": " ./node_modules/eslint/bin/eslint.js --ext .js,.vue src/",
+    "lint": "eslint --ext .js,.vue src/main/web/",
     "test": "jest --watch"
   },
   "eslintConfig": {
