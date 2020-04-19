@@ -11,15 +11,33 @@
     "@babel/preset-env": "^7.9.5",
     "@vue/component-compiler-utils": "^3.1.2",
     "@vue/test-utils": "^1.0.0-beta.33",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "babel-jest": "^25.3.0",
     "jest": "^25.3.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-vue": "^6.2.2",
     "parcel-bundler": "^1.12.4",
     "vue-jest": "^3.0.5",
+    "parcel-plugin-eslint": "^1.0.8-2",
+    "prettier": "2.0.4",
     "vue-template-compiler": "^2.6.11"
   },
   "scripts": {
     "serve": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "watch": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
+    "build": "parcel build --out-dir target/classes/public src/main/web/index.html",
+    "lint": " ./node_modules/eslint/bin/eslint.js --ext .js,.vue src/"
+    "format": " ./node_modules/eslint/bin/eslint.js --ext .js,.vue src/"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "plugin:vue/essential",
+      "plugin:prettier/recommended",
+      "eslint:recommended"
+    ]
     "build": "parcel build --out-dir target/classes/public src/main/web/index.html",
     "test": "jest --watch"
   },
