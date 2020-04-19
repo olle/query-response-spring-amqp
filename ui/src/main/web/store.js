@@ -47,9 +47,8 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    metrics: function(state, payload) {
-      state.metrics = payload;
-      return state;
+    metrics: function (state, payload) {
+      return {...state, metrics: payload};
     },
   },
   actions: {
