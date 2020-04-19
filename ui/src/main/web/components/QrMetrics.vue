@@ -44,13 +44,9 @@ export default {
       avgThroughput: (s) =>
         `${n2t(s.metrics.avg_throughput)}/${s.metrics.avg_throughput_unit}`,
       throughputQueries: (s) =>
-        `${n2t(s.metrics.throughput_queries)}/${
-          s.metrics.throughput_queries_unit
-        }`,
+        `${n2t(s.metrics.throughput_queries)}/${s.metrics.throughput_queries_unit}`,
       throughputResponses: (s) =>
-        `${n2t(s.metrics.throughput_responses)}/${
-          s.metrics.throughput_responses_unit
-        }`,
+        `${n2t(s.metrics.throughput_responses)}/${s.metrics.throughput_responses_unit}`,
     }),
   },
   store,

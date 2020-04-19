@@ -11,7 +11,7 @@ import MoonIcon from "../icons/MoonIcon.vue";
 
 export default {
   name: "qr-color-scheme-toggle",
-  created: function () {
+  created: function() {
     let storedTheme = window.localStorage.getItem("theme");
     if (storedTheme) {
       this.theme = storedTheme;
@@ -20,22 +20,22 @@ export default {
         ? "dark"
         : "light";
     }
-    window.matchMedia("(prefers-color-scheme: dark)").addListener((evt) => {
+    window.matchMedia("(prefers-color-scheme: dark)").addListener(evt => {
       this.theme = evt.matches ? "dark" : "light";
     });
   },
   data: () => ({
-    theme: "light",
+    theme: "light"
   }),
   watch: {
-    theme: (theme) => {
+    theme: theme => {
       window.localStorage.setItem("theme", theme);
       document.querySelector("body").setAttribute("data-theme", theme);
-    },
+    }
   },
   components: {
     SunIcon,
-    MoonIcon,
-  },
+    MoonIcon
+  }
 };
 </script>

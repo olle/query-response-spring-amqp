@@ -18,6 +18,6 @@
 
 <script>
 export default {
-  name: "live-icon",
+  name: "live-icon"
 };
 </script>

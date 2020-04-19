@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: "Queries",
+  name: "Queries"
 };
 </script>

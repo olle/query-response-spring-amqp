@@ -22,6 +22,6 @@
 
 <script>
 export default {
-  name: "queries-icon",
+  name: "queries-icon"
 };
 </script>

@@ -24,6 +24,6 @@
 
 <script>
 export default {
-  name: "logging-icon",
+  name: "logging-icon"
 };
 </script>

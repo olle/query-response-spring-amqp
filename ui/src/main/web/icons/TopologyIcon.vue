@@ -20,6 +20,6 @@
 
 <script>
 export default {
-  name: "topology-icon",
+  name: "topology-icon"
 };
 </script>

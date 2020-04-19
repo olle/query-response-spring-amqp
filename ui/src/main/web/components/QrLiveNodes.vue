@@ -19,9 +19,7 @@
         <td>jembo</td>
         <td>0</td>
         <td>lb1-jembo.some.cloud</td>
-        <td>
-          <time>3 hours</time>
-        </td>
+        <td><time>3 hours</time></td>
         <td>
           <data class="warning">12%</data>
           <small>
@@ -49,9 +47,7 @@
         <td>jembo</td>
         <td>1</td>
         <td>lb2-jembo.some.cloud</td>
-        <td>
-          <time>3 hours</time>
-        </td>
+        <td><time>3 hours</time></td>
         <td>
           <data>55%</data>
           <small>
@@ -79,9 +75,7 @@
         <td>jembo</td>
         <td>2</td>
         <td>lb3-jembo.some.cloud</td>
-        <td>
-          <time>2 hours</time>
-        </td>
+        <td><time>2 hours</time></td>
         <td>
           <data>55%</data>
           <small>
@@ -109,9 +103,7 @@
         <td>profile-service</td>
         <td>0</td>
         <td>profiles0.some.cloud</td>
-        <td>
-          <time>53 days</time>
-        </td>
+        <td><time>53 days</time></td>
         <td>
           <data>97%</data>
           <small>
@@ -139,9 +131,7 @@
         <td>profiles</td>
         <td>0</td>
         <td>profiles1.some.cloud</td>
-        <td>
-          <time>123 days</time>
-        </td>
+        <td><time>123 days</time></td>
         <td>
           <data class="failure">1%</data>
           <small>

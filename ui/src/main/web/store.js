@@ -48,11 +48,11 @@ export default new Vuex.Store({
   },
   mutations: {
     metrics: function (state, payload) {
-      return { ...state, metrics: payload };
+      return {...state, metrics: payload};
     },
   },
   actions: {
-    initialize({ state, commit }) {
+    initialize ({state, commit}) {
       initializeMetrics(state);
       setTimeout(() => shovel(commit), 1);
     },
