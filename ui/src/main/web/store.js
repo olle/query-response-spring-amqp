@@ -13,14 +13,6 @@ const initializeMetrics = (state) => {
   }
 };
 
-const shovel = (commit) => {
-  let metrics = localStorage.getItem("query-response/metrics");
-  if (metrics) {
-    commit("metrics", JSON.parse(metrics));
-  }
-  setTimeout(() => shovel(commit), 789);
-};
-
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== "production",
   state: {
@@ -49,9 +41,16 @@ export default new Vuex.Store({
   },
   mutations,
   actions: {
-    initialize({ state, commit }) {
+    initialize({ state, dispatch }) {
       initializeMetrics(state);
-      setTimeout(() => shovel(commit), 1);
+      dispatch("shovel");
+    },
+    shovel({ commit, dispatch }) {
+      let metrics = localStorage.getItem("query-response/metrics");
+      if (metrics) {
+        commit("metrics", JSON.parse(metrics));
+      }
+      setTimeout(() => dispatch("shovel"), 789);
     },
   },
 });

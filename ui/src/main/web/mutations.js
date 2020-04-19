@@ -1,5 +1,5 @@
 export default {
   metrics(state, payload) {
-    return { ...state, metrics: payload };
+    state.metrics = payload;
   },
 };
