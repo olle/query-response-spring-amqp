@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import mutations from "./mutations";
 
 Vue.use(Vuex);
 
@@ -46,13 +47,9 @@ export default new Vuex.Store({
       throughput_responses_unit: "s",
     },
   },
-  mutations: {
-    metrics: function (state, payload) {
-      return {...state, metrics: payload};
-    },
-  },
+  mutations,
   actions: {
-    initialize ({state, commit}) {
+    initialize({ state, commit }) {
       initializeMetrics(state);
       setTimeout(() => shovel(commit), 1);
     },
