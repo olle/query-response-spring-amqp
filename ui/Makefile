@@ -16,6 +16,9 @@ node_modules:
 test:
 	npm run test
 
+lint:
+	npm run lint
+
 clean:
 	rm -rf target/
 	rm -rf node_modules/

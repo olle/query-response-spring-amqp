@@ -1,7 +1,8 @@
 {
   "env": {
     "node": true,
-    "commonjs": true
+    "commonjs": true,
+    "jest": true
   },
   "root": true,
   "extends": [

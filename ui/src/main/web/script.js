@@ -60,7 +60,7 @@ new Vue({
     this.$store.dispatch("initialize");
   },
   watch: {
-    $route(to, _from) {
+    $route(to) {
       document.title = to.meta.title || DEFAULT_PAGE_TITLE;
     },
   },
