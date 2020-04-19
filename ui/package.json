@@ -23,7 +23,6 @@
     "watch": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "build": "parcel build --out-dir target/classes/public src/main/web/index.html",
     "lint": " ./node_modules/eslint/bin/eslint.js --ext .js,.vue src/"
-    "format": " ./node_modules/eslint/bin/eslint.js --ext .js,.vue src/"
   },
   "eslintConfig": {
     "root": true,
