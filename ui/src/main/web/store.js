@@ -18,8 +18,6 @@ export default new Vuex.Store({
   state: {
     // @see QrMetrics.vue
     metrics: {
-      success_rate: 0,
-      success_rate_rank: 0.0,
       count_queries: 0,
       count_responses: 0,
       count_fallbacks: 0,

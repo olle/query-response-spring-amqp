@@ -1,7 +1,7 @@
 <template>
   <section class="overview">
     <h2>Success Rate</h2>
-    <data class="big one">{{ successRate }}</data>
+    <data class="big one" v-bind:class="successRateRank">{{ successRate }}</data>
     <h3>Queries</h3>
     <data>{{ countQueries }}</data>
     <h3>Responses</h3>
@@ -31,7 +31,16 @@ export default {
   name: "qr-metrics",
   computed: {
     ...mapState({
-      successRate: (s) => `${s.metrics.success_rate}%`,
+      successRate: (s) =>
+        ns2p(s.metrics.count_responses, s.metrics.count_queries),
+      successRateRank: (s) => {
+        let rate = s.metrics.count_responses / s.metrics.count_queries;
+        if (rate < 0.2) {
+          return "failure";
+        } else if (rate < 0.6) {
+          return "warning";
+        }
+      },
       countQueries: (s) => n2t(s.metrics.count_queries),
       countResponses: (s) => n2t(s.metrics.count_responses),
       countFallbacks: (s) => n2t(s.metrics.count_fallbacks),
@@ -54,6 +63,10 @@ export default {
     }),
   },
   store,
+};
+
+const ns2p = (n, d) => {
+  return `${Math.round((n / d) * 100 * 10 + Number.EPSILON) / 10}%`;
 };
 
 const n2t = (num) => {

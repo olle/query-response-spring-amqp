@@ -116,7 +116,13 @@ public class QueryResponseUI {
                     .mapToInt(stat -> (int) stat.value)
                     .sum();
 
-            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum);
+            long countFallbacksSum = stats
+                    .stream()
+                    .filter(stat -> "count_fallbacks".equals(stat.key))
+                    .mapToInt(stat -> (int) stat.value)
+                    .sum();
+
+            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum);
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -156,12 +162,14 @@ public class QueryResponseUI {
         }
 
 
-        public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum) {
+        public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum,
+            long countFallbacksSum) {
 
             var json = String.format("{"
                     + "\"count_queries\": %d,"
-                    + "\"count_responses\": %d"
-                    + "}", countQueriesSum, countResponsesSum);
+                    + "\"count_responses\": %d,"
+                    + "\"count_fallbacks\": %d"
+                    + "}", countQueriesSum, countResponsesSum, countFallbacksSum);
 
             var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 
