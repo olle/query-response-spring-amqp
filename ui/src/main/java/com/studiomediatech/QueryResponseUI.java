@@ -43,11 +43,11 @@ import java.util.Set;
 @EnableQueryResponse
 @EnableScheduling
 @EnableWebSocket
-public class QueryResponseMonitoringUI {
+public class QueryResponseUI {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(QueryResponseMonitoringUI.class);
+        SpringApplication.run(QueryResponseUI.class);
     }
 
     @Configuration
