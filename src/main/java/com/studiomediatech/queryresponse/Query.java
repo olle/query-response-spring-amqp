@@ -210,6 +210,8 @@ class Query<T> implements MessageListener, Logging {
                  * exception.
                  */
                 if (this.orThrows != null) {
+                    stats.incrementFallbacksCounter();
+
                     throw this.orThrows.get();
                 }
 
@@ -228,6 +230,8 @@ class Query<T> implements MessageListener, Logging {
          * defaults or throws by configuration of the user.
          */
         if (elements.isEmpty() || notEnoughResponses) {
+            stats.incrementFallbacksCounter();
+
             if (this.orDefaults != null) {
                 return this.orDefaults.get();
             } else if (this.orThrows != null) {
