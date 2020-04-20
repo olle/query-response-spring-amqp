@@ -114,4 +114,29 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> null;
     }
+
+
+    @Test
+    void ensureFallbacksCountPartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var meters = new SimpleMeterRegistry();
+        var sut = new Statistics(env, ctx, meters);
+
+        var stat = "count_fallbacks";
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(0L);
+
+        sut.incrementFallbacksCounter();
+        sut.incrementFallbacksCounter();
+        sut.incrementFallbacksCounter();
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(3L);
+
+        ResponseRegistry.instance = () -> null;
+    }
 }

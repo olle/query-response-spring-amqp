@@ -33,12 +33,14 @@ class Statistics implements Logging {
     private static final String STAT_NAME = "name";
     private static final String STAT_COUNT_QUERIES = "count_queries";
     private static final String STAT_COUNT_RESPONSES = "count_responses";
+    private static final String STAT_COUNT_FALLBACKS = "count_fallbacks";
 
     private final Environment env;
     private final ApplicationContext ctx;
 
     private AtomicLong queriesCount = new AtomicLong(0);
     private AtomicLong responsesCount = new AtomicLong(0);
+    private AtomicLong fallbacksCount = new AtomicLong(0);
 
     public Statistics(Environment env, ApplicationContext ctx, MeterRegistry meters) {
 
@@ -55,6 +57,7 @@ class Statistics implements Logging {
         return List.of( // NOSONAR
                 Stat.of(STAT_COUNT_QUERIES, this.queriesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_RESPONSES, this.responsesCount.get()), // NOSONAR
+                Stat.of(STAT_COUNT_FALLBACKS, this.fallbacksCount.get()), // NOSONAR
                 Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
                 Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
                 Stat.of(STAT_PID, getPidOrDefault("-")), // NOSONAR
@@ -120,6 +123,12 @@ class Statistics implements Logging {
     public void incrementResponsesCounter() {
 
         this.responsesCount.incrementAndGet();
+    }
+
+
+    public void incrementFallbacksCounter() {
+
+        this.fallbacksCount.incrementAndGet();
     }
 
     public static final class Stat {
