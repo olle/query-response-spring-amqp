@@ -1,7 +1,9 @@
 <template>
   <section class="overview">
     <h2>Success Rate</h2>
-    <data class="big one" v-bind:class="successRateRank">{{ successRate }}</data>
+    <data class="big one" v-bind:class="successRateRank">{{
+      successRate
+    }}</data>
     <h3>Queries</h3>
     <data>{{ countQueries }}</data>
     <h3>Responses</h3>
@@ -34,7 +36,8 @@ export default {
       successRate: (s) =>
         ns2p(s.metrics.count_responses, s.metrics.count_queries),
       successRateRank: (s) => {
-        let rate = s.metrics.count_responses / s.metrics.count_queries;
+        let rate =
+          s.metrics.count_responses / Math.max(1, s.metrics.count_queries);
         if (rate < 0.2) {
           return "failure";
         } else if (rate < 0.6) {
@@ -66,7 +69,9 @@ export default {
 };
 
 const ns2p = (n, d) => {
-  return `${Math.round((n / d) * 100 * 10 + Number.EPSILON) / 10}%`;
+  return `${
+    Math.round((n / Math.max(1, d)) * 100 * 10 + Number.EPSILON) / 10
+  }%`;
 };
 
 const n2t = (num) => {
