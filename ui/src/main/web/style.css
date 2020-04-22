@@ -111,11 +111,23 @@ nav > ul > li {
     fill: var(--fg);
 }
 
+nav > ul > li.static {
+    cursor: default;
+    padding: .6rem 1rem;
+}
+
 nav > ul > li:not(.disabled):hover,
 nav > ul > li:not(.disabled):active {
     background: var(--bg-hover);
     color: var(--link-high-contrast);
     fill: var(--link-high-contrast);
+}
+
+nav > ul > li.static:hover,
+nav > ul > li.static:active {
+  background: inherit;
+  color: inherit;
+  fill: inherit;
 }
 
 nav > ul > li.active {
