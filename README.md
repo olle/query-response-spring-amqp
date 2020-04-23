@@ -102,12 +102,12 @@ lazy calls to data sources.
 AMQP Resources & Formats
 ------------------------
 
-The declared [AMQP] broker resources are very limited. Only the `queries`
+The declared [AMQP] broker resources are very limited. Only the `query-response`
 topic-exchange is created. All active Query/Response services will automatically
 declare the required exchange, with the following parameters:
 
 ```
-  name: queries
+  name: query-response
   type: topic
   auto-delete: true
 ```
@@ -119,7 +119,7 @@ which are used in the AMQP messages - a mini-protocol:
 
 ### Query messages
 
-Query messages are very simple in structure and form. The common `queries`
+Query messages are very simple in structure and form. The common `query-response`
 exchanged is published to, and the message `routing-key` will carry the specific
 `query-term` that is requested. The `reply-to` header property is set to the
 queue name of a generated `query-response-queue`, specific to the published
@@ -130,7 +130,7 @@ is no further content in the body, just an empty JSON object `{}`, as a
 placeholder.
 
 ```
-  exchange: queries
+  exchange: query-response
   routing-key: ${query-term}
   reply-to: ${query-response-queue}
   content-type: application/json
