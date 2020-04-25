@@ -18,11 +18,12 @@ import java.time.Duration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 /**
@@ -39,7 +40,13 @@ class Query<T> implements MessageListener, Logging {
 
     private final String queueName;
 
-    protected List<T> elements;
+    /*
+     * For the taking at-most/least feature, the concurrent append from a
+     * consumer, would cause structural change to the collection unless it's a
+     * more modern queue.
+     */
+    protected ConcurrentLinkedQueue<T> elements;
+
     protected String queryTerm;
     protected Class<T> responseType;
     protected Duration waitingFor;
@@ -60,7 +67,7 @@ class Query<T> implements MessageListener, Logging {
     protected Query() {
 
         this.queueName = UUID.randomUUID().toString();
-        this.elements = new ArrayList<>();
+        this.elements = new ConcurrentLinkedQueue<>();
     }
 
     @Override
@@ -114,27 +121,8 @@ class Query<T> implements MessageListener, Logging {
         query.waitingFor = queryBuilder.getWaitingFor();
         query.orDefaults = queryBuilder.getOrDefaults();
         query.onError = queryBuilder.getOnError();
-
         query.atLeast = queryBuilder.getTakingAtLeast();
-
-        /*
-         * If there's an lower limit, we scale the elements list using a fix
-         * pad, and maybe we prevent growing.
-         */
-        if (query.atLeast > 0) {
-            query.elements = new ArrayList<>(query.atLeast + 42);
-        }
-
         query.atMost = queryBuilder.getTakingAtMost();
-
-        /*
-         * If there's an upper limit, we can also limit the aggregate list, and
-         * allow for overrun. This may prevent growing of the list.
-         */
-        if (query.atMost > 0) {
-            query.elements = new ArrayList<>(query.atMost + 7);
-        }
-
         query.orThrows = queryBuilder.getOrThrows();
 
         return query;
@@ -186,7 +174,7 @@ class Query<T> implements MessageListener, Logging {
             if (atMost > 0 && elements.size() >= atMost) {
                 stats.incrementResponsesCounter();
 
-                return this.elements.subList(0, atMost);
+                return this.elements.stream().limit(atMost).collect(Collectors.toList());
             }
 
             try {

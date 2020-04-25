@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -38,6 +39,9 @@ class Response<T> implements MessageListener, Logging {
     private Supplier<Iterator<T>> elements;
     private Supplier<Integer> total;
 
+    // Size of response batches, 0=no batches
+    private int batchSize;
+
     // Visible to tests
     protected Response(String routingKey) {
 
@@ -51,24 +55,66 @@ class Response<T> implements MessageListener, Logging {
         try {
             log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
 
-            var response = buildResponse();
-            log().debug("Prepared response {}", response);
+            List<Response<T>.PublishedResponseEnvelope<T>> responses = new ArrayList<>();
 
-            byte[] body = writer.writeValueAsBytes(response);
+            if (batchSize == 0) {
+                responses.add(buildResponse());
+            } else {
+                responses.addAll(buildResponses());
+            }
 
-            var responseMessage = MessageBuilder.withBody(body)
-                    .setContentEncoding(StandardCharsets.UTF_8.name())
-                    .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                    .build();
+            log().debug("Prepared response(s) {}", responses);
 
-            var replyToAddress = message.getMessageProperties().getReplyToAddress();
-            var exchangeName = replyToAddress.getExchangeName();
-            var routingKey = replyToAddress.getRoutingKey();
+            for (Response<T>.PublishedResponseEnvelope<T> response : responses) {
+                byte[] body = writer.writeValueAsBytes(response);
 
-            this.facade.publishResponse(exchangeName, routingKey, responseMessage);
+                var responseMessage = MessageBuilder.withBody(body)
+                        .setContentEncoding(StandardCharsets.UTF_8.name())
+                        .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+                        .build();
+
+                var replyToAddress = message.getMessageProperties().getReplyToAddress();
+                var exchangeName = replyToAddress.getExchangeName();
+                var routingKey = replyToAddress.getRoutingKey();
+
+                this.facade.publishResponse(exchangeName, routingKey, responseMessage);
+            }
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
         }
+    }
+
+
+    private List<Response<T>.PublishedResponseEnvelope<T>> buildResponses() {
+
+        List<Response<T>.PublishedResponseEnvelope<T>> responses = new ArrayList<>();
+
+        int count = 0;
+        Iterator<T> it = this.elements.get();
+
+        PublishedResponseEnvelope<T> response = new PublishedResponseEnvelope<T>();
+
+        while (it.hasNext()) {
+            response.elements.add(it.next());
+            count++;
+
+            if (count == this.batchSize) {
+                response.count = response.elements.size();
+                response.total = this.total != null ? this.total.get() : response.elements.size();
+                responses.add(response);
+
+                response = new PublishedResponseEnvelope<T>();
+                count = 0;
+            }
+        }
+
+        if (count != 0) {
+            response.count = response.elements.size();
+            response.total = this.total != null ? this.total.get() : response.elements.size();
+            responses.add(response);
+        }
+
+        return responses;
     }
 
 
@@ -98,6 +144,8 @@ class Response<T> implements MessageListener, Logging {
         if (responses.total() != null) {
             response.total = responses.total();
         }
+
+        response.batchSize = responses.getBatchSize();
 
         return response;
     }

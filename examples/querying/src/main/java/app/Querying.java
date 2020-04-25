@@ -80,13 +80,13 @@ class Querying implements CommandLineRunner {
 
         var names = QueryBuilder.queryFor("names", String.class)
                 .takingAtLeast(33)
-                .takingAtMost(77)
-                .waitingFor(789).orEmpty()
+                .takingAtMost(80)
+                .waitingFor(456).orEmpty()
                 .stream()
                 .distinct()
                 .collect(Collectors.toList());
 
-        LOG.info("Results were: {} {}", names, names.isEmpty() ? "(not enough)" : "");
+        LOG.info("Results were: {} {} with size {}", names, names.isEmpty() ? "(not enough)" : "", names.size());
 
         pause();
     }

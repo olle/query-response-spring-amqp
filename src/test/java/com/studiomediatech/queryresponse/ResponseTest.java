@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.ArgumentMatchers.eq;
 
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 
 
@@ -94,6 +95,50 @@ class ResponseTest {
             + "count: 2,"
             + "total: 42,"
             + "elements: ['foo', 'bar']"
+            + "}", true);
+    }
+
+
+    @Test
+    void ensurePublishedBatchResponses() throws Exception {
+
+        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(capture::set)
+            .withBatchesOf(2)
+            .from("foo", "bar", "baz", "goo", "gar");
+
+        var sut = Response.from(capture.get());
+        sut.accept(facade);
+
+        sut.onMessage(MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build());
+
+        verify(facade, atLeast(3)).publishResponse(eq(""), eq("reply-to"), message.capture());
+
+        List<Message> ms = message.getAllValues();
+        assertThat(ms).hasSize(3);
+
+        String json1 = new String(ms.get(0).getBody());
+        String json2 = new String(ms.get(1).getBody());
+        String json3 = new String(ms.get(2).getBody());
+
+        JSONAssert.assertEquals(json1, "{"
+            + "count: 2,"
+            + "total: 5,"
+            + "elements: ['foo', 'bar']"
+            + "}", true);
+
+        JSONAssert.assertEquals(json2, "{"
+            + "count: 2,"
+            + "total: 5,"
+            + "elements: ['baz', 'goo']"
+            + "}", true);
+
+        JSONAssert.assertEquals(json3, "{"
+            + "count: 1,"
+            + "total: 5,"
+            + "elements: ['gar']"
             + "}", true);
     }
 }
