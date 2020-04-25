@@ -8,6 +8,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,6 +25,7 @@ class Responding implements CommandLineRunner {
 
         respondToBooks();
         respondToAuthors();
+        respondToNames();
 
         println("Waiting for queries! Press CTRL-C to exit.");
         Thread.currentThread().join();
@@ -50,6 +52,24 @@ class Responding implements CommandLineRunner {
         ResponseBuilder.respondTo("authors", Author.class)
             .withAll()
             .suppliedBy(() -> authors.subList(0, ThreadLocalRandom.current().nextInt(1, authors.size() + 1)));
+    }
+
+
+    private void respondToNames() {
+
+        var names = Arrays.asList("Yasir", "Araceli", "Emídio", "Rebekka", "Jack", "Hertha", "Oscar", "Astrid",
+                "Sedef", "Naomi", "Ioque", "Davut", "Edith", "Ortrun", "Eddie", "Noah", "Anthony", "Connor", "Mestan",
+                "Erich", "Marius", "Adrian", "Jenny", "Enio", "Grazia", "Batur", "Fabien", "Oscar", "Rafael", "Efe",
+                "Arthur", "Eva", "Thea", "Finn", "Esat", "Ramon", "Amanda", "Anouchka", "Zachary", "Ece",
+                "Hans-Günther", "Ebenezer", "Loni", "Ava", "Rose", "Lucy", "Katarina", "Ana", "Jonathan", "Bertram",
+                "Balthasar", "Fletcher", "Annelene", "Alberto", "Matilda", "Juanita", "Levin", "Latife", "Alexandre",
+                "Dylan", "آریا", "Carola", "Oswald", "Noury", "Logan", "Oliver", "Patricia", "Reitze", "Hayley",
+                "Saya", "Alexa", "Clarindo", "Mestan", "Nadine", "Salome", "Erin", "Elina", "Charlie", "Juliette",
+                "Cindy", "Hannah", "Victoria", "Eleanor", "Alexander", "Lázaro", "Daniel", "Sally", "Ashton");
+
+        ResponseBuilder.respondTo("names", String.class)
+            .withBatchesOf(12)
+            .from(names);
     }
 
 

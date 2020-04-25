@@ -32,6 +32,7 @@ class Querying implements CommandLineRunner {
         while (true) {
             queryForBooks();
             queryForAuthors();
+            queryForNames();
         }
     }
 
@@ -68,6 +69,24 @@ class Querying implements CommandLineRunner {
                 .collect(Collectors.toList());
 
         LOG.info("Results were: {} {}", authors, authors.isEmpty() ? "(not enough)" : "");
+
+        pause();
+    }
+
+
+    private void queryForNames() throws InterruptedException {
+
+        LOG.info("Querying for names...");
+
+        var names = QueryBuilder.queryFor("names", String.class)
+                .takingAtLeast(33)
+                .takingAtMost(77)
+                .waitingFor(789).orEmpty()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        LOG.info("Results were: {} {}", names, names.isEmpty() ? "(not enough)" : "");
 
         pause();
     }
