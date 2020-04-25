@@ -41,9 +41,9 @@ class Query<T> implements MessageListener, Logging {
     private final String queueName;
 
     /*
-     * For the taking at-most/least feature, the concurrent append from a
-     * consumer, would cause structural change to the collection unless it's a
-     * more modern queue.
+     * For the taking-at-most/least feature, the concurrent append from a
+     * consumer, would cause structural change to a list type collection, so we
+     * need to use a more more modern queue collection type.
      */
     protected ConcurrentLinkedQueue<T> elements;
 
