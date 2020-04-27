@@ -47,7 +47,7 @@ The configuration will try to connect to an AMQP message broker, using the
 common configurations for [Spring AMQP]. The default setup will try to connect
 to a local broker with the username and password `guest/guest`.
 
-_Please see the provided [./examples] for a simple setup with [RabbitMQ] as a
+_Please see the provided `examples/` for a simple setup with [RabbitMQ] as a
  docker container, to get you started._
 
   [`QueryResponseConfiguration`]: ./src/main/java/com/studiomediatech/queryresponse/QueryResponseConfiguration.java
@@ -208,4 +208,5 @@ Happy hacking!
 
 ---
 
-Spring is a trademark of Pivotal Software, Inc. in the U.S. and other countries.
+Spring and Spring Boot are trademarks of Pivotal Software, Inc. in the U.S. and
+other countries.
