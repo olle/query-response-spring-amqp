@@ -90,8 +90,8 @@ system using Query/Response across many services.
       .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 ```
 
-Dynamic responses are easy to build, with an API that fits modern Java, using
-lazy calls to data sources.
+Dynamic responses are easy to build, with an API that suits modern Java, using
+lazy calls to suppliers of data.
 
 ```java
   ResponseBuilder.respondTo("users/current", Token.class)
@@ -119,11 +119,11 @@ which are used in the AMQP messages - a mini-protocol:
 
 ### Query messages
 
-Query messages are very simple in structure and form. The common `query-response`
-exchanged is published to, and the message `routing-key` will carry the specific
-`query-term` that is requested. The `reply-to` header property is set to the
-queue name of a generated `query-response-queue`, specific to the published
-query.
+Query messages are very simple in structure and form. The common
+`query-response` exchanged is published to, and the message `routing-key` will
+carry the specific `query-term` that is requested. The `reply-to` header
+property is set to the queue name of a generated `query-response-queue`,
+specific to the published query.
 
 Both query and response messages use the `application/json` content-type. There
 is no further content in the body, just an empty JSON object `{}`, as a
@@ -141,14 +141,12 @@ placeholder.
 ### Response messages
 
 Published responses also use a common format. They are published to the empty
-(default) exchange, with the `query-response-queue` from the `reply-to` property
-of a consumed query as the `routing-key`. This will cause a direct routing of
-responses back to the declared response-queue.
+(default) exchange, with the `query-response-queue` from the `reply-to`
+property of a consumed query as the `routing-key`. This will cause a direct
+routing of responses back to the declared response-queue.
 
-The response body payload JSON structure always contains `count` and `total`
-properties. This is meta-information which provide consumers with hints on
-possible paged responses. The `elements` collection contain the actual response
-data.
+The response body payload JSON structure always wraps the `elements` collection
+containing the actual response data in a _envelope object_.
 
 ```
   exchange: (default)
@@ -156,11 +154,12 @@ data.
   content-type: application/json
   body:
   {
-    count: 42,
-    total: 1337,
     elements: [...]
   }
 ```
+
+The current properties and of Query/Response messages are simple but provide
+room for extensions in future versions.
 
 Happy hacking!
 
