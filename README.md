@@ -11,6 +11,25 @@ _always async_ approach to data exchange. Ensure decoupling of components. Be
 better prepared for system evolution. Create more scalable solutions. Change the
 way you think and design, by using Query/Response for Spring AMQP.
 
+Getting Started
+---------------
+
+The Query/Response library can easily be added to any Spring Boot® project, as
+a single dependency.
+
+```xml
+  <dependency>
+    <!-- From Jitpack-repo -->
+    <groupId>com.github.olle</groupId>
+    <artifactId>query-response-spring-amqp</artifactId>
+    <version>${SOME-TAG}</version>
+  </dependency>
+```
+
+_At the current time We recommend using [Jitpack](https://jitpack.io) to
+resolve the dependency. Query/Response will however be published to the
+Sonatype OSS repository, and Maven Central, in the future._
+
 Queries
 -------
 
