@@ -30,6 +30,30 @@ _At the current time We recommend using [Jitpack](https://jitpack.io) to
 resolve the dependency. Query/Response will however be published to the
 Sonatype OSS repository, and Maven Central, in the future._
 
+### `@EnableQueryResponse`
+
+To initialize the Query/Response library resources, and load the
+[`QueryResponseConfiguration`] class, the `@EnableQueryResponse` annotation can
+simply be added to any Spring Boot® application.
+
+```java
+@SpringBootApplication
+@EnableQueryResponse
+public class App {
+  ...
+```
+
+The configuration will try to connect to an AMQP message broker, using the
+common configurations for [Spring AMQP]. The default setup will try to connect
+to a local broker with the username and password `guest/guest`.
+
+_Please see the provided [./examples] for a simple setup with [RabbitMQ] as a
+ docker container, to get you started._
+
+  [`QueryResponseConfiguration`]: ./src/main/java/com/studiomediatech/queryresponse/QueryResponseConfiguration.java
+  [Spring AMQP]: https://spring.io/projects/spring-amqp
+  [RabbitMQ]: https://www.rabbitmq.com
+
 Queries
 -------
 
