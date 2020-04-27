@@ -24,6 +24,8 @@ import org.springframework.context.annotation.Import;
 
 import org.springframework.core.env.Environment;
 
+import java.util.function.Supplier;
+
 
 /**
  * Configures the required components for a Query/Response client, ensuring the availability of the necessary AMQP
@@ -34,11 +36,27 @@ import org.springframework.core.env.Environment;
 @Import(RabbitAutoConfiguration.class)
 class QueryResponseConfiguration implements Logging {
 
+    protected static Supplier<Long> now = () -> System.currentTimeMillis();
+
+    protected RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+
+        rabbitTemplate.addBeforePublishPostProcessors(message -> {
+            message.getMessageProperties().setHeader("x-qr-published", now.get());
+
+            return message;
+        });
+
+        return rabbitTemplate;
+    }
+
+
     @Bean
-    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate template, ConnectionFactory connectionFactory,
+    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, ConnectionFactory connectionFactory,
         TopicExchange queriesExchange) {
 
-        return new RabbitFacade(rabbitAdmin, template, connectionFactory, queriesExchange);
+        return new RabbitFacade(rabbitAdmin, rabbitTemplate(connectionFactory), connectionFactory, queriesExchange);
     }
 
 
