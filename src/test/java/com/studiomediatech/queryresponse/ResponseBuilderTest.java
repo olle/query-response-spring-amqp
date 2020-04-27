@@ -51,7 +51,6 @@ class ResponseBuilderTest {
     private List<String> asList(Iterator<String> iterator) {
 
         List<String> list = new ArrayList<>();
-
         iterator.forEachRemaining(list::add);
 
         return list;
@@ -59,79 +58,82 @@ class ResponseBuilderTest {
 
 
     @Test
-    @DisplayName("builder supplies iterator and correct count for collection")
-    void ensureBuilderSuppliesCollectionIteratorAndTotalCount() throws Exception {
+    @DisplayName("builder has iterator for provided collection")
+    void ensureBuilderHasCollectionIterator() throws Exception {
 
         var capture = new AtomicReference<ResponseBuilder<String>>(null);
 
         List<String> elements = List.of("foo", "bar", "baz");
 
-        ResponseBuilder.<String>respondTo("some-query", String.class).withSink(capture::set).withAll().from(elements);
+        ResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(capture::set)
+            .withAll()
+            .from(elements);
 
         ResponseBuilder<String> builder = capture.get();
         assertThat(builder).isNotNull();
 
-        assertThat(builder.total()).isNotNull();
-        assertThat(builder.total().get()).isEqualTo(3);
         assertThat(builder.elements()).isNotNull();
         assertThat(asList(builder.elements().get())).containsExactly("foo", "bar", "baz");
     }
 
 
     @Test
-    @DisplayName("builder supplies iterator and correct count for varargs")
-    void ensureBuilderSuppliesVarargsIteratorAndTotalCount() throws Exception {
+    @DisplayName("builder has iterator for varargs")
+    void ensureBuilderHasVarargsIterator() throws Exception {
 
         var capture = new AtomicReference<ResponseBuilder<String>>(null);
 
-        ResponseBuilder.<String>respondTo("some-query", String.class).withSink(capture::set).withAll()
+        ResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(capture::set)
+            .withAll()
             .from("foo", "bar", "baz");
 
         ResponseBuilder<String> builder = capture.get();
         assertThat(builder).isNotNull();
 
-        assertThat(builder.total().get()).isEqualTo(3);
         assertThat(builder.elements()).isNotNull();
         assertThat(asList(builder.elements().get())).containsExactly("foo", "bar", "baz");
     }
 
 
     @Test
-    @DisplayName("builder supplied iterator and total for suppliers")
-    void ensureBuilderSuppliesSuppliedIteratorAndTotalCount() throws Exception {
+    @DisplayName("builder has supplied iterator")
+    void ensureBuilderHasSuppliedIterator() throws Exception {
 
         var capture = new AtomicReference<ResponseBuilder<String>>(null);
 
         Supplier<Iterator<String>> elements = List.of("foo", "bar", "baz")::iterator;
-        Supplier<Integer> total = () -> 42;
 
-        ResponseBuilder.<String>respondTo("some-query", String.class).withSink(capture::set).withAll()
-            .from(elements, total);
+        ResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(capture::set)
+            .withAll()
+            .from(elements);
 
         ResponseBuilder<String> builder = capture.get();
         assertThat(builder).isNotNull();
 
-        assertThat(builder.total().get()).isEqualTo(42);
         assertThat(builder.elements()).isNotNull();
         assertThat(asList(builder.elements().get())).containsExactly("foo", "bar", "baz");
     }
 
 
     @Test
-    @DisplayName("builder has supplied collection elements and total from elements size")
+    @DisplayName("builder has supplied collection elements")
     void ensureSuppliedByCollection() throws Exception {
 
         var capture = new AtomicReference<ResponseBuilder<String>>(null);
 
         Supplier<Collection<String>> elements = () -> List.of("foo", "bar", "baz");
 
-        ResponseBuilder.<String>respondTo("some-query", String.class).withSink(capture::set).withAll()
+        ResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(capture::set)
+            .withAll()
             .suppliedBy(elements);
 
         ResponseBuilder<String> builder = capture.get();
         assertThat(builder).isNotNull();
 
-        assertThat(builder.total()).isNull();
         assertThat(builder.elements()).isNotNull();
         assertThat(asList(builder.elements().get())).containsExactly("foo", "bar", "baz");
     }
@@ -142,14 +144,16 @@ class ResponseBuilderTest {
 
         var builder = new AtomicReference<ResponseBuilder<String>>(null);
 
-        ResponseBuilder.<String>respondTo("some-query", String.class).withSink(builder::set).withAll().from("foobar");
+        ResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(builder::set)
+            .withAll()
+            .from("foobar");
 
         ResponseBuilder<String> b = builder.get();
         assertThat(b).isNotNull();
 
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(0);
-        assertThat(b.total().get()).isEqualTo(1);
         assertThat(b.elements()).isNotNull();
         assertThat(asList(b.elements().get())).containsExactly("foobar");
     }
@@ -162,7 +166,10 @@ class ResponseBuilderTest {
 
         var list = List.of("foo", "bar", "baz");
 
-        ResponseBuilder.respondTo("some-query", String.class).withSink(builder::set).withAll().from(list);
+        ResponseBuilder.respondTo("some-query", String.class)
+            .withSink(builder::set)
+            .withAll()
+            .from(list);
 
         @SuppressWarnings("unchecked")
         ResponseBuilder<String> b = (ResponseBuilder<String>) builder.get();
@@ -170,7 +177,6 @@ class ResponseBuilderTest {
 
         assertThat(b.getRespondToTerm()).isEqualTo("some-query");
         assertThat(b.getBatchSize()).isEqualTo(0);
-        assertThat(b.total().get()).isEqualTo(3);
         assertThat(b.elements()).isNotNull();
         assertThat(asList(b.elements().get())).containsExactly("foo", "bar", "baz");
     }
@@ -181,7 +187,9 @@ class ResponseBuilderTest {
 
         var builder = new AtomicReference<ResponseBuilder<?>>(null);
 
-        ResponseBuilder.respondTo("some-query", String.class).withSink(builder::set).withBatchesOf(3)
+        ResponseBuilder.respondTo("some-query", String.class)
+            .withSink(builder::set)
+            .withBatchesOf(3)
             .from("foo", "bar", "baz");
 
         ResponseBuilder<?> b = builder.get();
@@ -199,7 +207,9 @@ class ResponseBuilderTest {
         try {
             ResponseRegistry.instance = () -> registry;
 
-            ResponseBuilder.respondTo("foobar", String.class).withAll().from("foo", "bar", "baz");
+            ResponseBuilder.respondTo("foobar", String.class)
+                .withAll()
+                .from("foo", "bar", "baz");
 
             verify(registry).register(responses.capture());
 

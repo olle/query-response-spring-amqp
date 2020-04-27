@@ -30,13 +30,6 @@ public class ResponseBuilder<T> {
     private int batchSize = 0;
 
     /**
-     * The supplier of a total count of elements that a responder may be able to respond with. Can either be explicitly
-     * provided during build-time, in order to allow for lazily supplied responses. For known collections the supplier
-     * provides {@link Collection#size()}.
-     */
-    private Supplier<Integer> total;
-
-    /**
      * The supplier of the iterator, that provides elements for the built response. As the iterator may be lazily
      * provided, it may be that neither the builder or the created response has any control over the collection backing
      * the response.
@@ -97,7 +90,6 @@ public class ResponseBuilder<T> {
         var elements = Asserts.invariantResponseVarargsArray(ts);
 
         this.elements = elements::iterator;
-        this.total = elements::size;
 
         register();
     }
@@ -108,16 +100,14 @@ public class ResponseBuilder<T> {
         var elements = Asserts.invariantResponseCollection(ts);
 
         this.elements = elements::iterator;
-        this.total = elements::size;
 
         register();
     }
 
 
-    public void from(Supplier<Iterator<T>> elements, Supplier<Integer> total) {
+    public void from(Supplier<Iterator<T>> elements) {
 
         this.elements = Asserts.invariantSupplier(elements);
-        this.total = Asserts.invariantSupplier(total);
 
         register();
     }
@@ -126,7 +116,6 @@ public class ResponseBuilder<T> {
     public void suppliedBy(Supplier<Collection<T>> supplier) {
 
         this.elements = () -> (Iterator<T>) supplier.get().iterator();
-        this.total = null;
 
         register();
     }
@@ -147,12 +136,6 @@ public class ResponseBuilder<T> {
     int getBatchSize() {
 
         return this.batchSize;
-    }
-
-
-    Supplier<Integer> total() {
-
-        return this.total;
     }
 
 

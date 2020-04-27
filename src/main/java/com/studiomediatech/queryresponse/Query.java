@@ -252,10 +252,6 @@ class Query<T> implements MessageListener, Logging {
     static class ConsumedResponseEnvelope<R> {
 
         @JsonProperty
-        public int count;
-        @JsonProperty
-        public int total;
-        @JsonProperty
         public Collection<R> elements = new ArrayList<>();
 
         public static <R> ConsumedResponseEnvelope<R> empty() {
@@ -267,7 +263,7 @@ class Query<T> implements MessageListener, Logging {
         @Override
         public String toString() {
 
-            return "ConsumedResponseEnvelope [count=" + count + ", total=" + total + "]";
+            return "ConsumedResponseEnvelope [elements.size=" + elements.size() + "]";
         }
     }
 }
