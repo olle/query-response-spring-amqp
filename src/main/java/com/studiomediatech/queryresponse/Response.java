@@ -37,7 +37,6 @@ class Response<T> implements MessageListener, Logging {
     private RabbitFacade facade;
 
     private Supplier<Iterator<T>> elements;
-    private Supplier<Integer> total;
 
     // Size of response batches, 0=no batches
     private int batchSize;
@@ -99,18 +98,13 @@ class Response<T> implements MessageListener, Logging {
             count++;
 
             if (count == this.batchSize) {
-                response.count = response.elements.size();
-                response.total = this.total != null ? this.total.get() : response.elements.size();
                 responses.add(response);
-
                 response = new PublishedResponseEnvelope<T>();
                 count = 0;
             }
         }
 
         if (count != 0) {
-            response.count = response.elements.size();
-            response.total = this.total != null ? this.total.get() : response.elements.size();
             responses.add(response);
         }
 
@@ -123,13 +117,7 @@ class Response<T> implements MessageListener, Logging {
         var response = new PublishedResponseEnvelope<T>();
 
         Iterator<T> it = this.elements.get();
-
-        while (it.hasNext()) {
-            response.elements.add(it.next());
-        }
-
-        response.count = response.elements.size();
-        response.total = this.total != null ? this.total.get() : response.elements.size();
+        it.forEachRemaining(response.elements::add);
 
         return response;
     }
@@ -140,11 +128,6 @@ class Response<T> implements MessageListener, Logging {
         Response<T> response = new Response<>(responses.getRespondToTerm());
 
         response.elements = responses.elements();
-
-        if (responses.total() != null) {
-            response.total = responses.total();
-        }
-
         response.batchSize = responses.getBatchSize();
 
         return response;
@@ -171,10 +154,6 @@ class Response<T> implements MessageListener, Logging {
     class PublishedResponseEnvelope<R extends T> {
 
         @JsonProperty
-        public int count;
-        @JsonProperty
-        public int total;
-        @JsonProperty
         public Collection<R> elements = new ArrayList<>();
 
         PublishedResponseEnvelope() {
@@ -185,7 +164,7 @@ class Response<T> implements MessageListener, Logging {
         @Override
         public String toString() {
 
-            return "PublishedResponseEnvelope [count=" + count + ", total=" + total + "]";
+            return "PublishedResponseEnvelope [elements.size=" + elements.size() + "]";
         }
     }
 }

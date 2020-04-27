@@ -59,12 +59,7 @@ class ResponseTest {
         Message m = message.getValue();
         assertThat(m).isNotNull();
 
-        JSONAssert.assertEquals(new String(m.getBody()),
-            "{"
-            + "count: 3,"
-            + "total: 3,"
-            + "elements: ['foo', 'bar', 'baz']"
-            + "}", true);
+        JSONAssert.assertEquals(new String(m.getBody()), "{elements: ['foo', 'bar', 'baz']}", true);
     }
 
 
@@ -77,7 +72,7 @@ class ResponseTest {
         ResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
-            .from(() -> List.of("foo", "bar").iterator(), () -> 42);
+            .from(() -> List.of("foo", "bar").iterator());
 
         var sut = Response.from(capture.get());
         sut.accept(facade);
@@ -90,16 +85,12 @@ class ResponseTest {
         Message m = message.getValue();
         assertThat(m).isNotNull();
 
-        JSONAssert.assertEquals(new String(m.getBody()),
-            "{"
-            + "count: 2,"
-            + "total: 42,"
-            + "elements: ['foo', 'bar']"
-            + "}", true);
+        JSONAssert.assertEquals(new String(m.getBody()), "{elements: ['foo', 'bar']}", true);
     }
 
 
     @Test
+    @DisplayName("responses are published as batches of a given size, plus leftover")
     void ensurePublishedBatchResponses() throws Exception {
 
         AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
@@ -123,22 +114,8 @@ class ResponseTest {
         String json2 = new String(ms.get(1).getBody());
         String json3 = new String(ms.get(2).getBody());
 
-        JSONAssert.assertEquals(json1, "{"
-            + "count: 2,"
-            + "total: 5,"
-            + "elements: ['foo', 'bar']"
-            + "}", true);
-
-        JSONAssert.assertEquals(json2, "{"
-            + "count: 2,"
-            + "total: 5,"
-            + "elements: ['baz', 'goo']"
-            + "}", true);
-
-        JSONAssert.assertEquals(json3, "{"
-            + "count: 1,"
-            + "total: 5,"
-            + "elements: ['gar']"
-            + "}", true);
+        JSONAssert.assertEquals(json1, "{elements: ['foo', 'bar']}", true);
+        JSONAssert.assertEquals(json2, "{elements: ['baz', 'goo']}", true);
+        JSONAssert.assertEquals(json3, "{elements: ['gar']}", true);
     }
 }
