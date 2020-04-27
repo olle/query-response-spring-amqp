@@ -25,13 +25,15 @@ class ResponseRegistryTest {
 
     @Mock
     RabbitFacade facade;
+    @Mock
+    Statistics stats;
 
     @Test
     void ensureInstanceIsInjectedByContextLifecycleMethod() {
 
         ResponseRegistry.instance = () -> null;
 
-        var sut = new ResponseRegistry(null);
+        var sut = new ResponseRegistry(null, null);
         var ctx = Mockito.mock(ApplicationContext.class);
         when(ctx.getBean(ResponseRegistry.class)).thenReturn(sut);
 
@@ -75,7 +77,7 @@ class ResponseRegistryTest {
         var mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
 
-        new ResponseRegistry(null).register(capture.get());
+        new ResponseRegistry(null, stats).register(capture.get());
 
         verify(mock).accept(capture.get());
 
@@ -93,7 +95,7 @@ class ResponseRegistryTest {
             .withAll()
             .from("foo", "bar", "baz");
 
-        new ResponseRegistry(facade).accept(capture.get());
+        new ResponseRegistry(facade, stats).accept(capture.get());
 
         verify(facade).declareQueue(Mockito.isA(Response.class));
         verify(facade).declareBinding(Mockito.isA(Response.class));

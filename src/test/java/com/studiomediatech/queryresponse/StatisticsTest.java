@@ -2,8 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.Statistics.Stat;
 
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -40,14 +38,14 @@ class StatisticsTest {
 
     @SuppressWarnings("static-access")
     @Test
-    void ensureBuildsResponseOnInitialization() {
+    void ensureBuildsResponseOnApplicationReady() {
 
         ResponseRegistry.instance = () -> registry;
 
         var env = new MockEnvironment();
-        var meters = new SimpleMeterRegistry();
 
-        new Statistics(env, ctx, meters);
+        var sut = new Statistics(env, ctx);
+        sut.on(null);
 
         verify(registry).register(responses.capture());
 
@@ -72,8 +70,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         var env = new MockEnvironment();
-        var meters = new SimpleMeterRegistry();
-        var sut = new Statistics(env, ctx, meters);
+        var sut = new Statistics(env, ctx);
 
         var stat = "count_queries";
 
@@ -97,8 +94,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         var env = new MockEnvironment();
-        var meters = new SimpleMeterRegistry();
-        var sut = new Statistics(env, ctx, meters);
+        var sut = new Statistics(env, ctx);
 
         var stat = "count_responses";
 
@@ -122,8 +118,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         var env = new MockEnvironment();
-        var meters = new SimpleMeterRegistry();
-        var sut = new Statistics(env, ctx, meters);
+        var sut = new Statistics(env, ctx);
 
         var stat = "count_fallbacks";
 

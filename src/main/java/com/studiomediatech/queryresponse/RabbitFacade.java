@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class RabbitFacade implements Logging {
 
+    public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
+
     private final RabbitAdmin admin;
     private final ConnectionFactory connectionFactory;
     private final RabbitTemplate template;
@@ -169,6 +171,7 @@ class RabbitFacade implements Logging {
             .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
             .setContentType(MessageProperties.CONTENT_TYPE_JSON)
             .setContentLength(message.getBody().length)
+            .setHeader(HEADER_X_QR_PUBLISHED, System.currentTimeMillis())
             .build();
     }
 }

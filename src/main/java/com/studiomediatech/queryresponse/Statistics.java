@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 
 import org.springframework.core.env.Environment;
+
+import org.springframework.scheduling.annotation.Async;
 
 import org.springframework.util.StringUtils;
 
@@ -20,8 +23,10 @@ import java.net.UnknownHostException;
 import java.time.Duration;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -42,15 +47,23 @@ class Statistics implements Logging {
     private AtomicLong responsesCount = new AtomicLong(0);
     private AtomicLong fallbacksCount = new AtomicLong(0);
 
-    public Statistics(Environment env, ApplicationContext ctx, MeterRegistry meters) {
+    private List<Long> latencies = new LinkedList<>();
+
+    public Statistics(Environment env, ApplicationContext ctx) {
 
         this.env = env;
         this.ctx = ctx;
+    }
+
+    @Async
+    @EventListener
+    void on(ApplicationReadyEvent event) {
 
         ResponseBuilder.respondTo("query-response/stats", Stat.class)
             .withAll()
             .suppliedBy(this::getStats);
     }
+
 
     protected Collection<Stat> getStats() {
 
@@ -129,6 +142,23 @@ class Statistics implements Logging {
     public void incrementFallbacksCounter() {
 
         this.fallbacksCount.incrementAndGet();
+    }
+
+
+    public void measureLatency(Long published, Long now) {
+
+        if (published == null) {
+            return;
+        }
+
+        long latency = Math.max(1, now - published);
+
+        if (latencies.size() > 144) {
+            latencies.remove(0);
+        }
+
+        latencies.add(latency);
+        System.out.println(latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)));
     }
 
     public static final class Stat {

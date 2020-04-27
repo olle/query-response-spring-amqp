@@ -11,6 +11,7 @@ import com.studiomediatech.queryresponse.util.Logging;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.MessageProperties;
 
 import java.io.IOException;
 
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
  * @param  <T>  expected type of the coerced result elements.
  */
 class Query<T> implements MessageListener, Logging {
+
+    private static final String HEADER_X_QR_PUBLISHED = RabbitFacade.HEADER_X_QR_PUBLISHED;
 
     private static final long ONE_MILLIS = 1L;
 
@@ -63,6 +66,8 @@ class Query<T> implements MessageListener, Logging {
      */
     protected Function<Long, Boolean> fail = l -> false;
 
+    private Statistics stats;
+
     // Declared protected, for access in unit tests.
     protected Query() {
 
@@ -73,8 +78,18 @@ class Query<T> implements MessageListener, Logging {
     @Override
     public void onMessage(Message message) {
 
-        log().info("|--> Received response message: {}", message.getMessageProperties());
+        MessageProperties properties = message.getMessageProperties();
+        log().info("|--> Received response message: {}", properties);
+        measureLatency(properties.getHeader(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
         handleResponseEnvelope(parseMessage(message));
+    }
+
+
+    private void measureLatency(Long published, Long now) {
+
+        if (stats != null) {
+            this.stats.measureLatency(published, now);
+        }
     }
 
 
@@ -152,7 +167,9 @@ class Query<T> implements MessageListener, Logging {
      */
     public Collection<T> accept(RabbitFacade facade, Statistics stats) throws RuntimeException {
 
-        publishQuery(facade, stats);
+        this.stats = stats;
+
+        publishQuery(facade);
 
         /*
          * In this iteration of the Query/Response library, we block on the
@@ -233,18 +250,26 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    private void publishQuery(RabbitFacade facade, Statistics stats) {
+    private void publishQuery(RabbitFacade facade) {
 
         try {
             facade.publishQuery(this.queryTerm,
                 MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
-            stats.incrementQueriesCounter();
+            incrementQueriesCounterStats();
         } catch (RuntimeException ex) {
             if (this.onError != null) {
                 this.onError.accept(ex);
             }
 
             log().error("Failed to publish query message", ex);
+        }
+    }
+
+
+    private void incrementQueriesCounterStats() {
+
+        if (stats != null) {
+            this.stats.incrementQueriesCounter();
         }
     }
 

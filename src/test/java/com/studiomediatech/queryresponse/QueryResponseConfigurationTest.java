@@ -1,7 +1,5 @@
 package com.studiomediatech.queryresponse;
 
-import io.micrometer.core.instrument.MeterRegistry;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -67,14 +65,6 @@ class QueryResponseConfigurationTest {
             assertThat(bean).isNotNull();
             assertThat(ResponseRegistry.instance.get()).isEqualTo(bean);
         });
-    }
-
-
-    @Test
-    @DisplayName("a meter registry component bean is wired by the configuration")
-    void ensureWiresMeterRegistryComponent() throws Exception {
-
-        contextRunner.run(ctx -> assertThat(ctx.getBean(MeterRegistry.class)).isNotNull());
     }
 
 

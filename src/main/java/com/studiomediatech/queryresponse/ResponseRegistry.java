@@ -19,10 +19,12 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
     protected static Supplier<ResponseRegistry> instance = () -> null;
 
     private final RabbitFacade facade;
+    private final Statistics stats;
 
-    public ResponseRegistry(RabbitFacade facade) {
+    public ResponseRegistry(RabbitFacade facade, Statistics stats) {
 
         this.facade = facade;
+        this.stats = stats;
     }
 
     @Override
@@ -52,7 +54,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
         facade.declareBinding(response);
         facade.addListener(response);
 
-        response.accept(facade);
+        response.accept(facade, stats);
 
         log().info("Registered response {}", response);
     }

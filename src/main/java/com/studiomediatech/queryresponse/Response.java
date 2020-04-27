@@ -29,12 +29,15 @@ import java.util.function.Supplier;
  */
 class Response<T> implements MessageListener, Logging {
 
+    private static final String HEADER_X_QR_PUBLISHED = RabbitFacade.HEADER_X_QR_PUBLISHED;
+
     private static final ObjectWriter writer = new ObjectMapper().writer();
 
     private final String queueName;
     private final String routingKey;
 
     private RabbitFacade facade;
+    private Statistics stats;
 
     private Supplier<Iterator<T>> elements;
 
@@ -52,7 +55,9 @@ class Response<T> implements MessageListener, Logging {
     public void onMessage(Message message) {
 
         try {
-            log().info("|--> Consumed query: " + message.getMessageProperties().getReceivedRoutingKey());
+            MessageProperties properties = message.getMessageProperties();
+            log().info("|--> Consumed query: " + properties.getReceivedRoutingKey());
+            measureLatency(properties.getHeader(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
 
             List<Response<T>.PublishedResponseEnvelope<T>> responses = new ArrayList<>();
 
@@ -72,7 +77,7 @@ class Response<T> implements MessageListener, Logging {
                         .setContentType(MessageProperties.CONTENT_TYPE_JSON)
                         .build();
 
-                var replyToAddress = message.getMessageProperties().getReplyToAddress();
+                var replyToAddress = properties.getReplyToAddress();
                 var exchangeName = replyToAddress.getExchangeName();
                 var routingKey = replyToAddress.getRoutingKey();
 
@@ -80,6 +85,14 @@ class Response<T> implements MessageListener, Logging {
             }
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
+        }
+    }
+
+
+    private void measureLatency(Long published, Long now) {
+
+        if (stats != null) {
+            stats.measureLatency(published, now);
         }
     }
 
@@ -134,9 +147,10 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    public void accept(RabbitFacade facade) {
+    public void accept(RabbitFacade facade, Statistics stats) {
 
         this.facade = facade;
+        this.stats = stats;
     }
 
 

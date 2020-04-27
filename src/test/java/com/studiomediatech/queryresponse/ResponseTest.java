@@ -33,6 +33,8 @@ class ResponseTest {
 
     @Mock
     RabbitFacade facade;
+    @Mock
+    Statistics stats;
 
     @Captor
     ArgumentCaptor<Message> message;
@@ -49,7 +51,7 @@ class ResponseTest {
             .from("foo", "bar", "baz");
 
         var sut = Response.from(capture.get());
-        sut.accept(facade);
+        sut.accept(facade, stats);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
         sut.onMessage(query);
@@ -75,7 +77,7 @@ class ResponseTest {
             .from(() -> List.of("foo", "bar").iterator());
 
         var sut = Response.from(capture.get());
-        sut.accept(facade);
+        sut.accept(facade, stats);
 
         var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
         sut.onMessage(query);
@@ -101,7 +103,7 @@ class ResponseTest {
             .from("foo", "bar", "baz", "goo", "gar");
 
         var sut = Response.from(capture.get());
-        sut.accept(facade);
+        sut.accept(facade, stats);
 
         sut.onMessage(MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build());
 

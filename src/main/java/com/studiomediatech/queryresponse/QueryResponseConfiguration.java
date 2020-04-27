@@ -2,9 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import org.springframework.core.env.Environment;
-
-import java.util.function.Supplier;
 
 
 /**
@@ -36,27 +30,11 @@ import java.util.function.Supplier;
 @Import(RabbitAutoConfiguration.class)
 class QueryResponseConfiguration implements Logging {
 
-    protected static Supplier<Long> now = () -> System.currentTimeMillis();
-
-    protected RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-
-        rabbitTemplate.addBeforePublishPostProcessors(message -> {
-            message.getMessageProperties().setHeader("x-qr-published", now.get());
-
-            return message;
-        });
-
-        return rabbitTemplate;
-    }
-
-
     @Bean
-    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, ConnectionFactory connectionFactory,
-        TopicExchange queriesExchange) {
+    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate,
+        ConnectionFactory connectionFactory, TopicExchange queriesExchange) {
 
-        return new RabbitFacade(rabbitAdmin, rabbitTemplate(connectionFactory), connectionFactory, queriesExchange);
+        return new RabbitFacade(rabbitAdmin, rabbitTemplate, connectionFactory, queriesExchange);
     }
 
 
@@ -68,30 +46,22 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    ResponseRegistry respondingRegistry(RabbitFacade facade) {
+    Statistics statistics(Environment env, ApplicationContext ctx) {
 
-        return new ResponseRegistry(facade);
+        return new Statistics(env, ctx);
     }
 
 
     @Bean
-    QueryRegistry queryingRegistry(RabbitFacade facade, Statistics stats) {
+    ResponseRegistry responseRegistry(RabbitFacade facade, Statistics stats) {
+
+        return new ResponseRegistry(facade, stats);
+    }
+
+
+    @Bean
+    QueryRegistry queryRegistry(RabbitFacade facade, Statistics stats) {
 
         return new QueryRegistry(facade, stats);
-    }
-
-
-    @Bean
-    @ConditionalOnMissingBean
-    MeterRegistry meterRegistry() {
-
-        return new SimpleMeterRegistry();
-    }
-
-
-    @Bean
-    Statistics statistics(Environment env, ApplicationContext ctx, MeterRegistry meters) {
-
-        return new Statistics(env, ctx, meters);
     }
 }
