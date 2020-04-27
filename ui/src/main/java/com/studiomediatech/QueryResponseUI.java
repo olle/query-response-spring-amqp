@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -104,6 +105,8 @@ public class QueryResponseUI {
                     .waitingFor(1000)
                     .orEmpty();
 
+            stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
+
             long countQueriesSum = stats
                     .stream()
                     .filter(stat -> "count_queries".equals(stat.key))
@@ -123,6 +126,29 @@ public class QueryResponseUI {
                     .sum();
 
             handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum);
+
+            long minLatency = stats
+                    .stream()
+                    .filter(stat -> "min_latency".equals(stat.key))
+                    .mapToInt(stat -> (int) stat.value)
+                    .min()
+                    .orElse(0);
+
+            long maxLatency = stats
+                    .stream()
+                    .filter(stat -> "max_latency".equals(stat.key))
+                    .mapToInt(stat -> (int) stat.value)
+                    .max()
+                    .orElse(0);
+
+            double avgLatency = stats
+                    .stream()
+                    .filter(stat -> "avg_latency".equals(stat.key))
+                    .mapToDouble(stat -> (double) stat.value)
+                    .average()
+                    .orElse(0.0d);
+
+            handler.handleLatency(minLatency, maxLatency, avgLatency);
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -170,6 +196,25 @@ public class QueryResponseUI {
                     + "\"count_responses\": %d,"
                     + "\"count_fallbacks\": %d"
                     + "}", countQueriesSum, countResponsesSum, countFallbacksSum);
+
+            publishTextMessageWithPayload(json);
+        }
+
+
+        public void handleLatency(long minLatency, long maxLatency, double avgLatency) {
+
+            var json = String.format(Locale.US,
+                    "{"
+                    + "\"min_latency\": %d,"
+                    + "\"max_latency\": %d,"
+                    + "\"avg_latency\": %f"
+                    + "}", minLatency, maxLatency, avgLatency);
+
+            publishTextMessageWithPayload(json);
+        }
+
+
+        private void publishTextMessageWithPayload(String json) {
 
             var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 

@@ -4,14 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.EventListener;
 
 import org.springframework.core.env.Environment;
-
-import org.springframework.scheduling.annotation.Async;
 
 import org.springframework.util.StringUtils;
 
@@ -25,12 +20,17 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 class Statistics implements Logging {
+
+    // Yes, it's a FIB!!
+    private static final int MAX_COLLECTED_LATENCIES = 987;
 
     private static final String STAT_UPTIME = "uptime";
     private static final String STAT_PID = "pid";
@@ -39,6 +39,9 @@ class Statistics implements Logging {
     private static final String STAT_COUNT_QUERIES = "count_queries";
     private static final String STAT_COUNT_RESPONSES = "count_responses";
     private static final String STAT_COUNT_FALLBACKS = "count_fallbacks";
+    private static final String STAT_LATENCY_MAX = "max_latency";
+    private static final String STAT_LATENCY_MIN = "min_latency";
+    private static final String STAT_LATENCY_AVG = "avg_latency";
 
     private final Environment env;
     private final ApplicationContext ctx;
@@ -53,11 +56,11 @@ class Statistics implements Logging {
 
         this.env = env;
         this.ctx = ctx;
+
+        Executors.newScheduledThreadPool(1).schedule(this::respond, 1L, TimeUnit.SECONDS);
     }
 
-    @Async
-    @EventListener
-    void on(ApplicationReadyEvent event) {
+    void respond() {
 
         ResponseBuilder.respondTo("query-response/stats", Stat.class)
             .withAll()
@@ -74,8 +77,29 @@ class Statistics implements Logging {
                 Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
                 Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
                 Stat.of(STAT_PID, getPidOrDefault("-")), // NOSONAR
-                Stat.of(STAT_UPTIME, getUptimeOrDefault("-")) // NOSONAR
+                Stat.of(STAT_UPTIME, getUptimeOrDefault("-")), // NOSONAR
+                Stat.of(STAT_LATENCY_MAX, getMaxLatency()), // NOSONAR
+                Stat.of(STAT_LATENCY_MIN, getMinLatency()), // NOSONAR
+                Stat.of(STAT_LATENCY_AVG, getAvgLatency()) // NOSONAR
                 );
+    }
+
+
+    private double getAvgLatency() {
+
+        return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getAverage();
+    }
+
+
+    private long getMinLatency() {
+
+        return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getMin();
+    }
+
+
+    private long getMaxLatency() {
+
+        return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getMax();
     }
 
 
@@ -151,14 +175,17 @@ class Statistics implements Logging {
             return;
         }
 
-        long latency = Math.max(1, now - published);
+        long latency = now - published;
 
-        if (latencies.size() > 144) {
+        if (latency < 1) {
+            return;
+        }
+
+        if (latencies.size() > MAX_COLLECTED_LATENCIES) {
             latencies.remove(0);
         }
 
         latencies.add(latency);
-        System.out.println(latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)));
     }
 
     public static final class Stat {

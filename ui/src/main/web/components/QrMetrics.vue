@@ -47,12 +47,9 @@ export default {
       countQueries: (s) => n2t(s.metrics.count_queries),
       countResponses: (s) => n2t(s.metrics.count_responses),
       countFallbacks: (s) => n2t(s.metrics.count_fallbacks),
-      avgLatency: (s) =>
-        `${s.metrics.avg_latency}${s.metrics.avg_latency_unit}`,
-      minLatency: (s) =>
-        `${s.metrics.min_latency}${s.metrics.min_latency_unit}`,
-      maxLatency: (s) =>
-        `${s.metrics.max_latency}${s.metrics.max_latency_unit}`,
+      avgLatency: (s) => `${s.metrics.avg_latency}ms`,
+      minLatency: (s) => `${s.metrics.min_latency}ms`,
+      maxLatency: (s) => `${s.metrics.max_latency}ms`,
       avgThroughput: (s) =>
         `${n2t(s.metrics.avg_throughput)}/${s.metrics.avg_throughput_unit}`,
       throughputQueries: (s) =>

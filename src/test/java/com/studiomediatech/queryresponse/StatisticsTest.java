@@ -45,7 +45,7 @@ class StatisticsTest {
         var env = new MockEnvironment();
 
         var sut = new Statistics(env, ctx);
-        sut.on(null);
+        sut.respond();
 
         verify(registry).register(responses.capture());
 
