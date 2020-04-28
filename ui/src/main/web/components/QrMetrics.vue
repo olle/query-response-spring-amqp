@@ -47,9 +47,9 @@ export default {
       countQueries: (s) => n2t(s.metrics.count_queries),
       countResponses: (s) => n2t(s.metrics.count_responses),
       countFallbacks: (s) => n2t(s.metrics.count_fallbacks),
-      avgLatency: (s) => `${s.metrics.avg_latency}ms`,
-      minLatency: (s) => `${s.metrics.min_latency}ms`,
-      maxLatency: (s) => `${s.metrics.max_latency}ms`,
+      avgLatency: (s) => n2ms(s.metrics.avg_latency),
+      minLatency: (s) => n2ms(s.metrics.min_latency),
+      maxLatency: (s) => n2ms(s.metrics.max_latency),
       avgThroughput: (s) =>
         `${n2t(s.metrics.avg_throughput)}/${s.metrics.avg_throughput_unit}`,
       throughputQueries: (s) =>
@@ -63,6 +63,10 @@ export default {
     }),
   },
   store,
+};
+
+const n2ms = (ms) => {
+  return `${Math.round(ms * 10 + Number.EPSILON) / 10}ms`;
 };
 
 const ns2p = (n, d) => {
