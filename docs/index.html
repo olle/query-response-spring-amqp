@@ -5,8 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="Doc Writer">
-<title>Hello, AsciiDoc!</title>
+<title>Query/Response</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -524,15 +523,46 @@ table.CodeRay td.code>pre{padding:0}
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Hello, AsciiDoc!</h1>
-<div class="details">
-<span id="author" class="author">Doc Writer</span><br>
-<span id="email" class="email"><a href="mailto:doc@example.com">doc@example.com</a></span><br>
-</div>
+<h1>Query/Response</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_first_section">First Section</a></li>
+<li><a href="#_foreword">Foreword</a></li>
+<li><a href="#_a_simple_example">A simple example</a>
+<ul class="sectlevel2">
+<li><a href="#_any_good_sci_fi_books_out_there">Any good sci-fi books out there?</a></li>
+<li><a href="#_the_current_top_3_books">The current top-3 books</a></li>
+<li><a href="#_the_asimov_collection">The Asimov collection</a></li>
+<li><a href="#_no_book_lovers_out_there">No book lovers out there?</a></li>
+<li><a href="#_reprise_surprise">Reprise, surprise</a></li>
+<li><a href="#_so_whats_in_the_library">So, what&#8217;s in the library?</a></li>
+<li><a href="#_inversion_of_flow">Inversion of flow</a></li>
+</ul>
+</li>
+<li><a href="#_specification">Specification</a>
+<ul class="sectlevel2">
+<li><a href="#_intent">Intent</a></li>
+<li><a href="#_components_and_collaborators">Components and Collaborators</a></li>
+<li><a href="#_methods_and_actions">Methods and Actions</a></li>
+</ul>
+</li>
+<li><a href="#_the_example_revisited">The example revisited</a>
+<ul class="sectlevel2">
+<li><a href="#_a_better_library_protocol">A better library protocol</a></li>
+<li><a href="#_top_3_books_have_stars">Top-3 books have stars</a></li>
+<li><a href="#_one_of_each_flavour">One of each flavour</a></li>
+<li><a href="#_out_with_the_old">Out with the old</a></li>
+</ul>
+</li>
+<li><a href="#_queryresponse_maturity_model">Query/Response Maturity Model</a>
+<ul class="sectlevel2">
+<li><a href="#_level_0_purgatory">Level 0 - Purgatory</a></li>
+<li><a href="#_level_1">Level 1</a></li>
+<li><a href="#_level_2">Level 2</a></li>
+<li><a href="#_level_3">Level 3</a></li>
+<li><a href="#_level_4_and_beyond">Level 4 and beyond&#8230;&#8203;</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -540,26 +570,806 @@ table.CodeRay td.code>pre{padding:0}
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>An introduction to <a href="http://asciidoc.org">AsciiDoc</a>.</p>
+<p>A messaging pattern for building highly decoupled evolving service
+architectures.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_first_section">First Section</h2>
+<h2 id="_foreword">Foreword</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>item 1</p>
-</li>
-<li>
-<p>item 2</p>
-</li>
-</ul>
+<div class="paragraph">
+<p><em>Sometime around 2015 I came across a presentation with <a href="https://twitter.com/fgeorge52">Fred George</a>,
+ about the <a href="https://youtu.be/yPf5MfOZPY0">Challenges in Implementing Microservices</a>. It&#8217;s a great
+ talk, with lots of lessons-learned that are really relevant; still are
+ today, if you ask me. Experience comes from learning through failures, and at
+ this point in time I was well aware of the problems that come with services
+ using REST-ful APIs to call other services. I had already seen how latencies
+ could spike and availability get lost, as calls from service A to B were
+ actually depending on service B calling service C. It was a mess.</em></p>
 </div>
-<div class="listingblock">
+<div class="paragraph">
+<p><em>In his talk George lands at the question "Synchronous or Asynchronous?" and
+ proceeds to describe, what he calls, the "Needs Pattern". Service A would,
+ instead of calling service B, publish a request, and service B would be able
+ to pick it up and send back a response. After hearing this I began to think
+ a lot about the effects of moving to an asynchronous way of communication
+ between services. There was clearly a lot more here than just decoupling
+ service endpoints and call latencies. Something more profound.</em></p>
+</div>
+<div class="paragraph">
+<p><em>The <strong>Query/Response pattern</strong>, that I arrived at, challenges developers to
+ really think hard about responsibility and autonomy in architecture and
+ design. It gives very few guarantees (almost none actually), which will force
+ decisions about <a href="https://en.wikipedia.org/wiki/Service-level_objective">Service Level Objectives (SLA)</a>, as well as
+ resilience and availability, at a much earlier stage in the design and
+ development process. It literally turns things around, which we will see.</em></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_simple_example">A simple example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s learn about the Query/Response pattern by walking through a small
+fictional example (no pun intended). The technical context is <em>messaging</em> and
+hints at some type of broker-based setup - in theory though, any asynchronous
+communication could be used. The examples are only pseudo-code and plain-text
+data, to keep things simple.</p>
+</div>
+<div class="sect2">
+<h3 id="_any_good_sci_fi_books_out_there">Any good sci-fi books out there?</h3>
+<div class="paragraph">
+<p>Let&#8217;s publish a query.</p>
+</div>
+<div class="literalblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="ruby">puts <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello, World!</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre>query: books.sci-fi
+reply-to: library/books.sci-fi#42</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The structure above captures all the basic components that a query should
+communicate. The term <code>books.sci-fi</code> expresses the published <em>need</em>, and we
+can easily understand that it&#8217;s a <em>request</em> for science fiction books.</p>
+</div>
+<div class="paragraph">
+<p><em>The dot-notation is not at all required, the query can use any syntax that
+fits the platform or programming language.</em></p>
+</div>
+<div class="paragraph">
+<p>The query has an address where responses should be sent back to:
+<code>library/books.sci-fi#42</code>. This is really important, not only in order to
+receive responses, but also to avoid coupling the sender to the query. We
+don&#8217;t need to state who&#8217;s publishing the query. The <code>reply-to</code> is just an
+address, a location or <em>mailbox</em> that can be used for replies.</p>
+</div>
+<div class="paragraph">
+<p>The address is only for this particular query, and it is made to be unique.
+In this example <code>library/books.sci-fi#42</code> describes a topic <code>library</code>, and
+then the unique mailbox or queue for the query with a hash-code
+<code>books.sci-fi#42</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_current_top_3_books">The current top-3 books</h3>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#42
+body:
+  "Neuromancer"
+  "Snow Crash"
+  "I, Robot"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We&#8217;re in luck. We got a response! The information above represents a response
+to the query we published. It&#8217;s sent to the address from the query, and carries
+a body or payload of information which may be of interest to us.</p>
+</div>
+<div class="paragraph">
+<p>The response does not have to say who it&#8217;s from. This allows us to think about
+exchange of information, without the notion of: <em>"A sends a request to B,
+which responds to A"</em>. We are making sure that the services are decoupled from
+each other, by letting the response be an <em>optional</em> message, sent to the
+<em>address</em> instead of a reply to the <em>sender</em>. More about this later.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_asimov_collection">The Asimov collection</h3>
+<div class="paragraph">
+<p>Since our query was published as a notification, we&#8217;re not bound to a single
+reply. We can keep on consuming any number of responses that are sent to the
+address we published.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#42
+body:
+  "I, Robot"
+  "The Gods Themselves"
+  "Pebble in the Sky"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this response we received a list of book titles which all have the same
+author. The previous was a list with popular books. This reply even has one
+entry which was already in the first response we received.</p>
+</div>
+<div class="paragraph">
+<p>This is of course not a problem, and it shows us a couple of important things.
+Responses may come from different sources and contexts. This means that the
+consumer of a response will have to assert the value or <em>usefulness</em> of the
+received information, and decide how to handle it.</p>
+</div>
+<div class="paragraph">
+<p><em>The structure of a response should of course conform to some common, agreed
+ upon, format or data-shape. More on this later.</em></p>
+</div>
+<div class="paragraph">
+<p>Considering all this, we need to remember <a href="https://en.wikipedia.org/wiki/Robustness_principle">Postel&#8217;s Law</a>. Information
+should be liberally handled (interpreted), but publishing should be done
+more conservatively. As a consumer of responses we just can&#8217;t have a
+guarantee that the information received is valid, well formed or not malicious.
+We have to consume, convert and validate with great care. The decoupling in
+the Query/Response patter has a price, and this is one part of it.</p>
+</div>
+<div class="paragraph">
+<p><em>But is a published REST-endpoint, for POST requests, that much better? I
+ would argue that we still have the same requirements. To be able to handle
+ requests liberally, we have to convert and validate, with great care. But
+ we are coupling the client and server to each other and, what is perhaps
+ even worse, we&#8217;re actually allowing the client to control the writing of
+ information inside the server. We have at least surrendered to that model
+ of thinking. The POST is a write operation!</em></p>
+</div>
+<div class="paragraph">
+<p><em>To really think and reason about who&#8217;s controlling the write operation, can
+ be a very powerful concept in my view. And arguably, the further away we
+ can push this authority from the actual, internal act of writing, the less
+ we need to think about the complexity of both collaborators at once. This is
+ of course the essence of messaging. We could still achieve this with the REST
+ endpoint, but I would say that it is a lot harder to avoid thinking about
+ the effect of the returned response from the POST request. Even if it is
+ empty. We are caught in a lock-step or imperative model.</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_no_book_lovers_out_there">No book lovers out there?</h3>
+<div class="paragraph">
+<p>Let&#8217;s rewind the scenario a bit. Let&#8217;s say we&#8217;ve just published the query,
+but no responses arrive. What should we do?</p>
+</div>
+<div class="paragraph">
+<p>This is not a flaw in the design, but a specific part of the Query/Response
+pattern. It is always up to the consumer of responses (the one that sent
+the query), to decide <em>how long</em> it will continue to read, or wait for any to
+arrive at all. The pattern does not force this or make any promises.</p>
+</div>
+<div class="paragraph">
+<p>There might be responses. There may be none, a single one or a huge amount.
+This is by design, and it forces us to think about important questions, early
+in development. Fallback values, proper defaults, circuit-breakers and how
+to deal with a flood of responses.</p>
+</div>
+<div class="paragraph">
+<p><em>The most commonly asked question, by developers new to the Query/Response
+ pattern, is: "But what if there are no responses, what do I show the user?".
+ Exactly! Plan for that. This is something that should be considered early
+ in design and development. There might very well be a response, eventually,
+ but how long do you let the user wait for a result?</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reprise_surprise">Reprise, surprise</h3>
+<div class="paragraph">
+<p>Back to our original scenario. We&#8217;ve received both the top-3, as well as
+a collection of Asimov books. And we&#8217;re still open for more responses to the
+published address.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#42
+body:
+  "Neuromancer"
+  "Snow Crash"
+  "I, Robot"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Hey, what&#8217;s this! We now received the same response and body payload, as
+before. This is still not a problem, and it&#8217;s not a flaw in the pattern. It
+is not possible to avoid multiple responses, even from the same publisher. As
+a consumer, we have to be ready to handle it. There is nothing wrong with this
+response at all.</p>
+</div>
+<div class="paragraph">
+<p><em>The consumer must handle this, and can&#8217;t keep the entries in a simple list. If
+ we did, it would contain several duplicate entries. It would be enough to use
+ a set instead, so any duplicate entries would only be kept once.</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_so_whats_in_the_library">So, what&#8217;s in the library?</h3>
+<div class="paragraph">
+<p>Let&#8217;s see what we have.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>query: library.sci-fi
+reply-to: bookshelf/library.sci-fi#1337</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A new query is published and we understand the <code>query</code> term to mean that
+there&#8217;s an <em>interest</em> in knowing what books are in the library. A successful
+scenario could arrive at the following response being consumed.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: bookshelf/library.sci-fi#1337
+body:
+  "Neuromancer"
+  "Snow Crash"
+  "I, Robot"
+  "The Gods Themselves"
+  "Pebble in the Sky"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Just as expected.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inversion_of_flow">Inversion of flow</h3>
+<div class="paragraph">
+<p>What we&#8217;ve seen in this example scenario is actually an inversion of what
+could have been implemented as a tightly coupled, chained set of synchronous
+service calls:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>A user whishes to view a list of science fiction books through the
+<code>Bookshelf</code> service, which needs to call the <code>Library</code> for the list. The
+<code>Library</code> service aggregates all sci-fi books by calls to 2 configured
+services: <code>Top-3</code> and <code>Authors</code>. Only after both service calls return, can
+the <code>Library</code> respond to the <code>Bookshelf</code> and the user is presented with
+a list of sci-fi books.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>In this type of system, not only are the calls aggregated in the total time,
+effectively forcing the user to wait until all calls return, but also to the
+availability of each service. This accumulates at the point of the user,
+making it highly probable that viewing the list of books will fail.</p>
+</div>
+<div class="paragraph">
+<p><em>There are many ways to work towards better and more resilient solutions, also
+ in the synchronous solution. I&#8217;m not trying to say that it is the wrong
+ model. The point I&#8217;m trying to make, is the very different way of thinking
+ that the Query/Response pattern forces us into from the start. Availability,
+ fallbacks, resilience and strict timeouts are called out as key-concepts.</em></p>
+</div>
+<div class="paragraph">
+<p><em>I hope this illustrates what&#8217;s possible using this approach and that I&#8217;ve
+ sparked at least som interest in the Query/Response pattern. Later I will
+ extend on some of the features and caveats.</em></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_specification">Specification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I&#8217;d like to describe the Query/Response pattern in a more formal but not
+too strict way, since it&#8217;s not in any way some type of <em>standard</em> or
+<em>protocol</em>. This is a pattern derived from the general idea of expressing a
+<em>need</em> or <em>demand</em>, as previously told. It is shaped here, into a specific
+version, or flavour, in the <strong>Query/Response pattern</strong>. It simply contains
+my recommendations and suggestions on rules or principles to follow.</p>
+</div>
+<div class="paragraph">
+<p>Please, take what you like, leave the rest, and extend as you seem fit.</p>
+</div>
+<div class="paragraph">
+<p>Use of the keywords: "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" are intended
+to follow the definitions of <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_intent">Intent</h3>
+<div class="paragraph">
+<p>The Query/Response pattern aims to describe a model for information sharing
+in a distributed system. It does so by using strong decoupling of system
+actors and establishing asynchronous message-based high-level data exchange,
+as the only means of communication.</p>
+</div>
+<div class="paragraph">
+<p>The following specifications tries to provide a set of rules and guides,
+which can be used as an authoritative source for developer, implementing the
+pattern.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_components_and_collaborators">Components and Collaborators</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Query</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">message</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Very small, published notification.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Response</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">message</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Carries information as payload.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Address</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">location</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reference to "a mailbox"</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Publisher</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initiates <em>publish</em> method calls.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Consumer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepts <em>consume</em> method calls.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_query"><code>Query</code></h4>
+<div class="paragraph">
+<p>A notification that expresses a specific <em>need</em> or <em>whish</em>, which can be
+fulfilled by a response, published to a specified return address. The query
+MUST state its <em>need</em> or <em>whish</em> in an interpretable way. It may use any
+suitable syntax, semantics or language. Most commonly a simple string or term
+is used, similar to a message subject, -name or an event <em>routing-key</em>. A
+query MUST specify an address for responses, which SHOULD be <em>appropriate</em>
+for the stated query and, technically <em>available</em>, as the query is created.</p>
+</div>
+<div class="paragraph">
+<p><em>I very much recommend creating queries with expressions or terms from a
+ domain specific, or ubiquitous language. This allows for broader understanding
+ and involvement of stakeholders. Keeping queries human readable makes sense.
+ It&#8217;s often desirable to use structured terms, with semantics, such as
+ filters or parameters. This is quite common and not at all bad.</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_response"><code>Response</code></h4>
+<div class="paragraph">
+<p>A notification, published, as a response to a query, optionally carrying an
+information- or data-payload. A response MUST NOT be sent without an intent to
+<em>answer</em> a specific query (use event notifications for that). The response
+MUST be sent to the address of the query it responds to, without manipulating
+it. A response SHOULD carry an appropriate information- or data-payload, with
+the intent to answer the query it responds to. Note that this is not a strict
+requirement. Responses SHOULD be sent within an appropriate time frame of
+seeing a query.</p>
+</div>
+<div class="paragraph">
+<p><em>In most cases it&#8217;s desirable to publish a response as quick as possible,
+ after consuming a query.</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_address"><code>Address</code></h4>
+<div class="paragraph">
+<p>Describes and designates an addressable <em>location</em> with the capability to
+receive and handle responses. Typically a messaging <em>mailbox</em> or a queue. The
+address MUST NOT describe a system actor or collaborator, but instead ensure
+decoupling between a publisher and a consumer.</p>
+</div>
+<div class="paragraph">
+<p><em>In messaging or broker based systems, the address is typically a routing key,
+ topic or a queue-name.</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publisher"><code>Publisher</code></h4>
+<div class="paragraph">
+<p>An actor that initiates the publishing of a notification, either a query or
+a response depending on its current role. The publisher MUST NOT be responsible
+for the arrival of any published information. Publishers MUST NOT know any
+consumers.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The concrete <em>interpolated</em> roles <code>Query-Publisher</code> and
+<code>Response-Publisher</code>, does not have to be bound to a single or unique actor.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><em>It is open for the implementation of the Query/Response pattern to solve or
+ choose how it ensures delivery of messages, e.g. using a broker- or queue-
+ based messaging system or some other solution for asynchronous communication.</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consumer"><code>Consumer</code></h4>
+<div class="paragraph">
+<p>An actor that willingly yields to the consumption of notifications, from some
+external source, either a response or a query depending on its current role.
+Consumers MUST NOT know any publishers.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The concrete <em>interpolated</em> roles <code>Query-Consumer</code> and
+<code>Response-Consumer</code>, does not have to be bound to a single or unique actor.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_methods_and_actions">Methods and Actions</h3>
+<div class="paragraph">
+<p><em>Nothing in the Query/Response pattern is synchronous, or based on the notion
+ of guaranteed delivery (or only-once semantics). The following structured
+ step-by-step description is only for documentation purposes, and does not,
+ in any way, define a sequence which can be relied upon.</em></p>
+</div>
+<div class="sect3">
+<h4 id="_prepare_address">Prepare <code>Address</code></h4>
+<div class="paragraph">
+<p>Before publishing a query, the query publisher SHOULD ensure that an
+appropriate address, specified for the query, can be handled.</p>
+</div>
+<div class="paragraph">
+<p><em>Implementations are free to use a best-effort approach. It may be that the
+only option is to use short-lived or temporary resources, which may or may
+not fail to be allocated. Therefore there&#8217;s no strict requirement to ensure
+that the address can be handled.</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publish_query">Publish <code>Query</code></h4>
+<div class="paragraph">
+<p>The query publisher can, at any time, choose to publish a query. No ACK or
+NACK will be provided and the query publisher MUST NOT assume that the query
+has been consumed, or that a response will be returned at this time. The
+publisher SHOULD consider the case where the query is lost, examine options
+to detect and repair this, if possible; <em>timeouts, retries or fallbacks are
+perhaps options to investigate</em>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consume_query">Consume <code>Query</code></h4>
+<div class="paragraph">
+<p>A query consumer, that is willingly listening for queries, may at any time
+receive, and choose to handle a query. Consuming queries is an unbound
+operation. The consumer SHOULD handle queries with an intent to provide a
+response, or ignore the query. A consumer MAY decide to publish none, one or
+any number of responses to the query - it is optional. A consumer MAY at any
+time choose to stop listening for queries.</p>
+</div>
+<div class="paragraph">
+<p><em>Please note that the Query/Response pattern does not protect against
+query consumers with harmful intent. Implementations should consider issues
+like security, encryption and trust as extensions to it.</em></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_publish_response">Publish <code>Response</code></h4>
+<div class="paragraph">
+<p>A response publisher MUST use the provided address of the query it responds to,
+when publishing responses. No ACK or NACK will be provided and the publisher
+MUST NOT assume that the response has been delivered, arrived properly or
+consumed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consume_response">Consume <code>Response</code></h4>
+<div class="paragraph">
+<p>A response consumer, listening for responses at a previously created address,
+MAY at any time receive one or several responses - or not at all. Consuming
+responses is an unbounded operation. Any received response MAY have a payload
+or body of information. The consumer SHOULD assert and validate any
+transferred information with great care. A consumer MAY at any time choose to
+stop listening for responses.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_example_revisited">The example revisited</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s examine one of the most powerful aspects of using the Query/Response
+pattern. If we think back to our initial example we published a query for
+books in the sci-fi genre.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>query: books.sci-fi
+reply-to: library/books.sci-fi#42</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We also learned that responses may come from different sources, with different
+payloads and we are responsible for dealing with validation and duplicates etc.</p>
+</div>
+<div class="paragraph">
+<p>The query in this example uses only some minimal semantics to express the
+genre of books requested, the term <code>sci-fi</code>. This is part of a contract from
+our domain, together with rules on how any result payload should be presented.
+The list of strings within quotes are not by accident, it is also by design.</p>
+</div>
+<div class="paragraph">
+<p>The Query/Response pattern does not enforce any structural rules for query,
+address or response syntax. This must come from designers and developers. <em>I
+would suggest, using <a href="https://en.wikipedia.org/wiki/Domain-driven_design">Domain Driven Design</a> to leverage the power of
+a ubiquitous language in the queries</em>.</p>
+</div>
+<div class="paragraph">
+<p>All this together puts us in a position to allow change and evolution in our
+system.</p>
+</div>
+<div class="sect2">
+<h3 id="_a_better_library_protocol">A better library protocol</h3>
+<div class="paragraph">
+<p>We have agreed on supporting <em>stars</em> for book ratings, and different teams
+scramble to their stations to extend for the new feature.</p>
+</div>
+<div class="paragraph">
+<p>We saw earlier that data returned was formed as a list of quoted strings, and
+the contract for parsing was: "first quoted string per line is book title".</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>body:
+  "Neuromancer"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That rule and the capability to extend it, made it possible to agree on a new
+optional format: "trailing key-values are properties". For example:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>body:
+  "Neuromancer" isbn:9780307969958 stars:4</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is great. Let&#8217;s get to work.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_top_3_books_have_stars">Top-3 books have stars</h3>
+<div class="literalblock">
+<div class="content">
+<pre>query: books.sci-fi
+reply-to: library/books.sci-fi#77</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At a later time a new query for science fiction books is published. Now, we
+still must not assume anything about the service or collaborator publishing
+the query. It may be that we have a new service running in our system, not yet
+live, or an updated version of the first one - we don&#8217;t need to know.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#77
+body:
+  "Neuromancer" stars:3
+  "Snow Crash" stars:5
+  "I, Robot" stars:4</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first response looks great, it&#8217;s using the new extended protocol and
+provides star-ratings with the top-3 sci-fi book list.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_one_of_each_flavour">One of each flavour</h3>
+<div class="paragraph">
+<p>Another response is consumed:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#77
+body:
+  "I, Robot"
+  "The Gods Themselves"
+  "Pebble in the Sky"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Oh, ok seems that we&#8217;ve received a response with only Asimov books again, and
+sadly no stars. Luckily the protocol rules allows us to still use the response
+if we choose to.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#77
+body:
+  "I, Robot" stars:2
+  "The Gods Themselves"
+  "Pebble in the Sky" stars:5</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And what is this now. We&#8217;ve consumed yet another response and it appears to be
+the Asimov list again, but this time with star-ratings, but only for a few
+titles.</p>
+</div>
+<div class="paragraph">
+<p>This is quite normal and shows us a really important and valuable aspect of
+the Query/Response pattern. If we would pull the curtain back a bit, it could
+be reasonable to assume that the publisher of Asimov books now exists in 2
+distinct versions. One supports the new updated format, and has a couple of
+star-ratings set. The other appears to be the <em>older</em> version.</p>
+</div>
+<div class="paragraph">
+<p>We have effectively seen how response publishers can evolve, and even exist
+side-by-side, if care is taken to design a suitable payload protocol.</p>
+</div>
+<div class="paragraph">
+<p><em>The backward compatibility of the payload format is not at all required in the
+ Query/Response pattern. Implementations could use version tags or classifiers
+ to check for compatibility at the consumer side.</em></p>
+</div>
+<div class="paragraph">
+<p>The key point here is, the consumer is still responsible for asserting the
+usefulness and value of the response information. Parsing, validating or
+checking for version compatibility is required.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_out_with_the_old">Out with the old</h3>
+<div class="paragraph">
+<p>Let&#8217;s jump forward and say that at some later time, the query for sci-fi books
+is published again.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>query: books.sci-fi
+reply-to: library/books.sci-fi#88</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And this time, the only consumed response with Asimov books is the following:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>response: library/books.sci-fi#88
+body:
+  "I, Robot" stars:3
+  "The Gods Themselves" stars:3
+  "Pebble in the Sky" stars:5</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can almost certainly conclude that the original version of the Asimov
+book service has been shut down.</p>
+</div>
+<div class="paragraph">
+<p>Again we can see how the Query/Response pattern helps in coping with a natural
+evolution of the system. Services can be added, removed or upgraded at any
+time.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_queryresponse_maturity_model">Query/Response Maturity Model</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Just like with the <a href="https://martinfowler.com/articles/richardsonMaturityModel.html">Richardson Maturity Model</a>, I&#8217;ve identified an
+evolution of maturity around the acceptance, use and implementation of
+Query/Response. It describes the benefits, opportunities and also
+complexities, pretty well.</p>
+</div>
+<div class="sect2">
+<h3 id="_level_0_purgatory">Level 0 - Purgatory</h3>
+<div class="paragraph">
+<p>All communication and exchange is bound to fixed, configured, service end-
+points. Synchronous blocking calls exchange information based on formats
+declared in project Wiki-pages or Word-documents. Most solutions are stateless,
+with I/O bound performance. Changes typically require system wide,
+synchronized, upgrades. This lead to development dropping in velocity, as each
+module or team will find it hard or impossible to act independently of each
+other.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_1">Level 1</h3>
+<div class="paragraph">
+<p>Using the Query/Response pattern for the first time often leads to healthy
+temporal decoupling pretty quick. But with a lot of code still written with
+a synchronous model in mind, the data exchange tend to look a bit like <em>sync</em>.
+Solutions move towards being stateful, but loosen their I/O-bound performance
+characteristics. It&#8217;s hard for developer to think about queries and responses
+not coming from known components. Already at this level teams and modules gain
+a lot in the capability to move independently. Releases and deployment is
+practically not a tangle any more, although the view on evolutionary
+data-structures or protocols for data, may lag behind and still be
+Wiki/Document-based.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_2">Level 2</h3>
+<div class="paragraph">
+<p>At this level a deeper insight into the value of a proper data-structure or
+protocol for payload, which can evolve as required, is often gained. With
+this comes the extended benefit of seamless upgrades and service evolution.
+Developers get to experience how responsibilities can move without breaking
+or changing any integration code - response publishers can change owners and
+location.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_3">Level 3</h3>
+<div class="paragraph">
+<p>More and more ideas around reactivity and flexibility begin to take form.
+Events can immediately trigger queries which may enrich a local context based
+on current needs. This moves the design and use beyond a system using sync,
+and durable persistent state, to a more ephemeral and <em>living</em> model. The data
+structure of payloads tend to be less bound to strict <em>types</em> and more
+malleable <em>data shapes</em>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_4_and_beyond">Level 4 and beyond&#8230;&#8203;</h3>
+<div class="paragraph">
+<p>Information exchange using the Query/Response pattern allows for almost
+limitless evolution of services, or components, no longer bound to versions or
+availability. The structure of any data is also very dynamic, information can
+be partial, enriched, or come in different sets, from different publishers. No
+schema is required at this level, but <em>data shapes</em> are used, which can be
+embraced by all collaborators in the architecture. Queries are sent and
+responses consumed, sometimes within deliberate timeouts; take-until semantics.
+This way modules can provide, and fulfill, explicit SLAs if required.</p>
+</div>
+<div class="paragraph">
+<p><em>This is of course not supposed to be taken too seriously, but the maturity
+ levels describes a journey, from a strict and stale model, into one where
+ evolution and change is quite normal.</em></p>
 </div>
 </div>
 </div>
@@ -567,7 +1377,7 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-29 21:06:55 +0200
+Last updated 2020-04-29 21:57:47 +0200
 </div>
 </div>
 </body>

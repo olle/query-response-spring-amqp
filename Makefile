@@ -6,6 +6,8 @@ verify:
 install:
 	mvn install
 
-.PHONY: docs
+.PHONY: docs watch-docs
 docs:
 	mvn asciidoctor:process-asciidoc
+watch-docs:
+	mvn asciidoctor:http
