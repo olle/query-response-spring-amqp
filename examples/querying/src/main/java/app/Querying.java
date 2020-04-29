@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 
@@ -94,8 +95,9 @@ class Querying implements CommandLineRunner {
 
     private void pause() throws InterruptedException {
 
-        LOG.info("Sleeping for 10s...");
-        Thread.sleep(10000);
+        int ms = ThreadLocalRandom.current().nextInt(1000, 20000);
+        LOG.info("Sleeping for " + ms + "ms");
+        Thread.sleep(ms);
     }
 
 
