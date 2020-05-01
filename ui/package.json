@@ -25,8 +25,8 @@
     "vue-template-compiler": "^2.6.11"
   },
   "scripts": {
-    "serve": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
-    "watch": "parcel --port 3000 --out-dir target/classes/public src/main/web/index.html",
+    "watch": "parcel watch --out-dir target/classes/public src/main/web/index.html",
+    "serve": "parcel serve --port 3000 --out-dir target/classes/public src/main/web/index.html",
     "build": "parcel build --out-dir target/classes/public src/main/web/index.html",
     "lint": "eslint --ext .js,.vue src/main/web/",
     "test": "jest --watch"
