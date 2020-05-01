@@ -1,5 +1,7 @@
 package com.studiomediatech.queryresponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.queryresponse.util.Logging;
@@ -15,8 +17,11 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +47,8 @@ class Statistics implements Logging {
     private static final String STAT_LATENCY_MAX = "max_latency";
     private static final String STAT_LATENCY_MIN = "min_latency";
     private static final String STAT_LATENCY_AVG = "avg_latency";
+    private static final String STAT_TP_QUERIES = "throughput_queries";
+    private static final String STAT_TP_RESPONSES = "throughput_responses";
 
     private final Environment env;
     private final ApplicationContext ctx;
@@ -49,8 +56,11 @@ class Statistics implements Logging {
     private AtomicLong queriesCount = new AtomicLong(0);
     private AtomicLong responsesCount = new AtomicLong(0);
     private AtomicLong fallbacksCount = new AtomicLong(0);
+    private List<Long> latencies = new LinkedList<>(Arrays.asList(0L));
+    private AtomicLong lastQueriesCount = new AtomicLong(0);
 
-    private List<Long> latencies = new LinkedList<>();
+    private AtomicLong lastResponsesCount = new AtomicLong(0);
+    private AtomicLong lastResponsesTimestamp = new AtomicLong(System.currentTimeMillis());
 
     public Statistics(Environment env, ApplicationContext ctx) {
 
@@ -80,30 +90,48 @@ class Statistics implements Logging {
                 Stat.of(STAT_UPTIME, getUptimeOrDefault("-")), // NOSONAR
                 Stat.of(STAT_LATENCY_MAX, getMaxLatency()), // NOSONAR
                 Stat.of(STAT_LATENCY_MIN, getMinLatency()), // NOSONAR
-                Stat.of(STAT_LATENCY_AVG, getAvgLatency()) // NOSONAR
+                Stat.of(STAT_LATENCY_AVG, getAvgLatency()), // NOSONAR
+                getThroughputQueriesStat(), // NOSONAR
+                getThroughputResponsesStat() // NOSONAR
                 );
     }
 
 
-    private double getAvgLatency() {
+    protected Stat getThroughputQueriesStat() {
+
+        long current = this.queriesCount.get();
+
+        return Stat.at(STAT_TP_QUERIES, current - this.lastQueriesCount.getAndSet(current));
+    }
+
+
+    protected Stat getThroughputResponsesStat() {
+
+        long current = this.responsesCount.get();
+
+        return Stat.at(STAT_TP_RESPONSES, current - this.lastResponsesCount.getAndSet(current));
+    }
+
+
+    protected double getAvgLatency() {
 
         return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getAverage();
     }
 
 
-    private long getMinLatency() {
+    protected long getMinLatency() {
 
         return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getMin();
     }
 
 
-    private long getMaxLatency() {
+    protected long getMaxLatency() {
 
         return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getMax();
     }
 
 
-    private String getUptimeOrDefault(String defaults) {
+    protected String getUptimeOrDefault(String defaults) {
 
         return Stream.of(Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime()).toString())
             .filter(StringUtils::hasText)
@@ -112,7 +140,7 @@ class Statistics implements Logging {
     }
 
 
-    private String getPidOrDefault(String defaults) {
+    protected String getPidOrDefault(String defaults) {
 
         try {
             return "" + ProcessHandle.current().pid();
@@ -124,7 +152,7 @@ class Statistics implements Logging {
     }
 
 
-    private String getHostnameOrDefault(String defaults) {
+    protected String getHostnameOrDefault(String defaults) {
 
         String hostName = null;
 
@@ -141,7 +169,7 @@ class Statistics implements Logging {
     }
 
 
-    private String getApplicationNameOrDefault(String defaults) {
+    protected String getApplicationNameOrDefault(String defaults) {
 
         return Stream.of(env.getProperty("cola.id"), env.getProperty("spring.application.name"),
                     ctx.getApplicationName(), ctx.getId(), ctx.getDisplayName())
@@ -169,13 +197,13 @@ class Statistics implements Logging {
     }
 
 
-    public void measureLatency(Long published, Long now) {
+    public void measureLatency(Long publishedAtTimestamp, Long currentTimestamp) {
 
-        if (published == null) {
+        if (publishedAtTimestamp == null) {
             return;
         }
 
-        long latency = now - published;
+        long latency = currentTimestamp - publishedAtTimestamp;
 
         if (latency < 1) {
             return;
@@ -188,12 +216,15 @@ class Statistics implements Logging {
         latencies.add(latency);
     }
 
+    @JsonInclude(Include.NON_NULL)
     public static final class Stat {
 
         @JsonProperty
         public String key;
         @JsonProperty
         public Object value;
+        @JsonProperty
+        public Long timestamp;
 
         private Stat(String key, Object value) {
 
@@ -201,9 +232,22 @@ class Statistics implements Logging {
             this.value = value;
         }
 
+
+        public Stat(String key, Object value, long timestamp) {
+
+            this(key, value);
+            this.timestamp = timestamp;
+        }
+
         public static Stat of(String key, Object value) {
 
             return new Stat(key, value);
+        }
+
+
+        public static Stat at(String key, Object value) {
+
+            return new Stat(key, value, Instant.now(Clock.systemUTC()).toEpochMilli());
         }
     }
 }

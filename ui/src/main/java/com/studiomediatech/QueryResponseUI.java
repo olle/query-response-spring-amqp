@@ -158,11 +158,13 @@ public class QueryResponseUI {
             public String key;
             @JsonProperty
             public Object value;
+            @JsonProperty
+            public Long timestamp;
 
             @Override
             public String toString() {
 
-                return key + "=" + value;
+                return key + "=" + value + (timestamp != null ? " @" + timestamp : "");
             }
         }
     }
