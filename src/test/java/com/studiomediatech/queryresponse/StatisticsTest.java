@@ -90,14 +90,14 @@ class StatisticsTest {
 
 
     @Test
-    void ensureResponsesCountPartOfStats() throws Exception {
+    void ensureConsumedResponsesCountPartOfStats() throws Exception {
 
         ResponseRegistry.instance = () -> registry;
 
         var env = new MockEnvironment();
         var sut = new Statistics(env, ctx);
 
-        var stat = "count_responses";
+        var stat = "count_consumed_responses";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -105,6 +105,30 @@ class StatisticsTest {
         sut.incrementConsumedResponsesCounter();
         sut.incrementConsumedResponsesCounter();
         sut.incrementConsumedResponsesCounter();
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(3L);
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
+    void ensurePublishedResponsesCountPartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+
+        var stat = "count_published_responses";
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(0L);
+
+        sut.incrementPublishedResponsesCounter();
+        sut.incrementPublishedResponsesCounter();
+        sut.incrementPublishedResponsesCounter();
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(3L);

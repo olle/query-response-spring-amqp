@@ -42,7 +42,8 @@ class Statistics implements Logging {
     private static final String STAT_HOSTNAME = "hostname";
     private static final String STAT_NAME = "name";
     private static final String STAT_COUNT_QUERIES = "count_queries";
-    private static final String STAT_COUNT_RESPONSES = "count_responses";
+    private static final String STAT_COUNT_CONSUMED_RESPONSES = "count_consumed_responses";
+    private static final String STAT_COUNT_PUBLISHED_RESPONSES = "count_published_responses";
     private static final String STAT_COUNT_FALLBACKS = "count_fallbacks";
     private static final String STAT_LATENCY_MAX = "max_latency";
     private static final String STAT_LATENCY_MIN = "min_latency";
@@ -81,7 +82,8 @@ class Statistics implements Logging {
 
         return List.of( // NOSONAR
                 Stat.of(STAT_COUNT_QUERIES, this.publishedQueriesCount.get()), // NOSONAR
-                Stat.of(STAT_COUNT_RESPONSES, this.consumedResponsesCount.get()), // NOSONAR
+                Stat.of(STAT_COUNT_CONSUMED_RESPONSES, this.consumedResponsesCount.get()), // NOSONAR
+                Stat.of(STAT_COUNT_PUBLISHED_RESPONSES, this.publishedResponsesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_FALLBACKS, this.fallbacksCount.get()), // NOSONAR
                 Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
                 Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
