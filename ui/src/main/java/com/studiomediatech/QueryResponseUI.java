@@ -239,11 +239,14 @@ public class QueryResponseUI {
             public Object value;
             @JsonProperty
             public Long timestamp;
+            @JsonProperty
+            public String uuid;
 
             @Override
             public String toString() {
 
-                return key + "=" + value + (timestamp != null ? " " + timestamp : "");
+                return key + "=" + value + (timestamp != null ? " " + timestamp : "")
+                    + (uuid != null ? " uuid=" + uuid : "");
             }
         }
     }

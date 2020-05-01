@@ -25,9 +25,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,10 +39,10 @@ class Statistics implements Logging {
     // Yes, it's a FIB!!
     private static final int MAX_COLLECTED_LATENCIES = 987;
 
-    private static final String META_UPTIME = "uptime";
     private static final String META_PID = "pid";
-    private static final String META_HOSTNAME = "hostname";
     private static final String META_NAME = "name";
+    private static final String META_UPTIME = "uptime";
+    private static final String META_HOSTNAME = "host";
 
     private static final String STAT_COUNT_QUERIES = "count_queries";
     private static final String STAT_COUNT_CONSUMED_RESPONSES = "count_consumed_responses";
@@ -54,6 +56,7 @@ class Statistics implements Logging {
 
     private final Environment env;
     private final ApplicationContext ctx;
+    protected final String uuid;
 
     private AtomicLong publishedQueriesCount = new AtomicLong(0);
     private AtomicLong consumedResponsesCount = new AtomicLong(0);
@@ -63,10 +66,16 @@ class Statistics implements Logging {
     private AtomicLong lastPublishedQueriesCount = new AtomicLong(0);
     private AtomicLong lastPublishedResponsesCount = new AtomicLong(0);
 
+    protected Supplier<String> pidSupplier = () -> getPidOrDefault("-");
+    protected Supplier<String> nameSupplier = () -> getApplicationNameOrDefault("application");
+    protected Supplier<String> hostSupplier = () -> getHostnameOrDefault("unknown");
+    protected Supplier<String> uptimeSupplier = () -> getUptimeOrDefault("-");
+
     public Statistics(Environment env, ApplicationContext ctx) {
 
         this.env = env;
         this.ctx = ctx;
+        this.uuid = UUID.randomUUID().toString();
 
         // Start the responder after 3s
         Executors.newScheduledThreadPool(1).schedule(this::respond, 3L, TimeUnit.SECONDS);
@@ -87,16 +96,22 @@ class Statistics implements Logging {
                 Stat.of(STAT_COUNT_CONSUMED_RESPONSES, this.consumedResponsesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_PUBLISHED_RESPONSES, this.publishedResponsesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_FALLBACKS, this.fallbacksCount.get()), // NOSONAR
-                Stat.of(META_NAME, getApplicationNameOrDefault("application")), // NOSONAR
-                Stat.of(META_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
-                Stat.of(META_PID, getPidOrDefault("-")), // NOSONAR
-                Stat.of(META_UPTIME, getUptimeOrDefault("-")), // NOSONAR
+                getMeta(META_NAME, nameSupplier.get()), // NOSONAR
+                getMeta(META_HOSTNAME, hostSupplier.get()), // NOSONAR
+                getMeta(META_PID, pidSupplier.get()), // NOSONAR
+                getMeta(META_UPTIME, uptimeSupplier.get()), // NOSONAR
                 Stat.of(STAT_LATENCY_MAX, getMaxLatency()), // NOSONAR
                 Stat.of(STAT_LATENCY_MIN, getMinLatency()), // NOSONAR
                 Stat.of(STAT_LATENCY_AVG, getAvgLatency()), // NOSONAR
                 getThroughputQueriesStat(), // NOSONAR
                 getThroughputResponsesStat() // NOSONAR
                 );
+    }
+
+
+    private Stat getMeta(String key, Object value) {
+
+        return Stat.from(key, value, this.uuid);
     }
 
 
@@ -234,6 +249,8 @@ class Statistics implements Logging {
         public Object value;
         @JsonProperty
         public Long timestamp;
+        @JsonProperty
+        public String uuid;
 
         private Stat(String key, Object value) {
 
@@ -248,6 +265,13 @@ class Statistics implements Logging {
             this.timestamp = timestamp;
         }
 
+
+        public Stat(String key, Object value, String uuid) {
+
+            this(key, value);
+            this.uuid = uuid;
+        }
+
         public static Stat of(String key, Object value) {
 
             return new Stat(key, value);
@@ -260,10 +284,18 @@ class Statistics implements Logging {
         }
 
 
+        public static Stat from(String key, Object value, String uuid) {
+
+            return new Stat(key, value, uuid);
+        }
+
+
         @Override
         public String toString() {
 
-            return key + "=" + value + (timestamp != null ? " at=" + timestamp : "");
+            return key + "=" + value // NOSONAR
+                + (timestamp != null ? " at=" + timestamp : "") // NOSONAR
+                + (uuid != null ? " from=" + uuid : "");
         }
     }
 }

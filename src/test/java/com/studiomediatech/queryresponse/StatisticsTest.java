@@ -39,14 +39,13 @@ class StatisticsTest {
 
     @SuppressWarnings("static-access")
     @Test
-    void ensureBuildsResponseOnApplicationReady() {
+    void ensureBuildsResponseOnApplicationReady() throws InterruptedException {
 
         ResponseRegistry.instance = () -> registry;
 
         var env = new MockEnvironment();
 
-        var sut = new Statistics(env, ctx);
-        sut.respond();
+        new Statistics(env, ctx).respond();
 
         verify(registry).register(responses.capture());
 
@@ -60,6 +59,82 @@ class StatisticsTest {
         List<Stat> stats = new ArrayList<>();
         builder.elements().get().forEachRemaining(obj -> stats.add((Stat) obj));
         assertThat(stats.stream().map(s -> s.key).collect(Collectors.toList())).contains("count_queries");
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
+    void ensureMetaWithPidPartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+        sut.pidSupplier = () -> "some-pid";
+
+        var key = "pid";
+        Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
+
+        assertThat(stat.value).isEqualTo("some-pid");
+        assertThat(stat.uuid).isNotEmpty();
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
+    void ensureMetaWithNamePartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+        sut.nameSupplier = () -> "some-name";
+
+        var key = "name";
+        Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
+
+        assertThat(stat.value).isEqualTo("some-name");
+        assertThat(stat.uuid).isNotEmpty();
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
+    void ensureMetaWithHostPartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+        sut.hostSupplier = () -> "some-host";
+
+        var key = "host";
+        Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
+
+        assertThat(stat.value).isEqualTo("some-host");
+        assertThat(stat.uuid).isNotEmpty();
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
+    void ensureMetaWithUptimePartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+        sut.uptimeSupplier = () -> "some-uptime";
+
+        var key = "uptime";
+        Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
+
+        assertThat(stat.value).isEqualTo("some-uptime");
+        assertThat(stat.uuid).isNotEmpty();
 
         ResponseRegistry.instance = () -> null;
     }
@@ -277,8 +352,10 @@ class StatisticsTest {
 
         Stat s1 = Statistics.Stat.of("foo", 123);
         Stat s2 = Statistics.Stat.at("bar", 42);
+        Stat s3 = Statistics.Stat.from("bar", 42, "some-uuid");
 
         assertThat(s1.toString()).isEqualTo("foo=123");
         assertThat(s2.toString()).startsWith("bar=42 at=");
+        assertThat(s3.toString()).startsWith("bar=42 from=some-uuid");
     }
 }
