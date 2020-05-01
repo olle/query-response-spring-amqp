@@ -6,7 +6,7 @@
     <thead>
       <tr>
         <th class="h3">Name</th>
-        <th class="h3">Index</th>
+        <th class="h3">Pid</th>
         <th class="h3">Address</th>
         <th class="h3">Uptime</th>
         <th class="h3">Success Rate</th>
@@ -15,6 +15,15 @@
       </tr>
     </thead>
     <tbody>
+      <tr v-for="node in nodes" :key="node[0].uuid">
+        <td>{{node[0].value}}</td>
+        <td>{{node[2].value}}</td>
+        <td>{{node[1].value}}</td>
+        <td><time>{{node[3].value}}</time></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
       <tr>
         <td>jembo</td>
         <td>0</td>
@@ -170,7 +179,16 @@
 </template>
 
 <script>
+import store from "../store.js";
+import { mapState } from "vuex";
+
 export default {
   name: "qr-live-nodes",
+  computed: {
+    ...mapState({
+      nodes: (s) => s.nodes,
+    }),
+  },
+  store,
 };
 </script>
