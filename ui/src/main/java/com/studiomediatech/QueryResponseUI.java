@@ -115,7 +115,7 @@ public class QueryResponseUI {
 
             long countResponsesSum = stats
                     .stream()
-                    .filter(stat -> "count_responses".equals(stat.key))
+                    .filter(stat -> "count_consumed_responses".equals(stat.key))
                     .mapToInt(stat -> (int) stat.value)
                     .sum();
 

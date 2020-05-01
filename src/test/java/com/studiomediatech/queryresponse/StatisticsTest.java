@@ -138,6 +138,55 @@ class StatisticsTest {
 
 
     @Test
+    void ensureQueriesThroughputPartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+
+        var stat = "throughput_queries";
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(0L);
+
+        sut.incrementPublishedQueriesCounter();
+        sut.incrementPublishedQueriesCounter();
+        sut.incrementPublishedQueriesCounter();
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(3L);
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
+    void ensureResponsesThroughputPartOfStats() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+
+        var stat = "throughput_responses";
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(0L);
+
+        sut.incrementPublishedResponsesCounter();
+        sut.incrementPublishedResponsesCounter();
+        sut.incrementPublishedResponsesCounter();
+        sut.incrementPublishedResponsesCounter();
+
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
+            .findFirst().get()).isEqualTo(4L);
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
     void ensureFallbacksCountPartOfStats() throws Exception {
 
         ResponseRegistry.instance = () -> registry;
@@ -220,5 +269,16 @@ class StatisticsTest {
 
         assertThat(s1.timestamp).isNull();
         assertThat(s2.timestamp).isNotNull();
+    }
+
+
+    @Test
+    void ensurePrettyToStringForStats() throws Exception {
+
+        Stat s1 = Statistics.Stat.of("foo", 123);
+        Stat s2 = Statistics.Stat.at("bar", 42);
+
+        assertThat(s1.toString()).isEqualTo("foo=123");
+        assertThat(s2.toString()).startsWith("bar=42 at=");
     }
 }

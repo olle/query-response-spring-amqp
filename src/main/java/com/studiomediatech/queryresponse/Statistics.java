@@ -37,10 +37,11 @@ class Statistics implements Logging {
     // Yes, it's a FIB!!
     private static final int MAX_COLLECTED_LATENCIES = 987;
 
-    private static final String STAT_UPTIME = "uptime";
-    private static final String STAT_PID = "pid";
-    private static final String STAT_HOSTNAME = "hostname";
-    private static final String STAT_NAME = "name";
+    private static final String META_UPTIME = "uptime";
+    private static final String META_PID = "pid";
+    private static final String META_HOSTNAME = "hostname";
+    private static final String META_NAME = "name";
+
     private static final String STAT_COUNT_QUERIES = "count_queries";
     private static final String STAT_COUNT_CONSUMED_RESPONSES = "count_consumed_responses";
     private static final String STAT_COUNT_PUBLISHED_RESPONSES = "count_published_responses";
@@ -59,15 +60,16 @@ class Statistics implements Logging {
     private AtomicLong publishedResponsesCount = new AtomicLong(0);
     private AtomicLong fallbacksCount = new AtomicLong(0);
     private List<Long> latencies = new LinkedList<>(Arrays.asList(0L));
-    private AtomicLong lastQueriesCount = new AtomicLong(0);
-    private AtomicLong lastResponsesCount = new AtomicLong(0);
+    private AtomicLong lastPublishedQueriesCount = new AtomicLong(0);
+    private AtomicLong lastPublishedResponsesCount = new AtomicLong(0);
 
     public Statistics(Environment env, ApplicationContext ctx) {
 
         this.env = env;
         this.ctx = ctx;
 
-        Executors.newScheduledThreadPool(1).schedule(this::respond, 1L, TimeUnit.SECONDS);
+        // Start the responder after 3s
+        Executors.newScheduledThreadPool(1).schedule(this::respond, 3L, TimeUnit.SECONDS);
     }
 
     void respond() {
@@ -85,10 +87,10 @@ class Statistics implements Logging {
                 Stat.of(STAT_COUNT_CONSUMED_RESPONSES, this.consumedResponsesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_PUBLISHED_RESPONSES, this.publishedResponsesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_FALLBACKS, this.fallbacksCount.get()), // NOSONAR
-                Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
-                Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
-                Stat.of(STAT_PID, getPidOrDefault("-")), // NOSONAR
-                Stat.of(STAT_UPTIME, getUptimeOrDefault("-")), // NOSONAR
+                Stat.of(META_NAME, getApplicationNameOrDefault("application")), // NOSONAR
+                Stat.of(META_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
+                Stat.of(META_PID, getPidOrDefault("-")), // NOSONAR
+                Stat.of(META_UPTIME, getUptimeOrDefault("-")), // NOSONAR
                 Stat.of(STAT_LATENCY_MAX, getMaxLatency()), // NOSONAR
                 Stat.of(STAT_LATENCY_MIN, getMinLatency()), // NOSONAR
                 Stat.of(STAT_LATENCY_AVG, getAvgLatency()), // NOSONAR
@@ -102,15 +104,15 @@ class Statistics implements Logging {
 
         long current = this.publishedQueriesCount.get();
 
-        return Stat.at(STAT_TP_QUERIES, current - this.lastQueriesCount.getAndSet(current));
+        return Stat.at(STAT_TP_QUERIES, current - this.lastPublishedQueriesCount.getAndSet(current));
     }
 
 
     protected Stat getThroughputResponsesStat() {
 
-        long current = this.consumedResponsesCount.get();
+        long current = this.publishedResponsesCount.get();
 
-        return Stat.at(STAT_TP_RESPONSES, current - this.lastResponsesCount.getAndSet(current));
+        return Stat.at(STAT_TP_RESPONSES, current - this.lastPublishedResponsesCount.getAndSet(current));
     }
 
 
@@ -255,6 +257,13 @@ class Statistics implements Logging {
         public static Stat at(String key, Object value) {
 
             return new Stat(key, value, Instant.now(Clock.systemUTC()).toEpochMilli());
+        }
+
+
+        @Override
+        public String toString() {
+
+            return key + "=" + value + (timestamp != null ? " at=" + timestamp : "");
         }
     }
 }
