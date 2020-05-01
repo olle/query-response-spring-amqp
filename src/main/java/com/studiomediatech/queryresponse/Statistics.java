@@ -58,9 +58,7 @@ class Statistics implements Logging {
     private AtomicLong fallbacksCount = new AtomicLong(0);
     private List<Long> latencies = new LinkedList<>(Arrays.asList(0L));
     private AtomicLong lastQueriesCount = new AtomicLong(0);
-
     private AtomicLong lastResponsesCount = new AtomicLong(0);
-    private AtomicLong lastResponsesTimestamp = new AtomicLong(System.currentTimeMillis());
 
     public Statistics(Environment env, ApplicationContext ctx) {
 
