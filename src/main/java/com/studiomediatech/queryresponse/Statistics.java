@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.studiomediatech.queryresponse.util.DurationFormatter;
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.context.ApplicationContext;
@@ -151,10 +152,11 @@ class Statistics implements Logging {
 
     protected String getUptimeOrDefault(String defaults) {
 
-        return Stream.of(Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime()).toString())
-            .filter(StringUtils::hasText)
-            .findFirst()
-            .orElse(defaults);
+        try {
+            return DurationFormatter.format(Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime()));
+        } catch (RuntimeException e) {
+            return defaults;
+        }
     }
 
 
