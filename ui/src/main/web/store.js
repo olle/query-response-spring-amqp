@@ -28,6 +28,8 @@ export default new Vuex.Store({
       throughput_queries: 0.0,
       throughput_responses: 0.0,
     },
+    // @see QrLiveNodes.vue
+    nodes: {},
   },
   mutations,
   actions: {
@@ -36,10 +38,15 @@ export default new Vuex.Store({
       dispatch("shovel");
     },
     shovel({ commit, dispatch }) {
-      let metrics = localStorage.getItem("query-response/metrics");
-      if (metrics) {
-        commit("metrics", JSON.parse(metrics));
-      }
+      [
+        ["query-response/metrics", "metrics"],
+        ["query-response/nodes", "nodes"],
+      ].forEach(([key, store]) => {
+        let data = localStorage.getItem(key);
+        if (data) {
+          commit(store, JSON.parse(data));
+        }
+      });
       setTimeout(() => dispatch("shovel"), 789);
     },
   },
@@ -48,14 +55,16 @@ export default new Vuex.Store({
 const RECONNECT_DELAY = 5000;
 
 const updateMetrics = (data) => {
-  let prev = JSON.parse(localStorage.getItem("query-response/metrics"));
-  localStorage.setItem(
-    "query-response/metrics",
-    JSON.stringify({
-      ...prev,
-      ...data,
-    })
-  );
+  updateData("query-response/metrics", data);
+};
+
+const updateData = (key, data) => {
+  let prev = JSON.parse(localStorage.getItem(key));
+  localStorage.setItem(key, JSON.stringify({ ...prev, ...data }));
+};
+
+const updateNodes = (data) => {
+  localStorage.setItem("query-response/nodes", JSON.stringify(data));
 };
 
 const connectSocket = () => {
@@ -93,7 +102,12 @@ const connectSocket = () => {
       try {
         var message = JSON.parse(msg.data);
         console.log("got message", message);
-        updateMetrics(message);
+        if (message.metrics) {
+          updateMetrics(message.metrics);
+        }
+        if (message.nodes) {
+          updateNodes(message.nodes);
+        }
       } catch (err) {
         console.error("unexpected payload", msg.data);
       }

@@ -1,7 +1,12 @@
 package com.studiomediatech;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.studiomediatech.QueryResponseUI.Querier.Stat;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
@@ -21,6 +26,8 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
+import org.springframework.util.StringUtils;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -42,6 +49,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
@@ -169,6 +177,13 @@ public class QueryResponseUI {
             double throughputAvg = calculateThroughputAvg(queries, responses);
 
             handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg);
+
+            Map<String, List<Stat>> nodes = stats
+                    .stream()
+                    .filter(s -> StringUtils.hasText(s.uuid))
+                    .collect(Collectors.groupingBy(s -> s.uuid));
+
+            handler.handleNodes(nodes);
         }
 
 
@@ -255,6 +270,14 @@ public class QueryResponseUI {
 
         private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
+        private final ObjectMapper objectMapper;
+
+        public Handler() {
+
+            objectMapper = new ObjectMapper();
+            objectMapper.setSerializationInclusion(Include.NON_NULL);
+        }
+
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
@@ -272,11 +295,11 @@ public class QueryResponseUI {
         public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum,
             long countFallbacksSum) {
 
-            var json = String.format("{"
+            var json = String.format("{\"metrics\": {"
                     + "\"count_queries\": %d,"
                     + "\"count_responses\": %d,"
                     + "\"count_fallbacks\": %d"
-                    + "}", countQueriesSum, countResponsesSum, countFallbacksSum);
+                    + "}}", countQueriesSum, countResponsesSum, countFallbacksSum);
 
             publishTextMessageWithPayload(json);
         }
@@ -285,11 +308,11 @@ public class QueryResponseUI {
         public void handleLatency(long minLatency, long maxLatency, double avgLatency) {
 
             var json = String.format(Locale.US,
-                    "{"
+                    "{\"metrics\": {"
                     + "\"min_latency\": %d,"
                     + "\"max_latency\": %d,"
                     + "\"avg_latency\": %f"
-                    + "}", minLatency, maxLatency, avgLatency);
+                    + "}}", minLatency, maxLatency, avgLatency);
 
             publishTextMessageWithPayload(json);
         }
@@ -298,13 +321,29 @@ public class QueryResponseUI {
         public void handleThroughput(double queries, double responses, double avg) {
 
             var json = String.format(Locale.US,
-                    "{"
+                    "{\"metrics\": {"
                     + "\"throughput_queries\": %f,"
                     + "\"throughput_responses\": %f,"
                     + "\"avg_throughput\": %f"
-                    + "}", queries, responses, avg);
+                    + "}}", queries, responses, avg);
 
             publishTextMessageWithPayload(json);
+        }
+
+
+        public void handleNodes(Map<String, List<Stat>> nodes) {
+
+            try {
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("{\"nodes\": ");
+                sb.append(objectMapper.writeValueAsString(nodes));
+                sb.append("}");
+
+                publishTextMessageWithPayload(sb.toString());
+            } catch (JsonProcessingException e) {
+                log().error("Failed to create nodes payload", e);
+            }
         }
 
 
