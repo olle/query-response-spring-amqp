@@ -189,7 +189,7 @@ class Query<T> implements MessageListener, Logging {
              * sub-list even if overrun in size.
              */
             if (atMost > 0 && elements.size() >= atMost) {
-                stats.incrementResponsesCounter();
+                stats.incrementConsumedResponsesCounter();
 
                 return this.elements.stream().limit(atMost).collect(Collectors.toList());
             }
@@ -244,7 +244,7 @@ class Query<T> implements MessageListener, Logging {
             }
         }
 
-        stats.incrementResponsesCounter();
+        stats.incrementConsumedResponsesCounter();
 
         return elements;
     }
@@ -255,7 +255,7 @@ class Query<T> implements MessageListener, Logging {
         try {
             facade.publishQuery(this.queryTerm,
                 MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
-            incrementQueriesCounterStats();
+            incrementPublishedQueriesCounterStats();
         } catch (RuntimeException ex) {
             if (this.onError != null) {
                 this.onError.accept(ex);
@@ -266,10 +266,10 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    private void incrementQueriesCounterStats() {
+    private void incrementPublishedQueriesCounterStats() {
 
         if (stats != null) {
-            this.stats.incrementQueriesCounter();
+            this.stats.incrementPublishedQueriesCounter();
         }
     }
 

@@ -82,6 +82,7 @@ class Response<T> implements MessageListener, Logging {
                 var routingKey = replyToAddress.getRoutingKey();
 
                 this.facade.publishResponse(exchangeName, routingKey, responseMessage);
+                incrementPublishedResponseCounterStats();
             }
         } catch (RuntimeException | JsonProcessingException e) {
             log().error("Failed to publish response message", e);
@@ -93,6 +94,14 @@ class Response<T> implements MessageListener, Logging {
 
         if (stats != null) {
             stats.measureLatency(published, now);
+        }
+    }
+
+
+    private void incrementPublishedResponseCounterStats() {
+
+        if (stats != null) {
+            stats.incrementPublishedResponsesCounter();
         }
     }
 

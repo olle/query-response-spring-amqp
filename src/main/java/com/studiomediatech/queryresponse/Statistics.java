@@ -53,8 +53,9 @@ class Statistics implements Logging {
     private final Environment env;
     private final ApplicationContext ctx;
 
-    private AtomicLong queriesCount = new AtomicLong(0);
-    private AtomicLong responsesCount = new AtomicLong(0);
+    private AtomicLong publishedQueriesCount = new AtomicLong(0);
+    private AtomicLong consumedResponsesCount = new AtomicLong(0);
+    private AtomicLong publishedResponsesCount = new AtomicLong(0);
     private AtomicLong fallbacksCount = new AtomicLong(0);
     private List<Long> latencies = new LinkedList<>(Arrays.asList(0L));
     private AtomicLong lastQueriesCount = new AtomicLong(0);
@@ -79,8 +80,8 @@ class Statistics implements Logging {
     protected Collection<Stat> getStats() {
 
         return List.of( // NOSONAR
-                Stat.of(STAT_COUNT_QUERIES, this.queriesCount.get()), // NOSONAR
-                Stat.of(STAT_COUNT_RESPONSES, this.responsesCount.get()), // NOSONAR
+                Stat.of(STAT_COUNT_QUERIES, this.publishedQueriesCount.get()), // NOSONAR
+                Stat.of(STAT_COUNT_RESPONSES, this.consumedResponsesCount.get()), // NOSONAR
                 Stat.of(STAT_COUNT_FALLBACKS, this.fallbacksCount.get()), // NOSONAR
                 Stat.of(STAT_NAME, getApplicationNameOrDefault("application")), // NOSONAR
                 Stat.of(STAT_HOSTNAME, getHostnameOrDefault("unknown")), // NOSONAR
@@ -97,7 +98,7 @@ class Statistics implements Logging {
 
     protected Stat getThroughputQueriesStat() {
 
-        long current = this.queriesCount.get();
+        long current = this.publishedQueriesCount.get();
 
         return Stat.at(STAT_TP_QUERIES, current - this.lastQueriesCount.getAndSet(current));
     }
@@ -105,7 +106,7 @@ class Statistics implements Logging {
 
     protected Stat getThroughputResponsesStat() {
 
-        long current = this.responsesCount.get();
+        long current = this.consumedResponsesCount.get();
 
         return Stat.at(STAT_TP_RESPONSES, current - this.lastResponsesCount.getAndSet(current));
     }
@@ -177,15 +178,21 @@ class Statistics implements Logging {
     }
 
 
-    public void incrementQueriesCounter() {
+    public void incrementPublishedQueriesCounter() {
 
-        this.queriesCount.incrementAndGet();
+        this.publishedQueriesCount.incrementAndGet();
     }
 
 
-    public void incrementResponsesCounter() {
+    public void incrementConsumedResponsesCounter() {
 
-        this.responsesCount.incrementAndGet();
+        this.consumedResponsesCount.incrementAndGet();
+    }
+
+
+    public void incrementPublishedResponsesCounter() {
+
+        this.publishedResponsesCount.incrementAndGet();
     }
 
 

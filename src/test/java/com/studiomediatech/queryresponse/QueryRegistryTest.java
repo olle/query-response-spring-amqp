@@ -62,7 +62,7 @@ class QueryRegistryTest {
         verify(facade).addListener(Mockito.isA(Query.class));
         verify(facade).publishQuery(Mockito.eq("foobar"), Mockito.isA(Message.class));
 
-        verify(stats).incrementQueriesCounter();
-        verify(stats).incrementResponsesCounter();
+        verify(stats).incrementPublishedQueriesCounter();
+        verify(stats).incrementConsumedResponsesCounter();
     }
 }

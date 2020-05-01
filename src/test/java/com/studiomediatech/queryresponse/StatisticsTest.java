@@ -78,9 +78,9 @@ class StatisticsTest {
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
 
-        sut.incrementQueriesCounter();
-        sut.incrementQueriesCounter();
-        sut.incrementQueriesCounter();
+        sut.incrementPublishedQueriesCounter();
+        sut.incrementPublishedQueriesCounter();
+        sut.incrementPublishedQueriesCounter();
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(3L);
@@ -102,9 +102,9 @@ class StatisticsTest {
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
 
-        sut.incrementResponsesCounter();
-        sut.incrementResponsesCounter();
-        sut.incrementResponsesCounter();
+        sut.incrementConsumedResponsesCounter();
+        sut.incrementConsumedResponsesCounter();
+        sut.incrementConsumedResponsesCounter();
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(3L);
