@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
 
@@ -33,11 +34,17 @@ import java.io.IOException;
 
 import java.nio.charset.StandardCharsets;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.ToLongFunction;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
@@ -91,6 +98,14 @@ public class QueryResponseUI {
 
     static class Querier {
 
+        // This is a Fib!
+        private static final int MAX_SIZE = 2584;
+
+        static ToLongFunction<Stat> statToLong = s -> ((Number) s.value).longValue();
+
+        private List<Stat> queries = new LinkedList<>();
+        private List<Stat> responses = new LinkedList<>();
+
         private final Handler handler;
 
         public Querier(Handler handler) {
@@ -110,34 +125,32 @@ public class QueryResponseUI {
             long countQueriesSum = stats
                     .stream()
                     .filter(stat -> "count_queries".equals(stat.key))
-                    .mapToInt(stat -> (int) stat.value)
+                    .mapToLong(statToLong)
                     .sum();
 
             long countResponsesSum = stats
                     .stream()
                     .filter(stat -> "count_consumed_responses".equals(stat.key))
-                    .mapToInt(stat -> (int) stat.value)
-                    .sum();
+                    .mapToLong(statToLong).sum();
 
             long countFallbacksSum = stats
                     .stream()
                     .filter(stat -> "count_fallbacks".equals(stat.key))
-                    .mapToInt(stat -> (int) stat.value)
-                    .sum();
+                    .mapToLong(statToLong).sum();
 
             handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum);
 
             long minLatency = stats
                     .stream()
                     .filter(stat -> "min_latency".equals(stat.key))
-                    .mapToInt(stat -> (int) stat.value)
+                    .mapToLong(statToLong)
                     .min()
                     .orElse(0);
 
             long maxLatency = stats
                     .stream()
                     .filter(stat -> "max_latency".equals(stat.key))
-                    .mapToInt(stat -> (int) stat.value)
+                    .mapToLong(statToLong)
                     .max()
                     .orElse(0);
 
@@ -149,6 +162,72 @@ public class QueryResponseUI {
                     .orElse(0.0d);
 
             handler.handleLatency(minLatency, maxLatency, avgLatency);
+
+            // Order is important!!
+            double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
+            double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
+            double throughputAvg = calculateThroughputAvg(queries, responses);
+
+            handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg);
+        }
+
+
+        private double calculateThroughputAvg(List<Stat> queries, List<Stat> responses) {
+
+            List<Stat> all = new ArrayList<>();
+            all.addAll(queries);
+            all.addAll(responses);
+            all.sort(Comparator.comparing(s -> s.timestamp));
+
+            if (all.size() < 2) {
+                return 0.0;
+            }
+
+            long newest = all.get(all.size() - 1).timestamp;
+            long oldest = all.get(0).timestamp;
+            long duration = (newest - oldest) / 1000;
+
+            if (duration < 1) {
+                return 0.0;
+            }
+
+            long sum = all.stream().mapToLong(statToLong).sum();
+
+            return (sum * 1.0) / duration;
+        }
+
+
+        private double calculateThroughput(String key, Collection<Stat> source, List<Stat> dest) {
+
+            List<Stat> ts = source
+                    .stream()
+                    .filter(stat -> key.equals(stat.key))
+                    .sorted(Comparator.comparing(s -> s.timestamp))
+                    .collect(Collectors.toList());
+
+            for (Stat stat : ts) {
+                if (dest.size() > MAX_SIZE) {
+                    dest.remove(0);
+                }
+
+                dest.add(stat);
+            }
+
+            if (dest.size() < 2) {
+                return 0.0;
+            }
+
+            long newest = dest.get(dest.size() - 1).timestamp;
+            long oldest = dest.get(0).timestamp;
+            long duration = (newest - oldest) / 1000;
+
+            if (duration < 1) {
+                return 0.0;
+            }
+
+            long sum = dest.stream().mapToLong(statToLong).sum();
+
+            return (sum * 1.0) / duration;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -164,15 +243,12 @@ public class QueryResponseUI {
             @Override
             public String toString() {
 
-                return key + "=" + value + (timestamp != null ? " @" + timestamp : "");
+                return key + "=" + value + (timestamp != null ? " " + timestamp : "");
             }
         }
     }
 
-    static class Handler extends TextWebSocketHandler {
-
-        long lastCountQueries = -1;
-        long countQueries = -1;
+    static class Handler extends TextWebSocketHandler implements Logging {
 
         private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
@@ -216,6 +292,19 @@ public class QueryResponseUI {
         }
 
 
+        public void handleThroughput(double queries, double responses, double avg) {
+
+            var json = String.format(Locale.US,
+                    "{"
+                    + "\"throughput_queries\": %f,"
+                    + "\"throughput_responses\": %f,"
+                    + "\"avg_throughput\": %f"
+                    + "}", queries, responses, avg);
+
+            publishTextMessageWithPayload(json);
+        }
+
+
         private void publishTextMessageWithPayload(String json) {
 
             var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
@@ -224,7 +313,7 @@ public class QueryResponseUI {
                 try {
                     s.sendMessage(message);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log().error("Could not publish text message to websocket", e);
                 }
             }
         }

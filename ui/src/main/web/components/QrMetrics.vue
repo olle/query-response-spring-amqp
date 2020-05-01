@@ -50,19 +50,16 @@ export default {
       avgLatency: (s) => n2ms(s.metrics.avg_latency),
       minLatency: (s) => n2ms(s.metrics.min_latency),
       maxLatency: (s) => n2ms(s.metrics.max_latency),
-      avgThroughput: (s) =>
-        `${n2t(s.metrics.avg_throughput)}/${s.metrics.avg_throughput_unit}`,
-      throughputQueries: (s) =>
-        `${n2t(s.metrics.throughput_queries)}/${
-          s.metrics.throughput_queries_unit
-        }`,
-      throughputResponses: (s) =>
-        `${n2t(s.metrics.throughput_responses)}/${
-          s.metrics.throughput_responses_unit
-        }`,
+      avgThroughput: (s) => n2tp(s.metrics.avg_throughput),
+      throughputQueries: (s) => n2tp(s.metrics.throughput_queries),
+      throughputResponses: (s) => n2tp(s.metrics.throughput_responses),
     }),
   },
   store,
+};
+
+const n2tp = (d) => {
+  return `${Math.round(d * 10 + Number.EPSILON) / 10}/s`;
 };
 
 const n2ms = (ms) => {
