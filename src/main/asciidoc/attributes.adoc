@@ -1,0 +1,15 @@
+:doctype: book
+:idprefix:
+:idseparator: -
+:toc: left
+:toclevels: 4
+:tabsize: 4
+:numbered:
+:sectanchors:
+:sectnums:
+:icons: font
+:hide-uri-scheme:
+:docinfo: shared,private
+
+:code-src: ../java/com/studiomediatech/queryresponse
+:test-src: ../../test/java/com/studiomediatech/queryresponse
