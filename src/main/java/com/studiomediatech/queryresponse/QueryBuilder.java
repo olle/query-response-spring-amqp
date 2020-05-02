@@ -12,7 +12,13 @@ import java.util.function.Supplier;
 
 
 /**
- * Providing the entry-point to the fluid builder for queries, through the {@link #queryFor} method.
+ * Provides the entry to the fluid builder for queries, with the {@link #queryFor} method.
+ *
+ * <p>You begin building a query by calling the static method like this:</p>
+ *
+ * <pre>
+       QueryBuilder.queryFor("some-query", SomeType.class)...
+ * </pre>
  *
  * <p>A {@link QueryBuilder queryBuilder-instance} is a container for a composed or configured query. It is is much
  * like a command-pattern object, providing all the properties required in order to publish the query, await responses
@@ -81,14 +87,28 @@ public final class QueryBuilder<T> {
     }
 
     /**
-     * Creates a query-builder for the given term with an expected, and type coerced, collection of results to be
-     * returned.
+     * Creates a new chaining query-builder for the given term, and the expected type that result elements will be
+     * mapped to.
      *
-     * @param  <T>  type of the result elements.
-     * @param  term  to query for
-     * @param  type  expected to be coerced from responses into collection elements
+     * <p>The query {@code term} string, can use any pattern or structure, as defined by the system design. It
+     * expresses some <em>need</em> or interest in information. The given {@code type}, provide the data container,
+     * that is used if any responses are consumed.</p>
      *
-     * @return  a new queries builder, never {@code null}
+     * <p>The type, of the eventually resulting {@link Collection} is also inferred by the {@code type} argument. For
+     * example:</p>
+     *
+     * <pre>
+           Collection<String> names = QueryBuilder.queryFor("names/rock-legends", String.class)...
+     * </pre>
+     *
+     * @param  <T>  type of the result elements, and the {@code type} argument.
+     * @param  term  to query for. A {@link String} of up to 255 characters.
+     * @param  type  of response elements. Any Java type or {@code class} to map JSON responses to. Also infers the
+     *               type of the returned results {@link Collection} - if the built query succeeds.
+     *
+     * @return  a new {@link QueryBuilder} instance, <strong>never {@code null}</strong>
+     *
+     * @throws  IllegalArgumentException  if the query {@code term} argument is invalid.
      */
     public static <T> QueryBuilder<T> queryFor(String term, Class<T> type) {
 
@@ -250,10 +270,10 @@ public final class QueryBuilder<T> {
 
     /*
      * NOTE: Callers of this method are explicit, and not wrapped or overload in
-     *       calls to themselves, in order to show developers which methods
-     *       represent terminal-state in the fluid builder API.
+     * calls to themselves, in order to show developers which methods represent
+     * terminal-state in the fluid builder API.
      *
-     *       See for yourself. Lookup calling methods.
+     * See for yourself. Lookup calling methods.
      */
     private Collection<T> register() {
 
@@ -270,8 +290,8 @@ public final class QueryBuilder<T> {
         int atMost = Optional.ofNullable(takingAtMost).orElse(0);
 
         if (atLeast != 0 && atLeast > atMost && atMost != 0) {
-            throw new IllegalArgumentException("Cannot require more than limit. "
-                + "atLeast: " + atLeast + ", atMost: " + atMost);
+            throw new IllegalArgumentException("Cannot require more than limit. " + "atLeast: " + atLeast
+                + ", atMost: " + atMost);
         }
 
         if (atLeast != 0 && atLeast == atMost) {
@@ -337,14 +357,11 @@ public final class QueryBuilder<T> {
      * below:
      *
      * <pre>
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+       AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
-            .withSink(capture::set)
-            .waitingFor(123)
-            .orEmpty();
+       QueryBuilder.queryFor("foobar", String.class).withSink(capture::set).waitingFor(123).orEmpty();
 
-        assertThat(capture.get()).isNotNull();
+       assertThat(capture.get()).isNotNull();
      * </pre>
      *
      * <p>This method is protected, in order to reduce visibility and only make it available to tests.</p>
