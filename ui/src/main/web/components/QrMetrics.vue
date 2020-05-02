@@ -59,7 +59,13 @@ export default {
 };
 
 const n2tp = (d) => {
-  return `${Math.round(d * 10 + Number.EPSILON) / 10}/s`;
+  let ps = Math.round(d * 10 + Number.EPSILON) / 10;
+
+  if (ps < 1.0) {
+    return `${Math.round(d * 60 * 10 + Number.EPSILON) / 10}/min`;
+  }
+
+  return `${ps}/s`;
 };
 
 const n2ms = (ms) => {
