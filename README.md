@@ -26,7 +26,7 @@ a single dependency.
   </dependency>
 ```
 
-_At the current time We recommend using [Jitpack](https://jitpack.io) to
+_At the current time we recommend using [Jitpack](https://jitpack.io) to
 resolve the dependency. Query/Response will however be published to the
 Sonatype OSS repository, and Maven Central, in the future._
 
@@ -57,9 +57,9 @@ _Please see the provided `examples/` for a simple setup with [RabbitMQ] as a
 Queries
 -------
 
-The fluid Query/Response API, makes it easy for developers and understand and
+The fluid Query/Response API makes it easy for developers to understand and
 decide on a strategy for service integration. Timeouts are _first-class
-citizens_ in the API, and protect against surprises.
+citizens_ in the API and protect against surprises.
 
 ```java
   var authors = QueryBuilder.queryFor("authors", String.class)
@@ -76,7 +76,7 @@ is good enough, or fallbacks can be provided.
                   .orDefaults(Authors.defaults());
 ```
 
-Preserve resources, specific to the current needs and protect your services,
+Preserve resources specific to the current needs and protect your services,
 by limiting the amount of data consumed.
 
 ```java
@@ -97,7 +97,7 @@ an option to lenient handling with defaults.
                   .orThrow(TooFewOffersConstraintException::new);
 ```
 
-Optional capabilities, to handle exceptions and errors are built-in and very
+Optional capabilities to handle exceptions and errors are built-in and very
 easy to use.
 
 ```java
@@ -189,7 +189,7 @@ property of a consumed query as the `routing-key`. This will cause a direct
 routing of responses back to the declared response-queue.
 
 The response body payload JSON structure always wraps the `elements` collection
-containing the actual response data in a _envelope object_.
+containing the actual response data in an _envelope object_.
 
 ```
   exchange: (default)
@@ -201,7 +201,7 @@ containing the actual response data in a _envelope object_.
   }
 ```
 
-The current properties and of Query/Response messages are simple but provide
+The current properties of Query/Response messages are simple but provide
 room for extensions in future versions.
 
 Happy hacking!
