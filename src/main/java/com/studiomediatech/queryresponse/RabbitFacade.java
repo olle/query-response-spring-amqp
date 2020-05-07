@@ -75,8 +75,10 @@ class RabbitFacade implements Logging {
     private DirectMessageListenerContainer createNewListenerContainer() {
 
         DirectMessageListenerContainer container = new DirectMessageListenerContainer(connectionFactory);
-        container.setConsumersPerQueue(1);
         container.setAcknowledgeMode(AcknowledgeMode.NONE);
+        container.setConsumersPerQueue(1);
+        container.setPrefetchCount(12);
+        container.setMessagesPerAck(12);
 
         return container;
     }
