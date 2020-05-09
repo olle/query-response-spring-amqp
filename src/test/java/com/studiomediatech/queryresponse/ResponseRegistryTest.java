@@ -101,4 +101,20 @@ class ResponseRegistryTest {
         verify(facade).declareBinding(Mockito.isA(Response.class));
         verify(facade).addListener(Mockito.isA(Response.class));
     }
+
+
+    @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    void ensureCallsToRemoveListenerAndQueueOnFailure() throws Exception {
+
+        ResponseRegistry sut = new ResponseRegistry(facade, stats);
+
+        Response response = Mockito.mock(Response.class);
+        Mockito.doThrow(new RuntimeException()).when(response).accept(Mockito.any(), Mockito.any());
+
+        sut.doAccept(response);
+
+        verify(facade).removeListener(response);
+        verify(facade).removeQueue(response);
+    }
 }

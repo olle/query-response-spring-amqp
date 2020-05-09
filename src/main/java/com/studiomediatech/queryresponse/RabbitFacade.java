@@ -107,6 +107,12 @@ class RabbitFacade implements Logging {
     }
 
 
+    public void removeListener(Response<?> response) {
+
+        // TODO Auto-generated method stub
+    }
+
+
     private DirectMessageListenerContainer createMessageListenerContainer(MessageListener listener, String queueName) {
 
         return containers.computeIfAbsent(queueName,
@@ -125,6 +131,12 @@ class RabbitFacade implements Logging {
     public void removeQueue(Query<?> query) {
 
         admin.deleteQueue(query.getQueueName());
+    }
+
+
+    public void removeQueue(Response<?> response) {
+
+        // TODO Auto-generated method stub
     }
 
 

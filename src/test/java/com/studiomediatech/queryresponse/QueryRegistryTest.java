@@ -64,5 +64,8 @@ class QueryRegistryTest {
 
         verify(stats).incrementPublishedQueriesCounter();
         verify(stats).incrementConsumedResponsesCounter();
+
+        verify(facade).removeListener(Mockito.isA(Query.class));
+        verify(facade).removeQueue(Mockito.isA(Query.class));
     }
 }
