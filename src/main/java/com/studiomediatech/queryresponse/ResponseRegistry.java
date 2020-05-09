@@ -60,11 +60,10 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
             facade.addListener(response);
 
             response.accept(facade, stats);
+            log().info("Registered response {}", response);
         } catch (Throwable th) {
             facade.removeListener(response);
             facade.removeQueue(response);
         }
-
-        log().info("Registered response {}", response);
     }
 }

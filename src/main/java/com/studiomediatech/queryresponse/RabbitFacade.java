@@ -98,18 +98,24 @@ class RabbitFacade implements Logging {
 
     public void removeListener(Query<?> query) {
 
-        DirectMessageListenerContainer container = containers.remove(query.getQueueName());
-
-        if (container != null) {
-            container.removeQueueNames(query.getQueueName());
-            container.stop();
-        }
+        doRemoveListener(query.getQueueName());
     }
 
 
     public void removeListener(Response<?> response) {
 
-        // TODO Auto-generated method stub
+        doRemoveListener(response.getQueueName());
+    }
+
+
+    private void doRemoveListener(String queueName) {
+
+        DirectMessageListenerContainer container = containers.remove(queueName);
+
+        if (container != null) {
+            container.removeQueueNames(queueName);
+            container.stop();
+        }
     }
 
 
@@ -130,13 +136,19 @@ class RabbitFacade implements Logging {
 
     public void removeQueue(Query<?> query) {
 
-        admin.deleteQueue(query.getQueueName());
+        doRemoveQueue(query.getQueueName());
     }
 
 
     public void removeQueue(Response<?> response) {
 
-        // TODO Auto-generated method stub
+        doRemoveQueue(response.getQueueName());
+    }
+
+
+    private void doRemoveQueue(String queueName) {
+
+        admin.deleteQueue(queueName);
     }
 
 

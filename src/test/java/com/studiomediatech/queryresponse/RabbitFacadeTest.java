@@ -78,7 +78,7 @@ class RabbitFacadeTest {
 
 
     @Test
-    void ensureRemovesQueue() throws Exception {
+    void ensureRemovesQueueForQuery() throws Exception {
 
         var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
 
@@ -86,6 +86,18 @@ class RabbitFacadeTest {
         sut.removeQueue(query);
 
         verify(admin).deleteQueue(query.getQueueName());
+    }
+
+
+    @Test
+    void ensureRemovesQueueForResponse() throws Exception {
+
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
+
+        var response = new Response<>("foobaar");
+        sut.removeQueue(response);
+
+        verify(admin).deleteQueue(response.getQueueName());
     }
 
 
@@ -102,6 +114,24 @@ class RabbitFacadeTest {
 
         sut.removeListener(query);
         sut.removeListener(query); // Idempotent!
+
+        assertThat(!sut.containers.containsKey(queueName));
+    }
+
+
+    @Test
+    void ensureRemovesListenerForResponse() {
+
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
+
+        var response = new Response<>("bar");
+        sut.addListener(response);
+
+        String queueName = response.getQueueName();
+        assertThat(sut.containers.containsKey(queueName));
+
+        sut.removeListener(response);
+        sut.removeListener(response); // Idempotent!
 
         assertThat(!sut.containers.containsKey(queueName));
     }
