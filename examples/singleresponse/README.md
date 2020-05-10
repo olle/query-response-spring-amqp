@@ -5,6 +5,8 @@ The minimal example to reproduce the issue where _anonymous_ queues, for
 Query/Response responses, fail to recover after a loss of connection with the
 RabbitMQ broker.
 
+The issue is currently being tracked here https://github.com/olle/query-response-spring-amqp/issues/19
+
 ## Prerequisites
 
 To building the Query/Response library Java 11 or higher and Maven is required,
