@@ -157,8 +157,9 @@ class StatisticsTest {
         sut.incrementPublishedQueriesCounter();
         sut.incrementPublishedQueriesCounter();
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(3L);
+        Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
+        assertThat((long) s.value).isEqualTo(3L);
+        assertThat(s.uuid).isEqualTo(sut.uuid);
 
         ResponseRegistry.instance = () -> null;
     }
@@ -181,8 +182,9 @@ class StatisticsTest {
         sut.incrementConsumedResponsesCounter();
         sut.incrementConsumedResponsesCounter();
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(3L);
+        Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
+        assertThat((long) s.value).isEqualTo(3L);
+        assertThat(s.uuid).isEqualTo(sut.uuid);
 
         ResponseRegistry.instance = () -> null;
     }
@@ -205,8 +207,9 @@ class StatisticsTest {
         sut.incrementPublishedResponsesCounter();
         sut.incrementPublishedResponsesCounter();
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(3L);
+        Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
+        assertThat((long) s.value).isEqualTo(3L);
+        assertThat(s.uuid).isEqualTo(sut.uuid);
 
         ResponseRegistry.instance = () -> null;
     }
@@ -278,8 +281,9 @@ class StatisticsTest {
         sut.incrementFallbacksCounter();
         sut.incrementFallbacksCounter();
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(3L);
+        Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
+        assertThat((long) s.value).isEqualTo(3L);
+        assertThat(s.uuid).isEqualTo(sut.uuid);
 
         ResponseRegistry.instance = () -> null;
     }

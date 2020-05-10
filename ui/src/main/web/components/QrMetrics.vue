@@ -27,6 +27,13 @@
 
 <script>
 import store from "../store.js";
+import {
+  toNumberWithUnit,
+  toMillis,
+  toThroughputPerSecond,
+  toPercent,
+  toRateRank,
+} from "../metrics.js";
 import { mapState } from "vuex";
 
 export default {
@@ -34,60 +41,22 @@ export default {
   computed: {
     ...mapState({
       successRate: (s) =>
-        ns2p(s.metrics.count_responses, s.metrics.count_queries),
-      successRateRank: (s) => {
-        let rate =
-          s.metrics.count_responses / Math.max(1, s.metrics.count_queries);
-        if (rate < 0.2) {
-          return "failure";
-        } else if (rate < 0.6) {
-          return "warning";
-        }
-      },
-      countQueries: (s) => n2t(s.metrics.count_queries),
-      countResponses: (s) => n2t(s.metrics.count_responses),
-      countFallbacks: (s) => n2t(s.metrics.count_fallbacks),
-      avgLatency: (s) => n2ms(s.metrics.avg_latency),
-      minLatency: (s) => n2ms(s.metrics.min_latency),
-      maxLatency: (s) => n2ms(s.metrics.max_latency),
-      avgThroughput: (s) => n2tp(s.metrics.avg_throughput),
-      throughputQueries: (s) => n2tp(s.metrics.throughput_queries),
-      throughputResponses: (s) => n2tp(s.metrics.throughput_responses),
+        toPercent(s.metrics.count_responses, s.metrics.count_queries),
+      successRateRank: (s) =>
+        toRateRank(s.metrics.count_responses, s.metrics.count_queries),
+      countQueries: (s) => toNumberWithUnit(s.metrics.count_queries),
+      countResponses: (s) => toNumberWithUnit(s.metrics.count_responses),
+      countFallbacks: (s) => toNumberWithUnit(s.metrics.count_fallbacks),
+      avgLatency: (s) => toMillis(s.metrics.avg_latency),
+      minLatency: (s) => toMillis(s.metrics.min_latency),
+      maxLatency: (s) => toMillis(s.metrics.max_latency),
+      avgThroughput: (s) => toThroughputPerSecond(s.metrics.avg_throughput),
+      throughputQueries: (s) =>
+        toThroughputPerSecond(s.metrics.throughput_queries),
+      throughputResponses: (s) =>
+        toThroughputPerSecond(s.metrics.throughput_responses),
     }),
   },
   store,
-};
-
-const n2tp = (d) => {
-  let ps = Math.round(d * 10 + Number.EPSILON) / 10;
-
-  if (ps < 1.0) {
-    return `${Math.round(d * 60 * 10 + Number.EPSILON) / 10}/min`;
-  }
-
-  return `${ps}/s`;
-};
-
-const n2ms = (ms) => {
-  return `${Math.round(ms * 10 + Number.EPSILON) / 10}ms`;
-};
-
-const ns2p = (n, d) => {
-  return `${
-    Math.round((n / Math.max(1, d)) * 100 * 10 + Number.EPSILON) / 10
-  }%`;
-};
-
-const n2t = (num) => {
-  if (typeof num !== "number" || num < 1) {
-    return "0";
-  } else if (num > 99999999999999999999) {
-    return ">100E";
-  }
-  let i = Math.floor(Math.log(num) / Math.log(1000));
-  let q = 10 ** Math.min(3, i);
-  let value = Math.round((num / 1000 ** i + Number.EPSILON) * q) / q;
-  let suffix = ["", "k", "M", "G", "T", "P", "E"][i];
-  return `${value}${suffix}`;
 };
 </script>

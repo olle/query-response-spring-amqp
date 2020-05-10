@@ -95,10 +95,10 @@ class Statistics implements Logging {
     protected Collection<Stat> getStats() {
 
         return List.of( // NOSONAR
-                Stat.of(STAT_COUNT_QUERIES, this.publishedQueriesCount.get()), // NOSONAR
-                Stat.of(STAT_COUNT_CONSUMED_RESPONSES, this.consumedResponsesCount.get()), // NOSONAR
-                Stat.of(STAT_COUNT_PUBLISHED_RESPONSES, this.publishedResponsesCount.get()), // NOSONAR
-                Stat.of(STAT_COUNT_FALLBACKS, this.fallbacksCount.get()), // NOSONAR
+                getPublishedQueriesCountStat(), // NOSONAR
+                getConsumedResponsesCountStat(), // NOSONAR
+                getPublishedResponsesCountStat(), // NOSONAR
+                getFallbacksCountStat(), // NOSONAR
                 getMeta(META_NAME, nameSupplier.get()), // NOSONAR
                 getMeta(META_HOSTNAME, hostSupplier.get()), // NOSONAR
                 getMeta(META_PID, pidSupplier.get()), // NOSONAR
@@ -109,6 +109,30 @@ class Statistics implements Logging {
                 getThroughputQueriesStat(), // NOSONAR
                 getThroughputResponsesStat() // NOSONAR
                 );
+    }
+
+
+    private Stat getPublishedQueriesCountStat() {
+
+        return Stat.from(STAT_COUNT_QUERIES, this.publishedQueriesCount.get(), this.uuid);
+    }
+
+
+    private Stat getConsumedResponsesCountStat() {
+
+        return Stat.from(STAT_COUNT_CONSUMED_RESPONSES, this.consumedResponsesCount.get(), this.uuid);
+    }
+
+
+    private Stat getPublishedResponsesCountStat() {
+
+        return Stat.from(STAT_COUNT_PUBLISHED_RESPONSES, this.publishedResponsesCount.get(), this.uuid);
+    }
+
+
+    private Stat getFallbacksCountStat() {
+
+        return Stat.from(STAT_COUNT_FALLBACKS, this.fallbacksCount.get(), this.uuid);
     }
 
 
