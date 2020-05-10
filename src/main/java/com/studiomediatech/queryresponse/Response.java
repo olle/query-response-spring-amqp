@@ -52,6 +52,13 @@ class Response<T> implements MessageListener, Logging {
     }
 
     @Override
+    public String toString() {
+
+        return "Response [query='" + routingKey + "', queue=" + queueName + "]";
+    }
+
+
+    @Override
     public void onMessage(Message message) {
 
         try {

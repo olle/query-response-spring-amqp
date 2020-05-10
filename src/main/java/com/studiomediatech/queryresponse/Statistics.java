@@ -84,6 +84,8 @@ class Statistics implements Logging {
 
     void respond() {
 
+        log().debug("Registering response for statistics queries...");
+
         ResponseBuilder.respondTo("query-response/stats", Stat.class)
             .withAll()
             .suppliedBy(this::getStats);

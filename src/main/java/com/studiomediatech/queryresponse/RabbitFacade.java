@@ -3,6 +3,7 @@ package com.studiomediatech.queryresponse;
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.AnonymousQueue;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Message;
@@ -10,7 +11,6 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * Provides an abstraction between the use of RabbitMQ and the capabilities in Spring Boot AMQP, and the client code in
- * this library.
+ * Provides an abstraction between the use of RabbitMQ and the capabilities in Spring Boot AMQP, and the structured
+ * registry code in this library.
  */
 class RabbitFacade implements Logging {
 
@@ -48,19 +48,13 @@ class RabbitFacade implements Logging {
 
     public void declareQueue(Response<?> response) {
 
-        declareQueue(response.getQueueName());
+        admin.declareQueue(new AnonymousQueue(response::getQueueName));
     }
 
 
     public void declareQueue(Query<?> query) {
 
-        declareQueue(query.getQueueName());
-    }
-
-
-    private void declareQueue(String queueName) {
-
-        admin.declareQueue(log(QueueBuilder.nonDurable(queueName).autoDelete().exclusive().build()));
+        admin.declareQueue(new AnonymousQueue(query::getQueueName));
     }
 
 
@@ -75,6 +69,7 @@ class RabbitFacade implements Logging {
     private DirectMessageListenerContainer createNewListenerContainer() {
 
         DirectMessageListenerContainer container = new DirectMessageListenerContainer(connectionFactory);
+
         container.setAcknowledgeMode(AcknowledgeMode.NONE);
         container.setConsumersPerQueue(1);
         container.setPrefetchCount(12);

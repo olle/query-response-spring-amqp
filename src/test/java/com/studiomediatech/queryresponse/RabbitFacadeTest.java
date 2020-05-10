@@ -53,10 +53,31 @@ class RabbitFacadeTest {
 
         verify(admin).declareQueue(queue.capture());
 
-        assertThat(queue.getValue().getActualName()).isEqualTo(query.getQueueName());
+        Queue q = queue.getValue();
+
+        assertThat(q.getActualName()).isEqualTo(query.getQueueName());
+        assertThat(q.isDurable()).isFalse();
+        assertThat(q.isAutoDelete()).isTrue();
+        assertThat(q.isExclusive()).isTrue();
+        assertThat(q.getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
+    }
+
+
+    @Test
+    void ensureDeclaresQueueForResponse() {
+
+        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
+
+        Response<Object> response = new Response<>("some-routing-key");
+        sut.declareQueue(response);
+
+        verify(admin).declareQueue(queue.capture());
+
+        assertThat(queue.getValue().getActualName()).isEqualTo(response.getQueueName());
         assertThat(queue.getValue().isDurable()).isFalse();
-        assertThat(queue.getValue().isExclusive()).isTrue();
         assertThat(queue.getValue().isAutoDelete()).isTrue();
+        assertThat(queue.getValue().isExclusive()).isTrue();
+        assertThat(queue.getValue().getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
     }
 
 
@@ -134,23 +155,6 @@ class RabbitFacadeTest {
         sut.removeListener(response); // Idempotent!
 
         assertThat(!sut.containers.containsKey(queueName));
-    }
-
-
-    @Test
-    void ensureDeclaresQueueForResponse() {
-
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"));
-
-        Response<Object> response = new Response<>("some-routing-key");
-        sut.declareQueue(response);
-
-        verify(admin).declareQueue(queue.capture());
-
-        assertThat(queue.getValue().getName()).isEqualTo(response.getQueueName());
-        assertThat(queue.getValue().isDurable()).isFalse();
-        assertThat(queue.getValue().isExclusive()).isTrue();
-        assertThat(queue.getValue().isAutoDelete()).isTrue();
     }
 
 
