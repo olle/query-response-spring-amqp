@@ -15,7 +15,7 @@ class StatsOnlyResponse implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        System.out.println("> Waiting for stats queries! Press CTRL-C to exit.");
+        System.out.println("> Started, will register for stats queries. Press CTRL-C to exit.");
         Thread.currentThread().join();
     }
 
