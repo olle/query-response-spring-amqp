@@ -10,13 +10,13 @@
     <data>{{ countResponses }}</data>
     <h3>Fallback</h3>
     <data>{{ countFallbacks }}</data>
-    <h2>Latency (Avg)</h2>
+    <h2>Latency</h2>
     <time class="big two">{{ avgLatency }}</time>
     <h3>Min</h3>
     <time>{{ minLatency }}</time>
     <h3>Max</h3>
     <time>{{ maxLatency }}</time>
-    <h2>Throughput (Avg)</h2>
+    <h2>Throughput</h2>
     <data class="big three">{{ avgThroughput }}</data>
     <h3>Queries</h3>
     <data>{{ throughputQueries }}</data>

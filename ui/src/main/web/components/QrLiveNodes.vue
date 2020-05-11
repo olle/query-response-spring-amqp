@@ -10,8 +10,8 @@
         <th class="h3">Address</th>
         <th class="h3">Uptime</th>
         <th class="h3">Success Rate</th>
-        <th class="h3">Latency (Avg)</th>
-        <th class="h3">Throughput (Avg)</th>
+        <th class="h3">Latency</th>
+        <th class="h3">Throughput</th>
       </tr>
     </thead>
     <tbody>
@@ -55,36 +55,6 @@
           </small>
         </td>
       </tr>
-      <!--tr>
-        <td>jembo</td>
-        <td>0</td>
-        <td>lb1-jembo.some.cloud</td>
-        <td>
-          <time>3 hours</time>
-        </td>
-        <td>
-          <data class="warning">12%</data>
-          <small>
-            <data data-abbr="Q" title="Queries">232K</data>
-            <data data-abbr="R" title="Responses">13K</data>
-            <data data-abbr="F" title="Fallback">13K</data>
-          </small>
-        </td>
-        <td>
-          <time>44ms</time>
-          <small>
-            <time data-abbr="Min" title="Min">2ms</time>
-            <time data-abbr="Max" title="Max">231ms</time>
-          </small>
-        </td>
-        <td>
-          <data>55K/s</data>
-          <small>
-            <data data-abbr="Q" title="Queries">2K/s</data>
-            <data data-abbr="R" title="Responses">312K/s</data>
-          </small>
-        </td>
-      </tr -->
     </tbody>
   </table>
 </template>
