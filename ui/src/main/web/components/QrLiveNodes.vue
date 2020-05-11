@@ -36,7 +36,13 @@
             }}</data>
           </small>
         </td>
-        <td>-</td>
+        <td>
+          <time>{{ node.avgLatency }}</time>
+          <small>
+            <time data-abbr="Min" title="Min">{{ node.minLatency }}</time>
+            <time data-abbr="Max" title="Max">{{ node.maxLatency }}</time>
+          </small>
+        </td>
         <td>
           <data>{{ node.avgThroughput }}</data>
           <small>
@@ -90,6 +96,7 @@ import {
   toRateRank,
   toNumberWithUnit,
   toThroughputPerSecond,
+  toMillis,
 } from "../metrics.js";
 import { mapState } from "vuex";
 
@@ -123,6 +130,9 @@ export default {
             node.throughput_responses
           );
           node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
+          node.avgLatency = toMillis(node.avg_latency);
+          node.minLatency = toMillis(node.min_latency);
+          node.maxLatency = toMillis(node.max_latency);
           results.push(node);
         }
         return results;

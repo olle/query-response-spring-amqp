@@ -103,12 +103,30 @@ class Statistics implements Logging {
                 getMeta(META_HOSTNAME, hostSupplier.get()), // NOSONAR
                 getMeta(META_PID, pidSupplier.get()), // NOSONAR
                 getMeta(META_UPTIME, uptimeSupplier.get()), // NOSONAR
-                Stat.of(STAT_LATENCY_MAX, getMaxLatency()), // NOSONAR
-                Stat.of(STAT_LATENCY_MIN, getMinLatency()), // NOSONAR
-                Stat.of(STAT_LATENCY_AVG, getAvgLatency()), // NOSONAR
+                getMaxLatencyStat(), // NOSONAR
+                getMinLatencyStat(), // NOSONAR
+                getAvgLatencyStat(), // NOSONAR
                 getThroughputQueriesStat(), // NOSONAR
                 getThroughputResponsesStat() // NOSONAR
                 );
+    }
+
+
+    private Stat getAvgLatencyStat() {
+
+        return Stat.from(STAT_LATENCY_AVG, getAvgLatency(), this.uuid);
+    }
+
+
+    private Stat getMinLatencyStat() {
+
+        return Stat.from(STAT_LATENCY_MIN, getMinLatency(), this.uuid);
+    }
+
+
+    private Stat getMaxLatencyStat() {
+
+        return Stat.from(STAT_LATENCY_MAX, getMaxLatency(), this.uuid);
     }
 
 
