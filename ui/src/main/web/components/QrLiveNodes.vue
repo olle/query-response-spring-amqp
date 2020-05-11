@@ -38,10 +38,14 @@
         </td>
         <td>-</td>
         <td>
-          <data>-</data>
+          <data>{{ node.avgThroughput }}</data>
           <small>
-            <data data-abbr="Q" title="Queries">{{ node.throughputQueries }}</data>
-            <data data-abbr="R" title="Responses">{{ node.throughputResponses }}</data>
+            <data data-abbr="Q" title="Queries">{{
+              node.throughputQueries
+            }}</data>
+            <data data-abbr="R" title="Responses">{{
+              node.throughputResponses
+            }}</data>
           </small>
         </td>
       </tr>
@@ -81,7 +85,12 @@
 
 <script>
 import store from "../store.js";
-import { toPercent, toRateRank, toNumberWithUnit, toThroughputPerSecond } from "../metrics.js";
+import {
+  toPercent,
+  toRateRank,
+  toNumberWithUnit,
+  toThroughputPerSecond,
+} from "../metrics.js";
 import { mapState } from "vuex";
 
 export default {
@@ -113,7 +122,7 @@ export default {
           node.throughputResponses = toThroughputPerSecond(
             node.throughput_responses
           );
-
+          node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
           results.push(node);
         }
         return results;

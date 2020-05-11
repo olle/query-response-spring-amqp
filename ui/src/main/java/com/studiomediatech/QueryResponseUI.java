@@ -50,6 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
@@ -174,7 +175,7 @@ public class QueryResponseUI {
             // Order is important!!
             double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
             double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
-            double throughputAvg = calculateThroughputAvg(queries, responses);
+            double throughputAvg = calculateThroughputAvg(queries, responses, null);
 
             handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg);
 
@@ -183,15 +184,30 @@ public class QueryResponseUI {
                     .filter(s -> StringUtils.hasText(s.uuid))
                     .collect(Collectors.groupingBy(s -> s.uuid));
 
+            for (Entry<String, List<Stat>> node : nodes.entrySet()) {
+                var stat = new Stat();
+                stat.uuid = node.getKey();
+                stat.key = "avg_throughput";
+                stat.value = calculateThroughputAvg(queries, responses, node.getKey());
+                node.getValue().add(stat);
+            }
+
             handler.handleNodes(nodes);
         }
 
 
-        private double calculateThroughputAvg(List<Stat> queries, List<Stat> responses) {
+        private double calculateThroughputAvg(List<Stat> queries, List<Stat> responses, String node) {
 
             List<Stat> all = new ArrayList<>();
-            all.addAll(queries);
-            all.addAll(responses);
+
+            if (node != null) {
+                all.addAll(queries.stream().filter(s -> node.equals(s.uuid)).collect(Collectors.toList()));
+                all.addAll(responses.stream().filter(s -> node.equals(s.uuid)).collect(Collectors.toList()));
+            } else {
+                all.addAll(queries);
+                all.addAll(responses);
+            }
+
             all.sort(Comparator.comparing(s -> s.timestamp));
 
             if (all.size() < 2) {
