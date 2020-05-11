@@ -28,12 +28,22 @@
           }}</data>
           <small>
             <data data-abbr="Q" title="Queries">{{ node.countQueries }}</data>
-            <data data-abbr="R" title="Responses">{{ node.countResponses }}</data>
-            <data data-abbr="F" title="Fallback">{{ node.countFallbacks }}</data>
+            <data data-abbr="R" title="Responses">{{
+              node.countResponses
+            }}</data>
+            <data data-abbr="F" title="Fallback">{{
+              node.countFallbacks
+            }}</data>
           </small>
         </td>
         <td>-</td>
-        <td>-</td>
+        <td>
+          <data>-</data>
+          <small>
+            <data data-abbr="Q" title="Queries">{{ node.throughputQueries }}</data>
+            <data data-abbr="R" title="Responses">{{ node.throughputResponses }}</data>
+          </small>
+        </td>
       </tr>
       <!--tr>
         <td>jembo</td>
@@ -71,7 +81,7 @@
 
 <script>
 import store from "../store.js";
-import { toPercent, toRateRank, toNumberWithUnit } from "../metrics.js";
+import { toPercent, toRateRank, toNumberWithUnit, toThroughputPerSecond } from "../metrics.js";
 import { mapState } from "vuex";
 
 export default {
@@ -97,6 +107,13 @@ export default {
           node.countQueries = toNumberWithUnit(node.count_queries);
           node.countResponses = toNumberWithUnit(node.count_consumed_responses);
           node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
+          node.throughputQueries = toThroughputPerSecond(
+            node.throughput_queries
+          );
+          node.throughputResponses = toThroughputPerSecond(
+            node.throughput_responses
+          );
+
           results.push(node);
         }
         return results;

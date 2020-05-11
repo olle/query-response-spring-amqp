@@ -146,7 +146,7 @@ class Statistics implements Logging {
 
         long current = this.publishedQueriesCount.get();
 
-        return Stat.at(STAT_TP_QUERIES, current - this.lastPublishedQueriesCount.getAndSet(current));
+        return Stat.at(STAT_TP_QUERIES, current - this.lastPublishedQueriesCount.getAndSet(current), this.uuid);
     }
 
 
@@ -154,7 +154,7 @@ class Statistics implements Logging {
 
         long current = this.publishedResponsesCount.get();
 
-        return Stat.at(STAT_TP_RESPONSES, current - this.lastPublishedResponsesCount.getAndSet(current));
+        return Stat.at(STAT_TP_RESPONSES, current - this.lastPublishedResponsesCount.getAndSet(current), this.uuid);
     }
 
 
@@ -287,10 +287,11 @@ class Statistics implements Logging {
         }
 
 
-        public Stat(String key, Object value, long timestamp) {
+        public Stat(String key, Object value, long timestamp, String uuid) {
 
             this(key, value);
             this.timestamp = timestamp;
+            this.uuid = uuid;
         }
 
 
@@ -306,9 +307,9 @@ class Statistics implements Logging {
         }
 
 
-        public static Stat at(String key, Object value) {
+        public static Stat at(String key, Object value, String uuid) {
 
-            return new Stat(key, value, Instant.now(Clock.systemUTC()).toEpochMilli());
+            return new Stat(key, value, Instant.now(Clock.systemUTC()).toEpochMilli(), uuid);
         }
 
 

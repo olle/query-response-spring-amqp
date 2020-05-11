@@ -77,7 +77,7 @@ class StatisticsTest {
         Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
 
         assertThat(stat.value).isEqualTo("some-pid");
-        assertThat(stat.uuid).isNotEmpty();
+        assertThat(stat.uuid).isEqualTo(sut.uuid);
 
         ResponseRegistry.instance = () -> null;
     }
@@ -232,8 +232,10 @@ class StatisticsTest {
         sut.incrementPublishedQueriesCounter();
         sut.incrementPublishedQueriesCounter();
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(3L);
+        Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
+        assertThat((long) s.value).isEqualTo(3L);
+        assertThat(s.uuid).isEqualTo(sut.uuid);
+        assertThat(s.timestamp).isNotNull();
 
         ResponseRegistry.instance = () -> null;
     }
@@ -257,8 +259,10 @@ class StatisticsTest {
         sut.incrementPublishedResponsesCounter();
         sut.incrementPublishedResponsesCounter();
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(4L);
+        Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
+        assertThat((long) s.value).isEqualTo(4L);
+        assertThat(s.uuid).isEqualTo(sut.uuid);
+        assertThat(s.timestamp).isNotNull();
 
         ResponseRegistry.instance = () -> null;
     }
@@ -341,10 +345,10 @@ class StatisticsTest {
 
 
     @Test
-    void ensureCanHaveStatWithOrWithoutTimestamp() throws Exception {
+    void ensureCanHaveStatWithOrWithoutTimestampAndUUID() throws Exception {
 
         Stat s1 = Statistics.Stat.of("foo", 123);
-        Stat s2 = Statistics.Stat.at("bar", 42);
+        Stat s2 = Statistics.Stat.at("bar", 42, "some-uuid");
 
         assertThat(s1.timestamp).isNull();
         assertThat(s2.timestamp).isNotNull();
@@ -355,11 +359,12 @@ class StatisticsTest {
     void ensurePrettyToStringForStats() throws Exception {
 
         Stat s1 = Statistics.Stat.of("foo", 123);
-        Stat s2 = Statistics.Stat.at("bar", 42);
+        Stat s2 = Statistics.Stat.at("bar", 42, "some-uuid");
         Stat s3 = Statistics.Stat.from("bar", 42, "some-uuid");
 
         assertThat(s1.toString()).isEqualTo("foo=123");
         assertThat(s2.toString()).startsWith("bar=42 at=");
+        assertThat(s2.toString()).endsWith(" from=some-uuid");
         assertThat(s3.toString()).startsWith("bar=42 from=some-uuid");
     }
 }
