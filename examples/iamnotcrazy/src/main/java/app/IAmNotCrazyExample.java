@@ -6,12 +6,15 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.GenericApplicationContext;
 
 
 @SpringBootApplication
@@ -26,21 +29,22 @@ class IAmNotCrazyExample implements CommandLineRunner {
     }
 
 
-    @Bean
-    RabbitAdmin admin(ConnectionFactory connectionFactory) {
+    @Autowired
+    void setup(GenericApplicationContext ctx, final RabbitAdmin admin) {
 
-        return new RabbitAdmin(connectionFactory);
+        System.out.println("> This is a start...");
+
+        AnonymousQueue queue = new AnonymousQueue();
+        ctx.registerBean(Queue.class, () -> queue);
+
+        admin.declareQueue(queue);
     }
 
 
     @Bean
-    Queue anonymousQueue(RabbitAdmin admin) {
+    RabbitAdmin admin(ConnectionFactory connectionFactory) {
 
-        AnonymousQueue queue = new AnonymousQueue();
-
-        admin.declareQueue(queue);
-
-        return queue;
+        return new RabbitAdmin(connectionFactory);
     }
 
 

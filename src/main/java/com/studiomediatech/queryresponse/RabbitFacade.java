@@ -11,11 +11,14 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.NamingStrategy;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
+
+import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,37 +35,61 @@ class RabbitFacade implements Logging {
     private final RabbitAdmin admin;
     private final ConnectionFactory connectionFactory;
     private final RabbitTemplate template;
+    private final GenericApplicationContext ctx;
 
     private TopicExchange queriesExchange;
 
     protected final Map<String, DirectMessageListenerContainer> containers = new ConcurrentHashMap<>();
 
     public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, ConnectionFactory connectionFactory,
-        TopicExchange queriesExchange) {
+        TopicExchange queriesExchange, GenericApplicationContext ctx) {
 
         this.admin = admin;
         this.template = template;
         this.connectionFactory = connectionFactory;
         this.queriesExchange = queriesExchange;
+        this.ctx = ctx;
     }
 
     public void declareQueue(Response<?> response) {
 
-        admin.declareQueue(new AnonymousQueue(response::getQueueName));
+        declareAndRegisterQueue(response::getQueueName);
     }
 
 
     public void declareQueue(Query<?> query) {
 
-        admin.declareQueue(new AnonymousQueue(query::getQueueName));
+        declareAndRegisterQueue(query::getQueueName);
+    }
+
+
+    private void declareAndRegisterQueue(NamingStrategy name) {
+
+        AnonymousQueue queue = log(new AnonymousQueue(name));
+
+        ctx.registerBean(AnonymousQueue.class, () -> queue);
+
+        admin.declareQueue(queue);
     }
 
 
     public void declareBinding(Response<?> response) {
 
-        admin.declareBinding(log(
-                new Binding(response.getQueueName(), DestinationType.QUEUE, queriesExchange.getName(),
-                    response.getRoutingKey(), null)));
+        String queueName = response.getQueueName();
+        String routingKey = response.getRoutingKey();
+
+        declareAndRegisterBinding(queueName, routingKey);
+    }
+
+
+    private void declareAndRegisterBinding(String queueName, String routingKey) {
+
+        Binding binding = log(new Binding(queueName, DestinationType.QUEUE, queriesExchange.getName(), routingKey,
+                    null));
+
+        ctx.registerBean(Binding.class, () -> binding);
+
+        admin.declareBinding(binding);
     }
 
 

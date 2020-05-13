@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.support.GenericApplicationContext;
 
 import org.springframework.core.env.Environment;
 
@@ -32,9 +33,9 @@ class QueryResponseConfiguration implements Logging {
 
     @Bean
     RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate,
-        ConnectionFactory connectionFactory, TopicExchange queriesExchange) {
+        ConnectionFactory connectionFactory, TopicExchange queriesExchange, GenericApplicationContext ctx) {
 
-        return new RabbitFacade(rabbitAdmin, rabbitTemplate, connectionFactory, queriesExchange);
+        return new RabbitFacade(rabbitAdmin, rabbitTemplate, connectionFactory, queriesExchange, ctx);
     }
 
 
