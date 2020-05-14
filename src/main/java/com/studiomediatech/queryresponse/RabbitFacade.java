@@ -67,7 +67,7 @@ class RabbitFacade implements Logging {
 
         AnonymousQueue queue = log(new AnonymousQueue(name));
         admin.declareQueue(queue);
-        ctx.registerBean(AnonymousQueue.class, () -> queue);
+        ctx.registerBean(queue.getActualName(), AnonymousQueue.class, () -> queue);
     }
 
 
@@ -85,7 +85,7 @@ class RabbitFacade implements Logging {
         Binding binding = log(new Binding(queueName, DestinationType.QUEUE, queriesExchange.getName(), routingKey,
                     null));
         admin.declareBinding(binding);
-        ctx.registerBean(Binding.class, () -> binding);
+        ctx.registerBean(queueName + "-binding", Binding.class, () -> binding);
     }
 
 
