@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.studiomediatech.queryresponse.util.DurationFormatter;
 import com.studiomediatech.queryresponse.util.Logging;
 
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 
 import org.springframework.core.env.Environment;
 
@@ -27,8 +30,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -77,11 +78,9 @@ class Statistics implements Logging {
         this.env = env;
         this.ctx = ctx;
         this.uuid = UUID.randomUUID().toString();
-
-        // Start the responder after 3s
-        Executors.newScheduledThreadPool(1).schedule(this::respond, 3L, TimeUnit.SECONDS);
     }
 
+    @EventListener(ApplicationReadyEvent.class)
     void respond() {
 
         log().debug("Registering response for statistics queries...");
