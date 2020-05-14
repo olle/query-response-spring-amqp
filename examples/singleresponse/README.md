@@ -80,7 +80,7 @@ the following:
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::        (v2.2.6.RELEASE)
+ :: Spring Boot ::        (v2.2.7.RELEASE)
 2020-05-10 12:25:09.089  INFO 90030 --- [           main] uration$$EnhancerBySpringCGLIB$$86a134ee : //> Declared Exchange [name=query-response, type=topic, durable=true, autoDelete=true, internal=false, arguments={}]
 > Started, will register for stats queries. Press CTRL-C to exit.
 2020-05-10 12:25:12.103 DEBUG 90030 --- [pool-2-thread-1] c.s.queryresponse.Statistics             : Registering response for statistics queries...

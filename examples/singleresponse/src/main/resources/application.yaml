@@ -4,5 +4,5 @@ logging:
   level:
     root: ERROR
     com.studiomediatech.queryresponse: DEBUG
-    org.springframework.amqp.rabbit: DEBUG
+    org.springframework.amqp: DEBUG
 
