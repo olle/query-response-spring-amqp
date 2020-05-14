@@ -1,8 +1,0 @@
-spring.application.name: singleresponse-example
-
-logging:
-  level:
-    root: ERROR
-    com.studiomediatech.queryresponse: DEBUG
-    org.springframework.amqp.rabbit: DEBUG
-
