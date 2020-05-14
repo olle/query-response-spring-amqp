@@ -183,7 +183,7 @@ class RabbitFacade implements Logging {
         var m = decorateMessage(message);
 
         this.template.send(queriesExchange.getName(), routingKey, m);
-        log().info("|<-- Published query: {} - {}", routingKey, m);
+        logPublished("query", routingKey, m);
     }
 
 
@@ -202,10 +202,16 @@ class RabbitFacade implements Logging {
 
         try {
             this.template.send(exchange, routingKey, m);
-            log().info("|<-- Published response: " + m);
+            logPublished("response", routingKey, m);
         } catch (RuntimeException e) {
             log().error("Failed to publish response", e);
         }
+    }
+
+
+    private void logPublished(String type, String routingKey, Message message) {
+
+        log().info("|<-- Published {}: {} - {}", type, routingKey, message);
     }
 
 
