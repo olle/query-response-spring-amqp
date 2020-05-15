@@ -566,29 +566,29 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p><em>Sometime around 2015 I came across a presentation with <a href="https://twitter.com/fgeorge52">Fred George</a>,
  about the <a href="https://youtu.be/yPf5MfOZPY0">Challenges in Implementing Microservices</a>. It&#8217;s a great
- talk, with lots of lessons-learned that are really relevant; still are
- today, if you ask me. Experience comes from learning through failures, and at
- this point in time I was well aware of the problems that come with services
- using REST-ful APIs to call other services. I had already seen how latencies
- could spike and availability get lost, as calls from service A to B were
- actually depending on service B calling service C. It was a mess.</em></p>
+ talk, with lots of good and relevant information. Experience comes from
+ learning through failures, and at this point in time I sure had learned about
+ the problem with distributed services and blocking API calls. I had seen how
+ latencies would go up and availability go down the drain, as calls from
+ service A to B were actually depending on service B calling service C, calling
+ service D. It was a mess.</em></p>
 </div>
 <div class="paragraph">
-<p><em>In his talk George lands at the question "Synchronous or Asynchronous?" and
- proceeds to describe, what he calls, the "Needs Pattern". Service A would,
- instead of calling service B, publish a request, and service B would be able
- to pick it up and send back a response. After hearing this I began to think
- a lot about the effects of moving to an asynchronous way of communication
- between services. There was clearly a lot more here than just decoupling
- service endpoints and call latencies. Something more profound.</em></p>
+<p><em>In his talk <a href="https://twitter.com/fgeorge52">George</a> lands at the question "Synchronous or Asynchronous?"
+ and proceeds to describe, what he calls, the "Needs Pattern". Service A would,
+ instead of calling service B, publish a <strong>query</strong>, and service B would be
+ able to pick it up and send back a <strong>response</strong>. After hearing this I began to
+ think a lot about the effects of moving to asynchronous communication between
+ services. There was clearly a lot more there than just decoupling. Something
+ more profound.</em></p>
 </div>
 <div class="paragraph">
-<p><em>The <strong>Query/Response pattern</strong>, that I arrived at, challenges developers to
- really think hard about responsibility and autonomy in architecture and
- design. It gives very few guarantees (almost none actually), which will force
- decisions about <a href="https://en.wikipedia.org/wiki/Service-level_objective">Service Level Objectives (SLA)</a>, as well as
- resilience and availability, at a much earlier stage in the design and
- development process. It literally turns things around, which we will see.</em></p>
+<p><em>The <strong>Query/Response</strong> pattern, that I arrived at, challenges developers to
+ really think hard about the responsibilities and autonomy of services. It
+ provides very few guarantees, which will force decisions around resilience
+ and availability at a much earlier stage in the design and development process.
+ It literally turns things around - an inversion of responsibility - which we
+ will see.</em></p>
 </div>
 </div>
 </div>
@@ -1419,7 +1419,7 @@ This way modules can provide, and fulfill, explicit SLAs if required.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-02 10:23:40 +0200
+Last updated 2020-05-15 17:37:48 +0200
 </div>
 </div>
 </body>
