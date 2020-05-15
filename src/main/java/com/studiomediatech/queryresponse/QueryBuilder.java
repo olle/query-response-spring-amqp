@@ -117,11 +117,21 @@ public final class QueryBuilder<T> {
 
 
     /**
-     * Set the duration, in milliseconds, to block for when issuing a query.
+     * Set the approximate duration, in milliseconds, that the query will block for when being executed.
      *
-     * @param  millis  duration to block on the calling thread
+     * <p>The actual blocking time is not exact. The current contract will ensure blocking for <em>at least</em> the
+     * amount of time specified.</p>
+     *
+     * <p>Queries are always bound to a blocking timeout, and will return after at most the given duration. Combined
+     * with the <em>taking...</em> predicates ({@link #takingAtLeast(int)} or {@link #takingAtMost(int)}), this can be
+     * used to either return earlier, use a {@link #orDefaults default} or {@link #orThrow(Supplier) fail}.</p>
+     *
+     * @param  millis  duration to block on the calling thread. At the most {@link Long#MAX_VALUE} milliseconds is
+     *                 allowed.
      *
      * @return  the query builder, for chaining further calls
+     *
+     * @throws  IllegalArgumentException  for any 0, negative or too long duration.
      */
     public QueryBuilder<T> waitingFor(long millis) {
 
@@ -134,10 +144,15 @@ public final class QueryBuilder<T> {
     /**
      * Set the duration and temporal unit, to block for when issuing a query.
      *
-     * @param  amount  the amount of the duration to block on the calling thread
+     * @param  amount  the amount of the duration to block on the calling thread. An amount representing the duration
+     *                 of at the most {@link Long#MAX_VALUE} milliseconds is allowed.
      * @param  timeUnit  the unit of the blocking duration
      *
      * @return  the query builder, for chaining further calls
+     *
+     * @throws  IllegalArgumentException  for any 0, negative or too long duration.
+     *
+     * @see  #waitingFor(long)
      */
     public QueryBuilder<T> waitingFor(long amount, TemporalUnit timeUnit) {
 
@@ -150,9 +165,14 @@ public final class QueryBuilder<T> {
     /**
      * Set the duration to block for when issuing a query.
      *
-     * @param  duration  to block on the calling thread
+     * @param  duration  to block on the calling thread. A duration of at the most {@link Long#MAX_VALUE} milliseconds
+     *                   is allowed.
      *
      * @return  the query builder, for chaining further calls
+     *
+     * @throws  IllegalArgumentException  for any 0, negative or too long duration.
+     *
+     * @see  #waitingFor(long)
      */
     public QueryBuilder<T> waitingFor(Duration duration) {
 
@@ -165,9 +185,14 @@ public final class QueryBuilder<T> {
     /**
      * Sets the maximum number of elements to consume from responses, effectively limiting the returned results.
      *
-     * @param  atMost  number of elements to consume, must be greater than 0
+     * <p>Queries always block for a specified {@link #waitingFor(long) duration}.Combined with this specified amount
+     * of maximum elements to consume, the query can be made to return earlier.</p>
+     *
+     * @param  atMost  number of elements to consume, must be greater than 0.
      *
      * @return  the query builder, for chaining further calls
+     *
+     * @throws  IllegalArgumentException  for any values less than 1
      */
     public QueryBuilder<T> takingAtMost(int atMost) {
 
