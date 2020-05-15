@@ -65,6 +65,29 @@ class StatisticsTest {
 
 
     @Test
+    void ensureMetaWithPublishingOnlyStatus() throws Exception {
+
+        ResponseRegistry.instance = () -> registry;
+
+        var env = new MockEnvironment();
+        var sut = new Statistics(env, ctx);
+
+        var key = "only_responses";
+        Stat s1 = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
+
+        assertThat(s1.value).isEqualTo(true);
+        assertThat(s1.uuid).isEqualTo(sut.uuid);
+
+        sut.onlyResponses.set(false);
+
+        Stat s2 = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
+        assertThat(s2.value).isEqualTo(false);
+
+        ResponseRegistry.instance = () -> null;
+    }
+
+
+    @Test
     void ensureMetaWithPidPartOfStats() throws Exception {
 
         ResponseRegistry.instance = () -> registry;

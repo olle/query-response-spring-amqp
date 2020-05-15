@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ class Statistics implements Logging {
     private static final String META_NAME = "name";
     private static final String META_UPTIME = "uptime";
     private static final String META_HOSTNAME = "host";
+    private static final String META_RESPONSES = "only_responses";
 
     private static final String STAT_COUNT_QUERIES = "count_queries";
     private static final String STAT_COUNT_CONSUMED_RESPONSES = "count_consumed_responses";
@@ -67,6 +69,8 @@ class Statistics implements Logging {
     private List<Long> latencies = new LinkedList<>(Arrays.asList(0L));
     private AtomicLong lastPublishedQueriesCount = new AtomicLong(0);
     private AtomicLong lastPublishedResponsesCount = new AtomicLong(0);
+
+    protected final AtomicBoolean onlyResponses = new AtomicBoolean(true);
 
     protected Supplier<String> pidSupplier = () -> getPidOrDefault("-");
     protected Supplier<String> nameSupplier = () -> getApplicationNameOrDefault("application");
@@ -102,6 +106,7 @@ class Statistics implements Logging {
                 getMeta(META_HOSTNAME, hostSupplier.get()), // NOSONAR
                 getMeta(META_PID, pidSupplier.get()), // NOSONAR
                 getMeta(META_UPTIME, uptimeSupplier.get()), // NOSONAR
+                getMeta(META_RESPONSES, onlyResponses.get()), // NOSONAR
                 getMaxLatencyStat(), // NOSONAR
                 getMinLatencyStat(), // NOSONAR
                 getAvgLatencyStat(), // NOSONAR
@@ -244,6 +249,7 @@ class Statistics implements Logging {
 
     public void incrementPublishedQueriesCounter() {
 
+        onlyResponses.compareAndExchange(true, false);
         this.publishedQueriesCount.incrementAndGet();
     }
 
