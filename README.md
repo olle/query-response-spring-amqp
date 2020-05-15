@@ -41,6 +41,7 @@ simply be added to any Spring Boot® application.
 @EnableQueryResponse
 public class App {
   ...
+}
 ```
 
 The configuration will try to connect to an AMQP message broker, using the
