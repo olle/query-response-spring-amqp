@@ -3,36 +3,31 @@ package app;
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.ResponseBuilder;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+
+import org.springframework.context.event.EventListener;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
 @SpringBootApplication
 @EnableQueryResponse
-class Responding implements CommandLineRunner {
+public class Responding {
 
-    @Override
-    public void run(String... args) throws Exception {
+    public static void main(String[] args) {
 
-        println("Registering responses...");
-
-        respondToBooks();
-        respondToAuthors();
-        respondToNames();
-
-        println("Waiting for queries! Press CTRL-C to exit.");
-        Thread.currentThread().join();
+        // SpringApplication.run(Responding.class, args);
+        new SpringApplicationBuilder(Responding.class).web(WebApplicationType.NONE).run(args);
     }
 
 
-    private void respondToBooks() {
+    @EventListener(ApplicationReadyEvent.class)
+    void respondToBooks() {
 
         ResponseBuilder.respondTo("books/sci-fi", String.class)
             .withAll()
@@ -40,7 +35,8 @@ class Responding implements CommandLineRunner {
     }
 
 
-    private void respondToAuthors() {
+    @EventListener(ApplicationReadyEvent.class)
+    void respondToAuthors() {
 
         var tolkien = new Author("J. R. R. Tolkien", 1892, "South Africa");
         var lewis = new Author("C. S. Lewis", 1898, "United Kingdom");
@@ -55,7 +51,8 @@ class Responding implements CommandLineRunner {
     }
 
 
-    private void respondToNames() {
+    @EventListener(ApplicationReadyEvent.class)
+    void respondToNames() {
 
         var names = Arrays.asList("Yasir", "Araceli", "Emídio", "Rebekka", "Jack", "Hertha", "Oscar", "Astrid",
                 "Sedef", "Naomi", "Ioque", "Davut", "Edith", "Ortrun", "Eddie", "Noah", "Anthony", "Connor", "Mestan",
@@ -70,18 +67,6 @@ class Responding implements CommandLineRunner {
         ResponseBuilder.respondTo("names", String.class)
             .withBatchesOf(12)
             .from(names);
-    }
-
-
-    private static void println(String message, Object... args) {
-
-        System.out.println("> " + new Date() + "\t: " + String.format(message, args));
-    }
-
-
-    public static void main(String[] args) {
-
-        new SpringApplicationBuilder(Responding.class).web(WebApplicationType.NONE).run(args);
     }
 
     static class Author {
