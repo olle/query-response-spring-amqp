@@ -10,6 +10,7 @@
         <th class="h3">Address</th>
         <th class="h3">Uptime</th>
         <th class="h3">Success Rate</th>
+        <th class="h3">Responses</th>
         <th class="h3">Latency</th>
         <th class="h3">Throughput</th>
       </tr>
@@ -22,10 +23,11 @@
         <td>
           <time>{{ node.uptime }}</time>
         </td>
-        <td>
-          <data v-bind:class="node.successRateRank">{{
-            node.successRate
-          }}</data>
+        <td v-if="node.only_responses"><data>–</data></td>
+        <td v-else>
+          <data v-bind:class="node.successRateRank">
+            {{ node.successRate }}
+          </data>
           <small>
             <data data-abbr="Q" title="Queries">{{ node.countQueries }}</data>
             <data data-abbr="R" title="Responses">{{
@@ -36,6 +38,7 @@
             }}</data>
           </small>
         </td>
+        <td><data>{{ node.count_published_responses }}</data></td>
         <td>
           <time>{{ node.avgLatency }}</time>
           <small>
