@@ -32,8 +32,10 @@ import org.springframework.core.env.Environment;
 class QueryResponseConfiguration implements Logging {
 
     @Bean
-    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate,
-        ConnectionFactory connectionFactory, TopicExchange queriesExchange, GenericApplicationContext ctx) {
+    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, ConnectionFactory connectionFactory,
+        TopicExchange queriesExchange, GenericApplicationContext ctx) {
+
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 
         return new RabbitFacade(rabbitAdmin, rabbitTemplate, connectionFactory, queriesExchange, ctx);
     }
