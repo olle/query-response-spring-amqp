@@ -13,43 +13,47 @@
                 <home-icon></home-icon>
                 <h2>Overview</h2>
             </router-link>
-            <router-link class="disabled" to="/live" tag="li">
+            <!--
+              TODO: Coming in future versions...
+
+              <router-link class="disabled" to="/live" tag="li">
                 <live-icon></live-icon>
                 <h2>Live</h2>
-            </router-link>
-            <router-link class="disabled" to="queries" tag="li">
+              </router-link>
+              <router-link class="disabled" to="queries" tag="li">
                 <queries-icon></queries-icon>
                 <h2>Queries Insight</h2>
-            </router-link>
-            <router-link class="disabled" to="topology" tag="li">
+              </router-link>
+              <router-link class="disabled" to="topology" tag="li">
                 <topology-icon></topology-icon>
                 <h2>Q/R Topology</h2>
-            </router-link>
-            <router-link class="disabled" to="logging" tag="li">
+              </router-link>
+              <router-link class="disabled" to="logging" tag="li">
                 <logging-icon></logging-icon>
                 <h2>Logs</h2>
-            </router-link>
+              </router-link>
+            -->
         </ul>
         <ul>
-            <router-link class="disabled" to="settings" tag="li">
+            <!--
+              <router-link class="disabled" to="settings" tag="li">
                 <settings-icon></settings-icon>
                 <h2>Settings</h2>
-            </router-link>
+              </router-link>
+            -->
             <qr-color-scheme-toggle></qr-color-scheme-toggle>
         </ul>
     </nav>
     <main>
-        <router-view></router-view>
+      <router-view></router-view>
+      <footer>
+        &copy; Copyright
+        <script>document.write(new Date().getFullYear());</script>
+        Olle Törnström -
+        <a href="https://github.com/olle/query-response-spring-amqp/blob/master/LICENSE">The Apache License 2.0</a>
+      </footer>
     </main>
 </div>
-<aside style="float: right; padding: 1rem 2rem 0 0; display: none;">
-    <div class="color color-fg"></div>
-    <div class="color color-link"></div>
-    <div class="color color-link-hi-c"></div>
-    <div class="color color-success"></div>
-    <div class="color color-warning"></div>
-    <div class="color color-error"></div>
-</aside>
 </body>
 <script src="script.js"></script>
 <noscript>Sorry! But there's no Query/Response UI without JavaScript.</noscript>
