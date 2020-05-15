@@ -8,10 +8,12 @@ import com.studiomediatech.queryresponse.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,12 +22,19 @@ import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableQueryResponse
-class Querying implements CommandLineRunner {
+@EnableScheduling
+class Querying {
 
     private static final Logger LOG = LoggerFactory.getLogger(Querying.class);
 
-    @Override
-    public void run(String... args) throws Exception {
+    public static void main(String[] args) {
+
+        new SpringApplicationBuilder(Querying.class).web(WebApplicationType.NONE).run(args);
+    }
+
+
+    @Scheduled(fixedDelay = Long.MAX_VALUE)
+    void queries() throws InterruptedException {
 
         LOG.info("About to begin querying...");
         Thread.sleep(3000);
@@ -98,12 +107,6 @@ class Querying implements CommandLineRunner {
         int ms = ThreadLocalRandom.current().nextInt(1000, 20000);
         LOG.info("Sleeping for " + ms + "ms");
         Thread.sleep(ms);
-    }
-
-
-    public static void main(String[] args) {
-
-        new SpringApplicationBuilder(Querying.class).web(WebApplicationType.NONE).run(args);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

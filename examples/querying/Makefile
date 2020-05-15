@@ -1,5 +1,5 @@
 .PHONY: start
 start:
-	MAVEN_OPTS="-Xms50m -Xmx100m"; \
+	MAVEN_OPTS="-Xms25m -Xmx50m"; \
     mvn spring-boot:run
 
