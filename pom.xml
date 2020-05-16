@@ -127,7 +127,6 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
-                    <outputDirectory>docs/</outputDirectory>
                     <backend>html5</backend>
                     <sourceHighlighter>coderay</sourceHighlighter>
                     <attributes>

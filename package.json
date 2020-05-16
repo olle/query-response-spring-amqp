@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "devDependencies": {
+    "gh-pages": "^2.2.0"
+  },
+  "scripts": {
+    "deploy-docs": "gh-pages -d target/generated-docs"
+  }
+}

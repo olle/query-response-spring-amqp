@@ -9,5 +9,6 @@ install:
 .PHONY: docs watch-docs
 docs:
 	mvn asciidoctor:process-asciidoc
+	npm run deploy-docs
 watch-docs:
 	mvn asciidoctor:http
