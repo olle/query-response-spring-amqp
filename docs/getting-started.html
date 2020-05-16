@@ -673,13 +673,41 @@ easy, using the <code>QueryBuilder</code>.</p>
     <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
     <span class="directive">public</span> <span class="type">void</span> query() {
 
-        QueryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
-            .waitingFor(<span class="integer">1000L</span>)
-            .orEmpty()
-            .stream()
-            .forEach(<span class="predefined-type">System</span>.out::println);
+        <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">String</span>&gt; polos =
+            QueryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
+            .waitingFor(<span class="integer">1000L</span>) // <b class="conum">(2)</b>
+            .orEmpty(); // <b class="conum">(3)</b>
+
+        polos.stream().map(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco? </span><span class="delimiter">&quot;</span></span>::concat).forEach(<span class="predefined-type">System</span>.out::println);
     }
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Initiates a query for the term <code>marco</code>, expecting results of the type
+<code>String.class</code> to be returned. The return type is always aggregated in a
+collection. Either <strong>none, one or many</strong> responses may be returned.</p>
+</li>
+<li>
+<p>Queries require a timeout, here we set it to <code>1000L</code> milliseconds. This
+means that this specific query will <strong>always</strong> block for 1 second.</p>
+</li>
+<li>
+<p>The query may not receive any responses, so it <em>always</em> needs to specify
+how that case should be handled. Default here is an empty collection, of
+the declared return type <code>String.class</code>.</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>Hopefully this shows you, how concise and powerful the <code>QueryBuilder</code> is,
+dealing with results mapping, fault tolerance and default values, in just a
+couple of lines of code.</p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -694,8 +722,8 @@ c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Bod
 </div>
 </div>
 <div class="paragraph">
-<p>At the moment there are no responses to be consumed, before the timeout of
-<code>1000</code> milliseconds is up, so nothing is printed to <code>STDOUT</code>.</p>
+<p>At the moment there are no responses to be consumed, so after blocking for 1
+second, nothing is printed <code>STDOUT</code>.</p>
 </div>
 </div>
 </div>
@@ -735,8 +763,8 @@ c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Bod
 c.s.queryresponse.Response               : |--&gt; Consumed query: marco
 c.s.queryresponse.RabbitFacade           : |&lt;-- Published response: c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b - (Body:'{"elements":["polo","yolo"]}' MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=28, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
 c.s.queryresponse.Query                  : |--&gt; Received response message: MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=NON_PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, deliveryTag=1, consumerTag=amq.ctag-Q_ghWp4TWU9EYhi_rqErcg, consumerQueue=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b]
-polo
-yolo</pre>
+marco? polo
+marco? yolo</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -791,12 +819,23 @@ is available at <a href="http://localhost:8080" class="bare">localhost:8080</a> 
 <p>Since we are <em>eating our own dog food</em> we get a very nice effect, where the
 Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node.</p>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Overview Metrics</caption>
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-16 23:21:16 +0200
+Last updated 2020-05-17 00:21:11 +0200
 </div>
 </div>
 </body>

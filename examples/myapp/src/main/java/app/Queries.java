@@ -10,6 +10,8 @@ import org.springframework.core.annotation.Order;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 
 // tag::query[]
 @Component
@@ -19,11 +21,12 @@ public class Queries {
     @EventListener(ApplicationReadyEvent.class)
     public void query() {
 
-        QueryBuilder.queryFor("marco", String.class)
-            .waitingFor(1000L)
-            .orEmpty()
-            .stream()
-            .forEach(System.out::println);
+        Collection<String> polos =
+            QueryBuilder.queryFor("marco", String.class) // <1>
+            .waitingFor(1000L) // <2>
+            .orEmpty(); // <3>
+
+        polos.stream().map("marco? "::concat).forEach(System.out::println);
     }
 }
 // end::query[]

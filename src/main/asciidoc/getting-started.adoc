@@ -81,6 +81,22 @@ easy, using the `QueryBuilder`.
 ----
 include::{examples-src}/myapp/src/main/java/app/Queries.java[tags=query]
 ----
+<1> Initiates a query for the term `marco`, expecting results of the type
+    `String.class` to be returned. The return type is always aggregated in a
+    collection. Either **none, one or many** responses may be returned.
+
+<2> Queries require a timeout, here we set it to `1000L` milliseconds. This
+    means that this specific query will **always** block for 1 second.
+
+<3> The query may not receive any responses, so it _always_ needs to specify
+    how that case should be handled. Default here is an empty collection, of
+    the declared return type `String.class`.
+
+====
+Hopefully this shows you, how concise and powerful the `QueryBuilder` is,
+dealing with results mapping, fault tolerance and default values, in just a
+couple of lines of code.
+====
 
 If you run the application now, it will publish a **query** to the message
 broker, which we can see in the logs.
@@ -91,8 +107,8 @@ $ mvn spring-boot:run
 c.s.queryresponse.RabbitFacade           : |<-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642002076}, replyTo=94f0fff4-c4f3-4491-831d-00809edb6f95, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
 ....
 
-At the moment there are no responses to be consumed, before the timeout of
-`1000` milliseconds is up, so nothing is printed to `STDOUT`.
+At the moment there are no responses to be consumed, so after blocking for 1
+second, nothing is printed `STDOUT`.
 
 == Responses
 
@@ -115,8 +131,8 @@ c.s.queryresponse.RabbitFacade           : |<-- Published query: marco - (Body:'
 c.s.queryresponse.Response               : |--> Consumed query: marco
 c.s.queryresponse.RabbitFacade           : |<-- Published response: c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b - (Body:'{"elements":["polo","yolo"]}' MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=28, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
 c.s.queryresponse.Query                  : |--> Received response message: MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=NON_PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, deliveryTag=1, consumerTag=amq.ctag-Q_ghWp4TWU9EYhi_rqErcg, consumerQueue=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b]
-polo
-yolo
+marco? polo
+marco? yolo
 ....
 
 Now you can see a full roundtrip of the **query** being published and consumed,
@@ -149,3 +165,8 @@ image:ui.png[]
 
 Since we are _eating our own dog food_ we get a very nice effect, where the
 {qr-ui-name} instance is self-visualizing - it shows up as a live-node.
+
+.Overview Metrics
+|===
+| 
+|===
