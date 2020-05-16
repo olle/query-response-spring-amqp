@@ -10,44 +10,7 @@ _always async_ approach to data exchange. Ensure decoupling of components. Be
 better prepared for system evolution. Create more scalable solutions. Change the
 way you think and design, by using Query/Response for Spring AMQP.
 
-== Quickstart
-
-The Query/Response library can easily be added to any Spring Boot® project, as
-a single dependency.
-
-```xml
-  <dependency>
-    <!-- From Jitpack-repo -->
-    <groupId>com.github.olle</groupId>
-    <artifactId>query-response-spring-amqp</artifactId>
-    <version>${SOME-TAG}</version>
-  </dependency>
-```
-
-_At the current time we recommend using https://jitpack.io[Jitpack] to resolve
-the dependency. Query/Response will however be published to the Sonatype OSS 
-repository and Maven Central in the future._
-
-=== `@EnableQueryResponse`
-
-:QueryResponseConfiguration: link:./src/main/java/com/studiomediatech/queryresponse/QueryResponseConfiguration.java
-
-To initialize the Query/Response library resources, and load the
-{QueryResponseConfiguration}[`QueryResponseConfiguration`] class, the
-`@EnableQueryResponse` annotation can simply be added to any Spring Boot 
-application starter.
-
-```java
-@SpringBootApplication
-@EnableQueryResponse
-public class App {
-  ...
-}
-```
-
-The configuration will try to connect to an AMQP message broker, using the
-common configurations for Spring AMQP. The default setup will try to connect
-to a local broker with the username and password `guest/guest`.
+include::src/main/asciidoc/_quickstart.adoc[leveloffset=+1]
 
 _Please see the provided `examples/` for a simple setup with 
 https://www.rabbitmq.com[RabbitMQ] as a docker container, to get you started._
