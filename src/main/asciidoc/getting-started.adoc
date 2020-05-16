@@ -16,13 +16,13 @@ and wrapped it in a developer friendly library.
 :Gradle: https://gradle.org
 
 It is distributed as a {Maven}[Maven] dependency, and is known to work well with
-Maven 3.3+. Using the Maven dependency with {Gradle}[Gradle] should work too.
+Maven 3.3+. Using the dependency with {Gradle}[Gradle] should work too.
 
 :Quickstart: https://github.com/olle/query-response-spring-amqp#quickstart
 
 The current {Quickstart}[Quickstart] information, available on the projects
-{qr-gh-link}[Github] page, provides a short snippets on the current best way to
-add the Maven dependency.
+{qr-gh-link}[Github page], provides a short snippet on the currently best way
+to add the Maven dependency.
 
 == Installation
 
@@ -32,7 +32,7 @@ application starter with the `@EnableQueryResponse` annotation.
 
 [source,java]
 ----
-include::{examples-src}/myapp/src/main/java/app/MyApp.java[lines=8..18]
+include::{examples-src}/myapp/src/main/java/app/MyApp.java[lines=9..17]
 ----
 
 NOTE: This annotation will do nothing more but to import the
