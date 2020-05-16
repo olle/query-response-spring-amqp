@@ -1,5 +1,4 @@
-Query/Response for Spring® AMQP
-===============================
+= Query/Response for Spring® AMQP
 
 image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions?query=workflow%3A%22Java+CI%22"] image:https://img.shields.io/lgtm/grade/java/g/olle/query-response-spring-amqp.svg?logo=lgtm&logoWidth=18[title="Language grade: Java", link="https://lgtm.com/projects/g/olle/query-response-spring-amqp/context:java"] image:https://badges.gitter.im/query-response-spring-amqp/community.svg[title="Join the chat!", link="https://gitter.im/query-response-spring-amqp/community"]
 
@@ -11,8 +10,7 @@ _always async_ approach to data exchange. Ensure decoupling of components. Be
 better prepared for system evolution. Create more scalable solutions. Change the
 way you think and design, by using Query/Response for Spring AMQP.
 
-Getting Started
----------------
+== Quickstart
 
 The Query/Response library can easily be added to any Spring Boot® project, as
 a single dependency.
@@ -26,15 +24,18 @@ a single dependency.
   </dependency>
 ```
 
-_At the current time we recommend using [Jitpack](https://jitpack.io) to
-resolve the dependency. Query/Response will however be published to the
-Sonatype OSS repository, and Maven Central, in the future._
+_At the current time we recommend using https://jitpack.io[Jitpack] to resolve
+the dependency. Query/Response will however be published to the Sonatype OSS 
+repository and Maven Central in the future._
 
-### `@EnableQueryResponse`
+=== `@EnableQueryResponse`
+
+:QueryResponseConfiguration: link:./src/main/java/com/studiomediatech/queryresponse/QueryResponseConfiguration.java
 
 To initialize the Query/Response library resources, and load the
-[`QueryResponseConfiguration`] class, the `@EnableQueryResponse` annotation can
-simply be added to any Spring Boot® application.
+{QueryResponseConfiguration}[`QueryResponseConfiguration`] class, the
+`@EnableQueryResponse` annotation can simply be added to any Spring Boot 
+application starter.
 
 ```java
 @SpringBootApplication
@@ -45,18 +46,13 @@ public class App {
 ```
 
 The configuration will try to connect to an AMQP message broker, using the
-common configurations for [Spring AMQP]. The default setup will try to connect
+common configurations for Spring AMQP. The default setup will try to connect
 to a local broker with the username and password `guest/guest`.
 
-_Please see the provided `examples/` for a simple setup with [RabbitMQ] as a
- docker container, to get you started._
+_Please see the provided `examples/` for a simple setup with 
+https://www.rabbitmq.com[RabbitMQ] as a docker container, to get you started._
 
-  [`QueryResponseConfiguration`]: ./src/main/java/com/studiomediatech/queryresponse/QueryResponseConfiguration.java
-  [Spring AMQP]: https://spring.io/projects/spring-amqp
-  [RabbitMQ]: https://www.rabbitmq.com
-
-Queries
--------
+== Queries
 
 The fluid Query/Response API makes it easy for developers to understand and
 decide on a strategy for service integration. Timeouts are _first-class
@@ -109,8 +105,7 @@ easy to use.
                   .orThrow(TooFewOffersConstraintException::new);
 ```
 
-Responses
----------
+== Responses
 
 To create responding services we provide a really effective and expressive
 fluid-API. Developers benefit from the declarative style, and won't have to
@@ -143,8 +138,7 @@ lazy calls to suppliers of data.
       .suppliedBy(userTokenService::findAllCurrentUserTokens);
 ```
 
-AMQP Resources & Formats
-------------------------
+== AMQP Resources & Formats
 
 The declared [AMQP] broker resources are very limited. Only the `query-response`
 topic-exchange is created. All active Query/Response services will automatically
@@ -161,7 +155,7 @@ declare the required exchange, with the following parameters:
 The Query/Response library defines a small set of properties and data-formats,
 which are used in the AMQP messages - a mini-protocol:
 
-### Query messages
+=== Query messages
 
 Query messages are very simple in structure and form. The common
 `query-response` exchanged is published to, and the message `routing-key` will
@@ -182,7 +176,7 @@ placeholder.
   {}
 ```
 
-### Response messages
+=== Response messages
 
 Published responses also use a common format. They are published to the empty
 (default) exchange, with the `query-response-queue` from the `reply-to`
