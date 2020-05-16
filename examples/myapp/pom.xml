@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.studiomediatech</groupId>
-    <artifactId>singleresponse-example</artifactId>
+    <artifactId>myapp-example</artifactId>
     <version>0</version>
-    <name>Single Response Example</name>
+    <name>MyApp Example</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

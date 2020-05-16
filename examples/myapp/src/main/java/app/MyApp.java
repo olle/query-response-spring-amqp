@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @SpringBootApplication
-@EnableQueryResponse
 @RestController
-public class StatsOnlyResponse {
+@EnableQueryResponse
+public class MyApp {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(StatsOnlyResponse.class, args);
+        SpringApplication.run(MyApp.class, args);
     }
 
 
