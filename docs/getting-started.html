@@ -528,7 +528,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#system-requirements">1. System Requirements</a></li>
-<li><a href="#installing-running">2. Installing &amp; Running</a></li>
+<li><a href="#installation">2. Installation</a></li>
 <li><a href="#queries">3. Queries</a></li>
 <li><a href="#responses">4. Responses</a></li>
 <li><a href="#monitoring-ui">5. Monitoring UI</a></li>
@@ -565,7 +565,7 @@ to add the Maven dependency.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="installing-running"><a class="anchor" href="#installing-running"></a>2. Installing &amp; Running</h2>
+<h2 id="installation"><a class="anchor" href="#installation"></a>2. Installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Enabling Query/Response for Spring AMQP is done by loading the <code>QueryResponseConfiguration</code> class.
@@ -617,17 +617,6 @@ broker available. By default Spring AMQP tries to connect to a
       - <span class="string"><span class="delimiter">&quot;</span><span class="content">5672:5672</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Using <a href="https://www.docker.com">Docker</a> you can start a RabbitMQ instance running
-<em>detached</em> (<code>-d</code> option), in the background, in a container.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ docker-compose up -d
-Creating network "myapp_default" with the default driver
-Creating myapp_rabbitmq_1 ... done</pre>
-</div>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -643,6 +632,15 @@ The <code>3-management</code> tag will install and enable the RabbitMQ Managemen
 </table>
 </div>
 <div class="paragraph">
+<p>Using <a href="https://www.docker.com">Docker</a> you can start a RabbitMQ instance running
+<em>detached</em> (<code>-d</code> option), in the background, in a container.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ docker-compose up -d</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>Now starting your application, will enable Query/Response for Spring AMQP and create all the
 resources necessary on the broker.</p>
 </div>
@@ -652,7 +650,7 @@ resources necessary on the broker.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Now is a good time to use the RabbitMQ Managment UI, available at
+<p>Now is a good time to use the RabbitMQ Management UI, available at
 <a href="http://localhost:15672" class="bare">localhost:15672</a>, to inspect the exchange, queues and bindings created
 by Query/Response for Spring AMQP by default.</p>
 </div>
@@ -662,7 +660,42 @@ by Query/Response for Spring AMQP by default.</p>
 <h2 id="queries"><a class="anchor" href="#queries"></a>3. Queries</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO!</p>
+<p>Publishing <strong>queries</strong> is a way for your application to ask for information that
+it may need in order to accomplish tasks. Query/Response for Spring AMQP makes this really really
+easy, using the <code>QueryBuilder</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Queries</span> {
+
+    <span class="annotation">@Order</span>(<span class="integer">2</span>)
+    <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
+    <span class="directive">public</span> <span class="type">void</span> query() {
+
+        QueryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+            .waitingFor(<span class="integer">1000L</span>)
+            .orEmpty()
+            .stream()
+            .forEach(<span class="predefined-type">System</span>.out::println);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you run the application now, it will publish a <strong>query</strong> to the message
+broker, which we can see in the logs.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ mvn spring-boot:run
+  ...
+c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642002076}, replyTo=94f0fff4-c4f3-4491-831d-00809edb6f95, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At the moment there are no responses to be consumed, before the timeout of
+<code>1000</code> milliseconds is up, so nothing is printed to <code>STDOUT</code>.</p>
 </div>
 </div>
 </div>
@@ -670,7 +703,45 @@ by Query/Response for Spring AMQP by default.</p>
 <h2 id="responses"><a class="anchor" href="#responses"></a>4. Responses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO!</p>
+<p>Building services, medium, large or micro, publishing <strong>responses</strong> to queries
+is also really easy with Query/Response for Spring AMQP and the <code>ResponseBuilder</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Responses</span> {
+
+    <span class="annotation">@Order</span>(<span class="integer">1</span>)
+    <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
+    <span class="directive">public</span> <span class="type">void</span> response() {
+
+        ResponseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+            .withAll()
+            .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">polo</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">yolo</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now if you run the application again, with the response component registered
+before the query publisher, it will publish the response.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ mvn spring-boot:run
+  ...
+c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642489894}, replyTo=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
+c.s.queryresponse.Response               : |--&gt; Consumed query: marco
+c.s.queryresponse.RabbitFacade           : |&lt;-- Published response: c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b - (Body:'{"elements":["polo","yolo"]}' MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=28, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
+c.s.queryresponse.Query                  : |--&gt; Received response message: MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=NON_PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, deliveryTag=1, consumerTag=amq.ctag-Q_ghWp4TWU9EYhi_rqErcg, consumerQueue=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b]
+polo
+yolo</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you can see a full roundtrip of the <strong>query</strong> being published and consumed,
+and the <strong>response</strong> being published and also consumed. And the finished output
+is "polo" and "yolo" printed on <code>STDOUT</code>.</p>
 </div>
 </div>
 </div>
@@ -685,7 +756,7 @@ by Query/Response for Spring AMQP by default.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-16 13:59:21 +0200
+Last updated 2020-05-16 17:27:47 +0200
 </div>
 </div>
 </body>

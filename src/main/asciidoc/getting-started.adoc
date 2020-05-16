@@ -24,7 +24,7 @@ The current {Quickstart}[Quickstart] information, available on the projects
 {qr-gh-link}[Github page], provides a short snippet on the currently best way
 to add the Maven dependency.
 
-== Installing & Running
+== Installation
 
 Enabling {qr-name} is done by loading the `QueryResponseConfiguration` class.
 The most simple way to do this, is annotating your {spring-boot-name}
@@ -32,7 +32,7 @@ application starter with the `@EnableQueryResponse` annotation.
 
 [source,java]
 ----
-include::{examples-src}/myapp/src/main/java/app/MyApp.java[lines=9..17]
+include::{examples-src}/myapp/src/main/java/app/MyApp.java[tags=install]
 ----
 
 NOTE: This annotation will do nothing more but to import the
@@ -49,18 +49,16 @@ Add the following `docker-compose.yaml` file to your project root directory.
 include::{examples-src}/myapp/docker-compose.yaml[]
 ----
 
+NOTE: The `3-management` tag will install and enable the RabbitMQ Management UI.
+      When then broker is running, it can be access at http://localhost:15672
+      with username and password `guest`.
+
 Using https://www.docker.com[Docker] you can start a RabbitMQ instance running
 _detached_ (`-d` option), in the background, in a container.
 
 ....
 $ docker-compose up -d
-Creating network "myapp_default" with the default driver
-Creating myapp_rabbitmq_1 ... done
 ....
-
-NOTE: The `3-management` tag will install and enable the RabbitMQ Management UI.
-      When then broker is running, it can be access at http://localhost:15672
-      with username and password `guest`.
 
 Now starting your application, will enable {qr-name} and create all the
 resources necessary on the broker.
@@ -69,17 +67,60 @@ resources necessary on the broker.
 $ mvn spring-boot:run
 ....
 
-Now is a good time to use the RabbitMQ Managment UI, available at
+Now is a good time to use the RabbitMQ Management UI, available at
 http://localhost:15672, to inspect the exchange, queues and bindings created
 by {qr-name} by default.
 
 == Queries
 
-TODO!
+Publishing **queries** is a way for your application to ask for information that
+it may need in order to accomplish tasks. {qr-name} makes this really really 
+easy, using the `QueryBuilder`.
+
+[source,java]
+----
+include::{examples-src}/myapp/src/main/java/app/Queries.java[tags=query]
+----
+
+If you run the application now, it will publish a **query** to the message
+broker, which we can see in the logs.
+
+....
+$ mvn spring-boot:run
+  ...
+c.s.queryresponse.RabbitFacade           : |<-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642002076}, replyTo=94f0fff4-c4f3-4491-831d-00809edb6f95, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
+....
+
+At the moment there are no responses to be consumed, before the timeout of
+`1000` milliseconds is up, so nothing is printed to `STDOUT`.
 
 == Responses
 
-TODO!
+Building services, medium, large or micro, publishing **responses** to queries
+is also really easy with {qr-name} and the `ResponseBuilder`.
+
+[source,java]
+----
+include::{examples-src}/myapp/src/main/java/app/Responses.java[tags=response]
+----
+
+Now if you run the application again, with the response component registered
+before the query publisher, it will publish the response.
+
+....
+$ mvn spring-boot:run
+  ...
+c.s.queryresponse.RabbitFacade           : |<-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642489894}, replyTo=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
+c.s.queryresponse.Response               : |--> Consumed query: marco
+c.s.queryresponse.RabbitFacade           : |<-- Published response: c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b - (Body:'{"elements":["polo","yolo"]}' MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=28, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
+c.s.queryresponse.Query                  : |--> Received response message: MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=NON_PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, deliveryTag=1, consumerTag=amq.ctag-Q_ghWp4TWU9EYhi_rqErcg, consumerQueue=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b]
+polo
+yolo
+....
+
+Now you can see a full roundtrip of the **query** being published and consumed,
+and the **response** being published and also consumed. And the finished output
+is "polo" and "yolo" printed on `STDOUT`.
 
 == Monitoring UI
 
