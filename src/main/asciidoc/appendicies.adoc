@@ -1,0 +1,15 @@
+= Appendicies
+
+include::attributes.adoc[]
+
+== Trademarks
+
+:Oracle: https://www.oracle.com
+
+{java-name} is a registered trademark of {Oracle}[Oracle] and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+:Pivotal: https://www.pivotal.io
+
+{spring-name} and {spring-boot-name} are trademarks of {Pivotal}[Pivotal]
+Software, Inc. in the U.S. and other countries.

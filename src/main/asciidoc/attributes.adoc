@@ -13,3 +13,17 @@
 
 :code-src: ../java/com/studiomediatech/queryresponse
 :test-src: ../../test/java/com/studiomediatech/queryresponse
+
+:java-version: 11
+:java-name: Java
+:java-name-and-version: {java-name} {java-version}
+
+:spring-name: Spring
+:spring-amqp-name: Spring AMQP
+:spring-boot-version: 2.2.7.RELEASE
+:spring-boot-name: Spring Boot
+:spring-boot-name-and-version: {spring-boot-name} {spring-boot-version}
+
+:qr-current-version: 0.0.0-SNAPSHOT
+:qr-name: Query/Response for {spring-amqp-name}
+:qr-name-and-version: {qr-name} {qr-current-version}

@@ -48,3 +48,4 @@ first.
 include::getting-started.adoc[leveloffset=+1]
 include::developers-reference.adoc[leveloffset=+1]
 include::the-query-response-protocol.adoc[leveloffset=+1]
+include::appendicies.adoc[leveloffset=+1]

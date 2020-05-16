@@ -1,11 +1,22 @@
 = Getting Started
 
-TODO: This will introduce a developer to the library, with a short but
-      comprehensive introduction.
+include::attributes.adoc[]
+
+{qr-name} makes it really easy to extend {spring-boot-name} stand-alone,
+production-grade Applications, that are using {spring-amqp-name}. We have taken
+a working pattern for building highly decoupled evolving service architectures,
+and wrapped it in a developer friendly library.
 
 == System Requirements
 
-TODO!
+{qr-name-and-version} requires at least {spring-boot-name-and-version} and
+{java-name-and-version}, and should work for later releases too.
+
+:Maven: https://maven.apache.org
+:Gradle: https://gradle.org
+
+It is distributed as a {Maven}[Maven] dependency, and is known to work well with
+Maven 3.3+. Using the Maven dependency with {Gradle}[Gradle] should work too.
 
 == Queries
 
