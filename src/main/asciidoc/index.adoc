@@ -29,8 +29,8 @@ _The **Query/Response** pattern, that I arrived at, challenges developers to
  really think hard about the responsibilities and autonomy of services. It
  provides very few guarantees, which will force decisions around resilience
  and availability at a much earlier stage in the design and development process.
- It literally turns things around - an inversion of responsibility - which we
- will see._
+ It literally turns things around - an inversion of responsibility - which I
+ truly believe we can benefit from._
 
 == About This Document
 
