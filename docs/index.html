@@ -536,7 +536,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#getting-started">3. Getting Started</a>
 <ul class="sectlevel2">
 <li><a href="#system-requirements">3.1. System Requirements</a></li>
-<li><a href="#installation">3.2. Installation</a></li>
+<li><a href="#installing-running">3.2. Installing &amp; Running</a></li>
 <li><a href="#queries">3.3. Queries</a></li>
 <li><a href="#responses">3.4. Responses</a></li>
 <li><a href="#monitoring-ui">3.5. Monitoring UI</a></li>
@@ -650,7 +650,7 @@ to add the Maven dependency.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="installation"><a class="anchor" href="#installation"></a>3.2. Installation</h3>
+<h3 id="installing-running"><a class="anchor" href="#installing-running"></a>3.2. Installing &amp; Running</h3>
 <div class="paragraph">
 <p>Enabling Query/Response for Spring AMQP is done by loading the <code>QueryResponseConfiguration</code> class.
 The most simple way to do this, is annotating your Spring Boot
@@ -681,6 +681,64 @@ This annotation will do nothing more but to import the
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Before you can run your application you need to make sure there is an AMQP
+broker available. By default Spring AMQP tries to connect to a
+<a href="https://www.rabbitmq.com">RabbitMQ</a>, running locally on port <code>5672</code>.</p>
+</div>
+<div class="paragraph">
+<p>Add the following <code>docker-compose.yaml</code> file to your project root directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">version</span>: <span class="string"><span class="content">'3'</span></span>
+<span class="key">services</span>:
+  <span class="key">rabbitmq</span>:
+    <span class="key">image</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">rabbitmq:3-management</span><span class="delimiter">&quot;</span></span>
+    <span class="key">ports</span>:
+      - <span class="string"><span class="delimiter">&quot;</span><span class="content">15672:15672</span><span class="delimiter">&quot;</span></span>
+      - <span class="string"><span class="delimiter">&quot;</span><span class="content">5672:5672</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Using <a href="https://www.docker.com">Docker</a> you can start a RabbitMQ instance running
+<em>detached</em> (<code>-d</code> option), in the background, in a container.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ docker-compose up -d
+Creating network "myapp_default" with the default driver
+Creating myapp_rabbitmq_1 ... done</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The <code>3-management</code> tag will install and enable the RabbitMQ Management UI.
+      When then broker is running, it can be access at <a href="http://localhost:15672" class="bare">localhost:15672</a>
+      with username and password <code>guest</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now starting your application, will enable Query/Response for Spring AMQP and create all the
+resources necessary on the broker.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ mvn spring-boot:run</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now is a good time to use the RabbitMQ Managment UI, available at
+<a href="http://localhost:15672" class="bare">localhost:15672</a>, to inspect the exchange, queues and bindings created
+by Query/Response for Spring AMQP by default.</p>
 </div>
 </div>
 <div class="sect2">

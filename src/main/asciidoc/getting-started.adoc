@@ -24,7 +24,7 @@ The current {Quickstart}[Quickstart] information, available on the projects
 {qr-gh-link}[Github page], provides a short snippet on the currently best way
 to add the Maven dependency.
 
-== Installation
+== Installing & Running
 
 Enabling {qr-name} is done by loading the `QueryResponseConfiguration` class.
 The most simple way to do this, is annotating your {spring-boot-name}
@@ -37,6 +37,41 @@ include::{examples-src}/myapp/src/main/java/app/MyApp.java[lines=9..17]
 
 NOTE: This annotation will do nothing more but to import the
       `QueryResponseConfiguration` class.
+
+Before you can run your application you need to make sure there is an AMQP
+broker available. By default {spring-amqp-name} tries to connect to a
+https://www.rabbitmq.com[RabbitMQ], running locally on port `5672`.
+
+Add the following `docker-compose.yaml` file to your project root directory.
+
+[source,yaml]
+----
+include::{examples-src}/myapp/docker-compose.yaml[]
+----
+
+Using https://www.docker.com[Docker] you can start a RabbitMQ instance running
+_detached_ (`-d` option), in the background, in a container.
+
+....
+$ docker-compose up -d
+Creating network "myapp_default" with the default driver
+Creating myapp_rabbitmq_1 ... done
+....
+
+NOTE: The `3-management` tag will install and enable the RabbitMQ Management UI.
+      When then broker is running, it can be access at http://localhost:15672
+      with username and password `guest`.
+
+Now starting your application, will enable {qr-name} and create all the
+resources necessary on the broker.
+
+....
+$ mvn spring-boot:run
+....
+
+Now is a good time to use the RabbitMQ Managment UI, available at
+http://localhost:15672, to inspect the exchange, queues and bindings created
+by {qr-name} by default.
 
 == Queries
 
