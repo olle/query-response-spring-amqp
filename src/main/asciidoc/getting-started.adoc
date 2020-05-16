@@ -93,9 +93,9 @@ include::{examples-src}/myapp/src/main/java/app/Queries.java[tags=query]
     the declared return type `String.class`.
 
 ====
-Hopefully this shows you, how concise and powerful the `QueryBuilder` is,
-dealing with results mapping, fault tolerance and default values, in just a
-couple of lines of code.
+Hopefully this shows, how concise and powerful the `QueryBuilder` is, dealing
+with results mapping, fault tolerance and default values in just a couple of
+lines of code.
 ====
 
 If you run the application now, it will publish a **query** to the message
