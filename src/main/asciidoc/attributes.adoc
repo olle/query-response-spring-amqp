@@ -7,12 +7,12 @@
 :numbered:
 :sectanchors:
 :sectnums:
-:icons: font
 :hide-uri-scheme:
 :docinfo: shared,private
 
 :code-src: ../java/com/studiomediatech/queryresponse
 :test-src: ../../test/java/com/studiomediatech/queryresponse
+:examples-src: ../../../examples
 
 :java-version: 11
 :java-name: Java

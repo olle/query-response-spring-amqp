@@ -30,10 +30,12 @@ Enabling {qr-name} is done by loading the `QueryResponseConfiguration` class.
 The most simple way to do this, is annotating your {spring-boot-name}
 application starter with the `@EnableQueryResponse` annotation.
 
+[source,java]
+----
+include::{examples-src}/myapp/src/main/java/app/MyApp.java[lines=8..18]
+----
 
-
-NOTE: This annotation will do nothing more but to check for the appropriate
-      dependencies from {spring-amqp-name} and load, or import, the 
+NOTE: This annotation will do nothing more but to import the
       `QueryResponseConfiguration` class.
 
 == Queries

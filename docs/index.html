@@ -648,15 +648,27 @@ add the Maven dependency.</p>
 The most simple way to do this, is annotating your Spring Boot
 application starter with the <code>@EnableQueryResponse</code> annotation.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@SpringBootApplication</span>
+<span class="annotation">@EnableQueryResponse</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MyApp</span> {
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
+
+        SpringApplication.run(MyApp.class, args);
+    }
+}</code></pre>
+</div>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<div class="title">Note</div>
 </td>
 <td class="content">
-This annotation will do nothing more but to check for the appropriate
-      dependencies from Spring AMQP and load, or import, the
+This annotation will do nothing more but to import the
       <code>QueryResponseConfiguration</code> class.
 </td>
 </tr>
@@ -1100,7 +1112,7 @@ consumers.</p>
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<div class="title">Note</div>
 </td>
 <td class="content">
 The concrete <em>interpolated</em> roles <code>Query-Publisher</code> and
@@ -1126,7 +1138,7 @@ Consumers MUST NOT know any publishers.</p>
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<div class="title">Note</div>
 </td>
 <td class="content">
 The concrete <em>interpolated</em> roles <code>Query-Consumer</code> and
