@@ -140,17 +140,17 @@ lazy calls to suppliers of data.
 
 == AMQP Resources & Formats
 
-The declared [AMQP] broker resources are very limited. Only the `query-response`
-topic-exchange is created. All active Query/Response services will automatically
-declare the required exchange, with the following parameters:
+:AMQP: https://www.rabbitmq.com/protocol.html
+
+The declared {AMQP}[AMQP] broker resources are very limited. Only the 
+`query-response` topic-exchange is created. All active Query/Response services
+will automatically declare the required exchange, with the following parameters:
 
 ```
   name: query-response
   type: topic
   auto-delete: true
 ```
-
-  [AMQP]: https://www.rabbitmq.com/protocol.html
 
 The Query/Response library defines a small set of properties and data-formats,
 which are used in the AMQP messages - a mini-protocol:
