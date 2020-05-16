@@ -3,7 +3,7 @@
 include::attributes.adoc[]
 
 {qr-name} makes it really easy to extend {spring-boot-name} stand-alone,
-production-grade Applications, that are using {spring-amqp-name}. We have taken
+production-grade applications, that are using {spring-amqp-name}. We have taken
 a working pattern for building highly decoupled evolving service architectures,
 and wrapped it in a developer friendly library.
 
@@ -17,6 +17,24 @@ and wrapped it in a developer friendly library.
 
 It is distributed as a {Maven}[Maven] dependency, and is known to work well with
 Maven 3.3+. Using the Maven dependency with {Gradle}[Gradle] should work too.
+
+:Quickstart: https://github.com/olle/query-response-spring-amqp#quickstart
+
+The current {Quickstart}[Quickstart] information, available on the projects
+{qr-gh-link}[Github] page, provides a short snippets on the current best way to
+add the Maven dependency.
+
+== Installation
+
+Enabling {qr-name} is done by loading the `QueryResponseConfiguration` class.
+The most simple way to do this, is annotating your {spring-boot-name}
+application starter with the `@EnableQueryResponse` annotation.
+
+
+
+NOTE: This annotation will do nothing more but to check for the appropriate
+      dependencies from {spring-amqp-name} and load, or import, the 
+      `QueryResponseConfiguration` class.
 
 == Queries
 

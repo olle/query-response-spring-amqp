@@ -536,9 +536,10 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#getting-started">3. Getting Started</a>
 <ul class="sectlevel2">
 <li><a href="#system-requirements">3.1. System Requirements</a></li>
-<li><a href="#queries">3.2. Queries</a></li>
-<li><a href="#responses">3.3. Responses</a></li>
-<li><a href="#monitoring-ui">3.4. Monitoring UI</a></li>
+<li><a href="#installation">3.2. Installation</a></li>
+<li><a href="#queries">3.3. Queries</a></li>
+<li><a href="#responses">3.4. Responses</a></li>
+<li><a href="#monitoring-ui">3.5. Monitoring UI</a></li>
 </ul>
 </li>
 <li><a href="#developers-reference">4. Developers Reference</a>
@@ -620,7 +621,7 @@ first.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Query/Response for Spring AMQP makes it really easy to extend Spring Boot stand-alone,
-production-grade Applications, that are using Spring AMQP. We have taken
+production-grade applications, that are using Spring AMQP. We have taken
 a working pattern for building highly decoupled evolving service architectures,
 and wrapped it in a developer friendly library.</p>
 </div>
@@ -634,21 +635,48 @@ Java 11, and should work for later releases too.</p>
 <p>It is distributed as a <a href="https://maven.apache.org">Maven</a> dependency, and is known to work well with
 Maven 3.3+. Using the Maven dependency with <a href="https://gradle.org">Gradle</a> should work too.</p>
 </div>
+<div class="paragraph">
+<p>The current <a href="https://github.com/olle/query-response-spring-amqp#quickstart">Quickstart</a> information, available on the projects
+<a href="https://github.com/olle/query-response-spring-amqp">Github</a> page, provides a short snippets on the current best way to
+add the Maven dependency.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="queries"><a class="anchor" href="#queries"></a>3.2. Queries</h3>
+<h3 id="installation"><a class="anchor" href="#installation"></a>3.2. Installation</h3>
+<div class="paragraph">
+<p>Enabling Query/Response for Spring AMQP is done by loading the <code>QueryResponseConfiguration</code> class.
+The most simple way to do this, is annotating your Spring Boot
+application starter with the <code>@EnableQueryResponse</code> annotation.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This annotation will do nothing more but to check for the appropriate
+      dependencies from Spring AMQP and load, or import, the
+      <code>QueryResponseConfiguration</code> class.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="queries"><a class="anchor" href="#queries"></a>3.3. Queries</h3>
 <div class="paragraph">
 <p>TODO!</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="responses"><a class="anchor" href="#responses"></a>3.3. Responses</h3>
+<h3 id="responses"><a class="anchor" href="#responses"></a>3.4. Responses</h3>
 <div class="paragraph">
 <p>TODO!</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="monitoring-ui"><a class="anchor" href="#monitoring-ui"></a>3.4. Monitoring UI</h3>
+<h3 id="monitoring-ui"><a class="anchor" href="#monitoring-ui"></a>3.5. Monitoring UI</h3>
 <div class="paragraph">
 <p>TODO!</p>
 </div>
