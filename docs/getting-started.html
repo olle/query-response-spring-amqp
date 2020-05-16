@@ -743,20 +743,41 @@ yolo</pre>
 and the <strong>response</strong> being published and also consumed. And the finished output
 is "polo" and "yolo" printed on <code>STDOUT</code>.</p>
 </div>
+<div class="paragraph">
+<p>INFO: We are using the <code>@Order</code> annotation in our example only to ensure that
+      responses are built and registered before queries, when they are built
+      in one and the same app.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="monitoring-ui"><a class="anchor" href="#monitoring-ui"></a>5. Monitoring UI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO!</p>
+<p>Query/Response for Spring AMQP is intended to be used in a landscape of distributed services that
+need to exchange information and data. Being able to observe and see a visual
+overview is very important.</p>
+</div>
+<div class="paragraph">
+<p>We provide a monitoring and administration user interface for this purpose.</p>
+</div>
+<div class="paragraph">
+<p>TODO: Add link to distributed JAR.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ java -jar query-response-ui.jar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/ui.png" alt="ui"></span></p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-16 17:27:47 +0200
+Last updated 2020-05-16 18:10:24 +0200
 </div>
 </div>
 </body>

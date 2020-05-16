@@ -122,6 +122,22 @@ Now you can see a full roundtrip of the **query** being published and consumed,
 and the **response** being published and also consumed. And the finished output
 is "polo" and "yolo" printed on `STDOUT`.
 
+INFO: We are using the `@Order` annotation in our example only to ensure that
+      responses are built and registered before queries, when they are built
+      in one and the same app.
+
 == Monitoring UI
 
-TODO!
+{qr-name} is intended to be used in a landscape of distributed services that
+need to exchange information and data. Being able to observe and see a visual
+overview is very important.
+
+We provide a monitoring and administration user interface for this purpose.
+
+TODO: Add link to distributed JAR.
+
+....
+$ java -jar query-response-ui.jar
+....
+
+image:ui.png[]
