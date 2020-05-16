@@ -123,7 +123,7 @@ Now you can see a full roundtrip of the **query** being published and consumed,
 and the **response** being published and also consumed. And the finished output
 is "polo" and "yolo" printed on `STDOUT`.
 
-INFO: We are using the `@Order` annotation in our example only to ensure that
+NOTE: We are using the `@Order` annotation in our example only to ensure that
       responses are built and registered before queries, when they are built
       in one and the same app.
 
