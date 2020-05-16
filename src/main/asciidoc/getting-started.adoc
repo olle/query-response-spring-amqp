@@ -96,8 +96,9 @@ At the moment there are no responses to be consumed, before the timeout of
 
 == Responses
 
-Building services, medium, large or micro, publishing **responses** to queries
-is also really easy with {qr-name} and the `ResponseBuilder`.
+Building services, medium, large or _micro_ (who cares), that publish
+**responses** to queries is also really easy with {qr-name}, using the
+`ResponseBuilder`.
 
 [source,java]
 ----
@@ -128,9 +129,9 @@ INFO: We are using the `@Order` annotation in our example only to ensure that
 
 == Monitoring UI
 
-{qr-name} is intended to be used in a landscape of distributed services that
-need to exchange information and data. Being able to observe and see a visual
-overview is very important.
+{qr-name} is intended to be used in a landscape of distributed and highly
+decoupled services that exchange information and data. Being able to monitor and
+observe that is very important.
 
 We provide a monitoring and administration user interface for this purpose.
 
@@ -140,4 +141,11 @@ TODO: Add link to distributed JAR.
 $ java -jar query-response-ui.jar
 ....
 
+The {qr-ui-name} connects to the RabbitMQ broker and **uses Query/Response**
+to query for information about the live nodes in the current system setup. It
+is available at http://localhost:8080 after starting up.
+
 image:ui.png[]
+
+Since we are _eating our own dog food_ we get a very nice effect, where the
+{qr-ui-name} instance is self-visualizing - it shows up as a live-node.

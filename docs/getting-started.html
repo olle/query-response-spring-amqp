@@ -703,8 +703,9 @@ c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Bod
 <h2 id="responses"><a class="anchor" href="#responses"></a>4. Responses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Building services, medium, large or micro, publishing <strong>responses</strong> to queries
-is also really easy with Query/Response for Spring AMQP and the <code>ResponseBuilder</code>.</p>
+<p>Building services, medium, large or <em>micro</em> (who cares), that publish
+<strong>responses</strong> to queries is also really easy with Query/Response for Spring AMQP, using the
+<code>ResponseBuilder</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -754,9 +755,9 @@ is "polo" and "yolo" printed on <code>STDOUT</code>.</p>
 <h2 id="monitoring-ui"><a class="anchor" href="#monitoring-ui"></a>5. Monitoring UI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Query/Response for Spring AMQP is intended to be used in a landscape of distributed services that
-need to exchange information and data. Being able to observe and see a visual
-overview is very important.</p>
+<p>Query/Response for Spring AMQP is intended to be used in a landscape of distributed and highly
+decoupled services that exchange information and data. Being able to monitor and
+observe that is very important.</p>
 </div>
 <div class="paragraph">
 <p>We provide a monitoring and administration user interface for this purpose.</p>
@@ -770,14 +771,23 @@ overview is very important.</p>
 </div>
 </div>
 <div class="paragraph">
+<p>The Query/Response Monitoring UI connects to the RabbitMQ broker and <strong>uses Query/Response</strong>
+to query for information about the live nodes in the current system setup. It
+is available at <a href="http://localhost:8080" class="bare">localhost:8080</a> after starting up.</p>
+</div>
+<div class="paragraph">
 <p><span class="image"><img src="images/ui.png" alt="ui"></span></p>
+</div>
+<div class="paragraph">
+<p>Since we are <em>eating our own dog food</em> we get a very nice effect, where the
+Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-16 18:10:24 +0200
+Last updated 2020-05-16 23:14:19 +0200
 </div>
 </div>
 </body>
