@@ -26,8 +26,8 @@ to add the Maven dependency.
 
 == Installation
 
-Enabling {qr-name} is done by loading the `QueryResponseConfiguration` class.
-The most simple way to do this, is annotating your {spring-boot-name}
+Enabling {qr-name} is done by simply loading the `QueryResponseConfiguration`
+class. The most simple way to do this, is annotating your {spring-boot-name}
 application starter with the `@EnableQueryResponse` annotation.
 
 [source,java]
@@ -37,6 +37,9 @@ include::{examples-src}/myapp/src/main/java/app/MyApp.java[tags=install]
 
 NOTE: This annotation will do nothing more but to import the
       `QueryResponseConfiguration` class.
+
+That's it! There is no more infrastructure code, wiring or setup that needs to
+be done. **It's just that easy.**
 
 Before you can run your application you need to make sure there is an AMQP
 broker available. By default {spring-amqp-name} tries to connect to a
@@ -74,16 +77,20 @@ by {qr-name} by default.
 == Queries
 
 Publishing **queries** is a way for your application to ask for information that
-it may need in order to accomplish tasks. {qr-name} makes this really really 
-easy, using the `QueryBuilder`.
+it may need in order to accomplish tasks. Queries express a _need_, and are not
+address to any specific service or component.
+
+ {qr-name} makes it really really easy, to create and publish a query using
+ the `QueryBuilder`.
 
 [source,java]
 ----
 include::{examples-src}/myapp/src/main/java/app/Queries.java[tags=query]
 ----
-<1> Initiates a query for the term `marco`, expecting results of the type
-    `String.class` to be returned. The return type is always aggregated in a
-    collection. Either **none, one or many** responses may be returned.
+<1> Initiates a query for the term `marco`, with any results being consumed as,
+    or _mapped_ to, the type `String.class`. Returned results are always
+    gathered in a collection. Either **none, one or many** elements may be
+    returned.
 
 <2> Queries require a timeout, here we set it to `1000L` milliseconds. This
     means that this specific query will **always** block for 1 second.
