@@ -568,8 +568,8 @@ to add the Maven dependency.</p>
 <h2 id="installation"><a class="anchor" href="#installation"></a>2. Installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enabling Query/Response for Spring AMQP is done by loading the <code>QueryResponseConfiguration</code> class.
-The most simple way to do this, is annotating your Spring Boot
+<p>Enabling Query/Response for Spring AMQP is done by simply loading the <code>QueryResponseConfiguration</code>
+class. The most simple way to do this, is annotating your Spring Boot
 application starter with the <code>@EnableQueryResponse</code> annotation.</p>
 </div>
 <div class="listingblock">
@@ -597,6 +597,10 @@ This annotation will do nothing more but to import the
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>That&#8217;s it! There is no more infrastructure code, wiring or setup that needs to
+be done. <strong>It&#8217;s just that easy.</strong></p>
 </div>
 <div class="paragraph">
 <p>Before you can run your application you need to make sure there is an AMQP
@@ -661,8 +665,14 @@ by Query/Response for Spring AMQP by default.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Publishing <strong>queries</strong> is a way for your application to ask for information that
-it may need in order to accomplish tasks. Query/Response for Spring AMQP makes this really really
-easy, using the <code>QueryBuilder</code>.</p>
+it may need in order to accomplish tasks. Queries express a <em>need</em>, and are not
+address to any specific service or component.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>{qr-name} makes it really really easy, to create and publish a query using
+the `QueryBuilder`.</pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -686,9 +696,10 @@ easy, using the <code>QueryBuilder</code>.</p>
 <div class="colist arabic">
 <ol>
 <li>
-<p>Initiates a query for the term <code>marco</code>, expecting results of the type
-<code>String.class</code> to be returned. The return type is always aggregated in a
-collection. Either <strong>none, one or many</strong> responses may be returned.</p>
+<p>Initiates a query for the term <code>marco</code>, with any results being consumed as,
+or <em>mapped</em> to, the type <code>String.class</code>. Returned results are always
+gathered in a collection. Either <strong>none, one or many</strong> elements may be
+returned.</p>
 </li>
 <li>
 <p>Queries require a timeout, here we set it to <code>1000L</code> milliseconds. This
@@ -957,7 +968,7 @@ means any clients using Query/Response for Spring AMQP, that are currently up an
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-17 21:58:26 +0200
+Last updated 2020-05-17 22:07:50 +0200
 </div>
 </div>
 </body>
