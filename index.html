@@ -897,6 +897,14 @@ is available at <a href="http://localhost:8080" class="bare">localhost:8080</a> 
 <p>Since we are <em>eating our own dog food</em> we get a very nice effect, where the
 Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node.</p>
 </div>
+<div class="paragraph">
+<p>The Query/Response Monitoring UI lets us learn about the currently running system. The top most
+part provides a few base metrics - our initial <em>golden three:</em> success rate,
+latency and throughput.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/metrics.png" alt="metrics"></span></p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Overview Metrics</caption>
 <colgroup>
@@ -920,17 +928,17 @@ Query/Response Monitoring UI instance is self-visualizing - it shows up as a liv
   successfully evaluated.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SR Queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SR</strong> Queries</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of published queries.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SR Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SR</strong> Responses</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of consumed responses.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SR Fallbacks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SR</strong> Fallbacks</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of executed fallbacks.</p></td>
 </tr>
@@ -941,12 +949,12 @@ Query/Response Monitoring UI instance is self-visualizing - it shows up as a liv
   and then consumed. The <em>transport</em> duration.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">L Min</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> Min</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current measured shortest, non zero, latency duration.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">L Max</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> Max</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current measured longest latency duration.</p></td>
 </tr>
@@ -957,14 +965,68 @@ Query/Response Monitoring UI instance is self-visualizing - it shows up as a liv
   over a fixed sample size window.</em></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TP Queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TP</strong> Queries</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current measured message publishing rate, for queries.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TP Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TP</strong> Responses</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The current measured message publishing rate, for responses.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The second section shows some information about the current <em>live nodes</em>, which
+means any clients using Query/Response for Spring AMQP, that are currently up and running.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/live-nodes.png" alt="live nodes"></span></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Live Nodes</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Column</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Spring Boot app name, or <code>application</code> if it could not be resolved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pid</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>pid</code> of the client Java process, or <code>-</code> if it could not be resolved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Address</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Host name or IP address, or <code>unknown</code> if it could not be resolved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uptime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The app uptime, or <code>-</code> if it could not be determined.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success Rate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rate of successful queries (<strong>SR</strong>), or <code>-</code> in case the client is only publishing responses.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"> Number of published responses (including statistics for the Query/Response Monitoring UI).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measured latency for queries and responses, the <em>transport</em> duration (<strong>L</strong>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Publishing rate for queries and responses (<strong>TP</strong>).</p></td>
 </tr>
 </tbody>
 </table>
