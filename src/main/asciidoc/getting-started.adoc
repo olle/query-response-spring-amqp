@@ -166,6 +166,12 @@ image:ui.png[]
 Since we are _eating our own dog food_ we get a very nice effect, where the
 {qr-ui-name} instance is self-visualizing - it shows up as a live-node.
 
+The {qr-ui-name} lets us learn about the currently running system. The top most
+part provides a few base metrics - our initial _golden three:_ success rate,
+latency and throughput.
+
+image:metrics.png[]
+
 [cols="2,1,6"]
 .Overview Metrics
 |===
@@ -176,22 +182,43 @@ Since we are _eating our own dog food_ we get a very nice effect, where the
 | The rate of _successful_ queries performed. A query is successful if it
   returns results, which means any predicates, limits or timeouts are also
   successfully evaluated.
-| SR Queries   | `number` | The current known count of published queries.
-| SR Responses | `number` | The current known count of consumed responses.
-| SR Fallbacks | `number` | The current known count of executed fallbacks.
+| **SR** Queries   | `number` | The current known count of published queries.
+| **SR** Responses | `number` | The current known count of consumed responses.
+| **SR** Fallbacks | `number` | The current known count of executed fallbacks.
 
 | Latency (**L**)
 | `duration`
 | The average measured time for either a query or a response to be published,
   and then consumed. The _transport_ duration.
-| L Min   | `duration` | The current measured shortest, non zero, latency duration.
-| L Max   | `duration` | The current measured longest latency duration.
+| **L** Min   | `duration` | The current measured shortest, non zero, latency duration.
+| **L** Max   | `duration` | The current measured longest latency duration.
 
 | Throughput (**TP**)
 | `rate`
 | The current measured query and response message publishing rate. _Measured
   over a fixed sample size window._
-| TP Queries   | `rate` | The current measured message publishing rate, for queries.
-| TP Responses | `rate` | The current measured message publishing rate, for responses.
+| **TP** Queries   | `rate` | The current measured message publishing rate, for queries.
+| **TP** Responses | `rate` | The current measured message publishing rate, for responses.
+
+|===
+
+The second section shows some information about the current _live nodes_, which
+means any clients using {qr-name}, that are currently up and running.
+
+image:live-nodes.png[]
+
+[cols="1,4"]
+.Live Nodes
+|===
+| Column | Description
+
+| Name         | The {spring-boot-name} app name, or `application` if it could not be resolved.
+| Pid          | The `pid` of the client Java process, or `-` if it could not be resolved.
+| Address      | Host name or IP address, or `unknown` if it could not be resolved.
+| Uptime       | The app uptime, or `-` if it could not be determined.
+| Success Rate | Rate of successful queries (**SR**), or `-` in case the client is only publishing responses.
+| Responses    | Number of published responses (including statistics for the {qr-ui-name}).
+| Latency      | Measured latency for queries and responses, the _transport_ duration (**L**).
+| Throughput   | Publishing rate for queries and responses (**TP**).
 
 |===
