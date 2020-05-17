@@ -166,7 +166,32 @@ image:ui.png[]
 Since we are _eating our own dog food_ we get a very nice effect, where the
 {qr-ui-name} instance is self-visualizing - it shows up as a live-node.
 
+[cols="2,1,6"]
 .Overview Metrics
 |===
-| 
+| Name | Type | Description
+
+| Success Rate (**SR**)
+| `percent`
+| The rate of _successful_ queries performed. A query is successful if it
+  returns results, which means any predicates, limits or timeouts are also
+  successfully evaluated.
+| SR Queries   | `number` | The current known count of published queries.
+| SR Responses | `number` | The current known count of consumed responses.
+| SR Fallbacks | `number` | The current known count of executed fallbacks.
+
+| Latency (**L**)
+| `duration`
+| The average measured time for either a query or a response to be published,
+  and then consumed. The _transport_ duration.
+| L Min   | `duration` | The current measured shortest, non zero, latency duration.
+| L Max   | `duration` | The current measured longest latency duration.
+
+| Throughput (**TP**)
+| `rate`
+| The current measured query and response message publishing rate. _Measured
+  over a fixed sample size window._
+| TP Queries   | `rate` | The current measured message publishing rate, for queries.
+| TP Responses | `rate` | The current measured message publishing rate, for responses.
+
 |===

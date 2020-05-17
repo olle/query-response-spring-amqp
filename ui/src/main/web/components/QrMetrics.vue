@@ -8,7 +8,7 @@
     <data>{{ countQueries }}</data>
     <h3>Responses</h3>
     <data>{{ countResponses }}</data>
-    <h3>Fallback</h3>
+    <h3>Fallbacks</h3>
     <data>{{ countFallbacks }}</data>
     <h2>Latency</h2>
     <time class="big two">{{ avgLatency }}</time>
