@@ -822,11 +822,71 @@ Query/Response Monitoring UI instance is self-visualizing - it shows up as a liv
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Overview Metrics</caption>
 <colgroup>
-<col style="width: 100%;">
+<col style="width: 22.2222%;">
+<col style="width: 11.1111%;">
+<col style="width: 66.6667%;">
 </colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success Rate (<strong>SR</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>percent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The rate of <em>successful</em> queries performed. A query is successful if it
+  returns results, which means any predicates, limits or timeouts are also
+  successfully evaluated.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SR Queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of published queries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SR Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of consumed responses.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SR Fallbacks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of executed fallbacks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency (<strong>L</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The average measured time for either a query or a response to be published,
+  and then consumed. The <em>transport</em> duration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">L Min</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured shortest, non zero, latency duration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">L Max</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured longest latency duration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput (<strong>TP</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured query and response message publishing rate. <em>Measured
+  over a fixed sample size window.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TP Queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured message publishing rate, for queries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TP Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured message publishing rate, for responses.</p></td>
 </tr>
 </tbody>
 </table>
@@ -835,7 +895,7 @@ Query/Response Monitoring UI instance is self-visualizing - it shows up as a liv
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-17 01:44:16 +0200
+Last updated 2020-05-17 21:23:03 +0200
 </div>
 </div>
 </body>
