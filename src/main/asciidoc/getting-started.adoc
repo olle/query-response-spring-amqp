@@ -78,10 +78,10 @@ by {qr-name} by default.
 
 Publishing **queries** is a way for your application to ask for information that
 it may need in order to accomplish tasks. Queries express a _need_, and are not
-address to any specific service or component.
+addressed to any specific service or component.
 
- {qr-name} makes it really really easy, to create and publish a query using
- the `QueryBuilder`.
+{qr-name} makes it really really easy, to create and publish a query using
+the `QueryBuilder`.
 
 [source,java]
 ----
