@@ -127,6 +127,19 @@ Building services, medium, large or _micro_ (who cares), that publish
 ----
 include::{examples-src}/myapp/src/main/java/app/Responses.java[tags=response]
 ----
+<1> Initializes a response to queries for `marco`, providing the type-hint on
+    how to map entries in the response. Set to `String.class` here.
+
+<2> The response `withAll()` will publish all elements in one single response.
+
+<3> And finally this response is provided the elements `"polo", "yolo"` as the
+    actual data to publish. _The builder varags method, used here, is mostly
+    for trying out {qr-name}, or for static responses._
+
+====
+Again, the builder makes it really easy to create a responding service, without
+any special setup or complicated configurations.
+====
 
 Now if you run the application again, with the response component registered
 before the query publisher, it will publish the response.

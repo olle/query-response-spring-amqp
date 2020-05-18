@@ -19,9 +19,9 @@ public class Responses {
     @EventListener(ApplicationReadyEvent.class)
     public void response() {
 
-        ResponseBuilder.respondTo("marco", String.class)
-            .withAll()
-            .from("polo", "yolo");
+        ResponseBuilder.respondTo("marco", String.class) // <1>
+        .withAll() // <2>
+        .from("polo", "yolo"); // <3>
     }
 }
 // end::response[]
