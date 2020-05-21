@@ -58,6 +58,10 @@ const router = new VueRouter({
   ],
 });
 
+Vue.component("current-year", {
+  template: "<span>{{ new Date().getFullYear() }}</span>",
+});
+
 // App Init.
 new Vue({
   el: "#app",
