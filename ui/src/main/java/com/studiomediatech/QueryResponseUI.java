@@ -114,6 +114,7 @@ public class QueryResponseUI {
 
         private List<Stat> queries = new LinkedList<>();
         private List<Stat> responses = new LinkedList<>();
+        private List<Double> successRates = new LinkedList<>();
 
         private final Handler handler;
 
@@ -147,7 +148,11 @@ public class QueryResponseUI {
                     .filter(stat -> "count_fallbacks".equals(stat.key))
                     .mapToLong(statToLong).sum();
 
-            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum);
+            double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
+
+            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate);
+
+            handler.handleSuccessRatesSeries(successRates);
 
             long minLatency = stats
                     .stream()
@@ -193,6 +198,23 @@ public class QueryResponseUI {
             }
 
             handler.handleNodes(nodes);
+        }
+
+
+        private double calculateAndAggregateSuccessRate(long countQueriesSum, long countResponsesSum) {
+
+            double n = 1.0 * countResponsesSum;
+            double d = 1.0 * Math.max(1.0, countQueriesSum);
+
+            double rate = Math.round((n / d) * 100.0 * 10.0) / 10.0;
+
+            if (successRates.size() > MAX_SIZE) {
+                successRates.remove(0);
+            }
+
+            successRates.add(rate);
+
+            return rate;
         }
 
 
@@ -309,13 +331,29 @@ public class QueryResponseUI {
 
 
         public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum,
-            long countFallbacksSum) {
+            long countFallbacksSum, double successRate) {
 
-            var json = String.format("{\"metrics\": {"
+            var json = String.format(Locale.US,
+                    "{\"metrics\": {"
                     + "\"count_queries\": %d,"
                     + "\"count_responses\": %d,"
-                    + "\"count_fallbacks\": %d"
-                    + "}}", countQueriesSum, countResponsesSum, countFallbacksSum);
+                    + "\"count_fallbacks\": %d,"
+                    + "\"success_rate\": %f"
+                    + "}}", countQueriesSum, countResponsesSum, countFallbacksSum, successRate);
+
+            publishTextMessageWithPayload(json);
+        }
+
+
+        public void handleSuccessRatesSeries(List<Double> successRates) {
+
+            if (successRates.isEmpty()) {
+                return;
+            }
+
+            var json = String.format(Locale.US, "{\"metrics\": {"
+                    + "\"success_rates\": %s"
+                    + "}}", successRates);
 
             publishTextMessageWithPayload(json);
         }

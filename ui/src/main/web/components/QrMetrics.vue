@@ -5,7 +5,7 @@
       v-bind:class="successRateRank"
       class="chart one"
       type="Line"
-      :data="chartData"
+      :data="successRateSeries"
       :options="chartOptions"
     ></chartist>
     <data class="big one" v-bind:class="successRateRank">{{
@@ -65,7 +65,7 @@ export default {
     // TODO: return 3 data-series: success-rate, latency, throughput
     return {
       chartData: {
-        series: [[1, 3, 2, 4, 5, 6, 12, 7, 3, 2, 1, 1]],
+        series: [[0, 0, 0, 0, 0, 1, 2, 3, 4, 5]],
       },
       chartOptions: {
         axisX: {
@@ -88,10 +88,15 @@ export default {
   },
   computed: {
     ...mapState({
-      successRate: (s) =>
-        toPercent(s.metrics.count_responses, s.metrics.count_queries),
-      successRateRank: (s) =>
-        toRateRank(s.metrics.count_responses, s.metrics.count_queries),
+      successRate: (s) => `${s.metrics.success_rate}%`,
+      successRateRank: (s) => {
+        let rate = s.metrics.success_rate;
+        if (rate < 20.0) {
+          return "error";
+        } else if (rate < 60.0) {
+          return "warning";
+        }
+      },
       countQueries: (s) => toNumberWithUnit(s.metrics.count_queries),
       countResponses: (s) => toNumberWithUnit(s.metrics.count_responses),
       countFallbacks: (s) => toNumberWithUnit(s.metrics.count_fallbacks),
@@ -103,6 +108,7 @@ export default {
         toThroughputPerSecond(s.metrics.throughput_queries),
       throughputResponses: (s) =>
         toThroughputPerSecond(s.metrics.throughput_responses),
+      successRateSeries: (s) => ({ series: [[...s.metrics.success_rates]] }),
     }),
   },
   store,

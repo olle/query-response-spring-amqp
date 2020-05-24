@@ -348,14 +348,10 @@ section.overview > .chart {
 }
 @media (min-width: 1200px) {
   section.overview > .chart {
-    width: 18vw;
+    width: 100%;
   }
 }
-@media (min-width: 1500px) {
-  section.overview > .chart {
-    width: 20vw;
-  }
-}
+
 section.overview > .chart.one {
   grid-area: b1a;
 }
