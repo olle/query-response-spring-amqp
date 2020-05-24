@@ -1,7 +1,12 @@
 <template>
   <section class="overview">
     <h2>Success Rate</h2>
-    <div class="chart one"><line-chart></line-chart></div>
+    <chartist
+      class="chart one"
+      type="Line"
+      :data="chartData"
+      :options="chartOptions"
+    ></chartist>
     <data class="big one" v-bind:class="successRateRank">{{
       successRate
     }}</data>
@@ -12,14 +17,24 @@
     <h3>Fallbacks</h3>
     <data>{{ countFallbacks }}</data>
     <h2>Latency</h2>
-    <div class="chart two"><line-chart></line-chart></div>
+    <chartist
+      class="chart two"
+      type="Line"
+      :data="chartData"
+      :options="chartOptions"
+    ></chartist>
     <time class="big two">{{ avgLatency }}</time>
     <h3>Min</h3>
     <time>{{ minLatency }}</time>
     <h3>Max</h3>
     <time>{{ maxLatency }}</time>
     <h2>Throughput</h2>
-    <div class="chart three"><line-chart></line-chart></div>
+    <chartist
+      class="chart three"
+      type="Line"
+      :data="chartData"
+      :options="chartOptions"
+    ></chartist>
     <data class="big three">{{ avgThroughput }}</data>
     <h3>Queries</h3>
     <data>{{ throughputQueries }}</data>
@@ -39,17 +54,37 @@ import {
 } from "../metrics.js";
 import { mapState } from "vuex";
 import Vue from "vue";
-//import Chart from "chartjs";
 
-Vue.component("line-chart", {
-  mounted() {
-    console.log("EL: ", this.$refs);
-  },
-  template: "<canvas>chart-goes-here</canvas>",
-});
+import Chartist from "vue-chartist";
+Vue.use(Chartist);
 
 export default {
   name: "qr-metrics",
+  data: function () {
+    // TODO: return 3 data-series: success-rate, latency, throughput
+    return {
+      chartData: {
+        series: [[1, 3, 2, 4, 5, 6, 12, 7, 3, 2, 1, 1]],
+      },
+      chartOptions: {
+        axisX: {
+          showLabel: false,
+          showGrid: false,
+          offset: 0,
+        },
+        height: 93,
+        showPoint: false,
+        showArea: true,
+        fullWidth: true,
+        chartPadding: {
+          top: 10,
+          right: 0,
+          bottom: 0,
+          left: 0,
+        },
+      },
+    };
+  },
   computed: {
     ...mapState({
       successRate: (s) =>

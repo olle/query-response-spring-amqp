@@ -1,9 +1,8 @@
 {
   "private": true,
   "dependencies": {
-    "chart.js": "^2.9.3",
-    "chartjs": "^0.3.24",
     "vue": "^2.6.11",
+    "vue-chartist": "^2.2.1",
     "vue-hot-reload-api": "^2.3.4",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"

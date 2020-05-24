@@ -18,7 +18,7 @@ html {
   --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
   --border: 1px solid rgba(182, 182, 182, 0.424);
-  --success: #64ac90;
+  --success: hsl(157, 30%, 53%);
   --warning: hsl(37, 100%, 55%);
   --error: #fc4979;
   --bold: 600;
@@ -295,10 +295,6 @@ section.overview {
   margin-bottom: 1rem;
 }
 
-section.overview > .chart {
-  display: none;
-}
-
 @media (min-width: 1000px) {
   section.overview {
     grid-template-columns: min-content 5.8rem 1fr 6rem 5.8rem 1fr min-content 5.8rem 1fr;
@@ -308,10 +304,6 @@ section.overview > .chart {
       "b1 b1a b1a b2 b2a b2a b3 b3a b3a"
       "l1a l1b l1c l2a l2b l2c l3a l3b l3c"
       "v1a v1b v1c v2a v2b v2c v3a v3b v3c";
-  }
-
-  section.overview > .chart {
-    display: initial;
   }
 }
 
@@ -342,12 +334,17 @@ section.overview > .big.three {
 }
 
 section.overview > .chart {
-  margin-bottom: .4rem;
+  padding-bottom: 0.4rem;
+  display: none;
 }
-
 section.overview > .chart {
-  background: pink;
   width: 13vw;
+  height: 6rem;
+}
+@media (min-width: 1000px) {
+  section.overview > .chart {
+    display: initial;
+  }
 }
 @media (min-width: 1200px) {
   section.overview > .chart {
@@ -367,6 +364,19 @@ section.overview > .chart.two {
 }
 section.overview > .chart.three {
   grid-area: b3a;
+}
+
+section.overview > .chart .ct-label,
+section.overview > .chart .ct-grid,
+section.overview > .chart .ct-horizontal {
+  color: var(--fg-light);
+}
+section.overview > .chart .ct-line {
+  stroke: var(--success);
+}
+section.overview > .chart .ct-area {
+  fill: var(--success);
+  fill-opacity: .15;
 }
 
 section.overview > h3,
