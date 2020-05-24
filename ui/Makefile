@@ -5,6 +5,7 @@
 # server for e2e integration.
 #
 run: node_modules
+	mvn clean
 	npm run watch & mvn spring-boot:run
 
 #

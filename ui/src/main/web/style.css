@@ -376,7 +376,20 @@ section.overview > .chart .ct-line {
 }
 section.overview > .chart .ct-area {
   fill: var(--success);
-  fill-opacity: .15;
+  fill-opacity: 0.15;
+}
+
+section.overview > .chart.failure .ct-line {
+  stroke: var(--error);
+}
+section.overview > .chart.failure .ct-area {
+  fill: var(--error);
+}
+section.overview > .chart.warning .ct-line {
+  stroke: var(--warning);
+}
+section.overview > .chart.warning .ct-area {
+  fill: var(--warning);
 }
 
 section.overview > h3,

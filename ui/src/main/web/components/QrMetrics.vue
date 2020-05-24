@@ -2,6 +2,7 @@
   <section class="overview">
     <h2>Success Rate</h2>
     <chartist
+      v-bind:class="successRateRank"
       class="chart one"
       type="Line"
       :data="chartData"
