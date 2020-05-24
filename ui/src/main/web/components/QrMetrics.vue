@@ -21,7 +21,7 @@
     <chartist
       class="chart two"
       type="Line"
-      :data="chartData"
+      :data="avgLatenciesSeries"
       :options="chartOptions"
     ></chartist>
     <time class="big two">{{ avgLatency }}</time>
@@ -50,8 +50,6 @@ import {
   toNumberWithUnit,
   toMillis,
   toThroughputPerSecond,
-  toPercent,
-  toRateRank,
 } from "../metrics.js";
 import { mapState } from "vuex";
 import Vue from "vue";
@@ -109,6 +107,7 @@ export default {
       throughputResponses: (s) =>
         toThroughputPerSecond(s.metrics.throughput_responses),
       successRateSeries: (s) => ({ series: [[...s.metrics.success_rates]] }),
+      avgLatenciesSeries: (s) => ({ series: [[...s.metrics.avg_latencies]] }),
     }),
   },
   store,

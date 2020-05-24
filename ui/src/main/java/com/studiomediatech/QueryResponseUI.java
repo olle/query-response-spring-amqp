@@ -115,6 +115,7 @@ public class QueryResponseUI {
         private List<Stat> queries = new LinkedList<>();
         private List<Stat> responses = new LinkedList<>();
         private List<Double> successRates = new LinkedList<>();
+        private List<Double> latencies = new LinkedList<>();
 
         private final Handler handler;
 
@@ -151,7 +152,6 @@ public class QueryResponseUI {
             double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
 
             handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate);
-
             handler.handleSuccessRatesSeries(successRates);
 
             long minLatency = stats
@@ -175,7 +175,8 @@ public class QueryResponseUI {
                     .average()
                     .orElse(0.0d);
 
-            handler.handleLatency(minLatency, maxLatency, avgLatency);
+            aggregateLatencies(avgLatency);
+            handler.handleLatency(minLatency, maxLatency, avgLatency, latencies);
 
             // Order is important!!
             double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
@@ -198,6 +199,16 @@ public class QueryResponseUI {
             }
 
             handler.handleNodes(nodes);
+        }
+
+
+        private void aggregateLatencies(double avgLatency) {
+
+            if (latencies.size() > MAX_SIZE) {
+                latencies.remove(0);
+            }
+
+            latencies.add(avgLatency);
         }
 
 
@@ -359,14 +370,15 @@ public class QueryResponseUI {
         }
 
 
-        public void handleLatency(long minLatency, long maxLatency, double avgLatency) {
+        public void handleLatency(long minLatency, long maxLatency, double avgLatency, List<Double> latencies) {
 
             var json = String.format(Locale.US,
                     "{\"metrics\": {"
                     + "\"min_latency\": %d,"
                     + "\"max_latency\": %d,"
-                    + "\"avg_latency\": %f"
-                    + "}}", minLatency, maxLatency, avgLatency);
+                    + "\"avg_latency\": %f,"
+                    + "\"avg_latencies\": %s"
+                    + "}}", minLatency, maxLatency, avgLatency, latencies);
 
             publishTextMessageWithPayload(json);
         }

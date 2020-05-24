@@ -24,6 +24,7 @@ export default new Vuex.Store({
       success_rate: 0.0,
       success_rates: [],
       avg_latency: 0.0,
+      avg_latencies: [],
       min_latency: 0,
       max_latency: 0,
       avg_throughput: 0.0,
