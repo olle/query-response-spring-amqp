@@ -116,6 +116,7 @@ public class QueryResponseUI {
         private List<Stat> responses = new LinkedList<>();
         private List<Double> successRates = new LinkedList<>();
         private List<Double> latencies = new LinkedList<>();
+        private List<Double> throughputs = new LinkedList<>();
 
         private final Handler handler;
 
@@ -151,8 +152,8 @@ public class QueryResponseUI {
 
             double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
 
-            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate);
-            handler.handleSuccessRatesSeries(successRates);
+            handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
+                successRates);
 
             long minLatency = stats
                     .stream()
@@ -181,9 +182,9 @@ public class QueryResponseUI {
             // Order is important!!
             double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
             double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
-            double throughputAvg = calculateThroughputAvg(queries, responses, null);
+            double throughputAvg = calculateAndAggregateThroughputAvg(queries, responses, null);
 
-            handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg);
+            handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
 
             Map<String, List<Stat>> nodes = stats
                     .stream()
@@ -194,7 +195,7 @@ public class QueryResponseUI {
                 var stat = new Stat();
                 stat.uuid = node.getKey();
                 stat.key = "avg_throughput";
-                stat.value = calculateThroughputAvg(queries, responses, node.getKey());
+                stat.value = calculateAndAggregateThroughputAvg(queries, responses, node.getKey());
                 node.getValue().add(stat);
             }
 
@@ -229,7 +230,7 @@ public class QueryResponseUI {
         }
 
 
-        private double calculateThroughputAvg(List<Stat> queries, List<Stat> responses, String node) {
+        private double calculateAndAggregateThroughputAvg(List<Stat> queries, List<Stat> responses, String node) {
 
             List<Stat> all = new ArrayList<>();
 
@@ -257,7 +258,15 @@ public class QueryResponseUI {
 
             long sum = all.stream().mapToLong(statToLong).sum();
 
-            return (sum * 1.0) / duration;
+            double tp = (sum * 1.0) / duration;
+
+            if (throughputs.size() > MAX_SIZE) {
+                throughputs.remove(0);
+            }
+
+            throughputs.add(tp);
+
+            return tp;
         }
 
 
@@ -342,29 +351,16 @@ public class QueryResponseUI {
 
 
         public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum,
-            long countFallbacksSum, double successRate) {
+            long countFallbacksSum, double successRate, List<Double> successRates) {
 
             var json = String.format(Locale.US,
                     "{\"metrics\": {"
                     + "\"count_queries\": %d,"
                     + "\"count_responses\": %d,"
                     + "\"count_fallbacks\": %d,"
-                    + "\"success_rate\": %f"
-                    + "}}", countQueriesSum, countResponsesSum, countFallbacksSum, successRate);
-
-            publishTextMessageWithPayload(json);
-        }
-
-
-        public void handleSuccessRatesSeries(List<Double> successRates) {
-
-            if (successRates.isEmpty()) {
-                return;
-            }
-
-            var json = String.format(Locale.US, "{\"metrics\": {"
+                    + "\"success_rate\": %f,"
                     + "\"success_rates\": %s"
-                    + "}}", successRates);
+                    + "}}", countQueriesSum, countResponsesSum, countFallbacksSum, successRate, successRates);
 
             publishTextMessageWithPayload(json);
         }
@@ -384,14 +380,15 @@ public class QueryResponseUI {
         }
 
 
-        public void handleThroughput(double queries, double responses, double avg) {
+        public void handleThroughput(double queries, double responses, double avg, List<Double> throughputs) {
 
             var json = String.format(Locale.US,
                     "{\"metrics\": {"
                     + "\"throughput_queries\": %f,"
                     + "\"throughput_responses\": %f,"
-                    + "\"avg_throughput\": %f"
-                    + "}}", queries, responses, avg);
+                    + "\"avg_throughput\": %f,"
+                    + "\"avg_throughputs\": %s"
+                    + "}}", queries, responses, avg, throughputs);
 
             publishTextMessageWithPayload(json);
         }

@@ -5,7 +5,7 @@
       v-bind:class="successRateRank"
       class="chart one"
       type="Line"
-      :data="successRateSeries"
+      :data="successRates"
       :options="chartOptions"
     ></chartist>
     <data class="big one" v-bind:class="successRateRank">{{
@@ -21,7 +21,7 @@
     <chartist
       class="chart two"
       type="Line"
-      :data="avgLatenciesSeries"
+      :data="latencies"
       :options="chartOptions"
     ></chartist>
     <time class="big two">{{ avgLatency }}</time>
@@ -33,7 +33,7 @@
     <chartist
       class="chart three"
       type="Line"
-      :data="chartData"
+      :data="throughputs"
       :options="chartOptions"
     ></chartist>
     <data class="big three">{{ avgThroughput }}</data>
@@ -60,11 +60,7 @@ Vue.use(Chartist);
 export default {
   name: "qr-metrics",
   data: function () {
-    // TODO: return 3 data-series: success-rate, latency, throughput
     return {
-      chartData: {
-        series: [[0, 0, 0, 0, 0, 1, 2, 3, 4, 5]],
-      },
       chartOptions: {
         axisX: {
           showLabel: false,
@@ -106,8 +102,9 @@ export default {
         toThroughputPerSecond(s.metrics.throughput_queries),
       throughputResponses: (s) =>
         toThroughputPerSecond(s.metrics.throughput_responses),
-      successRateSeries: (s) => ({ series: [[...s.metrics.success_rates]] }),
-      avgLatenciesSeries: (s) => ({ series: [[...s.metrics.avg_latencies]] }),
+      successRates: (s) => ({ series: [[...s.metrics.success_rates]] }),
+      latencies: (s) => ({ series: [[...s.metrics.avg_latencies]] }),
+      throughputs: (s) => ({ series: [[...s.metrics.avg_throughputs]] }),
     }),
   },
   store,
