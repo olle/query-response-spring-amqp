@@ -2,6 +2,9 @@ import Vue from "vue";
 import Vuex from "vuex";
 import VueRouter from "vue-router";
 
+// CSS Styles
+import "../../../node_modules/chartist/dist/chartist.css";
+
 // Components
 import QrColorSchemeToggle from "./components/QrColorSchemeToggle.vue";
 
