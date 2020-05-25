@@ -249,7 +249,7 @@ public final class QueryBuilder<T> {
 
 
     /**
-     * Sets the default results to use, for a failing query.
+     * Sets the default results collection to use, for a failing query.
      *
      * @param  defaults  collection of results to use for a failing query
      *
@@ -264,7 +264,7 @@ public final class QueryBuilder<T> {
 
 
     /**
-     * Sets the default results provider to use, for a failing query. The supplier is only invoked if the query fails.
+     * Sets the default results supplier to use, for a failing query. The supplier is only invoked if the query fails.
      *
      * @param  defaults  collection provider, for results to use if the query fails
      *
