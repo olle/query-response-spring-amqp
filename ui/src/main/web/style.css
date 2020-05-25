@@ -361,7 +361,6 @@ section.overview > .chart.two {
 section.overview > .chart.three {
   grid-area: b3a;
 }
-
 section.overview > .chart .ct-label,
 section.overview > .chart .ct-grid,
 section.overview > .chart .ct-horizontal {
@@ -374,7 +373,6 @@ section.overview > .chart .ct-area {
   fill: var(--success);
   fill-opacity: 0.15;
 }
-
 section.overview > .chart.failure .ct-line {
   stroke: var(--error);
 }

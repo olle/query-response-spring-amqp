@@ -86,7 +86,7 @@ export default {
       successRateRank: (s) => {
         let rate = s.metrics.success_rate;
         if (rate < 20.0) {
-          return "error";
+          return "failure";
         } else if (rate < 60.0) {
           return "warning";
         }
