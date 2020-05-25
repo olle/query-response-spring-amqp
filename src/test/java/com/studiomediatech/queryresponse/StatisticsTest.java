@@ -325,8 +325,8 @@ class StatisticsTest {
         // NOOP
         sut.measureLatency(null, 43L);
 
-        assertThat(sut.getMinLatency()).isEqualTo(0);
-        assertThat(sut.getMaxLatency()).isEqualTo(0);
+        assertThat(sut.getMinLatency()).isNull();
+        assertThat(sut.getMaxLatency()).isNull();
         assertThat(sut.getAvgLatency()).isEqualTo(0.0, within(1.0));
 
         for (long i = 1; i < 1000; i++) {
@@ -334,8 +334,8 @@ class StatisticsTest {
             sut.measureLatency(1L, 1L);
         }
 
-        assertThat(sut.getMinLatency()).isEqualTo(0);
-        assertThat(sut.getMaxLatency()).isEqualTo(0);
+        assertThat(sut.getMinLatency()).isNull();
+        assertThat(sut.getMaxLatency()).isNull();
         assertThat(sut.getAvgLatency()).isEqualTo(0.0, within(1.0));
 
         // Given that we have measured 1000 20ms latencies
