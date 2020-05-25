@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -66,7 +67,7 @@ class Statistics implements Logging {
     private AtomicLong consumedResponsesCount = new AtomicLong(0);
     private AtomicLong publishedResponsesCount = new AtomicLong(0);
     private AtomicLong fallbacksCount = new AtomicLong(0);
-    private List<Long> latencies = new LinkedList<>(Arrays.asList(0L));
+    private List<Long> latencies = new LinkedList<>();
     private AtomicLong lastPublishedQueriesCount = new AtomicLong(0);
     private AtomicLong lastPublishedResponsesCount = new AtomicLong(0);
 
@@ -97,22 +98,23 @@ class Statistics implements Logging {
 
     protected Collection<Stat> getStats() {
 
-        return List.of( // NOSONAR
-                getPublishedQueriesCountStat(), // NOSONAR
-                getConsumedResponsesCountStat(), // NOSONAR
-                getPublishedResponsesCountStat(), // NOSONAR
-                getFallbacksCountStat(), // NOSONAR
-                getMeta(META_NAME, nameSupplier.get()), // NOSONAR
-                getMeta(META_HOSTNAME, hostSupplier.get()), // NOSONAR
-                getMeta(META_PID, pidSupplier.get()), // NOSONAR
-                getMeta(META_UPTIME, uptimeSupplier.get()), // NOSONAR
-                getMeta(META_RESPONSES, onlyResponses.get()), // NOSONAR
-                getMaxLatencyStat(), // NOSONAR
-                getMinLatencyStat(), // NOSONAR
-                getAvgLatencyStat(), // NOSONAR
-                getThroughputQueriesStat(), // NOSONAR
-                getThroughputResponsesStat() // NOSONAR
-                );
+        return Arrays.asList( // NOSONAR
+                    getPublishedQueriesCountStat(), // NOSONAR
+                    getConsumedResponsesCountStat(), // NOSONAR
+                    getPublishedResponsesCountStat(), // NOSONAR
+                    getFallbacksCountStat(), // NOSONAR
+                    getMeta(META_NAME, nameSupplier.get()), // NOSONAR
+                    getMeta(META_HOSTNAME, hostSupplier.get()), // NOSONAR
+                    getMeta(META_PID, pidSupplier.get()), // NOSONAR
+                    getMeta(META_UPTIME, uptimeSupplier.get()), // NOSONAR
+                    getMeta(META_RESPONSES, onlyResponses.get()), // NOSONAR
+                    getMaxLatencyStat(), // NOSONAR
+                    getMinLatencyStat(), // NOSONAR
+                    getAvgLatencyStat(), // NOSONAR
+                    getThroughputQueriesStat(), // NOSONAR
+                    getThroughputResponsesStat() // NOSONAR
+                )
+            .stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 
@@ -124,13 +126,17 @@ class Statistics implements Logging {
 
     private Stat getMinLatencyStat() {
 
-        return Stat.from(STAT_LATENCY_MIN, getMinLatency(), this.uuid);
+        Long minLatency = getMinLatency();
+
+        return minLatency != null ? Stat.from(STAT_LATENCY_MIN, minLatency, this.uuid) : null;
     }
 
 
     private Stat getMaxLatencyStat() {
 
-        return Stat.from(STAT_LATENCY_MAX, getMaxLatency(), this.uuid);
+        Long maxLatency = getMaxLatency();
+
+        return maxLatency != null ? Stat.from(STAT_LATENCY_MAX, maxLatency, this.uuid) : null;
     }
 
 
@@ -182,17 +188,29 @@ class Statistics implements Logging {
 
     protected double getAvgLatency() {
 
+        if (latencies.isEmpty()) {
+            return 0.0;
+        }
+
         return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getAverage();
     }
 
 
-    protected long getMinLatency() {
+    protected Long getMinLatency() {
+
+        if (latencies.isEmpty()) {
+            return null;
+        }
 
         return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getMin();
     }
 
 
-    protected long getMaxLatency() {
+    protected Long getMaxLatency() {
+
+        if (latencies.isEmpty()) {
+            return null;
+        }
 
         return latencies.stream().collect(Collectors.summarizingLong(Long::valueOf)).getMax();
     }

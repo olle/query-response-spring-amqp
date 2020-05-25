@@ -155,19 +155,19 @@ public class QueryResponseUI {
             handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
                 successRates);
 
-            long minLatency = stats
+            Long minLatency = stats
                     .stream()
                     .filter(stat -> "min_latency".equals(stat.key))
                     .mapToLong(statToLong)
                     .min()
-                    .orElse(0);
+                    .orElse(-1);
 
             long maxLatency = stats
                     .stream()
                     .filter(stat -> "max_latency".equals(stat.key))
                     .mapToLong(statToLong)
                     .max()
-                    .orElse(0);
+                    .orElse(-1);
 
             double avgLatency = stats
                     .stream()
@@ -370,8 +370,8 @@ public class QueryResponseUI {
 
             var json = String.format(Locale.US,
                     "{\"metrics\": {"
-                    + "\"min_latency\": %d,"
-                    + "\"max_latency\": %d,"
+                    + (minLatency != -1 ? "\"min_latency\": %d," : "")
+                    + (maxLatency != -1 ? "\"max_latency\": %d," : "")
                     + "\"avg_latency\": %f,"
                     + "\"avg_latencies\": %s"
                     + "}}", minLatency, maxLatency, avgLatency, latencies);
