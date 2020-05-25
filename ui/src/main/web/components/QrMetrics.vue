@@ -72,7 +72,7 @@ export default {
         showArea: true,
         fullWidth: true,
         chartPadding: {
-          top: 10,
+          top: 15,
           right: 0,
           bottom: 0,
           left: 0,
