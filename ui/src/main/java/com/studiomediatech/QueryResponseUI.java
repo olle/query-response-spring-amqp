@@ -41,6 +41,8 @@ import java.io.IOException;
 
 import java.nio.charset.StandardCharsets;
 
+import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -109,6 +111,7 @@ public class QueryResponseUI {
 
         // This is a Fib!
         private static final int MAX_SIZE = 2584;
+        private static final int SLIDING_WINDOW = 40;
 
         static ToLongFunction<Stat> statToLong = s -> ((Number) s.value).longValue();
 
@@ -117,6 +120,7 @@ public class QueryResponseUI {
         private List<Double> successRates = new LinkedList<>();
         private List<Double> latencies = new LinkedList<>();
         private List<Double> throughputs = new LinkedList<>();
+        private List<Double> tps = new LinkedList<>();
 
         private final Handler handler;
 
@@ -125,11 +129,11 @@ public class QueryResponseUI {
             this.handler = handler;
         }
 
-        @Scheduled(fixedDelay = 1000 * 11)
+        @Scheduled(fixedDelay = 1000 * 7)
         void query() {
 
             Collection<Stat> stats = QueryBuilder.queryFor("query-response/stats", Stat.class)
-                    .waitingFor(1000)
+                    .waitingFor(2L, ChronoUnit.SECONDS)
                     .orEmpty();
 
             stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
@@ -177,6 +181,7 @@ public class QueryResponseUI {
                     .orElse(0.0d);
 
             aggregateLatencies(avgLatency);
+
             handler.handleLatency(minLatency, maxLatency, avgLatency, latencies);
 
             // Order is important!!
@@ -256,17 +261,23 @@ public class QueryResponseUI {
                 return 0.0;
             }
 
-            long sum = all.stream().mapToLong(statToLong).sum();
+            double sum = 1.0 * all.stream().mapToLong(statToLong).sum();
+            double tp = Math.round((sum / duration) * 1000000.0) / 1000000.0;
 
-            double tp = (sum * 1.0) / duration;
+            if (tps.size() > SLIDING_WINDOW) {
+                tps.remove(0);
+            }
+
+            tps.add(tp);
 
             if (throughputs.size() > MAX_SIZE) {
                 throughputs.remove(0);
             }
 
-            throughputs.add(tp);
+            double avg = tps.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+            throughputs.add(avg);
 
-            return tp;
+            return avg;
         }
 
 
@@ -298,9 +309,9 @@ public class QueryResponseUI {
                 return 0.0;
             }
 
-            long sum = dest.stream().mapToLong(statToLong).sum();
+            double sum = 1.0 * dest.stream().mapToLong(statToLong).sum();
 
-            return (sum * 1.0) / duration;
+            return Math.round((sum / duration) * 1000000.0) / 1000000.0;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
