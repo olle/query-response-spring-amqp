@@ -38,7 +38,7 @@
             }}</data>
           </small>
         </td>
-        <td><data>{{ node.count_published_responses }}</data></td>
+        <td><data>{{ node.publishedResponses }}</data></td>
         <td>
           <time>{{ node.avgLatency }}</time>
           <small>
@@ -96,6 +96,7 @@ export default {
           node.countQueries = toNumberWithUnit(node.count_queries);
           node.countResponses = toNumberWithUnit(node.count_consumed_responses);
           node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
+          node.publishedResponses = toNumberWithUnit(node.count_published_responses);
           node.throughputQueries = toThroughputPerSecond(
             node.throughput_queries
           );
