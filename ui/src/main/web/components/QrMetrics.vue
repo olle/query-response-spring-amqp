@@ -6,7 +6,7 @@
       class="chart one"
       type="Line"
       :data="successRates"
-      :options="chartOptions"
+      :options="percentChart"
     ></chartist>
     <data class="big one" v-bind:class="successRateRank">{{
       successRate
@@ -22,7 +22,7 @@
       class="chart two"
       type="Line"
       :data="latencies"
-      :options="chartOptions"
+      :options="normalChart"
     ></chartist>
     <time class="big two">{{ avgLatency }}</time>
     <h3>Min</h3>
@@ -34,7 +34,7 @@
       class="chart three"
       type="Line"
       :data="throughputs"
-      :options="chartOptions"
+      :options="normalChart"
     ></chartist>
     <data class="big three">{{ avgThroughput }}</data>
     <h3>Queries</h3>
@@ -60,24 +60,37 @@ Vue.use(Chartist);
 export default {
   name: "qr-metrics",
   data: function () {
-    return {
-      chartOptions: {
-        axisX: {
-          showLabel: false,
-          showGrid: false,
-          offset: 0,
-        },
-        height: 93,
-        showPoint: false,
-        showArea: true,
-        fullWidth: true,
-        chartPadding: {
-          top: 15,
-          right: 0,
-          bottom: 0,
-          left: 0,
-        },
+
+    const normalChart = {
+      axisX: {
+        showLabel: false,
+        showGrid: false,
+        offset: 0,
       },
+      height: 93,
+      showPoint: false,
+      showArea: true,
+      fullWidth: true,
+      chartPadding: {
+        top: 13,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      },
+    };
+
+    const percentChart = {
+      ...normalChart,
+      axisY: {
+        type: Chartist.FixedScaleAxis,
+        high: 100,
+        low: 0,
+      },
+    };
+
+    return {
+      normalChart: normalChart,
+      percentChart: percentChart,
     };
   },
   computed: {
