@@ -15,6 +15,7 @@ import Queries from "./pages/Queries.vue";
 import Topology from "./pages/Topology.vue";
 import Logging from "./pages/Logging.vue";
 import Settings from "./pages/Settings.vue";
+import Cli from "./pages/Cli.vue";
 
 // Store
 import store from "./store.js";
@@ -28,6 +29,7 @@ import TopologyIcon from "./icons/TopologyIcon.vue";
 import LoggingIcon from "./icons/LoggingIcon.vue";
 import SettingsIcon from "./icons/SettingsIcon.vue";
 import BoltIcon from "./icons/BoltIcon.vue";
+import PromptIcon from "./icons/PromptIcon.vue";
 
 Vue.component("home-icon", HomeIcon);
 Vue.component("live-icon", LiveIcon);
@@ -36,6 +38,7 @@ Vue.component("topology-icon", TopologyIcon);
 Vue.component("logging-icon", LoggingIcon);
 Vue.component("settings-icon", SettingsIcon);
 Vue.component("bolt-icon", BoltIcon);
+Vue.component("prompt-icon", PromptIcon);
 
 // Router ---------------------------------------------------------------------
 
@@ -57,6 +60,7 @@ const router = new VueRouter({
     { path: "/queries", component: Queries, ...meta("Queries Insight") },
     { path: "/topology", component: Topology, ...meta("Q/R Topology") },
     { path: "/logging", component: Logging, ...meta("Logging") },
+    { path: "/cli", component: Cli, ...meta("Query CLI") },
     { path: "/settings", component: Settings, ...meta("Settings") },
   ],
 });
