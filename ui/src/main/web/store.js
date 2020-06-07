@@ -82,6 +82,7 @@ const connectSocket = () => {
 
     sock.onopen = () => {
       console.log("websocket opened");
+      sock.send("hello world!");
     };
 
     let handleClosed = () => {
