@@ -3,9 +3,6 @@ package com.studiomediatech;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.studiomediatech.QueryResponseUI.Querier;
-
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.web.socket.CloseStatus;
@@ -104,7 +101,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
     }
 
 
-    public void handleNodes(Map<String, List<Querier.Stat>> nodes) {
+    public void handleNodes(Map<String, List<QueryPublisher.Stat>> nodes) {
 
         try {
             StringBuilder sb = new StringBuilder();
