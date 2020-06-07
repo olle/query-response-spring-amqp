@@ -3,9 +3,6 @@ package com.studiomediatech;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.studiomediatech.QueryResponseUI.Querier;
-import com.studiomediatech.QueryResponseUI.Querier.Stat;
-
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
 
@@ -17,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.EventListener;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -32,6 +31,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import java.util.ArrayList;
@@ -68,6 +68,7 @@ public class QueryResponseUI {
 
 
         @Bean
+        @Primary
         TaskScheduler taskScheduler() {
 
             return new ThreadPoolTaskScheduler();
@@ -75,9 +76,10 @@ public class QueryResponseUI {
 
 
         @Bean
-        WebSocketHandler handler(ApplicationEventPublisher publisher) {
+        WebSocketHandler handler(ApplicationEventPublisher publisher, TaskScheduler scheduler) {
 
-            return new WebSocketHandler(publisher::publishEvent);
+            return new WebSocketHandler(event ->
+                        scheduler.schedule(() -> publisher.publishEvent(event), Instant.EPOCH));
         }
 
 
@@ -128,29 +130,29 @@ public class QueryResponseUI {
             this.handler = handler;
         }
 
+        @EventListener
+        void on(QueryRecordedEvent event) {
+
+            System.out.println(" >>>>>>>>>>>>> " + event);
+        }
+
+
         @Scheduled(fixedDelay = 1000 * 7)
         void query() {
 
             Collection<Stat> stats = QueryBuilder.queryFor("query-response/stats", Stat.class)
-                    .waitingFor(2L, ChronoUnit.SECONDS)
-                    .orEmpty();
+                    .waitingFor(2L, ChronoUnit.SECONDS).orEmpty();
 
             stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
 
-            long countQueriesSum = stats
-                    .stream()
-                    .filter(stat -> "count_queries".equals(stat.key))
+            long countQueriesSum = stats.stream().filter(stat -> "count_queries".equals(stat.key))
                     .mapToLong(statToLong)
                     .sum();
 
-            long countResponsesSum = stats
-                    .stream()
-                    .filter(stat -> "count_consumed_responses".equals(stat.key))
+            long countResponsesSum = stats.stream().filter(stat -> "count_consumed_responses".equals(stat.key))
                     .mapToLong(statToLong).sum();
 
-            long countFallbacksSum = stats
-                    .stream()
-                    .filter(stat -> "count_fallbacks".equals(stat.key))
+            long countFallbacksSum = stats.stream().filter(stat -> "count_fallbacks".equals(stat.key))
                     .mapToLong(statToLong).sum();
 
             double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
@@ -158,26 +160,14 @@ public class QueryResponseUI {
             handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
                 successRates);
 
-            Long minLatency = stats
-                    .stream()
-                    .filter(stat -> "min_latency".equals(stat.key))
-                    .mapToLong(statToLong)
-                    .min()
+            Long minLatency = stats.stream().filter(stat -> "min_latency".equals(stat.key)).mapToLong(statToLong).min()
                     .orElse(-1);
 
-            long maxLatency = stats
-                    .stream()
-                    .filter(stat -> "max_latency".equals(stat.key))
-                    .mapToLong(statToLong)
-                    .max()
+            long maxLatency = stats.stream().filter(stat -> "max_latency".equals(stat.key)).mapToLong(statToLong).max()
                     .orElse(-1);
 
-            double avgLatency = stats
-                    .stream()
-                    .filter(stat -> "avg_latency".equals(stat.key))
-                    .mapToDouble(stat -> (double) stat.value)
-                    .average()
-                    .orElse(0.0d);
+            double avgLatency = stats.stream().filter(stat -> "avg_latency".equals(stat.key))
+                    .mapToDouble(stat -> (double) stat.value).average().orElse(0.0d);
 
             aggregateLatencies(avgLatency);
 
@@ -190,9 +180,7 @@ public class QueryResponseUI {
 
             handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
 
-            Map<String, List<Stat>> nodes = stats
-                    .stream()
-                    .filter(s -> StringUtils.hasText(s.uuid))
+            Map<String, List<Stat>> nodes = stats.stream().filter(s -> StringUtils.hasText(s.uuid))
                     .collect(Collectors.groupingBy(s -> s.uuid));
 
             for (Entry<String, List<Stat>> node : nodes.entrySet()) {
@@ -282,11 +270,8 @@ public class QueryResponseUI {
 
         private double calculateThroughput(String key, Collection<Stat> source, List<Stat> dest) {
 
-            List<Stat> ts = source
-                    .stream()
-                    .filter(stat -> key.equals(stat.key))
-                    .sorted(Comparator.comparing(s -> s.timestamp))
-                    .collect(Collectors.toList());
+            List<Stat> ts = source.stream().filter(stat -> key.equals(stat.key))
+                    .sorted(Comparator.comparing(s -> s.timestamp)).collect(Collectors.toList());
 
             for (Stat stat : ts) {
                 if (dest.size() > MAX_SIZE) {

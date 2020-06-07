@@ -57,7 +57,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        System.err.println("GOT MESSAGE " + message + " FROM SESSION " + session);
+        emitter.emitEvent(QueryRecordedEvent.valueOf(message.getPayload(), session.getId()));
     }
 
 
