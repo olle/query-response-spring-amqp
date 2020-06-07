@@ -1,25 +1,24 @@
 package com.studiomediatech;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.studiomediatech.QueryResponseUI.Querier;
 import com.studiomediatech.QueryResponseUI.Querier.Stat;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
-import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import org.springframework.scheduling.TaskScheduler;
@@ -29,31 +28,19 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import org.springframework.util.StringUtils;
 
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import java.io.IOException;
-
-import java.nio.charset.StandardCharsets;
 
 import java.time.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
@@ -69,8 +56,9 @@ public class QueryResponseUI {
         SpringApplication.run(QueryResponseUI.class);
     }
 
+    @Order(10)
     @Configuration
-    static class Config implements WebSocketConfigurer {
+    static class AppConfig {
 
         @Bean
         ConnectionNameStrategy connectionNameStrategy(Environment env) {
@@ -86,28 +74,39 @@ public class QueryResponseUI {
         }
 
 
-        @Override
-        public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        @Bean
+        WebSocket handler(ApplicationEventPublisher publisher) {
 
-            registry.addHandler(handler(), "/ws");
+            return new WebSocket(publisher::publishEvent);
         }
 
 
         @Bean
-        Handler handler() {
-
-            return new Handler();
-        }
-
-
-        @Bean
-        Querier querier(Handler handler) {
+        Querier querier(WebSocket handler) {
 
             return new Querier(handler);
         }
     }
 
-    static class Querier {
+    @Order(100)
+    @Configuration
+    static class WebSocketConfig implements WebSocketConfigurer {
+
+        private final WebSocket webSocketHandler;
+
+        public WebSocketConfig(WebSocket webSocketHandler) {
+
+            this.webSocketHandler = webSocketHandler;
+        }
+
+        @Override
+        public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+
+            registry.addHandler(webSocketHandler, "/ws");
+        }
+    }
+
+    public static class Querier {
 
         // This is a Fib!
         private static final int MAX_SIZE = 2584;
@@ -122,9 +121,9 @@ public class QueryResponseUI {
         private List<Double> throughputs = new LinkedList<>();
         private List<Double> tps = new LinkedList<>();
 
-        private final Handler handler;
+        private final WebSocket handler;
 
-        public Querier(Handler handler) {
+        public Querier(WebSocket handler) {
 
             this.handler = handler;
         }
@@ -315,7 +314,7 @@ public class QueryResponseUI {
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-        static class Stat {
+        public static class Stat {
 
             @JsonProperty
             public String key;
@@ -331,106 +330,6 @@ public class QueryResponseUI {
 
                 return key + "=" + value + (timestamp != null ? " " + timestamp : "")
                     + (uuid != null ? " uuid=" + uuid : "");
-            }
-        }
-    }
-
-    static class Handler extends TextWebSocketHandler implements Logging {
-
-        private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
-
-        private final ObjectMapper objectMapper;
-
-        public Handler() {
-
-            objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(Include.NON_NULL);
-        }
-
-        @Override
-        public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
-            sessions.add(session);
-        }
-
-
-        @Override
-        public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-
-            sessions.remove(session);
-        }
-
-
-        public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum,
-            long countFallbacksSum, double successRate, List<Double> successRates) {
-
-            var json = String.format(Locale.US,
-                    "{\"metrics\": {"
-                    + "\"count_queries\": %d,"
-                    + "\"count_responses\": %d,"
-                    + "\"count_fallbacks\": %d,"
-                    + "\"success_rate\": %f,"
-                    + "\"success_rates\": %s"
-                    + "}}", countQueriesSum, countResponsesSum, countFallbacksSum, successRate, successRates);
-
-            publishTextMessageWithPayload(json);
-        }
-
-
-        public void handleLatency(long minLatency, long maxLatency, double avgLatency, List<Double> latencies) {
-
-            var json = String.format(Locale.US,
-                    "{\"metrics\": {"
-                    + (minLatency != -1 ? "\"min_latency\": %d," : "")
-                    + (maxLatency != -1 ? "\"max_latency\": %d," : "")
-                    + "\"avg_latency\": %f,"
-                    + "\"avg_latencies\": %s"
-                    + "}}", minLatency, maxLatency, avgLatency, latencies);
-
-            publishTextMessageWithPayload(json);
-        }
-
-
-        public void handleThroughput(double queries, double responses, double avg, List<Double> throughputs) {
-
-            var json = String.format(Locale.US,
-                    "{\"metrics\": {"
-                    + "\"throughput_queries\": %f,"
-                    + "\"throughput_responses\": %f,"
-                    + "\"avg_throughput\": %f,"
-                    + "\"avg_throughputs\": %s"
-                    + "}}", queries, responses, avg, throughputs);
-
-            publishTextMessageWithPayload(json);
-        }
-
-
-        public void handleNodes(Map<String, List<Stat>> nodes) {
-
-            try {
-                StringBuilder sb = new StringBuilder();
-
-                sb.append("{\"nodes\": ");
-                sb.append(objectMapper.writeValueAsString(nodes));
-                sb.append("}");
-
-                publishTextMessageWithPayload(sb.toString());
-            } catch (JsonProcessingException e) {
-                log().error("Failed to create nodes payload", e);
-            }
-        }
-
-
-        private void publishTextMessageWithPayload(String json) {
-
-            var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
-
-            for (WebSocketSession s : sessions) {
-                try {
-                    s.sendMessage(message);
-                } catch (IOException e) {
-                    log().error("Could not publish text message to websocket", e);
-                }
             }
         }
     }
