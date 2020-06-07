@@ -75,14 +75,14 @@ public class QueryResponseUI {
 
 
         @Bean
-        WebSocket handler(ApplicationEventPublisher publisher) {
+        WebSocketHandler handler(ApplicationEventPublisher publisher) {
 
-            return new WebSocket(publisher::publishEvent);
+            return new WebSocketHandler(publisher::publishEvent);
         }
 
 
         @Bean
-        Querier querier(WebSocket handler) {
+        Querier querier(WebSocketHandler handler) {
 
             return new Querier(handler);
         }
@@ -92,9 +92,9 @@ public class QueryResponseUI {
     @Configuration
     static class WebSocketConfig implements WebSocketConfigurer {
 
-        private final WebSocket webSocketHandler;
+        private final WebSocketHandler webSocketHandler;
 
-        public WebSocketConfig(WebSocket webSocketHandler) {
+        public WebSocketConfig(WebSocketHandler webSocketHandler) {
 
             this.webSocketHandler = webSocketHandler;
         }
@@ -121,9 +121,9 @@ public class QueryResponseUI {
         private List<Double> throughputs = new LinkedList<>();
         private List<Double> tps = new LinkedList<>();
 
-        private final WebSocket handler;
+        private final WebSocketHandler handler;
 
-        public Querier(WebSocket handler) {
+        public Querier(WebSocketHandler handler) {
 
             this.handler = handler;
         }

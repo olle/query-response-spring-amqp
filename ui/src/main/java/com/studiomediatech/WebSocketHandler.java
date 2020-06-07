@@ -25,14 +25,14 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class WebSocket extends TextWebSocketHandler implements Logging {
+public class WebSocketHandler extends TextWebSocketHandler implements Logging {
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
     private final EventEmitter emitter;
     private final ObjectMapper objectMapper;
 
-    public WebSocket(EventEmitter emitter) {
+    public WebSocketHandler(EventEmitter emitter) {
 
         this.emitter = emitter;
 
