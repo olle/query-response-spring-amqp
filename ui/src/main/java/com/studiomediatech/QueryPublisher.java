@@ -50,10 +50,11 @@ public class QueryPublisher implements Logging {
     @EventListener
     void on(QueryRecordedEvent event) {
 
-        log().info(">>>>>>>>>>>>>>>>>>>> {}", event);
+        Collection<Object> response = QueryBuilder.queryFor(event.getQuery(), Object.class)
+                .waitingFor(1234)
+                .takingAtMost(1)
+                .orEmpty();
 
-        Collection<Object> response = QueryBuilder.queryFor(event.getQuery(), Object.class).waitingFor(1234).orEmpty();
-        log().info("Got {}", response);
         handler.handleResponse(response, event.getPublisherId());
     }
 

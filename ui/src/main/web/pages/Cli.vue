@@ -5,7 +5,7 @@
       <input v-model="query" :autofocus="'autofocus'" />
     </form>
     <code>
-      <em>No responses received yet.</em>
+      <pre>{{ response }}</pre>
     </code>
   </article>
 </template>
@@ -18,6 +18,7 @@ export default {
   data: function () {
     return {
       query: "",
+      response: "No response.",
     };
   },
   methods: {
@@ -32,19 +33,18 @@ export default {
     if (input) {
       input.focus();
     }
+    addListener((msg) => {
+      try {
+        var message = JSON.parse(msg.data);
+        if (message.response) {
+          this.$data.response = message.response;
+        }
+      } catch (err) {
+        console.error("unexpected payload", msg.data);
+      }
+    });
   },
 };
-
-addListener((msg) => {
-  try {
-    var message = JSON.parse(msg.data);
-    if (message.response) {
-      console.log("THIS IS US", message.response);
-    }
-  } catch (err) {
-    console.error("unexpected payload", msg.data);
-  }
-});
 </script>
 
 <style scoped>
@@ -58,6 +58,7 @@ form * {
 form > input,
 code {
   background: var(--panel);
+  color: var(--fg);
   border: var(--border);
   padding: 0.8rem 1rem;
 }
@@ -69,5 +70,6 @@ form > input {
 code {
   display: block;
   border-top: none;
+  font-size: 0.9rem;
 }
 </style>
