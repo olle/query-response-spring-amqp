@@ -3,6 +3,7 @@ package com.studiomediatech;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.web.socket.CloseStatus;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 import java.nio.charset.StandardCharsets;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -127,6 +129,22 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
             } catch (IOException e) {
                 log().error("Could not publish text message to websocket", e);
             }
+        }
+    }
+
+
+    public void handleResponse(Collection<Object> response, String publisherId) {
+
+        try {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("{\"response\": ");
+            sb.append(objectMapper.writeValueAsString(response));
+            sb.append("}");
+
+            publishTextMessageWithPayload(sb.toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 }

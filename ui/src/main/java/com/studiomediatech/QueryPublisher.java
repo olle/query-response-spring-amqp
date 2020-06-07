@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.context.event.EventListener;
 
@@ -24,7 +25,7 @@ import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
 
-public class QueryPublisher {
+public class QueryPublisher implements Logging {
 
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
@@ -49,7 +50,11 @@ public class QueryPublisher {
     @EventListener
     void on(QueryRecordedEvent event) {
 
-        System.out.println(" >>>>>>>>>>>>> " + event);
+        log().info(">>>>>>>>>>>>>>>>>>>> {}", event);
+
+        Collection<Object> response = QueryBuilder.queryFor(event.getQuery(), Object.class).waitingFor(1234).orEmpty();
+        log().info("Got {}", response);
+        handler.handleResponse(response, event.getPublisherId());
     }
 
 

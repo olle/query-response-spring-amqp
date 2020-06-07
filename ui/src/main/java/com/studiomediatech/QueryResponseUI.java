@@ -11,12 +11,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -55,10 +57,16 @@ public class QueryResponseUI {
 
 
         @Bean
-        WebSocketHandler handler(ApplicationEventPublisher publisher, TaskScheduler scheduler) {
+        EventEmitter eventEmitter(TaskScheduler scheduler, ApplicationEventPublisher publisher) {
 
-            return new WebSocketHandler(event ->
-                        scheduler.schedule(() -> publisher.publishEvent(event), Instant.EPOCH));
+            return event -> scheduler.schedule(() -> publisher.publishEvent(event), Instant.EPOCH);
+        }
+
+
+        @Bean
+        WebSocketHandler handler(EventEmitter emitter) {
+
+            return new WebSocketHandler(emitter);
         }
 
 
