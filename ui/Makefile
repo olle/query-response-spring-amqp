@@ -6,7 +6,7 @@
 #
 run: node_modules
 	mvn clean
-	npm run watch & mvn spring-boot:run
+	npm run watch & mvn spring-boot:run ; wait
 
 #
 # Focused on client-side, this target will run a front-end only server, so

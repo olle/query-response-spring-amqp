@@ -2,23 +2,30 @@
   <article>
     <h1>Query Command Line Interface</h1>
     <form v-on:submit.prevent="publish">
-      <input v-model="query" :autofocus="'autofocus'" />
+      <label>&gt;</label>
+      <input v-model="query" v-focus :autofocus="'autofocus'" />
     </form>
-    <code>
-      <pre>{{ response }}</pre>
-    </code>
+    <pre><code>{{ response }}</code></pre>
   </article>
 </template>
 
 <script>
+import Vue from "vue";
+
 import { publishMessage, addListener } from "../ws";
+
+Vue.directive("focus", {
+  inserted: function (el) {
+    el.focus();
+  },
+});
 
 export default {
   name: "Cli",
   data: function () {
     return {
       query: "",
-      response: "No response.",
+      response: "# " + new Date(),
     };
   },
   methods: {
@@ -29,15 +36,11 @@ export default {
     },
   },
   mounted: function () {
-    let input = document.querySelector("[autofocus]");
-    if (input) {
-      input.focus();
-    }
     addListener((msg) => {
       try {
         var message = JSON.parse(msg.data);
         if (message.response) {
-          this.$data.response = message.response;
+          this.$data.response = JSON.stringify(message.response, null, 2);
         }
       } catch (err) {
         console.error("unexpected payload", msg.data);
@@ -48,28 +51,38 @@ export default {
 </script>
 
 <style scoped>
-form {
-  font-family: monospace;
-}
 form * {
   border: none;
-  font-family: inherit;
 }
+form {
+  display: flex;
+}
+form > label,
 form > input,
-code {
+pre {
   background: var(--panel);
   color: var(--fg);
   border: var(--border);
   padding: 0.8rem 1rem;
+  font-size: 1.1rem;
+  font-family: monospace;
+}
+form > label {
+  border-right: none;
+  padding-right: 0;
 }
 form > input {
+  flex: 1;
   width: 100%;
-  border-bottom-style: dotted;
-  font-size: 1rem;
+  border-left: none;
+  padding-left: 0.5rem;
 }
-code {
-  display: block;
+form > input:focus {
+  outline: none;
+}
+pre {
   border-top: none;
-  font-size: 0.9rem;
+  margin-top: 0;
+  font-family: monospace;
 }
 </style>

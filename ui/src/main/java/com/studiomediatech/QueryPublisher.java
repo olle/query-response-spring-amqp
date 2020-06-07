@@ -52,7 +52,7 @@ public class QueryPublisher implements Logging {
 
         Collection<Object> response = QueryBuilder.queryFor(event.getQuery(), Object.class)
                 .waitingFor(1234)
-                .takingAtMost(1)
+                .takingAtMost(42)
                 .orEmpty();
 
         handler.handleResponse(response, event.getPublisherId());
