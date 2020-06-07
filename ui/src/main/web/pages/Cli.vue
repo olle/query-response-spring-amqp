@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { publishMessage } from "../ws";
+import { publishMessage, addListener } from "../ws";
 
 export default {
   name: "Cli",
@@ -34,6 +34,17 @@ export default {
     }
   },
 };
+
+addListener((msg) => {
+  try {
+    var message = JSON.parse(msg.data);
+    if (message.response) {
+      console.log("THIS IS US", message.response);
+    }
+  } catch (err) {
+    console.error("unexpected payload", msg.data);
+  }
+});
 </script>
 
 <style scoped>
