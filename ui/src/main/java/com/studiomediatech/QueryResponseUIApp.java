@@ -1,5 +1,8 @@
 package com.studiomediatech;
 
+import com.studiomediatech.events.AsyncEventEmitter;
+import com.studiomediatech.events.EventEmitter;
+
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 
 import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
@@ -23,18 +26,16 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import java.time.Instant;
-
 
 @SpringBootApplication
 @EnableQueryResponse
 @EnableScheduling
 @EnableWebSocket
-public class QueryResponseUI {
+public class QueryResponseUIApp {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(QueryResponseUI.class);
+        SpringApplication.run(QueryResponseUIApp.class);
     }
 
     @Order(10)
@@ -59,7 +60,7 @@ public class QueryResponseUI {
         @Bean
         EventEmitter eventEmitter(TaskScheduler scheduler, ApplicationEventPublisher publisher) {
 
-            return event -> scheduler.schedule(() -> publisher.publishEvent(event), Instant.EPOCH);
+            return new AsyncEventEmitter(scheduler, publisher);
         }
 
 

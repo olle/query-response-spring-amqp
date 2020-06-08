@@ -68,14 +68,17 @@ public class QueryPublisher implements Logging {
 
         stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
 
-        long countQueriesSum = stats.stream().filter(stat -> "count_queries".equals(stat.key))
+        long countQueriesSum = stats.stream()
+                .filter(stat -> "count_queries".equals(stat.key))
                 .mapToLong(statToLong)
                 .sum();
 
-        long countResponsesSum = stats.stream().filter(stat -> "count_consumed_responses".equals(stat.key))
+        long countResponsesSum = stats.stream()
+                .filter(stat -> "count_consumed_responses".equals(stat.key))
                 .mapToLong(statToLong).sum();
 
-        long countFallbacksSum = stats.stream().filter(stat -> "count_fallbacks".equals(stat.key))
+        long countFallbacksSum = stats.stream()
+                .filter(stat -> "count_fallbacks".equals(stat.key))
                 .mapToLong(statToLong).sum();
 
         double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
@@ -83,14 +86,21 @@ public class QueryPublisher implements Logging {
         handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
             successRates);
 
-        Long minLatency = stats.stream().filter(stat -> "min_latency".equals(stat.key)).mapToLong(statToLong).min()
+        Long minLatency = stats.stream()
+                .filter(stat -> "min_latency".equals(stat.key))
+                .mapToLong(statToLong).min()
                 .orElse(-1);
 
-        long maxLatency = stats.stream().filter(stat -> "max_latency".equals(stat.key)).mapToLong(statToLong).max()
+        long maxLatency = stats.stream()
+                .filter(stat -> "max_latency".equals(stat.key))
+                .mapToLong(statToLong).max()
                 .orElse(-1);
 
-        double avgLatency = stats.stream().filter(stat -> "avg_latency".equals(stat.key))
-                .mapToDouble(stat -> (double) stat.value).average().orElse(0.0d);
+        double avgLatency = stats.stream()
+                .filter(stat -> "avg_latency".equals(stat.key))
+                .mapToDouble(stat -> (double) stat.value)
+                .average()
+                .orElse(0.0d);
 
         aggregateLatencies(avgLatency);
 
@@ -103,7 +113,8 @@ public class QueryPublisher implements Logging {
 
         handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
 
-        Map<String, List<QueryPublisher.Stat>> nodes = stats.stream().filter(s -> StringUtils.hasText(s.uuid))
+        Map<String, List<QueryPublisher.Stat>> nodes = stats.stream()
+                .filter(s -> StringUtils.hasText(s.uuid))
                 .collect(Collectors.groupingBy(s -> s.uuid));
 
         for (Entry<String, List<QueryPublisher.Stat>> node : nodes.entrySet()) {
