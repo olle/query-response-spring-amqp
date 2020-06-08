@@ -2,18 +2,20 @@ package com.studiomediatech.events;
 
 public final class QueryRecordedEvent {
 
+    private static final int DEFAULT_TIMEOUT_MS = 150;
+
     private final String query;
     private final String publisherId;
 
     private QueryRecordedEvent(String query, String publisherId) {
 
-        this.query = query;
+        this.query = query.trim();
         this.publisherId = publisherId;
     }
 
     public String getQuery() {
 
-        return query;
+        return query.split(" ")[0];
     }
 
 
@@ -33,5 +35,15 @@ public final class QueryRecordedEvent {
     public String toString() {
 
         return "QueryRecordedEvent [query=" + query + ", publisherId=" + publisherId + "]";
+    }
+
+
+    public long getTimeout() {
+
+        try {
+            return query.contains(" ") ? Long.parseLong(query.split(" ")[1]) : DEFAULT_TIMEOUT_MS;
+        } catch (RuntimeException e) {
+            return 1000;
+        }
     }
 }

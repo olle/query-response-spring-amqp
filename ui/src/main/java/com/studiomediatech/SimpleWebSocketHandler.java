@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.events.QueryRecordedEvent;
+
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.web.socket.CloseStatus;
@@ -158,8 +159,15 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
 
         var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 
+        WebSocketSession s = sessionsById.get(id);
+
+        if (s == null) {
+            log().warn("Could not find websocket session for {} in {}", id, sessionsById);
+
+            return;
+        }
+
         try {
-            WebSocketSession s = sessionsById.get(id);
             s.sendMessage(message);
         } catch (IOException e) {
             log().error("Could not publish text message to websocket", e);

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.studiomediatech</groupId>
@@ -109,13 +110,13 @@
                                             <minimum>0.60</minimum>
                                         </limit>
                                     </limits>
-                                <excludes>
-                                    <exclude>com.studiomediatech.queryresponse.QueryResponseConfiguration</exclude>
-                                    <exclude>com.studiomediatech.queryresponse.Statistics</exclude>
-                                    <exclude>com.studiomediatech.queryresponse.util.*</exclude>
-                                    <exclude>com.studiomediatech.queryresponse.Query.ConsumedResponseEnvelope</exclude>
-                                    <exclude>com.studiomediatech.queryresponse.Response.PublishedResponseEnvelope</exclude>
-                                </excludes>
+                                    <excludes>
+                                        <exclude>com.studiomediatech.queryresponse.QueryResponseConfiguration</exclude>
+                                        <exclude>com.studiomediatech.queryresponse.Statistics</exclude>
+                                        <exclude>com.studiomediatech.queryresponse.util.*</exclude>
+                                        <exclude>com.studiomediatech.queryresponse.Query.ConsumedResponseEnvelope</exclude>
+                                        <exclude>com.studiomediatech.queryresponse.Response.PublishedResponseEnvelope</exclude>
+                                    </excludes>
                                 </rule>
                             </rules>
                         </configuration>

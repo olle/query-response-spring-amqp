@@ -2,7 +2,9 @@ package com.studiomediatech;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.studiomediatech.events.QueryRecordedEvent;
+
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.util.Logging;
 
@@ -50,10 +52,14 @@ public class QueryPublisher implements Logging {
     @EventListener
     void on(QueryRecordedEvent event) {
 
-        Collection<Object> response = QueryBuilder.queryFor(event.getQuery(), Object.class)
-                .waitingFor(1234)
-                .takingAtMost(42)
-                .orEmpty();
+        log().info("HANDLING {}", event);
+
+        String query = event.getQuery();
+        long timeout = event.getTimeout();
+
+        Collection<Object> response = QueryBuilder.queryFor(query, Object.class)
+                .waitingFor(timeout)
+                .orDefaults(List.of("No responses"));
 
         handler.handleResponse(response, event.getPublisherId());
     }
