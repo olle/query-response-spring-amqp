@@ -2,7 +2,7 @@ package com.studiomediatech;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.util.Logging;
 
@@ -40,9 +40,9 @@ public class QueryPublisher implements Logging {
     private List<Double> throughputs = new LinkedList<>();
     private List<Double> tps = new LinkedList<>();
 
-    private final WebSocketHandler handler;
+    private final SimpleWebSocketHandler handler;
 
-    public QueryPublisher(WebSocketHandler handler) {
+    public QueryPublisher(SimpleWebSocketHandler handler) {
 
         this.handler = handler;
     }

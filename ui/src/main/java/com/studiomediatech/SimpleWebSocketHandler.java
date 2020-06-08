@@ -3,12 +3,15 @@ package com.studiomediatech;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.studiomediatech.events.EventEmitter;
+import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
@@ -16,22 +19,23 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
-public class WebSocketHandler extends TextWebSocketHandler implements Logging {
+public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logging {
 
-    private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
+    private static final int SEND_TIME_LIMIT = 6 * 1000;
+    private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;
+
+    private final Map<String, WebSocketSession> sessionsById = new ConcurrentHashMap<>();
 
     private final EventEmitter emitter;
     private final ObjectMapper objectMapper;
 
-    public WebSocketHandler(EventEmitter emitter) {
+    public SimpleWebSocketHandler(EventEmitter emitter) {
 
         this.emitter = emitter;
 
@@ -42,14 +46,15 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-        sessions.add(session);
+        sessionsById.put(session.getId(),
+            new ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, SEND_BUFFER_SIZE_LIMIT));
     }
 
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-        sessions.remove(session);
+        sessionsById.remove(session.getId());
     }
 
 
@@ -123,7 +128,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
 
         var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 
-        for (WebSocketSession s : sessions) {
+        for (WebSocketSession s : sessionsById.values()) {
             try {
                 s.sendMessage(message);
             } catch (IOException e) {
@@ -133,7 +138,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
     }
 
 
-    public void handleResponse(Collection<Object> response, String publisherId) {
+    public void handleResponse(Collection<Object> response, String id) {
 
         try {
             StringBuilder sb = new StringBuilder();
@@ -142,9 +147,22 @@ public class WebSocketHandler extends TextWebSocketHandler implements Logging {
             sb.append(objectMapper.writeValueAsString(response));
             sb.append("}");
 
-            publishTextMessageWithPayload(sb.toString());
+            publishTextMessageWithPayloadToSession(id, sb.toString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    private void publishTextMessageWithPayloadToSession(String id, String json) {
+
+        var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
+
+        try {
+            WebSocketSession s = sessionsById.get(id);
+            s.sendMessage(message);
+        } catch (IOException e) {
+            log().error("Could not publish text message to websocket", e);
         }
     }
 }

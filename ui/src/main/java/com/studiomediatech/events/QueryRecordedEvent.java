@@ -1,6 +1,6 @@
-package com.studiomediatech;
+package com.studiomediatech.events;
 
-public class QueryRecordedEvent {
+public final class QueryRecordedEvent {
 
     private final String query;
     private final String publisherId;

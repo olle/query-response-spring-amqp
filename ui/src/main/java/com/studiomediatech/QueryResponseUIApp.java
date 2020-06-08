@@ -65,14 +65,14 @@ public class QueryResponseUIApp {
 
 
         @Bean
-        WebSocketHandler handler(EventEmitter emitter) {
+        SimpleWebSocketHandler handler(EventEmitter emitter) {
 
-            return new WebSocketHandler(emitter);
+            return new SimpleWebSocketHandler(emitter);
         }
 
 
         @Bean
-        QueryPublisher querier(WebSocketHandler handler) {
+        QueryPublisher querier(SimpleWebSocketHandler handler) {
 
             return new QueryPublisher(handler);
         }
@@ -82,9 +82,9 @@ public class QueryResponseUIApp {
     @Configuration
     static class WebSocketConfig implements WebSocketConfigurer {
 
-        private final WebSocketHandler webSocketHandler;
+        private final SimpleWebSocketHandler webSocketHandler;
 
-        public WebSocketConfig(WebSocketHandler webSocketHandler) {
+        public WebSocketConfig(SimpleWebSocketHandler webSocketHandler) {
 
             this.webSocketHandler = webSocketHandler;
         }
