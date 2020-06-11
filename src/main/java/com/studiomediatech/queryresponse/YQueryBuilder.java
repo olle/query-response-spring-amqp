@@ -110,9 +110,9 @@ public final class YQueryBuilder<T> {
      *
      * @throws  IllegalArgumentException  if the query {@code term} argument is invalid.
      */
-    public static <T> YQueryBuilder<T> queryFor(String term, Class<T> type) {
+    static <T> YQueryBuilder<T> queryFor(String term, Class<T> type) {
 
-        return new YQueryBuilder<>(term, type);
+        return new YQueryBuilder<T>(term, type);
     }
 
 
@@ -404,6 +404,14 @@ public final class YQueryBuilder<T> {
 
             return null;
         };
+
+        return this;
+    }
+
+
+    YQueryBuilder<T> withRegistry(QueryRegistry queryRegistry) {
+
+        this.sink = queryRegistry::accept;
 
         return this;
     }

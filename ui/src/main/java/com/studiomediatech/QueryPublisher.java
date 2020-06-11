@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.events.QueryRecordedEvent;
 
-import com.studiomediatech.queryresponse.YQueryBuilder;
+import com.studiomediatech.queryresponse.XQueryBuilder;
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.context.event.EventListener;
@@ -42,11 +42,13 @@ public class QueryPublisher implements Logging {
     private List<Double> throughputs = new LinkedList<>();
     private List<Double> tps = new LinkedList<>();
 
+    private final XQueryBuilder queryBuilder;
     private final SimpleWebSocketHandler handler;
 
-    public QueryPublisher(SimpleWebSocketHandler handler) {
+    public QueryPublisher(SimpleWebSocketHandler handler, XQueryBuilder queryBuilder) {
 
         this.handler = handler;
+        this.queryBuilder = queryBuilder;
     }
 
     @EventListener
@@ -57,7 +59,7 @@ public class QueryPublisher implements Logging {
         String query = event.getQuery();
         long timeout = event.getTimeout();
 
-        Collection<Object> response = YQueryBuilder.queryFor(query, Object.class)
+        Collection<Object> response = queryBuilder.queryFor(query, Object.class)
                 .waitingFor(timeout)
                 .orDefaults(List.of("No responses"));
 
@@ -68,7 +70,7 @@ public class QueryPublisher implements Logging {
     @Scheduled(fixedDelay = 1000 * 7)
     void query() {
 
-        Collection<QueryPublisher.Stat> stats = YQueryBuilder.queryFor("query-response/stats",
+        Collection<QueryPublisher.Stat> stats = queryBuilder.queryFor("query-response/stats",
                     QueryPublisher.Stat.class)
                 .waitingFor(2L, ChronoUnit.SECONDS).orEmpty();
 
