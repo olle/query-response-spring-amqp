@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.events.QueryRecordedEvent;
 
-import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.YQueryBuilder;
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.context.event.EventListener;
@@ -57,7 +57,7 @@ public class QueryPublisher implements Logging {
         String query = event.getQuery();
         long timeout = event.getTimeout();
 
-        Collection<Object> response = QueryBuilder.queryFor(query, Object.class)
+        Collection<Object> response = YQueryBuilder.queryFor(query, Object.class)
                 .waitingFor(timeout)
                 .orDefaults(List.of("No responses"));
 
@@ -68,7 +68,7 @@ public class QueryPublisher implements Logging {
     @Scheduled(fixedDelay = 1000 * 7)
     void query() {
 
-        Collection<QueryPublisher.Stat> stats = QueryBuilder.queryFor("query-response/stats",
+        Collection<QueryPublisher.Stat> stats = YQueryBuilder.queryFor("query-response/stats",
                     QueryPublisher.Stat.class)
                 .waitingFor(2L, ChronoUnit.SECONDS).orEmpty();
 

@@ -61,9 +61,9 @@ class QueryTest {
     @Test
     void ensureResponseIsConsumed() {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("term", String.class)
+        YQueryBuilder.queryFor("term", String.class)
             .withSink(capture::set)
             .waitingFor(1)
             .orEmpty();
@@ -80,11 +80,11 @@ class QueryTest {
     @Test
     void ensureInvokesOnErrorHandler() throws Exception {
 
-        AtomicReference<QueryBuilder<Foo>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<Foo>> capture = new AtomicReference<>(null);
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        QueryBuilder.queryFor("term", Foo.class)
+        YQueryBuilder.queryFor("term", Foo.class)
             .withSink(capture::set)
             .waitingFor(42)
             .onError(err -> {
@@ -106,9 +106,9 @@ class QueryTest {
     @Test
     void ensureIgnoresErrorIfNoHandler() throws Exception {
 
-        AtomicReference<QueryBuilder<Foo>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<Foo>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("term", Foo.class)
+        YQueryBuilder.queryFor("term", Foo.class)
             .withSink(capture::set)
             .waitingFor(1)
             .orEmpty();
@@ -125,9 +125,9 @@ class QueryTest {
     @Test
     void ensureReturnsDefaultsForLessThanAtLeast() {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1)
             .takingAtLeast(5)
@@ -145,9 +145,9 @@ class QueryTest {
     @Test
     void ensureReturnsOnlyAtMostWhenConsumed() {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1234)
             .takingAtMost(3)
@@ -168,9 +168,9 @@ class QueryTest {
     @Test
     void ensureReturnsOnlyExactlyAtMostWhenConsumed() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1234)
             .takingAtMost(6)
@@ -191,9 +191,9 @@ class QueryTest {
     @Test
     void ensureReturnsAllBelowAtMost() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1)
             .takingAtMost(6)
@@ -211,9 +211,9 @@ class QueryTest {
     @Test
     void ensureThrowsWhenOrThrowsIsSetAndTimeout() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1)
             .orThrow(TimeoutOrThrowsException::new);
@@ -227,9 +227,9 @@ class QueryTest {
     @Test
     void ensureThrowsWhenOrThrowsIsSetAndAtLeastFails() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1)
             .takingAtLeast(10)
@@ -250,9 +250,9 @@ class QueryTest {
     @Test
     void ensureSuccessWhenMoreThanAtLeastConsumed() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .takingAtLeast(5)
@@ -273,9 +273,9 @@ class QueryTest {
     @Test
     void ensureThrowsProvidedWhenInterruptedDuringWait() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .orThrow(AtLeastOrThrowsException::new);
@@ -294,9 +294,9 @@ class QueryTest {
     @Test
     void ensureInvokesOnErrorHandlerWhenInterruptedDuringWait() throws Exception {
 
-        AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        QueryBuilder.queryFor("foobar", String.class)
+        YQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .onError(err -> { assertThat(err).isInstanceOf(InterruptedException.class); })

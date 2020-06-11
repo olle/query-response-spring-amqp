@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @param  <T>  the type of response entries or elements.
  */
-public class ResponseBuilder<T> {
+public class YResponseBuilder<T> {
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -39,7 +39,7 @@ public class ResponseBuilder<T> {
     /**
      * The target, used in the terminal operation. Can be modified from {@link #withSink(Consumer)}.
      */
-    private Consumer<ResponseBuilder<T>> sink = ResponseRegistry::register;
+    private Consumer<YResponseBuilder<T>> sink = ResponseRegistry::register;
 
     /**
      * Constructs a response builder, with the given term to respond to.
@@ -50,18 +50,18 @@ public class ResponseBuilder<T> {
      *
      * @param  term  to respond to
      */
-    private ResponseBuilder(String term, Class<T> type) {
+    private YResponseBuilder(String term, Class<T> type) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
-    public static <T> ResponseBuilder<T> respondTo(String term, Class<T> type) {
+    public static <T> YResponseBuilder<T> respondTo(String term, Class<T> type) {
 
-        return new ResponseBuilder<>(term, type);
+        return new YResponseBuilder<>(term, type);
     }
 
 
-    public ResponseBuilder<T> withAll() {
+    public YResponseBuilder<T> withAll() {
 
         this.batchSize = 0;
 
@@ -69,7 +69,7 @@ public class ResponseBuilder<T> {
     }
 
 
-    public ResponseBuilder<T> withBatchesOf(int size) {
+    public YResponseBuilder<T> withBatchesOf(int size) {
 
         this.batchSize = Asserts.invariantBatchSize(size);
 
@@ -166,7 +166,7 @@ public class ResponseBuilder<T> {
      *
      * @return  this builder, for chaining.
      */
-    protected ResponseBuilder<T> withSink(Consumer<ResponseBuilder<T>> sink) {
+    protected YResponseBuilder<T> withSink(Consumer<YResponseBuilder<T>> sink) {
 
         this.sink = sink;
 

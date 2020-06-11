@@ -48,9 +48,9 @@ class ResponseRegistryTest {
     @Test
     void ensureThrowsOnMissingBean() {
 
-        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query", String.class)
+        YResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -67,9 +67,9 @@ class ResponseRegistryTest {
     @Test
     void ensureInstanceIsInvokedOnRegister() {
 
-        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query", String.class)
+        YResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -88,9 +88,9 @@ class ResponseRegistryTest {
     @Test
     void ensureAcceptResponses() {
 
-        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<YResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ResponseBuilder.<String>respondTo("some-query", String.class)
+        YResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
