@@ -4,9 +4,9 @@ public class XQueryBuilder {
 
     private final QueryRegistry queryRegistry;
 
-    public XQueryBuilder(QueryRegistry registry) {
+    public XQueryBuilder(QueryRegistry queryRegistry) {
 
-        this.queryRegistry = registry;
+        this.queryRegistry = queryRegistry;
     }
 
     public <T> YQueryBuilder<T> queryFor(String term, Class<T> type) {

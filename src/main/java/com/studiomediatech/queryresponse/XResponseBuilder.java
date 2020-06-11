@@ -2,8 +2,15 @@ package com.studiomediatech.queryresponse;
 
 public class XResponseBuilder {
 
-    public XResponseBuilder(ResponseRegistry registry) {
+    private final ResponseRegistry responseRegistry;
 
-        // TODO Auto-generated constructor stub
+    public XResponseBuilder(ResponseRegistry responseRegistry) {
+
+        this.responseRegistry = responseRegistry;
+    }
+
+    public <T> YResponseBuilder<T> respondTo(String term, Class<T> type) {
+
+        return YResponseBuilder.respondTo(term, type).withRegistry(responseRegistry);
     }
 }

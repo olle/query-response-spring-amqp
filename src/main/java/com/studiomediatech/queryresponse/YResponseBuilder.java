@@ -55,7 +55,7 @@ public class YResponseBuilder<T> {
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
-    public static <T> YResponseBuilder<T> respondTo(String term, Class<T> type) {
+    static <T> YResponseBuilder<T> respondTo(String term, Class<T> type) {
 
         return new YResponseBuilder<>(term, type);
     }
@@ -169,6 +169,14 @@ public class YResponseBuilder<T> {
     protected YResponseBuilder<T> withSink(Consumer<YResponseBuilder<T>> sink) {
 
         this.sink = sink;
+
+        return this;
+    }
+
+
+    YResponseBuilder<T> withRegistry(ResponseRegistry responseRegistry) {
+
+        this.sink = responseRegistry::accept;
 
         return this;
     }
