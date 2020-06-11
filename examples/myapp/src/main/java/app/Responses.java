@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.queryresponse.ResponseBuilder;
+import com.studiomediatech.queryresponse.XResponseBuilder;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
@@ -15,11 +15,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class Responses {
 
+    private final XResponseBuilder responseBuilder;
+
+    public Responses(XResponseBuilder responseBuilder) {
+
+        this.responseBuilder = responseBuilder;
+    }
+
     @Order(1)
     @EventListener(ApplicationReadyEvent.class)
     public void response() {
 
-        ResponseBuilder.respondTo("marco", String.class) // <1>
+        responseBuilder.respondTo("marco", String.class) // <1>
         .withAll() // <2>
         .from("polo", "yolo"); // <3>
     }

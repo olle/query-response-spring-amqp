@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.XQueryBuilder;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
@@ -17,12 +17,19 @@ import java.util.Collection;
 @Component
 public class Queries {
 
+    private final XQueryBuilder queryBuilder;
+
+    public Queries(XQueryBuilder queryBuilder) {
+
+        this.queryBuilder = queryBuilder;
+    }
+
     @Order(2)
     @EventListener(ApplicationReadyEvent.class)
     public void query() {
 
         Collection<String> polos =
-            QueryBuilder.queryFor("marco", String.class) // <1>
+            queryBuilder.queryFor("marco", String.class) // <1>
             .waitingFor(1000L) // <2>
             .orEmpty(); // <3>
 
