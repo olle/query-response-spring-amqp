@@ -16,8 +16,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QueryResponseConfigurationTest {
 
     ApplicationContextRunner contextRunner =
-        new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(QueryResponseConfiguration.class,
-                RabbitAutoConfiguration.class));
+        new ApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(QueryResponseConfiguration.class, RabbitAutoConfiguration.class));
+
+    @Test
+    void ensureProvidesQueryBuilderBean() throws Exception {
+
+        contextRunner.run(ctx -> {
+            assertThat(ctx.getBean(XQueryBuilder.class)).isNotNull();
+            assertThat(ctx.getBean("queryBuilder")).isNotNull();
+        });
+    }
+
+
+    @Test
+    void ensureProvidesResponseBuilderBean() throws Exception {
+
+        contextRunner.run(ctx -> {
+            assertThat(ctx.getBean(XResponseBuilder.class)).isNotNull();
+            assertThat(ctx.getBean("responseBuilder")).isNotNull();
+        });
+    }
+
 
     @Test
     void ensureConfiguresRabbitFacade() throws Exception {
