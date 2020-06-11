@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.queryresponse.XResponseBuilder;
+import com.studiomediatech.queryresponse.ResponseBuilder;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Responses {
 
-    private final XResponseBuilder responseBuilder;
+    private final ResponseBuilder responseBuilder;
 
-    public Responses(XResponseBuilder responseBuilder) {
+    public Responses(ResponseBuilder responseBuilder) {
 
         this.responseBuilder = responseBuilder;
     }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.studiomediatech.events.QueryRecordedEvent;
 
-import com.studiomediatech.queryresponse.XQueryBuilder;
+import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.context.event.EventListener;
@@ -42,10 +42,10 @@ public class QueryPublisher implements Logging {
     private List<Double> throughputs = new LinkedList<>();
     private List<Double> tps = new LinkedList<>();
 
-    private final XQueryBuilder queryBuilder;
+    private final QueryBuilder queryBuilder;
     private final SimpleWebSocketHandler handler;
 
-    public QueryPublisher(SimpleWebSocketHandler handler, XQueryBuilder queryBuilder) {
+    public QueryPublisher(SimpleWebSocketHandler handler, QueryBuilder queryBuilder) {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;

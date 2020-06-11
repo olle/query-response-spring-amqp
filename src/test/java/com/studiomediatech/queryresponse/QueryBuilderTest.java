@@ -14,18 +14,18 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
-class XResponseBuilderTest {
+class QueryBuilderTest {
 
     @Mock
-    ResponseRegistry registry;
+    QueryRegistry registry;
 
     @InjectMocks
-    XResponseBuilder sut;
+    QueryBuilder sut;
 
     @Test
     void ensureCreatesLegacyBuilderByProxy() {
 
-        YResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
+        YQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
         assertThat(builder).isNotNull();
     }
 
@@ -33,8 +33,8 @@ class XResponseBuilderTest {
     @Test
     void ensureUsesInjectedRegistry() {
 
-        YResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
-        builder.from("foo", "bar", "baz");
+        YQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
+        builder.waitingFor(1).orEmpty();
 
         verify(registry).accept(builder);
     }

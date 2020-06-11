@@ -4,7 +4,7 @@ import com.studiomediatech.events.AsyncEventEmitter;
 import com.studiomediatech.events.EventEmitter;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
-import com.studiomediatech.queryresponse.XQueryBuilder;
+import com.studiomediatech.queryresponse.QueryBuilder;
 
 import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
 
@@ -73,7 +73,7 @@ public class QueryResponseUIApp {
 
 
         @Bean
-        QueryPublisher querier(SimpleWebSocketHandler handler, XQueryBuilder queryBuilder) {
+        QueryPublisher querier(SimpleWebSocketHandler handler, QueryBuilder queryBuilder) {
 
             return new QueryPublisher(handler, queryBuilder);
         }

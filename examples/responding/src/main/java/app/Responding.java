@@ -1,7 +1,7 @@
 package app;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
-import com.studiomediatech.queryresponse.XResponseBuilder;
+import com.studiomediatech.queryresponse.ResponseBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Responding {
 
     @Autowired
-    XResponseBuilder responseBuilder;
+    ResponseBuilder responseBuilder;
 
     public static void main(String[] args) {
 

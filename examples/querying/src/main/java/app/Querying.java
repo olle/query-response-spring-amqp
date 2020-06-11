@@ -3,7 +3,7 @@ package app;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.studiomediatech.queryresponse.EnableQueryResponse;
-import com.studiomediatech.queryresponse.XQueryBuilder;
+import com.studiomediatech.queryresponse.QueryBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ class Querying {
     private static final Logger LOG = LoggerFactory.getLogger(Querying.class);
 
     @Autowired
-    XQueryBuilder queryBuilder;
+    QueryBuilder queryBuilder;
 
     public static void main(String[] args) {
 

@@ -1,10 +1,10 @@
 package com.studiomediatech.queryresponse;
 
-public class XResponseBuilder {
+public class ResponseBuilder {
 
     private final ResponseRegistry responseRegistry;
 
-    public XResponseBuilder(ResponseRegistry responseRegistry) {
+    public ResponseBuilder(ResponseRegistry responseRegistry) {
 
         this.responseRegistry = responseRegistry;
     }

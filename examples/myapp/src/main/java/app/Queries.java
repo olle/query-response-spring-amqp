@@ -1,6 +1,6 @@
 package app;
 
-import com.studiomediatech.queryresponse.XQueryBuilder;
+import com.studiomediatech.queryresponse.QueryBuilder;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
@@ -17,9 +17,9 @@ import java.util.Collection;
 @Component
 public class Queries {
 
-    private final XQueryBuilder queryBuilder;
+    private final QueryBuilder queryBuilder;
 
-    public Queries(XQueryBuilder queryBuilder) {
+    public Queries(QueryBuilder queryBuilder) {
 
         this.queryBuilder = queryBuilder;
     }

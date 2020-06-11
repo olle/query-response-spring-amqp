@@ -23,7 +23,7 @@ class QueryResponseConfigurationTest {
     void ensureProvidesQueryBuilderBean() throws Exception {
 
         contextRunner.run(ctx -> {
-            assertThat(ctx.getBean(XQueryBuilder.class)).isNotNull();
+            assertThat(ctx.getBean(QueryBuilder.class)).isNotNull();
             assertThat(ctx.getBean("queryBuilder")).isNotNull();
         });
     }
@@ -33,7 +33,7 @@ class QueryResponseConfigurationTest {
     void ensureProvidesResponseBuilderBean() throws Exception {
 
         contextRunner.run(ctx -> {
-            assertThat(ctx.getBean(XResponseBuilder.class)).isNotNull();
+            assertThat(ctx.getBean(ResponseBuilder.class)).isNotNull();
             assertThat(ctx.getBean("responseBuilder")).isNotNull();
         });
     }

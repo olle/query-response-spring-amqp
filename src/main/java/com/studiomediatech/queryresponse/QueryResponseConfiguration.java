@@ -36,17 +36,17 @@ class QueryResponseConfiguration implements Logging {
 
     @Bean
     @ConditionalOnMissingBean
-    public XQueryBuilder queryBuilder(QueryRegistry registry) {
+    public QueryBuilder queryBuilder(QueryRegistry registry) {
 
-        return new XQueryBuilder(registry);
+        return new QueryBuilder(registry);
     }
 
 
     @Bean
     @ConditionalOnMissingBean
-    public XResponseBuilder responseBuilder(ResponseRegistry registry) {
+    public ResponseBuilder responseBuilder(ResponseRegistry registry) {
 
-        return new XResponseBuilder(registry);
+        return new ResponseBuilder(registry);
     }
 
 
