@@ -42,11 +42,13 @@ public class QueryPublisher implements Logging {
     private List<Double> throughputs = new LinkedList<>();
     private List<Double> tps = new LinkedList<>();
 
+    private final QueryBuilder queryBuilder;
     private final SimpleWebSocketHandler handler;
 
-    public QueryPublisher(SimpleWebSocketHandler handler) {
+    public QueryPublisher(SimpleWebSocketHandler handler, QueryBuilder queryBuilder) {
 
         this.handler = handler;
+        this.queryBuilder = queryBuilder;
     }
 
     @EventListener
@@ -57,7 +59,7 @@ public class QueryPublisher implements Logging {
         String query = event.getQuery();
         long timeout = event.getTimeout();
 
-        Collection<Object> response = QueryBuilder.queryFor(query, Object.class)
+        Collection<Object> response = queryBuilder.queryFor(query, Object.class)
                 .waitingFor(timeout)
                 .orDefaults(List.of("No responses"));
 
@@ -68,7 +70,7 @@ public class QueryPublisher implements Logging {
     @Scheduled(fixedDelay = 1000 * 7)
     void query() {
 
-        Collection<QueryPublisher.Stat> stats = QueryBuilder.queryFor("query-response/stats",
+        Collection<QueryPublisher.Stat> stats = queryBuilder.queryFor("query-response/stats",
                     QueryPublisher.Stat.class)
                 .waitingFor(2L, ChronoUnit.SECONDS).orEmpty();
 

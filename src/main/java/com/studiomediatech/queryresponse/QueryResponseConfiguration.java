@@ -10,8 +10,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +30,33 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 @ConditionalOnClass(RabbitAutoConfiguration.class)
+@AutoConfigureAfter(RabbitAutoConfiguration.class)
 @Import(RabbitAutoConfiguration.class)
 class QueryResponseConfiguration implements Logging {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public QueryBuilder queryBuilder(QueryRegistry registry) {
+
+        return new QueryBuilder(registry);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ResponseBuilder responseBuilder(ResponseRegistry registry) {
+
+        return new ResponseBuilder(registry);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+
+        return new RabbitAdmin(connectionFactory);
+    }
+
 
     @Bean
     RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, ConnectionFactory connectionFactory,

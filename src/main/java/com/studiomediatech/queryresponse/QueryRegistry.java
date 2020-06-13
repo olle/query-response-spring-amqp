@@ -49,7 +49,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
      *                     {@link IllegalStateException} if the query registry could not be resolved, at the time of
      *                     the call.
      */
-    static <T> Collection<T> register(QueryBuilder<T> queryBuilder) {
+    static <T> Collection<T> register(YQueryBuilder<T> queryBuilder) {
 
         var registry = instance.get();
 
@@ -61,7 +61,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
     }
 
 
-    <T> Collection<T> accept(QueryBuilder<T> queryBuilder) throws RuntimeException {
+    <T> Collection<T> accept(YQueryBuilder<T> queryBuilder) throws RuntimeException {
 
         return doAccept(Query.from(queryBuilder));
     }

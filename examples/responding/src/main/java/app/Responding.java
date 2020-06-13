@@ -3,6 +3,8 @@ package app;
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.ResponseBuilder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -19,6 +21,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @EnableQueryResponse
 public class Responding {
 
+    @Autowired
+    ResponseBuilder responseBuilder;
+
     public static void main(String[] args) {
 
         // SpringApplication.run(Responding.class, args);
@@ -29,7 +34,7 @@ public class Responding {
     @EventListener(ApplicationReadyEvent.class)
     void respondToBooks() {
 
-        ResponseBuilder.respondTo("books/sci-fi", String.class)
+        responseBuilder.respondTo("books/sci-fi", String.class)
             .withAll()
             .from("Neuromancer", "Snow Crash", "I, Robot", "The Gods Themselves", "Pebble in the Sky");
     }
@@ -45,7 +50,7 @@ public class Responding {
 
         var authors = List.of(tolkien, lewis, asimov, gibson);
 
-        ResponseBuilder.respondTo("authors", Author.class)
+        responseBuilder.respondTo("authors", Author.class)
             .withAll()
             .suppliedBy(() -> authors.subList(0, ThreadLocalRandom.current().nextInt(1, authors.size() + 1)));
     }
@@ -64,7 +69,7 @@ public class Responding {
                 "Saya", "Alexa", "Clarindo", "Mestan", "Nadine", "Salome", "Erin", "Elina", "Charlie", "Juliette",
                 "Cindy", "Hannah", "Victoria", "Eleanor", "Alexander", "Lázaro", "Daniel", "Sally", "Ashton");
 
-        ResponseBuilder.respondTo("names", String.class)
+        responseBuilder.respondTo("names", String.class)
             .withBatchesOf(12)
             .from(names);
     }

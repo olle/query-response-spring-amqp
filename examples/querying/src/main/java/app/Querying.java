@@ -8,6 +8,8 @@ import com.studiomediatech.queryresponse.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -26,6 +28,9 @@ import java.util.stream.Collectors;
 class Querying {
 
     private static final Logger LOG = LoggerFactory.getLogger(Querying.class);
+
+    @Autowired
+    QueryBuilder queryBuilder;
 
     public static void main(String[] args) {
 
@@ -53,7 +58,7 @@ class Querying {
 
         var defaults = List.of("Neuromancer", "I, Robot");
 
-        var results = QueryBuilder.queryFor("books/sci-fi", String.class)
+        var results = queryBuilder.queryFor("books/sci-fi", String.class)
                 .waitingFor(2000)
                 .orDefaults(defaults)
                 .stream()
@@ -70,7 +75,7 @@ class Querying {
 
         LOG.info("Querying for authors...");
 
-        var authors = QueryBuilder.queryFor("authors", Author.class)
+        var authors = queryBuilder.queryFor("authors", Author.class)
                 .takingAtLeast(3)
                 .waitingFor(888)
                 .orEmpty()
@@ -88,7 +93,7 @@ class Querying {
 
         LOG.info("Querying for names...");
 
-        var names = QueryBuilder.queryFor("names", String.class)
+        var names = queryBuilder.queryFor("names", String.class)
                 .takingAtLeast(33)
                 .takingAtMost(80)
                 .waitingFor(456).orEmpty()

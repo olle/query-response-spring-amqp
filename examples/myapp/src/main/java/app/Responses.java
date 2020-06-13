@@ -15,11 +15,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class Responses {
 
+    private final ResponseBuilder responseBuilder;
+
+    public Responses(ResponseBuilder responseBuilder) {
+
+        this.responseBuilder = responseBuilder;
+    }
+
     @Order(1)
     @EventListener(ApplicationReadyEvent.class)
     public void response() {
 
-        ResponseBuilder.respondTo("marco", String.class) // <1>
+        responseBuilder.respondTo("marco", String.class) // <1>
         .withAll() // <2>
         .from("polo", "yolo"); // <3>
     }

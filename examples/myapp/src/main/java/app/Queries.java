@@ -17,12 +17,19 @@ import java.util.Collection;
 @Component
 public class Queries {
 
+    private final QueryBuilder queryBuilder;
+
+    public Queries(QueryBuilder queryBuilder) {
+
+        this.queryBuilder = queryBuilder;
+    }
+
     @Order(2)
     @EventListener(ApplicationReadyEvent.class)
     public void query() {
 
         Collection<String> polos =
-            QueryBuilder.queryFor("marco", String.class) // <1>
+            queryBuilder.queryFor("marco", String.class) // <1>
             .waitingFor(1000L) // <2>
             .orEmpty(); // <3>
 
