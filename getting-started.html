@@ -677,12 +677,19 @@ the <code>QueryBuilder</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Queries</span> {
 
+    <span class="directive">private</span> <span class="directive">final</span> QueryBuilder queryBuilder;
+
+    <span class="directive">public</span> Queries(QueryBuilder queryBuilder) {
+
+        <span class="local-variable">this</span>.queryBuilder = queryBuilder;
+    }
+
     <span class="annotation">@Order</span>(<span class="integer">2</span>)
     <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
     <span class="directive">public</span> <span class="type">void</span> query() {
 
         <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">String</span>&gt; polos =
-            QueryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
+            queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
             .waitingFor(<span class="integer">1000L</span>) // <b class="conum">(2)</b>
             .orEmpty(); // <b class="conum">(3)</b>
 
@@ -749,11 +756,18 @@ second, nothing is printed <code>STDOUT</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Responses</span> {
 
+    <span class="directive">private</span> <span class="directive">final</span> ResponseBuilder responseBuilder;
+
+    <span class="directive">public</span> Responses(ResponseBuilder responseBuilder) {
+
+        <span class="local-variable">this</span>.responseBuilder = responseBuilder;
+    }
+
     <span class="annotation">@Order</span>(<span class="integer">1</span>)
     <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
     <span class="directive">public</span> <span class="type">void</span> response() {
 
-        ResponseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
+        responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
         .withAll() // <b class="conum">(2)</b>
         .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">polo</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">yolo</span><span class="delimiter">&quot;</span></span>); // <b class="conum">(3)</b>
     }
