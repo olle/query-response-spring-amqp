@@ -548,6 +548,55 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>TODO!</p>
 </div>
+<div class="paragraph">
+<p>Defaults are suddenly top-of-mind for developers, and either the <em>empty case</em>
+is good enough, or fallbacks can be provided.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  var authors = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+                  .waitingFor(<span class="integer">800</span>)
+                  .orDefaults(Authors.defaults());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Preserve resources specific to the current needs and protect your services,
+by limiting the amount of data consumed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  var authors = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+                  .takingAtMost(<span class="integer">10</span>)
+                  .waitingFor(<span class="integer">800</span>)
+                  .orDefaults(Authors.defaults());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Express constraints and react accordingly, throwing on an unfulfilled query, as
+an option to lenient handling with defaults.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  var offers = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/rental</span><span class="delimiter">&quot;</span></span>, Offer.class)
+                  .takingAtLeast(<span class="integer">10</span>)
+                  .takingAtMost(<span class="integer">20</span>)
+                  .waitingFor(<span class="integer">2</span>, ChronoUnit.SECONDS)
+                  .orThrow(TooFewOffersConstraintException::<span class="keyword">new</span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Optional capabilities to handle exceptions and errors are built-in and very
+easy to use.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  var offers = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/rental</span><span class="delimiter">&quot;</span></span>, NewOffer.class)
+                  .takingAtLeast(<span class="integer">3</span>)
+                  .waitingFor(<span class="integer">400</span>)
+                  .onError(error -&gt; LOG.error(<span class="string"><span class="delimiter">&quot;</span><span class="content">Failure!</span><span class="delimiter">&quot;</span></span>, error))
+                  .orThrow(TooFewOffersConstraintException::<span class="keyword">new</span>);</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -556,12 +605,34 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>TODO!</p>
 </div>
+<div class="paragraph">
+<p>Batch responses provide developers with more options to tune and throttle a
+system using Query/Response across many services.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/monday</span><span class="delimiter">&quot;</span></span>, Offer.class)
+      .withBatchesOf(<span class="integer">20</span>)
+      .from(offers.findAllOffersByDayOfWeek(<span class="predefined-type">Calendar</span>.MONDAY));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dynamic responses are easy to build, with an API that suits modern Java, using
+lazy calls to suppliers of data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">users/current</span><span class="delimiter">&quot;</span></span>, Token.class)
+      .withBatchesOf(<span class="integer">128</span>)
+      .suppliedBy(userTokenService::findAllCurrentUserTokens);</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-02 10:24:18 +0200
+Last updated 2020-06-14 21:36:20 +0200
 </div>
 </div>
 </body>
