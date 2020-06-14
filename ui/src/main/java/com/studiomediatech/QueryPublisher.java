@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
@@ -59,11 +60,22 @@ public class QueryPublisher implements Logging {
         String query = event.getQuery();
         long timeout = event.getTimeout();
 
-        Collection<Object> response = queryBuilder.queryFor(query, Object.class)
-                .waitingFor(timeout)
-                .orDefaults(List.of("No responses"));
+        Optional<Integer> maybe = event.getLimit();
 
-        handler.handleResponse(response, event.getPublisherId());
+        List<Object> orEmptyResponse = List.of("No responses");
+
+        if (maybe.isPresent()) {
+            int limit = maybe.get();
+
+            handler.handleResponse(queryBuilder.queryFor(query, Object.class)
+                .waitingFor(timeout)
+                .takingAtMost(limit)
+                .orDefaults(orEmptyResponse), event.getPublisherId());
+        } else {
+            handler.handleResponse(queryBuilder.queryFor(query, Object.class)
+                .waitingFor(timeout)
+                .orDefaults(orEmptyResponse), event.getPublisherId());
+        }
     }
 
 

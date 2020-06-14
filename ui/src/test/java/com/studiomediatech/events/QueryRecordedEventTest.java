@@ -61,4 +61,25 @@ class QueryRecordedEventTest {
 
         assertThat(QueryRecordedEvent.valueOf("some-query", "").getTimeout()).isEqualTo(150L);
     }
+
+
+    @Test
+    void ensureHasNoLimitIfNoThirdArgument() throws Exception {
+
+        assertThat(QueryRecordedEvent.valueOf("some-query 343  ", "").getLimit()).isEmpty();
+    }
+
+
+    @Test
+    void ensureGetsNonEmptyLimitIfValidThirdArgument() throws Exception {
+
+        assertThat(QueryRecordedEvent.valueOf("some-query 343 12", "").getLimit()).isNotEmpty();
+    }
+
+
+    @Test
+    void ensureGetsGivenLimitIfValidThirdArgument() throws Exception {
+
+        assertThat(QueryRecordedEvent.valueOf("some-query 343 12", "").getLimit()).hasValue(12);
+    }
 }

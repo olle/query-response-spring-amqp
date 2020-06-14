@@ -1,5 +1,8 @@
 package com.studiomediatech.events;
 
+import java.util.Optional;
+
+
 public final class QueryRecordedEvent {
 
     private static final int DEFAULT_TIMEOUT_MS = 150;
@@ -44,6 +47,22 @@ public final class QueryRecordedEvent {
             return query.contains(" ") ? Long.parseLong(query.split(" ")[1]) : DEFAULT_TIMEOUT_MS;
         } catch (RuntimeException e) {
             return 1000;
+        }
+    }
+
+
+    public Optional<Integer> getLimit() {
+
+        if (!query.contains(" ")) {
+            return Optional.empty();
+        }
+
+        try {
+            int limit = Integer.parseInt(query.split(" ")[2]);
+
+            return limit > 0 ? Optional.of(limit) : Optional.empty();
+        } catch (RuntimeException e) {
+            return Optional.empty();
         }
     }
 }

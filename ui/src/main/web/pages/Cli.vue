@@ -3,7 +3,7 @@
     <h1>Query Command Line Interface</h1>
     <form v-on:submit.prevent="publish">
       <label>&gt;</label>
-      <input v-model="query" v-focus :autofocus="'autofocus'" placeholder="query [timeout:150]" />
+      <input v-model="query" v-focus :autofocus="'autofocus'" placeholder="query [timeout [limit]]" />
     </form>
     <pre><code>{{ response }}</code></pre>
   </article>
@@ -75,6 +75,7 @@ form > input {
   flex: 1;
   width: 100%;
   border-left: none;
+  border-right: none;
   padding-left: 0.5rem;
 }
 form > input:focus {
