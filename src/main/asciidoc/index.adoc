@@ -36,9 +36,9 @@ _The **Query/Response** pattern, that I arrived at, challenges developers to
 
 This document is intended to work as a comprehensive reference for developers.
 It provides an introduction to the technical prerequisites, and how to get
-started. We present the Monitoring UI and describe its features and benefits.
-There is a deep-dive into the `QueryBuilder` and `ResponseBuilder`, which is
-aimed at describing their capabilities.
+started. There is a deep-dive into the `QueryBuilder` and `ResponseBuilder`,
+which is aimed at describing their capabilities. We present the Monitoring UI
+and describe its features and benefits.
 
 TIP: Towards the end of this document we've added an introduction and
      explanation of <<The Query/Response Protocol>>. For readers new to
@@ -46,5 +46,6 @@ TIP: Towards the end of this document we've added an introduction and
 
 include::getting-started.adoc[leveloffset=+1]
 include::developers-reference.adoc[leveloffset=+1]
+include::monitoring-ui.adoc[leveloffset=+1]
 include::the-query-response-protocol.adoc[leveloffset=+1]
 include::appendicies.adoc[leveloffset=+1]

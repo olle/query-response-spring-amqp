@@ -2,6 +2,8 @@ package app;
 
 import com.studiomediatech.queryresponse.QueryBuilder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 import org.springframework.context.event.EventListener;
@@ -17,12 +19,8 @@ import java.util.Collection;
 @Component
 public class Queries {
 
-    private final QueryBuilder queryBuilder;
-
-    public Queries(QueryBuilder queryBuilder) {
-
-        this.queryBuilder = queryBuilder;
-    }
+    @Autowired
+    QueryBuilder queryBuilder;
 
     @Order(2)
     @EventListener(ApplicationReadyEvent.class)

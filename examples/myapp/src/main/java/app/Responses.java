@@ -2,6 +2,8 @@ package app;
 
 import com.studiomediatech.queryresponse.ResponseBuilder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 import org.springframework.context.event.EventListener;
@@ -15,12 +17,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Responses {
 
-    private final ResponseBuilder responseBuilder;
-
-    public Responses(ResponseBuilder responseBuilder) {
-
-        this.responseBuilder = responseBuilder;
-    }
+    @Autowired
+    ResponseBuilder responseBuilder;
 
     @Order(1)
     @EventListener(ApplicationReadyEvent.class)
