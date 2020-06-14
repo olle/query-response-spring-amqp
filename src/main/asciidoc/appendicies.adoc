@@ -2,6 +2,67 @@
 
 include::attributes.adoc[]
 
+== AMQP Resources & Formats
+
+:AMQP: https://www.rabbitmq.com/protocol.html
+
+The declared {AMQP}[AMQP] broker resources are very limited. Only the 
+`query-response` topic-exchange is created. All active Query/Response services
+will automatically declare the required exchange, with the following parameters:
+
+```
+  name: query-response
+  type: topic
+  auto-delete: true
+```
+
+The Query/Response library defines a small set of properties and data-formats,
+which are used in the AMQP messages - a mini-protocol:
+
+=== Query messages
+
+Query messages are very simple in structure and form. The common
+`query-response` exchanged is published to, and the message `routing-key` will
+carry the specific `query-term` that is requested. The `reply-to` header
+property is set to the queue name of a generated `query-response-queue`,
+specific to the published query.
+
+Both query and response messages use the `application/json` content-type. There
+is no further content in the body, just an empty JSON object `{}`, as a
+placeholder.
+
+```
+  exchange: query-response
+  routing-key: ${query-term}
+  reply-to: ${query-response-queue}
+  content-type: application/json
+  body:
+  {}
+```
+
+=== Response messages
+
+Published responses also use a common format. They are published to the empty
+(default) exchange, with the `query-response-queue` from the `reply-to`
+property of a consumed query as the `routing-key`. This will cause a direct
+routing of responses back to the declared response-queue.
+
+The response body payload JSON structure always wraps the `elements` collection
+containing the actual response data in an _envelope object_.
+
+```
+  exchange: (default)
+  routing-key: ${query-response-queue}
+  content-type: application/json
+  body:
+  {
+    elements: [...]
+  }
+```
+
+The current properties of Query/Response messages are simple but provide
+room for extensions in future versions.
+
 == Trademarks
 
 :Oracle: https://www.oracle.com
