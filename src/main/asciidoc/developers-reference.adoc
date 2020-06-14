@@ -10,7 +10,65 @@ TODO!
 
 TODO!
 
+Defaults are suddenly top-of-mind for developers, and either the _empty case_
+is good enough, or fallbacks can be provided.
+
+```java
+  var authors = queryBuilder.queryFor("authors", String.class)
+                  .waitingFor(800)
+                  .orDefaults(Authors.defaults());
+```
+
+Preserve resources specific to the current needs and protect your services,
+by limiting the amount of data consumed.
+
+```java
+  var authors = queryBuilder.queryFor("authors", String.class)
+                  .takingAtMost(10)
+                  .waitingFor(800)
+                  .orDefaults(Authors.defaults());
+```
+
+Express constraints and react accordingly, throwing on an unfulfilled query, as
+an option to lenient handling with defaults.
+
+```java
+  var offers = queryBuilder.queryFor("offers/rental", Offer.class)
+                  .takingAtLeast(10)
+                  .takingAtMost(20)
+                  .waitingFor(2, ChronoUnit.SECONDS)
+                  .orThrow(TooFewOffersConstraintException::new);
+```
+
+Optional capabilities to handle exceptions and errors are built-in and very
+easy to use.
+
+```java
+  var offers = queryBuilder.queryFor("offers/rental", NewOffer.class)
+                  .takingAtLeast(3)
+                  .waitingFor(400)
+                  .onError(error -> LOG.error("Failure!", error))
+                  .orThrow(TooFewOffersConstraintException::new);
+```
+
 == `ResponseBuilder`
 
 TODO!
 
+Batch responses provide developers with more options to tune and throttle a
+system using Query/Response across many services.
+
+```java
+  responseBuilder.respondTo("offers/monday", Offer.class)
+      .withBatchesOf(20)
+      .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+```
+
+Dynamic responses are easy to build, with an API that suits modern Java, using
+lazy calls to suppliers of data.
+
+```java
+  responseBuilder.respondTo("users/current", Token.class)
+      .withBatchesOf(128)
+      .suppliedBy(userTokenService::findAllCurrentUserTokens);
+```
