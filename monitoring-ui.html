@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<title>Getting Started</title>
+<title>Monitoring UI</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -523,14 +523,16 @@ table.CodeRay td.code>pre{padding:0}
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>Getting Started</h1>
+<h1>Monitoring UI</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#system-requirements">1. System Requirements</a></li>
-<li><a href="#installation">2. Installation</a></li>
-<li><a href="#queries">3. Queries</a></li>
-<li><a href="#responses">4. Responses</a></li>
+<li><a href="#overview">1. Overview</a>
+<ul class="sectlevel2">
+<li><a href="#three-golden-metrics">1.1. Three Golden Metrics</a></li>
+<li><a href="#live-nodes">1.2. Live Nodes</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -538,290 +540,175 @@ table.CodeRay td.code>pre{padding:0}
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Query/Response for Spring AMQP makes it really easy to extend Spring Boot stand-alone,
-production-grade applications, that are using Spring AMQP. We have taken
-a working pattern for building highly decoupled evolving service architectures,
-and wrapped it in a developer friendly library.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="system-requirements"><a class="anchor" href="#system-requirements"></a>1. System Requirements</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Query/Response for Spring AMQP 0.0.0-SNAPSHOT requires at least Spring Boot 2.2.7.RELEASE and
-Java 11, and should work for later releases too.</p>
+<p>Query/Response for Spring AMQP is intended to be used in a landscape of distributed and highly
+decoupled services that exchange information and data. Being able to monitor and
+observe that is very important.</p>
 </div>
 <div class="paragraph">
-<p>It is distributed as a <a href="https://maven.apache.org">Maven</a> dependency, and is known to work well with
-Maven 3.3+. Using the dependency with <a href="https://gradle.org">Gradle</a> should work too.</p>
+<p>We provide a monitoring and administration user interface for this purpose.</p>
 </div>
 <div class="paragraph">
-<p>The current <a href="https://github.com/olle/query-response-spring-amqp#quickstart">Quickstart</a> information, available on the projects
-<a href="https://github.com/olle/query-response-spring-amqp">Github page</a>, provides a short snippet on the currently best way
-to add the Maven dependency.</p>
+<p>TODO: Add link to distributed JAR.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="installation"><a class="anchor" href="#installation"></a>2. Installation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Enabling Query/Response for Spring AMQP is done by simply loading the <code>QueryResponseConfiguration</code>
-class. The most simple way to do this, is annotating your Spring Boot
-application starter with the <code>@EnableQueryResponse</code> annotation.</p>
-</div>
-<div class="listingblock">
+<div class="literalblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@SpringBootApplication</span>
-<span class="annotation">@EnableQueryResponse</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">MyApp</span> {
-
-    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) {
-
-        SpringApplication.run(MyApp.class, args);
-    }
-}</code></pre>
+<pre>$ java -jar query-response-ui.jar</pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overview"><a class="anchor" href="#overview"></a>1. Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Query/Response Monitoring UI connects to the RabbitMQ broker and <strong>uses Query/Response</strong>
+to query for information about the live nodes in the current system setup. It
+is available at <a href="http://localhost:8080" class="bare">localhost:8080</a> after starting up.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/ui.png" alt="ui"></span></p>
+</div>
+<div class="paragraph">
+<p>Since we are <em>eating our own dog food</em> we get a very nice effect, where the
+Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node.</p>
+</div>
+<div class="sect2">
+<h3 id="three-golden-metrics"><a class="anchor" href="#three-golden-metrics"></a>1.1. Three Golden Metrics</h3>
+<div class="paragraph">
+<p>The Query/Response Monitoring UI lets us learn about the currently running system. The top most
+part provides a few base metrics - our initial <em>golden three:</em> success rate,
+latency and throughput.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/metrics.png" alt="metrics"></span></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Overview Metrics</caption>
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 11.1111%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
 <tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-This annotation will do nothing more but to import the
-      <code>QueryResponseConfiguration</code> class.
-</td>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success Rate (<strong>SR</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>percent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The rate of <em>successful</em> queries performed. A query is successful if it
+  returns results, which means any predicates, limits or timeouts are also
+  successfully evaluated.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SR</strong> Queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of published queries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SR</strong> Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of consumed responses.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>SR</strong> Fallbacks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current known count of executed fallbacks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency (<strong>L</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The average measured time for either a query or a response to be published,
+  and then consumed. The <em>transport</em> duration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> Min</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured shortest, non zero, latency duration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>L</strong> Max</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured longest latency duration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput (<strong>TP</strong>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured query and response message publishing rate. <em>Measured
+  over a fixed sample size window.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TP</strong> Queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured message publishing rate, for queries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TP</strong> Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current measured message publishing rate, for responses.</p></td>
+</tr>
+</tbody>
 </table>
 </div>
+<div class="sect2">
+<h3 id="live-nodes"><a class="anchor" href="#live-nodes"></a>1.2. Live Nodes</h3>
 <div class="paragraph">
-<p>That&#8217;s it! There is no more infrastructure code, wiring or setup that needs to
-be done. <strong>It&#8217;s just that easy.</strong></p>
-</div>
-<div class="paragraph">
-<p>Before you can run your application you need to make sure there is an AMQP
-broker available. By default Spring AMQP tries to connect to a
-<a href="https://www.rabbitmq.com">RabbitMQ</a>, running locally on port <code>5672</code>.</p>
+<p>The second section shows some information about the current <em>live nodes</em>, which
+means any clients using Query/Response for Spring AMQP, that are currently up and running.</p>
 </div>
 <div class="paragraph">
-<p>Add the following <code>docker-compose.yaml</code> file to your project root directory.</p>
+<p><span class="image"><img src="images/live-nodes.png" alt="live nodes"></span></p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">version</span>: <span class="string"><span class="content">'3'</span></span>
-<span class="key">services</span>:
-  <span class="key">rabbitmq</span>:
-    <span class="key">image</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">rabbitmq:3-management</span><span class="delimiter">&quot;</span></span>
-    <span class="key">ports</span>:
-      - <span class="string"><span class="delimiter">&quot;</span><span class="content">15672:15672</span><span class="delimiter">&quot;</span></span>
-      - <span class="string"><span class="delimiter">&quot;</span><span class="content">5672:5672</span><span class="delimiter">&quot;</span></span></code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Live Nodes</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
 <tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The <code>3-management</code> tag will install and enable the RabbitMQ Management UI.
-      When then broker is running, it can be access at <a href="http://localhost:15672" class="bare">localhost:15672</a>
-      with username and password <code>guest</code>.
-</td>
+<th class="tableblock halign-left valign-top">Column</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Using <a href="https://www.docker.com">Docker</a> you can start a RabbitMQ instance running
-<em>detached</em> (<code>-d</code> option), in the background, in a container.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ docker-compose up -d</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now starting your application, will enable Query/Response for Spring AMQP and create all the
-resources necessary on the broker.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ mvn spring-boot:run</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now is a good time to use the RabbitMQ Management UI, available at
-<a href="http://localhost:15672" class="bare">localhost:15672</a>, to inspect the exchange, queues and bindings created
-by Query/Response for Spring AMQP by default.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="queries"><a class="anchor" href="#queries"></a>3. Queries</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Publishing <strong>queries</strong> is a way for your application to ask for information that
-it may need in order to accomplish tasks. Queries express a <em>need</em>, and are not
-addressed to any specific service or component.</p>
-</div>
-<div class="paragraph">
-<p>Query/Response for Spring AMQP makes it really really easy, to create and publish a query using
-the <code>QueryBuilder</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Queries</span> {
-
-    <span class="annotation">@Autowired</span>
-    QueryBuilder queryBuilder;
-
-    <span class="annotation">@Order</span>(<span class="integer">2</span>)
-    <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
-    <span class="directive">public</span> <span class="type">void</span> query() {
-
-        <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">String</span>&gt; polos =
-            queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
-            .waitingFor(<span class="integer">1000L</span>) // <b class="conum">(2)</b>
-            .orEmpty(); // <b class="conum">(3)</b>
-
-        polos.stream().map(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco? </span><span class="delimiter">&quot;</span></span>::concat).forEach(<span class="predefined-type">System</span>.out::println);
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<ol>
-<li>
-<p>Initiates a query for the term <code>marco</code>, with any results being consumed as,
-or <em>mapped</em> to, the type <code>String.class</code>. Returned results are always
-gathered in a collection. Either <strong>none, one or many</strong> elements may be
-returned.</p>
-</li>
-<li>
-<p>Queries require a timeout, here we set it to <code>1000L</code> milliseconds. This
-means that this specific query will <strong>always</strong> block for 1 second.</p>
-</li>
-<li>
-<p>The query may not receive any responses, so it <em>always</em> needs to specify
-how that case should be handled. Default here is an empty collection, of
-the declared return type <code>String.class</code>.</p>
-</li>
-</ol>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>Hopefully this shows, how concise and powerful the <code>QueryBuilder</code> is, dealing
-with results mapping, fault tolerance and default values in just a couple of
-lines of code.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>If you run the application now, it will publish a <strong>query</strong> to the message
-broker, which we can see in the logs.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ mvn spring-boot:run
-  ...
-c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642002076}, replyTo=94f0fff4-c4f3-4491-831d-00809edb6f95, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>At the moment there are no responses to be consumed, so after blocking for 1
-second, nothing is printed <code>STDOUT</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="responses"><a class="anchor" href="#responses"></a>4. Responses</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Building services, medium, large or <em>micro</em> (who cares), that publish
-<strong>responses</strong> to queries is also really easy with Query/Response for Spring AMQP, using the
-<code>ResponseBuilder</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">Responses</span> {
-
-    <span class="annotation">@Autowired</span>
-    ResponseBuilder responseBuilder;
-
-    <span class="annotation">@Order</span>(<span class="integer">1</span>)
-    <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
-    <span class="directive">public</span> <span class="type">void</span> response() {
-
-        responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">marco</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class) // <b class="conum">(1)</b>
-        .withAll() // <b class="conum">(2)</b>
-        .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">polo</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">yolo</span><span class="delimiter">&quot;</span></span>); // <b class="conum">(3)</b>
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<ol>
-<li>
-<p>Initializes a response to queries for <code>marco</code>, providing the type-hint on
-how to map entries in the response. Set to <code>String.class</code> here.</p>
-</li>
-<li>
-<p>The response <code>withAll()</code> will publish all elements in one single response.</p>
-</li>
-<li>
-<p>And finally this response is provided the elements <code>"polo", "yolo"</code> as the
-actual data to publish. <em>The builder varags method, used here, is mostly
-for trying out Query/Response for Spring AMQP, or for static responses.</em></p>
-</li>
-</ol>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>Again, the builder makes it really easy to create a responding service, without
-any special setup or complicated configurations.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>Now if you run the application again, with the response component registered
-before the query publisher, it will publish the response.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ mvn spring-boot:run
-  ...
-c.s.queryresponse.RabbitFacade           : |&lt;-- Published query: marco - (Body:'{}' MessageProperties [headers={x-qr-published=1589642489894}, replyTo=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, contentType=application/json, contentLength=2, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
-c.s.queryresponse.Response               : |--&gt; Consumed query: marco
-c.s.queryresponse.RabbitFacade           : |&lt;-- Published response: c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b - (Body:'{"elements":["polo","yolo"]}' MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=28, deliveryMode=NON_PERSISTENT, priority=0, deliveryTag=0])
-c.s.queryresponse.Query                  : |--&gt; Received response message: MessageProperties [headers={x-qr-published=1589642489941}, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=NON_PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b, deliveryTag=1, consumerTag=amq.ctag-Q_ghWp4TWU9EYhi_rqErcg, consumerQueue=c77a8a1d-c959-4f2a-bd51-85b7e6b5b69b]
-marco? polo
-marco? yolo</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now you can see a full roundtrip of the <strong>query</strong> being published and consumed,
-and the <strong>response</strong> being published and also consumed. And the finished output
-is "polo" and "yolo" printed on <code>STDOUT</code>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
+</thead>
+<tbody>
 <tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-We are using the <code>@Order</code> annotation in our example only to ensure that
-      responses are built and registered before queries, when they are built
-      in one and the same app.
-</td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Spring Boot app name, or <code>application</code> if it could not be resolved.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pid</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>pid</code> of the client Java process, or <code>-</code> if it could not be resolved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Address</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Host name or IP address, or <code>unknown</code> if it could not be resolved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uptime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The app uptime, or <code>-</code> if it could not be determined.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success Rate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rate of successful queries (<strong>SR</strong>), or <code>-</code> in case the client is only publishing responses.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"> Number of published responses (including statistics for the Query/Response Monitoring UI).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measured latency for queries and responses, the <em>transport</em> duration (<strong>L</strong>).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Publishing rate for queries and responses (<strong>TP</strong>).</p></td>
+</tr>
+</tbody>
 </table>
 </div>
 </div>
@@ -829,7 +716,7 @@ We are using the <code>@Order</code> annotation in our example only to ensure th
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-14 11:39:10 +0200
+Last updated 2020-06-14 11:41:20 +0200
 </div>
 </div>
 </body>

@@ -539,7 +539,6 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#installation">3.2. Installation</a></li>
 <li><a href="#queries">3.3. Queries</a></li>
 <li><a href="#responses">3.4. Responses</a></li>
-<li><a href="#monitoring-ui">3.5. Monitoring UI</a></li>
 </ul>
 </li>
 <li><a href="#developers-reference">4. Developers Reference</a>
@@ -549,17 +548,22 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#responsebuilder">4.3. <code>ResponseBuilder</code></a></li>
 </ul>
 </li>
-<li><a href="#the-queryresponse-protocol">5. The Query/Response Protocol</a>
+<li><a href="#monitoring-ui">5. Monitoring UI</a>
 <ul class="sectlevel2">
-<li><a href="#a-simple-example">5.1. A simple example</a></li>
-<li><a href="#specification">5.2. Specification</a></li>
-<li><a href="#the-example-revisited">5.3. The example revisited</a></li>
-<li><a href="#queryresponse-maturity-model">5.4. Query/Response Maturity Model</a></li>
+<li><a href="#overview-2">5.1. Overview</a></li>
 </ul>
 </li>
-<li><a href="#appendicies">6. Appendicies</a>
+<li><a href="#the-queryresponse-protocol">6. The Query/Response Protocol</a>
 <ul class="sectlevel2">
-<li><a href="#trademarks">6.1. Trademarks</a></li>
+<li><a href="#a-simple-example">6.1. A simple example</a></li>
+<li><a href="#specification">6.2. Specification</a></li>
+<li><a href="#the-example-revisited">6.3. The example revisited</a></li>
+<li><a href="#queryresponse-maturity-model">6.4. Query/Response Maturity Model</a></li>
+</ul>
+</li>
+<li><a href="#appendicies">7. Appendicies</a>
+<ul class="sectlevel2">
+<li><a href="#trademarks">7.1. Trademarks</a></li>
 </ul>
 </li>
 </ul>
@@ -604,9 +608,9 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>This document is intended to work as a comprehensive reference for developers.
 It provides an introduction to the technical prerequisites, and how to get
-started. We present the Monitoring UI and describe its features and benefits.
-There is a deep-dive into the <code>QueryBuilder</code> and <code>ResponseBuilder</code>, which is
-aimed at describing their capabilities.</p>
+started. There is a deep-dive into the <code>QueryBuilder</code> and <code>ResponseBuilder</code>,
+which is aimed at describing their capabilities. We present the Monitoring UI
+and describe its features and benefits.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -759,12 +763,8 @@ the <code>QueryBuilder</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Queries</span> {
 
-    <span class="directive">private</span> <span class="directive">final</span> QueryBuilder queryBuilder;
-
-    <span class="directive">public</span> Queries(QueryBuilder queryBuilder) {
-
-        <span class="local-variable">this</span>.queryBuilder = queryBuilder;
-    }
+    <span class="annotation">@Autowired</span>
+    QueryBuilder queryBuilder;
 
     <span class="annotation">@Order</span>(<span class="integer">2</span>)
     <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
@@ -836,12 +836,8 @@ second, nothing is printed <code>STDOUT</code>.</p>
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">Responses</span> {
 
-    <span class="directive">private</span> <span class="directive">final</span> ResponseBuilder responseBuilder;
-
-    <span class="directive">public</span> Responses(ResponseBuilder responseBuilder) {
-
-        <span class="local-variable">this</span>.responseBuilder = responseBuilder;
-    }
+    <span class="annotation">@Autowired</span>
+    ResponseBuilder responseBuilder;
 
     <span class="annotation">@Order</span>(<span class="integer">1</span>)
     <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
@@ -914,8 +910,34 @@ We are using the <code>@Order</code> annotation in our example only to ensure th
 </table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="developers-reference"><a class="anchor" href="#developers-reference"></a>4. Developers Reference</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="monitoring-ui"><a class="anchor" href="#monitoring-ui"></a>3.5. Monitoring UI</h3>
+<h3 id="overview"><a class="anchor" href="#overview"></a>4.1. Overview</h3>
+<div class="paragraph">
+<p>TODO!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="querybuilder"><a class="anchor" href="#querybuilder"></a>4.2. <code>QueryBuilder</code></h3>
+<div class="paragraph">
+<p>TODO!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="responsebuilder"><a class="anchor" href="#responsebuilder"></a>4.3. <code>ResponseBuilder</code></h3>
+<div class="paragraph">
+<p>TODO!</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring-ui"><a class="anchor" href="#monitoring-ui"></a>5. Monitoring UI</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Query/Response for Spring AMQP is intended to be used in a landscape of distributed and highly
 decoupled services that exchange information and data. Being able to monitor and
@@ -932,6 +954,8 @@ observe that is very important.</p>
 <pre>$ java -jar query-response-ui.jar</pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="overview-2"><a class="anchor" href="#overview-2"></a>5.1. Overview</h3>
 <div class="paragraph">
 <p>The Query/Response Monitoring UI connects to the RabbitMQ broker and <strong>uses Query/Response</strong>
 to query for information about the live nodes in the current system setup. It
@@ -944,6 +968,8 @@ is available at <a href="http://localhost:8080" class="bare">localhost:8080</a> 
 <p>Since we are <em>eating our own dog food</em> we get a very nice effect, where the
 Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node.</p>
 </div>
+<div class="sect3">
+<h4 id="three-golden-metrics"><a class="anchor" href="#three-golden-metrics"></a>5.1.1. Three Golden Metrics</h4>
 <div class="paragraph">
 <p>The Query/Response Monitoring UI lets us learn about the currently running system. The top most
 part provides a few base metrics - our initial <em>golden three:</em> success rate,
@@ -1023,6 +1049,9 @@ latency and throughput.</p>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect3">
+<h4 id="live-nodes"><a class="anchor" href="#live-nodes"></a>5.1.2. Live Nodes</h4>
 <div class="paragraph">
 <p>The second section shows some information about the current <em>live nodes</em>, which
 means any clients using Query/Response for Spring AMQP, that are currently up and running.</p>
@@ -1080,38 +1109,16 @@ means any clients using Query/Response for Spring AMQP, that are currently up an
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="developers-reference"><a class="anchor" href="#developers-reference"></a>4. Developers Reference</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="overview"><a class="anchor" href="#overview"></a>4.1. Overview</h3>
-<div class="paragraph">
-<p>TODO!</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="querybuilder"><a class="anchor" href="#querybuilder"></a>4.2. <code>QueryBuilder</code></h3>
-<div class="paragraph">
-<p>TODO!</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="responsebuilder"><a class="anchor" href="#responsebuilder"></a>4.3. <code>ResponseBuilder</code></h3>
-<div class="paragraph">
-<p>TODO!</p>
-</div>
-</div>
-</div>
 </div>
 <div class="sect1">
-<h2 id="the-queryresponse-protocol"><a class="anchor" href="#the-queryresponse-protocol"></a>5. The Query/Response Protocol</h2>
+<h2 id="the-queryresponse-protocol"><a class="anchor" href="#the-queryresponse-protocol"></a>6. The Query/Response Protocol</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A messaging pattern for building highly decoupled evolving service
 architectures.</p>
 </div>
 <div class="sect2">
-<h3 id="a-simple-example"><a class="anchor" href="#a-simple-example"></a>5.1. A simple example</h3>
+<h3 id="a-simple-example"><a class="anchor" href="#a-simple-example"></a>6.1. A simple example</h3>
 <div class="paragraph">
 <p>Let&#8217;s learn about the Query/Response pattern by walking through a small
 fictional example (no pun intended). The technical context is <em>messaging</em> and
@@ -1120,7 +1127,7 @@ communication could be used. The examples are only pseudo-code and plain-text
 data, to keep things simple.</p>
 </div>
 <div class="sect3">
-<h4 id="any-good-sci-fi-books-out-there"><a class="anchor" href="#any-good-sci-fi-books-out-there"></a>5.1.1. Any good sci-fi books out there?</h4>
+<h4 id="any-good-sci-fi-books-out-there"><a class="anchor" href="#any-good-sci-fi-books-out-there"></a>6.1.1. Any good sci-fi books out there?</h4>
 <div class="paragraph">
 <p>Let&#8217;s publish a query.</p>
 </div>
@@ -1154,7 +1161,7 @@ then the unique mailbox or queue for the query with a hash-code
 </div>
 </div>
 <div class="sect3">
-<h4 id="the-current-top-3-books"><a class="anchor" href="#the-current-top-3-books"></a>5.1.2. The current top-3 books</h4>
+<h4 id="the-current-top-3-books"><a class="anchor" href="#the-current-top-3-books"></a>6.1.2. The current top-3 books</h4>
 <div class="literalblock">
 <div class="content">
 <pre>response: library/books.sci-fi#42
@@ -1178,7 +1185,7 @@ each other, by letting the response be an <em>optional</em> message, sent to the
 </div>
 </div>
 <div class="sect3">
-<h4 id="the-asimov-collection"><a class="anchor" href="#the-asimov-collection"></a>5.1.3. The Asimov collection</h4>
+<h4 id="the-asimov-collection"><a class="anchor" href="#the-asimov-collection"></a>6.1.3. The Asimov collection</h4>
 <div class="paragraph">
 <p>Since our query was published as a notification, we&#8217;re not bound to a single
 reply. We can keep on consuming any number of responses that are sent to the
@@ -1237,7 +1244,7 @@ the Query/Response patter has a price, and this is one part of it.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="no-book-lovers-out-there"><a class="anchor" href="#no-book-lovers-out-there"></a>5.1.4. No book lovers out there?</h4>
+<h4 id="no-book-lovers-out-there"><a class="anchor" href="#no-book-lovers-out-there"></a>6.1.4. No book lovers out there?</h4>
 <div class="paragraph">
 <p>Let&#8217;s rewind the scenario a bit. Let&#8217;s say we&#8217;ve just published the query,
 but no responses arrive. What should we do?</p>
@@ -1263,7 +1270,7 @@ to deal with a flood of responses.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="reprise-surprise"><a class="anchor" href="#reprise-surprise"></a>5.1.5. Reprise, surprise</h4>
+<h4 id="reprise-surprise"><a class="anchor" href="#reprise-surprise"></a>6.1.5. Reprise, surprise</h4>
 <div class="paragraph">
 <p>Back to our original scenario. We&#8217;ve received both the top-3, as well as
 a collection of Asimov books. And we&#8217;re still open for more responses to the
@@ -1292,7 +1299,7 @@ response at all.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="so-whats-in-the-library"><a class="anchor" href="#so-whats-in-the-library"></a>5.1.6. So, what&#8217;s in the library?</h4>
+<h4 id="so-whats-in-the-library"><a class="anchor" href="#so-whats-in-the-library"></a>6.1.6. So, what&#8217;s in the library?</h4>
 <div class="paragraph">
 <p>Let&#8217;s see what we have.</p>
 </div>
@@ -1323,7 +1330,7 @@ body:
 </div>
 </div>
 <div class="sect3">
-<h4 id="inversion-of-flow"><a class="anchor" href="#inversion-of-flow"></a>5.1.7. Inversion of flow</h4>
+<h4 id="inversion-of-flow"><a class="anchor" href="#inversion-of-flow"></a>6.1.7. Inversion of flow</h4>
 <div class="paragraph">
 <p>What we&#8217;ve seen in this example scenario is actually an inversion of what
 could have been implemented as a tightly coupled, chained set of synchronous
@@ -1362,7 +1369,7 @@ making it highly probable that viewing the list of books will fail.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="specification"><a class="anchor" href="#specification"></a>5.2. Specification</h3>
+<h3 id="specification"><a class="anchor" href="#specification"></a>6.2. Specification</h3>
 <div class="paragraph">
 <p>I&#8217;d like to describe the Query/Response pattern in a more formal but not
 too strict way, since it&#8217;s not in any way some type of <em>standard</em> or
@@ -1380,7 +1387,7 @@ my recommendations and suggestions on rules or principles to follow.</p>
 to follow the definitions of <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
 </div>
 <div class="sect3">
-<h4 id="intent"><a class="anchor" href="#intent"></a>5.2.1. Intent</h4>
+<h4 id="intent"><a class="anchor" href="#intent"></a>6.2.1. Intent</h4>
 <div class="paragraph">
 <p>The Query/Response pattern aims to describe a model for information sharing
 in a distributed system. It does so by using strong decoupling of system
@@ -1394,7 +1401,7 @@ pattern.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="components-and-collaborators"><a class="anchor" href="#components-and-collaborators"></a>5.2.2. Components and Collaborators</h4>
+<h4 id="components-and-collaborators"><a class="anchor" href="#components-and-collaborators"></a>6.2.2. Components and Collaborators</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1535,7 +1542,7 @@ The concrete <em>interpolated</em> roles <code>Query-Consumer</code> and
 </div>
 </div>
 <div class="sect3">
-<h4 id="methods-and-actions"><a class="anchor" href="#methods-and-actions"></a>5.2.3. Methods and Actions</h4>
+<h4 id="methods-and-actions"><a class="anchor" href="#methods-and-actions"></a>6.2.3. Methods and Actions</h4>
 <div class="paragraph">
 <p><em>Nothing in the Query/Response pattern is synchronous, or based on the notion
  of guaranteed delivery (or only-once semantics). The following structured
@@ -1605,7 +1612,7 @@ stop listening for responses.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="the-example-revisited"><a class="anchor" href="#the-example-revisited"></a>5.3. The example revisited</h3>
+<h3 id="the-example-revisited"><a class="anchor" href="#the-example-revisited"></a>6.3. The example revisited</h3>
 <div class="paragraph">
 <p>Let&#8217;s examine one of the most powerful aspects of using the Query/Response
 pattern. If we think back to our initial example we published a query for
@@ -1638,7 +1645,7 @@ a ubiquitous language in the queries</em>.</p>
 system.</p>
 </div>
 <div class="sect3">
-<h4 id="a-better-library-protocol"><a class="anchor" href="#a-better-library-protocol"></a>5.3.1. A better library protocol</h4>
+<h4 id="a-better-library-protocol"><a class="anchor" href="#a-better-library-protocol"></a>6.3.1. A better library protocol</h4>
 <div class="paragraph">
 <p>We have agreed on supporting <em>stars</em> for book ratings, and different teams
 scramble to their stations to extend for the new feature.</p>
@@ -1668,7 +1675,7 @@ optional format: "trailing key-values are properties". For example:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="top-3-books-have-stars"><a class="anchor" href="#top-3-books-have-stars"></a>5.3.2. Top-3 books have stars</h4>
+<h4 id="top-3-books-have-stars"><a class="anchor" href="#top-3-books-have-stars"></a>6.3.2. Top-3 books have stars</h4>
 <div class="literalblock">
 <div class="content">
 <pre>query: books.sci-fi
@@ -1696,7 +1703,7 @@ provides star-ratings with the top-3 sci-fi book list.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="one-of-each-flavour"><a class="anchor" href="#one-of-each-flavour"></a>5.3.3. One of each flavour</h4>
+<h4 id="one-of-each-flavour"><a class="anchor" href="#one-of-each-flavour"></a>6.3.3. One of each flavour</h4>
 <div class="paragraph">
 <p>Another response is consumed:</p>
 </div>
@@ -1751,7 +1758,7 @@ checking for version compatibility is required.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="out-with-the-old"><a class="anchor" href="#out-with-the-old"></a>5.3.4. Out with the old</h4>
+<h4 id="out-with-the-old"><a class="anchor" href="#out-with-the-old"></a>6.3.4. Out with the old</h4>
 <div class="paragraph">
 <p>Let&#8217;s jump forward and say that at some later time, the query for sci-fi books
 is published again.</p>
@@ -1786,7 +1793,7 @@ time.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="queryresponse-maturity-model"><a class="anchor" href="#queryresponse-maturity-model"></a>5.4. Query/Response Maturity Model</h3>
+<h3 id="queryresponse-maturity-model"><a class="anchor" href="#queryresponse-maturity-model"></a>6.4. Query/Response Maturity Model</h3>
 <div class="paragraph">
 <p>Just like with the <a href="https://martinfowler.com/articles/richardsonMaturityModel.html">Richardson Maturity Model</a>, I&#8217;ve identified an
 evolution of maturity around the acceptance, use and implementation of
@@ -1794,7 +1801,7 @@ Query/Response. It describes the benefits, opportunities and also
 complexities, pretty well.</p>
 </div>
 <div class="sect3">
-<h4 id="level-0-purgatory"><a class="anchor" href="#level-0-purgatory"></a>5.4.1. Level 0 - Purgatory</h4>
+<h4 id="level-0-purgatory"><a class="anchor" href="#level-0-purgatory"></a>6.4.1. Level 0 - Purgatory</h4>
 <div class="paragraph">
 <p>All communication and exchange is bound to fixed, configured, service end-
 points. Synchronous blocking calls exchange information based on formats
@@ -1806,7 +1813,7 @@ other.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="level-1"><a class="anchor" href="#level-1"></a>5.4.2. Level 1</h4>
+<h4 id="level-1"><a class="anchor" href="#level-1"></a>6.4.2. Level 1</h4>
 <div class="paragraph">
 <p>Using the Query/Response pattern for the first time often leads to healthy
 temporal decoupling pretty quick. But with a lot of code still written with
@@ -1821,7 +1828,7 @@ Wiki/Document-based.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="level-2"><a class="anchor" href="#level-2"></a>5.4.3. Level 2</h4>
+<h4 id="level-2"><a class="anchor" href="#level-2"></a>6.4.3. Level 2</h4>
 <div class="paragraph">
 <p>At this level a deeper insight into the value of a proper data-structure or
 protocol for payload, which can evolve as required, is often gained. With
@@ -1832,7 +1839,7 @@ location.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="level-3"><a class="anchor" href="#level-3"></a>5.4.4. Level 3</h4>
+<h4 id="level-3"><a class="anchor" href="#level-3"></a>6.4.4. Level 3</h4>
 <div class="paragraph">
 <p>More and more ideas around reactivity and flexibility begin to take form.
 Events can immediately trigger queries which may enrich a local context based
@@ -1843,7 +1850,7 @@ malleable <em>data shapes</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="level-4-and-beyond"><a class="anchor" href="#level-4-and-beyond"></a>5.4.5. Level 4 and beyond&#8230;&#8203;</h4>
+<h4 id="level-4-and-beyond"><a class="anchor" href="#level-4-and-beyond"></a>6.4.5. Level 4 and beyond&#8230;&#8203;</h4>
 <div class="paragraph">
 <p>Information exchange using the Query/Response pattern allows for almost
 limitless evolution of services, or components, no longer bound to versions or
@@ -1864,10 +1871,10 @@ This way modules can provide, and fulfill, explicit SLAs if required.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="appendicies"><a class="anchor" href="#appendicies"></a>6. Appendicies</h2>
+<h2 id="appendicies"><a class="anchor" href="#appendicies"></a>7. Appendicies</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="trademarks"><a class="anchor" href="#trademarks"></a>6.1. Trademarks</h3>
+<h3 id="trademarks"><a class="anchor" href="#trademarks"></a>7.1. Trademarks</h3>
 <div class="paragraph">
 <p>Java is a registered trademark of <a href="https://www.oracle.com">Oracle</a> and/or its affiliates.
 Other names may be trademarks of their respective owners.</p>
@@ -1882,7 +1889,7 @@ Software, Inc. in the U.S. and other countries.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-16 12:28:33 +0200
+Last updated 2020-06-14 11:39:40 +0200
 </div>
 </div>
 </body>
