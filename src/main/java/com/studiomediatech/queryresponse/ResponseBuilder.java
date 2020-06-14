@@ -9,8 +9,8 @@ public class ResponseBuilder {
         this.responseRegistry = responseRegistry;
     }
 
-    public <T> YResponseBuilder<T> respondTo(String term, Class<T> type) {
+    public <T> ChainingResponseBuilder<T> respondTo(String term, Class<T> type) {
 
-        return YResponseBuilder.respondTo(term, type).withRegistry(responseRegistry);
+        return ChainingResponseBuilder.respondTo(term, type).withRegistry(responseRegistry);
     }
 }

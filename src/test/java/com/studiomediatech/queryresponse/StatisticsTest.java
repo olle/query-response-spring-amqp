@@ -35,7 +35,7 @@ class StatisticsTest {
     ResponseRegistry registry;
 
     @Captor
-    ArgumentCaptor<YResponseBuilder<?>> responses;
+    ArgumentCaptor<ChainingResponseBuilder<?>> responses;
 
     @SuppressWarnings("static-access")
     @Test
@@ -49,7 +49,7 @@ class StatisticsTest {
 
         verify(registry).register(responses.capture());
 
-        YResponseBuilder<?> builder = responses.getValue();
+        ChainingResponseBuilder<?> builder = responses.getValue();
         assertThat(builder).isNotNull();
 
         assertThat(builder.getRespondToTerm()).isEqualTo("query-response/stats");

@@ -9,8 +9,8 @@ public class QueryBuilder {
         this.queryRegistry = queryRegistry;
     }
 
-    public <T> YQueryBuilder<T> queryFor(String term, Class<T> type) {
+    public <T> ChainingQueryBuilder<T> queryFor(String term, Class<T> type) {
 
-        return YQueryBuilder.queryFor(term, type).withRegistry(queryRegistry);
+        return ChainingQueryBuilder.queryFor(term, type).withRegistry(queryRegistry);
     }
 }

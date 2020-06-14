@@ -90,7 +90,7 @@ class Statistics implements Logging {
 
         log().debug("Registering response for statistics queries...");
 
-        YResponseBuilder.respondTo("query-response/stats", Stat.class)
+        ChainingResponseBuilder.respondTo("query-response/stats", Stat.class)
             .withAll()
             .suppliedBy(this::getStats);
     }

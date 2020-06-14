@@ -20,13 +20,13 @@ import java.util.function.Supplier;
        QueryBuilder.queryFor("some-query", SomeType.class)...
  * </pre>
  *
- * <p>A {@link YQueryBuilder queryBuilder-instance} is a container for a composed or configured query. It is is much
+ * <p>A {@link ChainingQueryBuilder queryBuilder-instance} is a container for a composed or configured query. It is is much
  * like a command-pattern object, providing all the properties required in order to publish the query, await responses
  * and return the results.</p>
  *
  * @param  <T>  the <em>coerced</em> type of the query's response element {@link Collection collection}.
  */
-public final class YQueryBuilder<T> {
+public final class ChainingQueryBuilder<T> {
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -77,10 +77,10 @@ public final class YQueryBuilder<T> {
     /**
      * The target function, applied in the terminal method. Can be modified by {@link #withSink(Consumer)}.
      */
-    private Function<YQueryBuilder<T>, Collection<T>> sink = QueryRegistry::register;
+    private Function<ChainingQueryBuilder<T>, Collection<T>> sink = QueryRegistry::register;
 
     // Declared protected, for access in unit tests.
-    protected YQueryBuilder(String term, Class<T> type) {
+    protected ChainingQueryBuilder(String term, Class<T> type) {
 
         this.type = type;
         this.queryForTerm = Asserts.invariantQueryTerm(term);
@@ -106,13 +106,13 @@ public final class YQueryBuilder<T> {
      * @param  type  of response elements. Any Java type or {@code class} to map JSON responses to. Also infers the
      *               type of the returned results {@link Collection} - if the built query succeeds.
      *
-     * @return  a new {@link YQueryBuilder} instance, <strong>never {@code null}</strong>
+     * @return  a new {@link ChainingQueryBuilder} instance, <strong>never {@code null}</strong>
      *
      * @throws  IllegalArgumentException  if the query {@code term} argument is invalid.
      */
-    static <T> YQueryBuilder<T> queryFor(String term, Class<T> type) {
+    static <T> ChainingQueryBuilder<T> queryFor(String term, Class<T> type) {
 
-        return new YQueryBuilder<T>(term, type);
+        return new ChainingQueryBuilder<T>(term, type);
     }
 
 
@@ -133,7 +133,7 @@ public final class YQueryBuilder<T> {
      *
      * @throws  IllegalArgumentException  for any 0, negative or too long duration.
      */
-    public YQueryBuilder<T> waitingFor(long millis) {
+    public ChainingQueryBuilder<T> waitingFor(long millis) {
 
         this.waitingFor = Asserts.invariantDuration(Duration.ofMillis(millis));
 
@@ -154,7 +154,7 @@ public final class YQueryBuilder<T> {
      *
      * @see  #waitingFor(long)
      */
-    public YQueryBuilder<T> waitingFor(long amount, TemporalUnit timeUnit) {
+    public ChainingQueryBuilder<T> waitingFor(long amount, TemporalUnit timeUnit) {
 
         this.waitingFor = Asserts.invariantDuration(Duration.of(amount, timeUnit));
 
@@ -174,7 +174,7 @@ public final class YQueryBuilder<T> {
      *
      * @see  #waitingFor(long)
      */
-    public YQueryBuilder<T> waitingFor(Duration duration) {
+    public ChainingQueryBuilder<T> waitingFor(Duration duration) {
 
         this.waitingFor = Asserts.invariantDuration(duration);
 
@@ -194,7 +194,7 @@ public final class YQueryBuilder<T> {
      *
      * @throws  IllegalArgumentException  for any values less than 1
      */
-    public YQueryBuilder<T> takingAtMost(int atMost) {
+    public ChainingQueryBuilder<T> takingAtMost(int atMost) {
 
         this.takingAtMost = Asserts.invariantAtMost(atMost);
         assertTakingAtMostAndAtLeast();
@@ -211,7 +211,7 @@ public final class YQueryBuilder<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public YQueryBuilder<T> takingAtLeast(int atLeast) {
+    public ChainingQueryBuilder<T> takingAtLeast(int atLeast) {
 
         this.takingAtLeast = Asserts.invariantAtLeast(atLeast);
         assertTakingAtMostAndAtLeast();
@@ -227,7 +227,7 @@ public final class YQueryBuilder<T> {
      *
      * @return  the query builder, for chaining further calls
      */
-    public YQueryBuilder<T> onError(Consumer<Throwable> handler) {
+    public ChainingQueryBuilder<T> onError(Consumer<Throwable> handler) {
 
         this.onError = handler;
 
@@ -396,7 +396,7 @@ public final class YQueryBuilder<T> {
      *
      * @return  this builder, for chaining.
      */
-    protected YQueryBuilder<T> withSink(Consumer<YQueryBuilder<T>> sink) {
+    protected ChainingQueryBuilder<T> withSink(Consumer<ChainingQueryBuilder<T>> sink) {
 
         this.sink =
             builder -> {
@@ -409,7 +409,7 @@ public final class YQueryBuilder<T> {
     }
 
 
-    YQueryBuilder<T> withRegistry(QueryRegistry queryRegistry) {
+    ChainingQueryBuilder<T> withRegistry(QueryRegistry queryRegistry) {
 
         this.sink = queryRegistry::accept;
 

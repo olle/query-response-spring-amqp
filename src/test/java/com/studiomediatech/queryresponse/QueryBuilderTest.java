@@ -25,7 +25,7 @@ class QueryBuilderTest {
     @Test
     void ensureCreatesLegacyBuilderByProxy() {
 
-        YQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
+        ChainingQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
         assertThat(builder).isNotNull();
     }
 
@@ -33,7 +33,7 @@ class QueryBuilderTest {
     @Test
     void ensureUsesInjectedRegistry() {
 
-        YQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
+        ChainingQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
         builder.waitingFor(1).orEmpty();
 
         verify(registry).accept(builder);

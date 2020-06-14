@@ -25,7 +25,7 @@ class ResponseBuilderTest {
     @Test
     void ensureCreatesLegacyBuilderByProxy() {
 
-        YResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
+        ChainingResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
         assertThat(builder).isNotNull();
     }
 
@@ -33,7 +33,7 @@ class ResponseBuilderTest {
     @Test
     void ensureUsesInjectedRegistry() {
 
-        YResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
+        ChainingResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
         builder.from("foo", "bar", "baz");
 
         verify(registry).accept(builder);

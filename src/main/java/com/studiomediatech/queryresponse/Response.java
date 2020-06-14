@@ -152,7 +152,7 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Response<T> from(YResponseBuilder<T> responses) {
+    static <T> Response<T> from(ChainingResponseBuilder<T> responses) {
 
         Response<T> response = new Response<>(responses.getRespondToTerm());
 

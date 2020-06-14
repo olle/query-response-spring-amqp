@@ -29,7 +29,7 @@ class QueryRegistryTest {
         assertThrows(IllegalStateException.class,
             () -> {
                 QueryRegistry.instance = () -> null;
-                QueryRegistry.register(new YQueryBuilder<>("foobar", String.class));
+                QueryRegistry.register(new ChainingQueryBuilder<>("foobar", String.class));
             });
     }
 
@@ -41,7 +41,7 @@ class QueryRegistryTest {
         var mock = Mockito.mock(QueryRegistry.class);
         QueryRegistry.instance = () -> mock;
 
-        var queryBuilder = new YQueryBuilder<>("foobar", String.class);
+        var queryBuilder = new ChainingQueryBuilder<>("foobar", String.class);
         new QueryRegistry(null, null).register(queryBuilder);
 
         verify(mock).accept(queryBuilder);
@@ -53,7 +53,7 @@ class QueryRegistryTest {
     @Test
     void ensureAcceptQueries() {
 
-        var queries = new YQueryBuilder<>("foobar", String.class);
+        var queries = new ChainingQueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
 
         new QueryRegistry(facade, stats).accept(queries);

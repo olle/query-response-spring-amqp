@@ -21,15 +21,15 @@ public class ResponseBuilderApiTest {
 
         // EXAMPLES --------
 
-        YResponseBuilder.respondTo("authors", String.class)
+        ChainingResponseBuilder.respondTo("authors", String.class)
             .withAll()
             .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 
-        YResponseBuilder.respondTo("offers/monday", Offer.class)
+        ChainingResponseBuilder.respondTo("offers/monday", Offer.class)
             .withBatchesOf(20)
             .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 
-        YResponseBuilder.respondTo("users/current", Token.class)
+        ChainingResponseBuilder.respondTo("users/current", Token.class)
             .withBatchesOf(256)
             .suppliedBy(userTokenService::findAllCurrentUserTokens);
 

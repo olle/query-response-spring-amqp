@@ -43,9 +43,9 @@ class ResponseTest {
     @DisplayName("after consuming a query message, a response is published")
     void ensurePublishesResponseOnConsumedQueryMessage() throws JSONException {
 
-        AtomicReference<YResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        YResponseBuilder.<String>respondTo("some-query", String.class)
+        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from("foo", "bar", "baz");
@@ -69,9 +69,9 @@ class ResponseTest {
     @DisplayName("response is built from iterator after a query message is consumed")
     void ensureCallsElementsIteratorAfterQueryConsumed() throws Exception {
 
-        AtomicReference<YResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        YResponseBuilder.<String>respondTo("some-query", String.class)
+        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
             .from(() -> List.of("foo", "bar").iterator());
@@ -95,9 +95,9 @@ class ResponseTest {
     @DisplayName("responses are published as batches of a given size, plus leftover")
     void ensurePublishedBatchResponses() throws Exception {
 
-        AtomicReference<YResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        YResponseBuilder.<String>respondTo("some-query", String.class)
+        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withBatchesOf(2)
             .from("foo", "bar", "baz", "goo", "gar");

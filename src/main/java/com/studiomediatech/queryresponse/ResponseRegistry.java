@@ -34,7 +34,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
     }
 
 
-    public static <T> void register(YResponseBuilder<T> responses) {
+    public static <T> void register(ChainingResponseBuilder<T> responses) {
 
         var registry = instance.get();
 
@@ -46,7 +46,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
     }
 
 
-    <T> void accept(YResponseBuilder<T> responses) {
+    <T> void accept(ChainingResponseBuilder<T> responses) {
 
         doAccept(Response.from(responses));
     }

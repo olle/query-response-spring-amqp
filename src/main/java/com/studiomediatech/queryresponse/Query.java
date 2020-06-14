@@ -127,7 +127,7 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Query<T> from(YQueryBuilder<T> queryBuilder) {
+    static <T> Query<T> from(ChainingQueryBuilder<T> queryBuilder) {
 
         Query<T> query = new Query<>();
 

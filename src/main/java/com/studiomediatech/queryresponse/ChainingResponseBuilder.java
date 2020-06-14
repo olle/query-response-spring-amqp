@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @param  <T>  the type of response entries or elements.
  */
-public class YResponseBuilder<T> {
+public class ChainingResponseBuilder<T> {
 
     /**
      * The current implementation supports only term-based queries - that means, there may only be opaque semantics in
@@ -39,7 +39,7 @@ public class YResponseBuilder<T> {
     /**
      * The target, used in the terminal operation. Can be modified from {@link #withSink(Consumer)}.
      */
-    private Consumer<YResponseBuilder<T>> sink = ResponseRegistry::register;
+    private Consumer<ChainingResponseBuilder<T>> sink = ResponseRegistry::register;
 
     /**
      * Constructs a response builder, with the given term to respond to.
@@ -50,18 +50,18 @@ public class YResponseBuilder<T> {
      *
      * @param  term  to respond to
      */
-    private YResponseBuilder(String term, Class<T> type) {
+    private ChainingResponseBuilder(String term, Class<T> type) {
 
         this.respondToTerm = Asserts.invariantQueryTerm(term);
     }
 
-    static <T> YResponseBuilder<T> respondTo(String term, Class<T> type) {
+    static <T> ChainingResponseBuilder<T> respondTo(String term, Class<T> type) {
 
-        return new YResponseBuilder<>(term, type);
+        return new ChainingResponseBuilder<>(term, type);
     }
 
 
-    public YResponseBuilder<T> withAll() {
+    public ChainingResponseBuilder<T> withAll() {
 
         this.batchSize = 0;
 
@@ -69,7 +69,7 @@ public class YResponseBuilder<T> {
     }
 
 
-    public YResponseBuilder<T> withBatchesOf(int size) {
+    public ChainingResponseBuilder<T> withBatchesOf(int size) {
 
         this.batchSize = Asserts.invariantBatchSize(size);
 
@@ -166,7 +166,7 @@ public class YResponseBuilder<T> {
      *
      * @return  this builder, for chaining.
      */
-    protected YResponseBuilder<T> withSink(Consumer<YResponseBuilder<T>> sink) {
+    protected ChainingResponseBuilder<T> withSink(Consumer<ChainingResponseBuilder<T>> sink) {
 
         this.sink = sink;
 
@@ -174,7 +174,7 @@ public class YResponseBuilder<T> {
     }
 
 
-    YResponseBuilder<T> withRegistry(ResponseRegistry responseRegistry) {
+    ChainingResponseBuilder<T> withRegistry(ResponseRegistry responseRegistry) {
 
         this.sink = responseRegistry::accept;
 

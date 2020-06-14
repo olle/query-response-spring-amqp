@@ -15,14 +15,14 @@ import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-class YQueryBuilderTest {
+class ChainingQueryBuilderTest {
 
     @Test
     void ensureWithSinkCapturesBuilder() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        var nope = YQueryBuilder.queryFor("foobar", String.class)
+        var nope = ChainingQueryBuilder.queryFor("foobar", String.class)
                 .withSink(capture::set)
                 .waitingFor(123)
                 .orEmpty();
@@ -35,9 +35,9 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderHoldsQueryAndType() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1337)
             .orEmpty();
@@ -50,9 +50,9 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCapturesWaitingForCorrectMillis() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1337)
             .orEmpty();
@@ -64,9 +64,9 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCapturesWaitingForCorrectDurationArgs() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(3, ChronoUnit.SECONDS)
             .orEmpty();
@@ -78,9 +78,9 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCapturesWaitingForCorrectAsDuration() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(Duration.ofMillis(3000))
             .orEmpty();
@@ -92,9 +92,9 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCapturesTakingAtMost() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .takingAtMost(42)
             .waitingFor(123)
@@ -107,9 +107,9 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCaptureTakingAtLeast() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .takingAtLeast(33)
             .waitingFor(123)
@@ -122,11 +122,11 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCapturesOnErrorHandler() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
         Consumer<Throwable> handler = obj -> { };
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .onError(handler)
@@ -139,11 +139,11 @@ class YQueryBuilderTest {
     @Test
     void ensureBuilderCapturesThrowable() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
         Supplier<RuntimeException> throwable = RuntimeException::new;
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .orThrow(throwable);
@@ -155,11 +155,11 @@ class YQueryBuilderTest {
     @Test
     void ensureCapturesDefaults() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
         Collection<String> defaults = List.of("foo", "bar", "baz");
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .orDefaults(defaults);
@@ -172,11 +172,11 @@ class YQueryBuilderTest {
     @Test
     void ensureCapturesDefaultsSupplier() throws Exception {
 
-        AtomicReference<YQueryBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
         Collection<String> defaults = List.of("foo", "bar", "baz");
 
-        YQueryBuilder.queryFor("foobar", String.class)
+        ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(123)
             .orDefaults(() -> defaults);
@@ -190,7 +190,7 @@ class YQueryBuilderTest {
     void ensureThrowsForMoreTakingAtLeastThanAtMost() {
 
         Assertions.assertThrows(IllegalArgumentException.class,
-            () -> YQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(2));
+            () -> ChainingQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(2));
     }
 
 
@@ -198,6 +198,6 @@ class YQueryBuilderTest {
     void ensureThrowsForEqualTakingAtLeastAsAtMost() {
 
         Assertions.assertThrows(IllegalArgumentException.class,
-            () -> YQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(1));
+            () -> ChainingQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(1));
     }
 }
