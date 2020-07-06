@@ -97,11 +97,13 @@ work.
 
 == Documentation &amp; Examples
 
-Read more and learn how to user Query/Response in the
+Read more and learn how to use Query/Response, and how it works, in the
 https://olle.github.io/query-response-spring-amqp/[online documentation].
 
-Also check out the working link:./examples/[examples] to get started quickly
-with Query/Response.
+Also make sure to check out the working link:./examples/[examples] to get
+started quickly with Query/Response.
+
+Have fun!
 
 ---
 
