@@ -10,6 +10,21 @@ _always async_ approach to data exchange. Ensure decoupling of components. Be
 better prepared for system evolution. Create more scalable solutions. Change the
 way you think and design, by using Query/Response for Spring AMQP.
 
+== Thought provoking
+
+Up front and center - Query/Response puts developers in another mindset. With
+lower coupling, as a feature, there's much more room for better component and
+service modeling. Autonomy and independence, by design. System evolution and
+elasticity, by design.
+
+== Batteries, included
+
+Query/Response provides tools to allow developers to monitor, measure, explore
+and discover the capabilities of their runtime system. Metrics and interactive
+utilities, built-in.
+
+image:ui/ui.png[]
+
 == Quickstart
 
 The Query/Response library can easily be added to any Spring Boot® project, as
