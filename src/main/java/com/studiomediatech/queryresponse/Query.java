@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.LongPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -64,7 +64,7 @@ class Query<T> implements MessageListener, Logging {
      * returning false, by default. This enables testability, as it's protected
      * and may compute other results.
      */
-    protected Function<Long, Boolean> fail = l -> false;
+    protected LongPredicate fail = l -> false;
 
     private Statistics stats;
 
@@ -195,11 +195,11 @@ class Query<T> implements MessageListener, Logging {
             }
 
             try {
-                if (this.fail.apply(wait)) {
+                if (this.fail.test(wait)) {
                     throw new InterruptedException();
-                } else {
-                    Thread.sleep(ONE_MILLIS);
                 }
+
+                Thread.sleep(ONE_MILLIS);
             } catch (InterruptedException e) {
                 // Soft handler for the exception, may be informed.
                 if (this.onError != null) {
@@ -207,7 +207,7 @@ class Query<T> implements MessageListener, Logging {
                 }
 
                 // Reset interrupted state, before moving on.
-                log().error("Sleep interrupted with still " + wait + "ms to go", e);
+                log().error("Sleep interrupted with still {} ms to go", wait, e);
                 Thread.currentThread().interrupt();
 
                 /*
