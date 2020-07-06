@@ -95,6 +95,14 @@ work.
       .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
 ```
 
+== Documentation &amp; Examples
+
+Read more and learn how to user Query/Response in the
+https://olle.github.io/query-response-spring-amqp/[online documentation].
+
+Also check out the working link:./examples/[examples] to get started quickly
+with Query/Response.
+
 ---
 
 Spring and Spring Boot are trademarks of Pivotal Software, Inc. in the U.S. and
