@@ -32,8 +32,8 @@ We recommend injecting it via the component constructor, and keeping it as a
 private field. The `findAuthors()` method below, shows how to access the
 `queryBuilder` field in order to publish a query.
 
-Queries are built and published using the `QueryBuilder.queryFor(..)` method.
-Any of the terminal calls to either `orEmpty()`, `orDefaults(..)` or
+Queries are built and published using the `queryFor(..)` _initial_ method.
+Any of the _terminal_ calls to either `orEmpty()`, `orDefaults(..)` or
 `orThrows(..)` will block on the calling thread.
 
 [source,java]
@@ -42,17 +42,33 @@ include::{examples-src}/querying/src/main/java/examples/Authors.java[tags=author
 ----
 
 In the example above, the published query is defined by the string **term** 
-`"authors"`. This is how the most basic contract of {qr-pfx} is defined. A any
+`"authors"`. This is how the most basic contract of {qr-pfx} is defined. Any
 string or text term may be published as a query.
 
 The second argument is the expected type of any received response elements. It
 is not published with the query, but rather used to coerce or interpret any
-received responses. This means that regardless of the payload of any response 
-{qr-name} will attempt to read the response elements as the type `String.class`.
+received responses. This means that regardless of the payload of any response,
+in this case {qr-name} will attempt to read the response elements as the
+declared type `String.class`.
 
-Since the call to `orEmpty()` will block, users have to specify any of the
-blocking _conditions_ - here the call to `watingFor(..)` defines that the call
-will block for around 800 milliseconds.
+Since the call to `orEmpty()` will block, users have to specify one or more
+blocking _conditional_. We'll explain more about the possible conditional calls
+in the table below. In the example above, the call to `waitingFor(..)` defines
+that the call will block for around 800 milliseconds.
+
+|===
+| Method              | Type          | Description
+
+| `queryFor(..)`      | _initial_     | Creates a new builder for a query
+| `waitingFor(..)`    | _conditional_ | Specifies the waiting/blocking condition
+| `takingAtMost(..)`  | _conditional_ | Sets a limit condition, a maximum
+| `takingAtLeast(..)` | _conditional_ | Sets a limit condition, a minimum
+| `onError(..)`       | _informal_    | Allows for explicit logging etc.
+| `orEmpty()`         | _terminal_    | Terminates with empty, after conditionals are evaluated
+| `orDefaults(..)`    | _terminal_    | Terminates with some defaults, after conditionals are evaluated
+| `orThrow(..)`       | _terminal_    | Terminates by throwing, after conditionals are evaluated
+|===
+
 
 TODO!
 
