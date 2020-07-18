@@ -572,8 +572,8 @@ private field. The <code>findAuthors()</code> method below, shows how to access 
 <code>queryBuilder</code> field in order to publish a query.</p>
 </div>
 <div class="paragraph">
-<p>Queries are built and published using the <code>QueryBuilder.queryFor(..)</code> method.
-Any of the terminal calls to either <code>orEmpty()</code>, <code>orDefaults(..)</code> or
+<p>Queries are built and published using the <code>queryFor(..)</code> <em>initial</em> method.
+Any of the <em>terminal</em> calls to either <code>orEmpty()</code>, <code>orDefaults(..)</code> or
 <code>orThrows(..)</code> will block on the calling thread.</p>
 </div>
 <div class="listingblock">
@@ -599,20 +599,78 @@ Any of the terminal calls to either <code>orEmpty()</code>, <code>orDefaults(..)
 </div>
 <div class="paragraph">
 <p>In the example above, the published query is defined by the string <strong>term</strong>
-<code>"authors"</code>. This is how the most basic contract of Query/Response is defined. A any
+<code>"authors"</code>. This is how the most basic contract of Query/Response is defined. Any
 string or text term may be published as a query.</p>
 </div>
 <div class="paragraph">
 <p>The second argument is the expected type of any received response elements. It
 is not published with the query, but rather used to coerce or interpret any
-received responses. This means that regardless of the payload of any response
-Query/Response for Spring AMQP will attempt to read the response elements as the type <code>String.class</code>.</p>
+received responses. This means that regardless of the payload of any response,
+in this case Query/Response for Spring AMQP will attempt to read the response elements as the
+declared type <code>String.class</code>.</p>
 </div>
 <div class="paragraph">
-<p>Since the call to <code>orEmpty()</code> will block, users have to specify any of the
-blocking <em>conditions</em> - here the call to <code>watingFor(..)</code> defines that the call
-will block for around 800 milliseconds.</p>
+<p>Since the call to <code>orEmpty()</code> will block, users have to specify one or more
+blocking <em>conditional</em>. We&#8217;ll explain more about the possible conditional calls
+in the table below. In the example above, the call to <code>waitingFor(..)</code> defines
+that the call will block for around 800 milliseconds.</p>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Method</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>queryFor(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>initial</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creates a new builder for a query</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>waitingFor(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>conditional</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies the waiting/blocking condition</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>takingAtMost(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>conditional</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets a limit condition, a maximum</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>takingAtLeast(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>conditional</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets a limit condition, a minimum</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>onError(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>informal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allows for explicit logging etc.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orEmpty()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Terminates with empty, after conditionals are evaluated</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orDefaults(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Terminates with some defaults, after conditionals are evaluated</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orThrow(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Terminates by throwing, after conditionals are evaluated</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>TODO!</p>
 </div>
@@ -700,7 +758,7 @@ lazy calls to suppliers of data.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-18 19:20:12 +0200
+Last updated 2020-07-19 01:37:30 +0200
 </div>
 </div>
 </body>
