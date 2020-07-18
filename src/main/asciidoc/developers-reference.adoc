@@ -23,6 +23,29 @@ explain the concepts behind them, and the intention of their implementation.
 
 == `QueryBuilder`
 
+The `QueryBuilder` class is the central entry-point, and provides a fluent
+builder-API, for publishing queries. It's provided as a bean, by enabling
+{qr-name}, using the `@EnableQueryResponse` annotation. It may be injected
+as a dependency to provide access from methods in Spring any component.
+
+We recommend injecting it via the component constructor, and keeping it as a
+private field. The `findAuthors()` method below, shows how to access the
+`queryBuilder` field in order to publish a query.
+
+[source,java]
+----
+include::{examples-src}/querying/src/main/java/examples/Authors.java[tags=authorsClass]
+----
+
+In example above, the published query is defined by the **term** `"authors"`.
+This is how the most basic contract of {qr-pfx} is defined. A any string or
+text term may be published as a query. The second argument is the expected
+type of any received response elements. It is not published with the query, but
+rather used to coerce or interpret any received responses.
+
+This means that regardless of the payload of any response {qr-name} will attempt
+to read the response elements as the type `String.class`.
+
 TODO!
 
 Defaults are suddenly top-of-mind for developers, and either the _empty case_
