@@ -1,7 +1,8 @@
 {
   "private": true,
   "devDependencies": {
-    "gh-pages": "^2.2.0"
+    "gh-pages": "^2.2.0",
+    "lodash": ">=4.17.19"
   },
   "scripts": {
     "deploy-docs": "gh-pages -d target/generated-docs"
