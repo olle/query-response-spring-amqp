@@ -940,6 +940,49 @@ explain the concepts behind them, and the intention of their implementation.</p>
 <div class="sect2">
 <h3 id="querybuilder"><a class="anchor" href="#querybuilder"></a>4.2. <code>QueryBuilder</code></h3>
 <div class="paragraph">
+<p>The <code>QueryBuilder</code> class is the central entry-point, and provides a fluent
+builder-API, for publishing queries. It&#8217;s provided as a bean, by enabling
+Query/Response for Spring AMQP, using the <code>@EnableQueryResponse</code> annotation. It may be injected
+as a dependency to provide access from methods in Spring any component.</p>
+</div>
+<div class="paragraph">
+<p>We recommend injecting it via the component constructor, and keeping it as a
+private field. The <code>findAuthors()</code> method below, shows how to access the
+<code>queryBuilder</code> field in order to publish a query.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">Authors</span> {
+
+    <span class="directive">private</span> <span class="directive">final</span> QueryBuilder queryBuilder;
+
+    <span class="directive">public</span> Authors(QueryBuilder queryBuilder) {
+
+        <span class="local-variable">this</span>.queryBuilder = queryBuilder;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">String</span>&gt; findAuthors() {
+
+        <span class="keyword">return</span> queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+            .waitingFor(<span class="integer">800</span>)
+            .orEmpty();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In example above, the published query is defined by the <strong>term</strong> <code>"authors"</code>.
+This is how the most basic contract of Query/Response is defined. A any string or
+text term may be published as a query. The second argument is the expected
+type of any received response elements. It is not published with the query, but
+rather used to coerce or interpret any received responses.</p>
+</div>
+<div class="paragraph">
+<p>This means that regardless of the payload of any response Query/Response for Spring AMQP will attempt
+to read the response elements as the type <code>String.class</code>.</p>
+</div>
+<div class="paragraph">
 <p>TODO!</p>
 </div>
 <div class="paragraph">
