@@ -919,7 +919,22 @@ We are using the <code>@Order</code> annotation in our example only to ensure th
 <div class="sect2">
 <h3 id="overview"><a class="anchor" href="#overview"></a>4.1. Overview</h3>
 <div class="paragraph">
-<p>TODO!</p>
+<p>The goal of Query/Response for Spring AMQP is to provide developers with tools that are easy to use
+and understand. We believe that a procedural and imperative style of writing
+programs, or thinking about tasks in programs, is broadly understood and
+valuable model. With Query/Response for Spring AMQP we try to support this, rather than introducing
+any new concepts for <em>streams</em>, <em>futures</em> or <em>promises</em>.</p>
+</div>
+<div class="paragraph">
+<p>With Query/Response for Spring AMQP developers should feel enabled to write code in a <em>normal</em> way.
+However, it is our mission to raise awareness of things that are hard to
+consider, when building <a href="https://en.wikipedia.org/wiki/Distributed_computing">distributed systems</a>. The tools try to convey
+these considerations, by making them transparent and part of the API.</p>
+</div>
+<div class="paragraph">
+<p>In the next couple of sections we&#8217;ll look closer at the <code>QueryBuilder</code> and the
+<code>ResponseBuilder</code> types. We&#8217;ll discuss how to use them in detail, and try to
+explain the concepts behind them, and the intention of their implementation.</p>
 </div>
 </div>
 <div class="sect2">
