@@ -943,7 +943,7 @@ explain the concepts behind them, and the intention of their implementation.</p>
 <p>The <code>QueryBuilder</code> class is the central entry-point, and provides a fluent
 builder-API, for publishing queries. It&#8217;s provided as a bean, by enabling
 Query/Response for Spring AMQP, using the <code>@EnableQueryResponse</code> annotation. It may be injected
-as a dependency to provide access from methods in Spring any component.</p>
+as a dependency to provide access from methods in any Spring component.</p>
 </div>
 <div class="paragraph">
 <p>We recommend injecting it via the component constructor, and keeping it as a
@@ -972,15 +972,15 @@ private field. The <code>findAuthors()</code> method below, shows how to access 
 </div>
 </div>
 <div class="paragraph">
-<p>In example above, the published query is defined by the <strong>term</strong> <code>"authors"</code>.
-This is how the most basic contract of Query/Response is defined. A any string or
-text term may be published as a query. The second argument is the expected
-type of any received response elements. It is not published with the query, but
-rather used to coerce or interpret any received responses.</p>
+<p>In the example above, the published query is defined by the string <strong>term</strong>
+<code>"authors"</code>. This is how the most basic contract of Query/Response is defined. A any
+string or text term may be published as a query.</p>
 </div>
 <div class="paragraph">
-<p>This means that regardless of the payload of any response Query/Response for Spring AMQP will attempt
-to read the response elements as the type <code>String.class</code>.</p>
+<p>The second argument is the expected type of any received response elements. It
+is not published with the query, but rather used to coerce or interpret any
+received responses. This means that regardless of the payload of any response
+Query/Response for Spring AMQP will attempt to read the response elements as the type <code>String.class</code>.</p>
 </div>
 <div class="paragraph">
 <p>TODO!</p>
