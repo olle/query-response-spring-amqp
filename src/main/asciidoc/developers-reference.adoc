@@ -32,6 +32,8 @@ We recommend injecting it via the component constructor, and keeping it as a
 private field. The `findAuthors()` method below, shows how to access the
 `queryBuilder` field in order to publish a query.
 
+Queries built and published using the `QueryBuilder.queryFor(..)` method.
+
 [source,java]
 ----
 include::{examples-src}/querying/src/main/java/examples/Authors.java[tags=authorsClass]
