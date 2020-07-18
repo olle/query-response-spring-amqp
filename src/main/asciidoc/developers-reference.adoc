@@ -32,7 +32,9 @@ We recommend injecting it via the component constructor, and keeping it as a
 private field. The `findAuthors()` method below, shows how to access the
 `queryBuilder` field in order to publish a query.
 
-Queries built and published using the `QueryBuilder.queryFor(..)` method.
+Queries are built and published using the `QueryBuilder.queryFor(..)` method.
+Any of the terminal calls to either `orEmpty()`, `orDefaults(..)` or
+`orThrows(..)` will block on the calling thread.
 
 [source,java]
 ----
@@ -47,6 +49,10 @@ The second argument is the expected type of any received response elements. It
 is not published with the query, but rather used to coerce or interpret any
 received responses. This means that regardless of the payload of any response 
 {qr-name} will attempt to read the response elements as the type `String.class`.
+
+Since the call to `orEmpty()` will block, users have to specify any of the
+blocking _conditions_ - here the call to `watingFor(..)` defines that the call
+will block for around 800 milliseconds.
 
 TODO!
 
