@@ -4,7 +4,22 @@ include::attributes.adoc[]
 
 == Overview
 
-TODO!
+The goal of {qr-name} is to provide developers with tools that are easy to use
+and understand. We believe that a procedural and imperative style of writing
+programs, or thinking about tasks in programs, is broadly understood and
+valuable model. With {qr-name} we try to support this, rather than introducing
+any new concepts for _streams_, _futures_ or _promises_.
+
+:DISTR: https://en.wikipedia.org/wiki/Distributed_computing
+
+With {qr-name} developers should feel enabled to write code in a _normal_ way.
+However, it is our mission to raise awareness of things that are hard to
+consider, when building {DISTR}[distributed systems]. The tools try to convey
+these considerations, by making them transparent and part of the API.
+
+In the next couple of sections we'll look closer at the `QueryBuilder` and the
+`ResponseBuilder` types. We'll discuss how to use them in detail, and try to
+explain the concepts behind them, and the intention of their implementation.
 
 == `QueryBuilder`
 
