@@ -52,10 +52,16 @@ in this case {qr-name} will attempt to read the response elements as the
 declared type `String.class`.
 
 Since the call to `orEmpty()` will block, users have to specify one or more
-blocking _conditional_. We'll explain more about the possible conditional calls
-in the table below. In the example above, the call to `waitingFor(..)` defines
-that the call will block for around 800 milliseconds.
+blocking _conditional_. In the example above, the call to `waitingFor(..)`
+defines that the call will block for around 800 milliseconds.
 
+Constructing queries with the `QueryBuilder` revolves around a composition of
+_initial_, _conditional_, the odd _informal_ and exactly one _terminal_ method
+call. In the table below is a short description of the different methods and
+types.
+
+[cols="1,1,3"]
+.`QueryBuilder` fluid API method types
 |===
 | Method              | Type          | Description
 
@@ -69,6 +75,21 @@ that the call will block for around 800 milliseconds.
 | `orThrow(..)`       | _terminal_    | Terminates by throwing, after conditionals are evaluated
 |===
 
+Let's take a closer look at each of the builder method types.
+
+=== _Initial_ methods
+
+At the moment there's only one _initial_ method and it's declared as:
+
+```java
+  public <T> ChainingQueryBuilder<T> queryFor(String term, Class<T> type)
+```
+
+=== _Conditional_ methods
+
+=== _Terminal_ methods
+
+=== _Informal_ methods
 
 TODO!
 
