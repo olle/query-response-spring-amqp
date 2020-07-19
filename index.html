@@ -1069,10 +1069,54 @@ types.</p>
 <pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">public</span> &lt;T&gt; ChainingQueryBuilder&lt;T&gt; queryFor(<span class="predefined-type">String</span> term, <span class="predefined-type">Class</span>&lt;T&gt; type)</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>So we can query for any <code>String</code> <strong>term</strong> and given the expected mapped or
+coerced <strong>type</strong> as a <code>Class&lt;T&gt;</code>. The returned <code>ChainingQueryBuilder&lt;T&gt;</code>
+provides the capabilities of the fluid API.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="conditional-methods"><a class="anchor" href="#conditional-methods"></a>4.2.2. <em>Conditional</em> methods</h4>
-
+<div class="paragraph">
+<p>All <em>conditional</em> properties can be composed together by the <code>QueryResponse</code>
+builder API, to define whether a query is successful or not. If an executing
+query is completed in a <strong>successful</strong> way, fulfilling the <em>conditionals</em>, it will
+return and not consume any more responses.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>waitingFor(..)</code> - a <em>conditional</em> that defines the amount of blocking time
+that is acceptable. In many cases a query must have a defined blocking time
+in order to be easily evaluated as successful or not. Is considered
+<strong>successful</strong> if <em>any</em> responses are received within the given time limit. The
+API for is declared to provide a few different ways to specify the timeout.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>waitingFor(long millis)</code></p>
+</li>
+<li>
+<p><code>waitingFor(long amount, TemporalUnit timeUnit)</code></p>
+</li>
+<li>
+<p><code>waitingFor(Duration duration)</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>takingAtMost(int atMost)</code> - defines a limiting <em>conditional</em> on the aggregated
+number of received elements. The blocking client evaluates to <strong>successful</strong>,
+and returns, if the given amount if reached.</p>
+</li>
+<li>
+<p><code>takingAtLeast(int atLeast)</code> - defines a minimum <em>conditional</em> on the number
+of received element. The query evaluates to <strong>successful</strong>, only if at least
+the given number of elements has been consumed.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect3">
 <h4 id="terminal-methods"><a class="anchor" href="#terminal-methods"></a>4.2.3. <em>Terminal</em> methods</h4>
@@ -1080,20 +1124,6 @@ types.</p>
 </div>
 <div class="sect3">
 <h4 id="informal-methods"><a class="anchor" href="#informal-methods"></a>4.2.4. <em>Informal</em> methods</h4>
-<div class="paragraph">
-<p>TODO!</p>
-</div>
-<div class="paragraph">
-<p>Defaults are suddenly top-of-mind for developers, and either the <em>empty case</em>
-is good enough, or fallbacks can be provided.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">  var authors = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
-                  .waitingFor(<span class="integer">800</span>)
-                  .orDefaults(Authors.defaults());</code></pre>
-</div>
-</div>
 <div class="paragraph">
 <p>Preserve resources specific to the current needs and protect your services,
 by limiting the amount of data consumed.</p>
