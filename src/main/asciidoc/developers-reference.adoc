@@ -99,8 +99,8 @@ return and not consume any more responses.
 * `waitingFor(..)` - a _conditional_ that defines the amount of blocking time
   that is acceptable. In many cases a query must have a defined blocking time
   in order to be easily evaluated as successful or not. Is considered
-  *successful* if _any_ responses are received within the given time limit. The
-  API for is declared to provide a few different ways to specify the timeout.
+  *successful* if _any_ responses are received within the given time limit.
+  There are a few different methods declared, to specify the timeout:
 
 ** `waitingFor(long millis)`
 ** `waitingFor(long amount, TemporalUnit timeUnit)`
@@ -116,9 +116,13 @@ return and not consume any more responses.
 
 === _Terminal_ methods
 
+TODO:
+
 === _Informal_ methods
 
+TODO:
 
+TO-UNDO:
 
 Preserve resources specific to the current needs and protect your services,
 by limiting the amount of data consumed.
