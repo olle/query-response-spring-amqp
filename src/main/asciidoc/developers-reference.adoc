@@ -85,22 +85,40 @@ At the moment there's only one _initial_ method and it's declared as:
   public <T> ChainingQueryBuilder<T> queryFor(String term, Class<T> type)
 ```
 
+So we can query for any `String` **term** and given the expected mapped or
+coerced **type** as a `Class<T>`. The returned `ChainingQueryBuilder<T>`
+provides the capabilities of the fluid API.
+
 === _Conditional_ methods
+
+All _conditional_ properties can be composed together by the `QueryResponse`
+builder API, to define whether a query is successful or not. If an executing
+query is completed in a *successful* way, fulfilling the _conditionals_, it will
+return and not consume any more responses.
+
+* `waitingFor(..)` - a _conditional_ that defines the amount of blocking time
+  that is acceptable. In many cases a query must have a defined blocking time
+  in order to be easily evaluated as successful or not. Is considered
+  *successful* if _any_ responses are received within the given time limit. The
+  API for is declared to provide a few different ways to specify the timeout.
+
+** `waitingFor(long millis)`
+** `waitingFor(long amount, TemporalUnit timeUnit)`
+** `waitingFor(Duration duration)`
+
+* `takingAtMost(int atMost)` - defines a limiting _conditional_ on the aggregated
+  number of received elements. The blocking client evaluates to *successful*,
+  and returns, if the given amount if reached.
+
+* `takingAtLeast(int atLeast)` - defines a minimum _conditional_ on the number
+  of received element. The query evaluates to *successful*, only if at least
+  the given number of elements has been consumed.
 
 === _Terminal_ methods
 
 === _Informal_ methods
 
-TODO!
 
-Defaults are suddenly top-of-mind for developers, and either the _empty case_
-is good enough, or fallbacks can be provided.
-
-```java
-  var authors = queryBuilder.queryFor("authors", String.class)
-                  .waitingFor(800)
-                  .orDefaults(Authors.defaults());
-```
 
 Preserve resources specific to the current needs and protect your services,
 by limiting the amount of data consumed.
