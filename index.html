@@ -1232,8 +1232,127 @@ have to be observed.</p>
 <div class="sect2">
 <h3 id="responsebuilder"><a class="anchor" href="#responsebuilder"></a>4.3. <code>ResponseBuilder</code></h3>
 <div class="paragraph">
-<p>TODO!</p>
+<p>Another entry-point into Query/Response for Spring AMQP is the <code>ResponseBuilder</code>. It provides a
+fluid builder-API that allows users to create responding services or components.</p>
 </div>
+<div class="paragraph">
+<p>It is also provided as a bean, when using the <code>@EnableQueryResponse</code> annotation
+in a Spring application. It can easily be injected as a dependency to provide
+access from methods in Spring components.</p>
+</div>
+<div class="paragraph">
+<p>The <code>respondWithAuthors()</code>-method below, shows how the injected builder is used
+to create a responding service.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Component</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">OnlyThreeAuthors</span> {
+
+    <span class="directive">private</span> <span class="directive">final</span> ResponseBuilder responseBuilder;
+
+    <span class="directive">public</span> OnlyThreeAuthors(ResponseBuilder responseBuilder) {
+
+        <span class="local-variable">this</span>.responseBuilder = responseBuilder;
+    }
+
+    <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
+    <span class="directive">public</span> <span class="type">void</span> respondWithAuthors() {
+
+        responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+            .withAll()
+            .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">Tolkien</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Lewis</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Rowling</span><span class="delimiter">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example above the responding service is defined by calling the builder
+method <code>respondTo(..)</code> with the query <strong>term</strong> parameter <code>"authors"</code>. It will
+be bound to publish the given 3 authors as <code>String.class</code> entries, whenever it
+consumes a query for the matching string <strong>term</strong> <code>"authors"</code>.</p>
+</div>
+<div class="paragraph">
+<p>This is the most basic premiss of {qr-prx}, that any string or text term may be
+interpreted as a query - it is however up to the publisher to determine what
+the query means.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+We&#8217;ve tried to provide information around the Query/Response <em>protocol</em> and
+     philosophy in the later chapter on <a href="#the-queryresponse-protocol">The Query/Response Protocol</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The second parameter is the the type of each element, that will be published in
+the response. It is given both as a type hint for the compiler, as well as a
+parameter to the data mapper. Here it&#8217;s trivial, the three authors are given as
+<code>String.class</code> entries.</p>
+</div>
+<div class="paragraph">
+<p>Response publishers are built using the <code>respondTo(..)</code> <em>initial</em> method. Any
+following call to one of the <em>terminal</em> methods <code>from(..)</code> or <code>suppliedBy(..)</code>
+will create and register it, as its own consumer in another thread. The
+builder call returns immediately.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ResponseBuilder</code> comes with some methods to allow for <em>partitioning</em> or
+<em>batching</em>, which can be used to control the transfer of data to some degree.</p>
+</div>
+<div class="paragraph">
+<p>The table below shows a summary of the builder methods and types.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. <code>ResponseBuilder</code> fluid API method types</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Method</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>respondTo(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>initial</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creates a new builder for a query</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>withAll()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>batching</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specifies NO batches</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>withBatchesOf(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>batching</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the batch size of responses</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Terminates with some given response data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>suppliedBy(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Terminates with some supplied response data</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="responsebuilder-examples"><a class="anchor" href="#responsebuilder-examples"></a>4.3.1. <code>ResponseBuilder</code> examples</h4>
 <div class="paragraph">
 <p>Batch responses provide developers with more options to tune and throttle a
 system using Query/Response across many services.</p>
@@ -1254,6 +1373,7 @@ lazy calls to suppliers of data.</p>
 <pre class="CodeRay highlight"><code data-lang="java">  responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">users/current</span><span class="delimiter">&quot;</span></span>, Token.class)
       .withBatchesOf(<span class="integer">128</span>)
       .suppliedBy(userTokenService::findAllCurrentUserTokens);</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1303,7 +1423,7 @@ latency and throughput.</p>
 <p><span class="image"><img src="images/metrics.png" alt="metrics"></span></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Overview Metrics</caption>
+<caption class="title">Table 3. Overview Metrics</caption>
 <colgroup>
 <col style="width: 22.2222%;">
 <col style="width: 11.1111%;">
@@ -1384,7 +1504,7 @@ means any clients using Query/Response for Spring AMQP, that are currently up an
 <p><span class="image"><img src="images/live-nodes.png" alt="live nodes"></span></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Live Nodes</caption>
+<caption class="title">Table 4. Live Nodes</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
