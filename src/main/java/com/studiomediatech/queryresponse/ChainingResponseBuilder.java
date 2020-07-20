@@ -79,27 +79,27 @@ public class ChainingResponseBuilder<T> {
 
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    public final void from(T... ts) {
+    public final void from(T... elements) {
 
-        if (ts.length == 1 && ts[0] instanceof Collection) {
-            from((Collection<T>) ts[0]);
+        if (elements.length == 1 && elements[0] instanceof Collection) {
+            from((Collection<T>) elements[0]);
 
             return;
         }
 
-        var elements = Asserts.invariantResponseVarargsArray(ts);
+        var es = Asserts.invariantResponseVarargsArray(elements);
 
-        this.elements = elements::iterator;
+        this.elements = es::iterator;
 
         register();
     }
 
 
-    public void from(Collection<T> ts) {
+    public void from(Collection<T> elements) {
 
-        var elements = Asserts.invariantResponseCollection(ts);
+        var es = Asserts.invariantResponseCollection(elements);
 
-        this.elements = elements::iterator;
+        this.elements = es::iterator;
 
         register();
     }
@@ -113,9 +113,9 @@ public class ChainingResponseBuilder<T> {
     }
 
 
-    public void suppliedBy(Supplier<Collection<T>> supplier) {
+    public void suppliedBy(Supplier<Collection<T>> elements) {
 
-        this.elements = () -> (Iterator<T>) supplier.get().iterator();
+        this.elements = () -> (Iterator<T>) elements.get().iterator();
 
         register();
     }

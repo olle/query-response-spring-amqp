@@ -197,8 +197,9 @@ It is also provided as a bean, when using the `@EnableQueryResponse` annotation
 in a Spring application. It can easily be injected as a dependency to provide
 access from methods in Spring components.
 
-The `respondWithAuthors()`-method below, shows how the injected builder is used
-to create a responding service.
+The `respondWithAuthors()` method below, shows how the injected builder is used
+to create a responding service. It is invoked by the Spring application context,
+on the `ApplicationReadyEvent` event.
 
 [source,java]
 ----
@@ -210,12 +211,13 @@ method `respondTo(..)` with the query **term** parameter `"authors"`. It will
 be bound to publish the given 3 authors as `String.class` entries, whenever it
 consumes a query for the matching string **term** `"authors"`.
 
-This is the most basic premiss of {qr-prx}, that any string or text term may be
-interpreted as a query - it is however up to the publisher to determine what
-the query means.
+This is the most basic premiss of {qr-pfx}, that any string or text term may be
+interpreted as a query - it is however up to the response publisher to
+determine what the query means.
 
 TIP: We've tried to provide information around the {qr-pfx} _protocol_ and
-     philosophy in the later chapter on <<The Query/Response Protocol>>.
+     philosophy in the later chapter on <<The Query/Response Protocol>>. Go
+     there to find out more.
 
 The second parameter is the the type of each element, that will be published in
 the response. It is given both as a type hint for the compiler, as well as a
@@ -244,10 +246,55 @@ The table below shows a summary of the builder methods and types.
 | `suppliedBy(..)`    | _terminal_ | Terminates with some supplied response data
 |===
 
+Let's take a closer look at each of the builder method types.
+
+=== _Initial_ methods
+
+At the moment there's only one _initial_ method for building responses. It is
+declared as:
+
+```java
+  public <T> ChainingResponseBuilder<T> respondTo(String term, Class<T> type)
+```
+
+So we can create a response for any `String` **term** and declare that we intend
+to publish elements of some **type** given as a `Class<T>`. The returned
+`ChainingResponseBuilder<T>` provides the capabilities of the fluid API.
+
+=== _Batching_ methods
+
+Control over how response elements are published can be made by using the
+_batching_ methods that the builder provides.
+
+* `withAll()` - defines that **no** batching should be used, and will publish
+  all given elements, or try to drain a supplied `Iterator` all at once.
+
+* `withBatchesOf(int size)` - defines a batch size, which the response publisher
+  will use, to create a series of response messages, with up-to the given `size`
+  of elements.
+
+=== _Terminal_ methods
+
+Only one _terminal_ method can be called on the builder, per response. It will
+ensure that a responder is created and added as a query-consumer, a subscriber
+to the query **term** as a topic. It is not attached to the calling thread, so
+the builder call always returns after the _terminal_ call.
+
+* `from(..)` - declares the source for the provided response data elements. It
+  is declared in a few different ways, for alternative use:
+
+** `from(T... elements)` - vararg elements
+** `from(Collection<T> elements)` - provided collection at _build-time_
+** `from(Supplier<Iterator<T>> elements)` - supplied iterator at _build-time_
+
+* `suppliedBy(Supplier<Collection<T>> elements)` - declares that response data
+  is supplied at _run-time_.
+
 === `ResponseBuilder` examples
 
 Batch responses provide developers with more options to tune and throttle a
-system using Query/Response across many services.
+system using {qr-pfx} across many services. It may tune and change the profile
+of resource use, in a network.
 
 ```java
   responseBuilder.respondTo("offers/monday", Offer.class)
