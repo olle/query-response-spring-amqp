@@ -1088,9 +1088,9 @@ return and not consume any more responses.</p>
 <ul>
 <li>
 <p><code>waitingFor(..)</code> - defines a timeout <em>conditional</em>. The built query will
-evaluate as <strong>successful</strong> if <em>any</em> responses are consumed within the
-(approximate) given time limit. There are a few different methods declared,
-to specify the timeout:</p>
+evaluate as <strong>successful</strong> if <em>any</em> responses were consumed after the
+(approximate) given time limit has elapsed. There are a few different methods
+declared, to specify the timeout:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1130,7 +1130,7 @@ in the <em>initial</em> method <code>type</code> parameter.</p>
 <ul>
 <li>
 <p><code>orEmpty()</code> - defines the query to return an empty <code>Collection</code> in case the
-<em>conditionals</em> do not evaluate to <strong>successful</strong>.evaluated</p>
+<em>conditionals</em> do not evaluate to <strong>successful</strong>.</p>
 </li>
 <li>
 <p><code>orDefaults(..)</code> - defines the query to return with some provided <em>defaults</em>
