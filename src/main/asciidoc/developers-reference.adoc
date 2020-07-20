@@ -98,9 +98,9 @@ query is completed in a *successful* way, fulfilling the _conditionals_, it will
 return and not consume any more responses.
 
 * `waitingFor(..)` - defines a timeout _conditional_. The built query will
-  evaluate as *successful* if _any_ responses are consumed within the
-  (approximate) given time limit. There are a few different methods declared,
-  to specify the timeout:
+  evaluate as *successful* if _any_ responses were consumed after the
+  (approximate) given time limit has elapsed. There are a few different methods
+  declared, to specify the timeout:
 
 ** `waitingFor(long millis)`
 ** `waitingFor(long amount, TemporalUnit timeUnit)`
@@ -122,7 +122,7 @@ declared to return `Collection<T>` where the type parameter `<T>` is given
 in the _initial_ method `type` parameter.
 
 * `orEmpty()` - defines the query to return an empty `Collection` in case the
-  _conditionals_ do not evaluate to *successful*.evaluated
+  _conditionals_ do not evaluate to *successful*.
 
 * `orDefaults(..)` - defines the query to return with some provided _defaults_
   in case the _conditionals_ do not evaluate to *successful*. There are a couple
