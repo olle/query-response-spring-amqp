@@ -534,6 +534,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#conditional-methods">2.2. <em>Conditional</em> methods</a></li>
 <li><a href="#terminal-methods">2.3. <em>Terminal</em> methods</a></li>
 <li><a href="#informal-methods">2.4. <em>Informal</em> methods</a></li>
+<li><a href="#querybuilder-examples">2.5. <code>QueryBuilder</code> examples</a></li>
 </ul>
 </li>
 <li><a href="#responsebuilder">3. <code>ResponseBuilder</code></a></li>
@@ -568,7 +569,7 @@ explain the concepts behind them, and the intention of their implementation.</p>
 <h2 id="querybuilder"><a class="anchor" href="#querybuilder"></a>2. <code>QueryBuilder</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>QueryBuilder</code> class is the central entry-point, and provides a fluent
+<p>The <code>QueryBuilder</code> class is a central point of entry, and provides a fluent
 builder-API, for publishing queries. It&#8217;s provided as a bean, by enabling
 Query/Response for Spring AMQP, using the <code>@EnableQueryResponse</code> annotation. It may be injected
 as a dependency to provide access from methods in any Spring component.</p>
@@ -577,11 +578,6 @@ as a dependency to provide access from methods in any Spring component.</p>
 <p>We recommend injecting it via the component constructor, and keeping it as a
 private field. The <code>findAuthors()</code> method below, shows how to access the
 <code>queryBuilder</code> field in order to publish a query.</p>
-</div>
-<div class="paragraph">
-<p>Queries are built and published using the <code>queryFor(..)</code> <em>initial</em> method.
-Any of the <em>terminal</em> calls to either <code>orEmpty()</code>, <code>orDefaults(..)</code> or
-<code>orThrows(..)</code> will block on the calling thread.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -617,15 +613,21 @@ in this case Query/Response for Spring AMQP will attempt to read the response el
 declared type <code>String.class</code>.</p>
 </div>
 <div class="paragraph">
-<p>Since the call to <code>orEmpty()</code> will block, users have to specify one or more
-blocking <em>conditional</em>. In the example above, the call to <code>waitingFor(..)</code>
-defines that the call will block for around 800 milliseconds.</p>
+<p>Queries are built and published using the <code>queryFor(..)</code> <em>initial</em> method.
+Any following call to one of the <em>terminal</em> methods <code>orEmpty()</code>,
+<code>orDefaults(..)</code> and <code>orThrows(..)</code> will build and execute the query, and block
+on the calling thread.</p>
 </div>
 <div class="paragraph">
-<p>Constructing queries with the <code>QueryBuilder</code> revolves around a composition of
-<em>initial</em>, <em>conditional</em>, the odd <em>informal</em> and exactly one <em>terminal</em> method
-call. In the table below is a short description of the different methods and
-types.</p>
+<p>Since the call above to <code>orEmpty()</code> blocks the thread, users have to specify
+one or more query <em>conditionals</em>. In the example above, the call to
+<code>waitingFor(..)</code> defines that the call will block for around 800 milliseconds.</p>
+</div>
+<div class="paragraph">
+<p>Constructing queries with the <code>QueryBuilder</code> revolves around creating a
+composition of <em>initial</em>, <em>conditional</em>, maybe an optional <em>informal</em> and
+exactly one <em>terminal</em> method call. In the table below is a short review of the
+different builder methods and their types.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. <code>QueryBuilder</code> fluid API method types</caption>
@@ -663,11 +665,6 @@ types.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Sets a limit condition, a minimum</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>onError(..)</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>informal</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Allows for explicit logging etc.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>orEmpty()</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Terminates with empty, after conditionals are evaluated</p></td>
@@ -681,6 +678,11 @@ types.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>orThrow(..)</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>terminal</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Terminates by throwing, after conditionals are evaluated</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>onError(..)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>informal</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allows for explicit logging etc.</p></td>
 </tr>
 </tbody>
 </table>
@@ -714,11 +716,10 @@ return and not consume any more responses.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>waitingFor(..)</code> - a <em>conditional</em> that defines the amount of blocking time
-that is acceptable. In many cases a query must have a defined blocking time
-in order to be easily evaluated as successful or not. Is considered
-<strong>successful</strong> if <em>any</em> responses are received within the given time limit.
-There are a few different methods declared, to specify the timeout:</p>
+<p><code>waitingFor(..)</code> - defines a timeout <em>conditional</em>. The built query will
+evaluate as <strong>successful</strong> if <em>any</em> responses are consumed within the
+(approximate) given time limit. There are a few different methods declared,
+to specify the timeout:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -734,14 +735,14 @@ There are a few different methods declared, to specify the timeout:</p>
 </div>
 </li>
 <li>
-<p><code>takingAtMost(int atMost)</code> - defines a limiting <em>conditional</em> on the aggregated
-number of received elements. The blocking client evaluates to <strong>successful</strong>,
-and returns, if the given amount if reached.</p>
+<p><code>takingAtMost(int atMost)</code> - defines a limiting <em>conditional</em> on the
+aggregated number of received elements. The built query evaluates to
+<strong>successful</strong>, and returns, when the given amount is reached.</p>
 </li>
 <li>
 <p><code>takingAtLeast(int atLeast)</code> - defines a minimum <em>conditional</em> on the number
-of received element. The query evaluates to <strong>successful</strong>, only if at least
-the given number of elements has been consumed.</p>
+of received element. The built query evaluates to <strong>successful</strong>, only if at
+least the given number of elements can be consumed.</p>
 </li>
 </ul>
 </div>
@@ -749,36 +750,93 @@ the given number of elements has been consumed.</p>
 <div class="sect2">
 <h3 id="terminal-methods"><a class="anchor" href="#terminal-methods"></a>2.3. <em>Terminal</em> methods</h3>
 <div class="paragraph">
-<p>TODO:</p>
+<p>Only one <em>terminal</em> method can be invoked on the builder, per query. It will
+ensure that the query is built and executed. All <em>terminal</em> methods are
+declared to return <code>Collection&lt;T&gt;</code> where the type parameter <code>&lt;T&gt;</code> is given
+in the <em>initial</em> method <code>type</code> parameter.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>orEmpty()</code> - defines the query to return an empty <code>Collection</code> in case the
+<em>conditionals</em> do not evaluate to <strong>successful</strong>.evaluated</p>
+</li>
+<li>
+<p><code>orDefaults(..)</code> - defines the query to return with some provided <em>defaults</em>
+in case the <em>conditionals</em> do not evaluate to <strong>successful</strong>. There are a couple
+different methods declared for defaults:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>orDefaults(Collection&lt;T&gt; defaults)</code> - set at <em>build-time</em>.</p>
+</li>
+<li>
+<p><code>orDefaults(Supplier&lt;Collection&lt;T&gt;&gt; defaults)</code> - supplied at <em>run-time</em>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>orThrow(..)</code> - defines the query to throw an exception in case the
+<em>conditionals</em> do not evaluate to <strong>successful</strong>.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="informal-methods"><a class="anchor" href="#informal-methods"></a>2.4. <em>Informal</em> methods</h3>
 <div class="paragraph">
-<p>TODO:</p>
-</div>
-<div class="paragraph">
-<p>TO-UNDO:</p>
-</div>
-<div class="paragraph">
-<p>Preserve resources specific to the current needs and protect your services,
-by limiting the amount of data consumed.</p>
+<p>Currently there&#8217;s only one <em>informal</em> builder method, allowing for extended
+logging or information capture, in case the query fails or an exception is
+thrown.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">  var authors = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">public</span> ChainingQueryBuilder&lt;T&gt; onError(Consumer&lt;<span class="predefined-type">Throwable</span>&gt; handler)</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Try to think more about how the <code>QueryBuilder</code> API covers the exceptional
+     query-cases, as part of the composition of <em>conditionals</em>. If clients try
+     to use <em>terminals</em> that provide sensible defaults, it may not be necessary
+     to build other types of complex recovery or retries.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="querybuilder-examples"><a class="anchor" href="#querybuilder-examples"></a>2.5. <code>QueryBuilder</code> examples</h3>
+<div class="paragraph">
+<p>Below are some examples of how the different <code>QueryBuilder</code> API methods can be
+combined.</p>
+</div>
+<div class="paragraph">
+<p>Using <code>takingAtMost(..)</code>, combined with <code>waitingFor(..)</code>, system resources may
+be preserved and the client can be protected from consuming too much data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="keyword">return</span> queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
                   .takingAtMost(<span class="integer">10</span>)
                   .waitingFor(<span class="integer">800</span>)
                   .orDefaults(Authors.defaults());</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Express constraints and react accordingly, throwing on an unfulfilled query, as
-an option to lenient handling with defaults.</p>
+<p>It is possible to express constraints at the integration point, also when using
+Query/Response for Spring AMQP, throwing on an unfulfilled query, as an option to more lenient
+handling with defaults.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">  var offers = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/rental</span><span class="delimiter">&quot;</span></span>, Offer.class)
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="keyword">return</span> queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/rental</span><span class="delimiter">&quot;</span></span>, Offer.class)
                   .takingAtLeast(<span class="integer">10</span>)
                   .takingAtMost(<span class="integer">20</span>)
                   .waitingFor(<span class="integer">2</span>, ChronoUnit.SECONDS)
@@ -786,12 +844,12 @@ an option to lenient handling with defaults.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Optional capabilities to handle exceptions and errors are built-in and very
-easy to use.</p>
+<p>The <em>informal</em> builder feature, allows for transparency into queries that may
+have to be observed.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">  var offers = queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/rental</span><span class="delimiter">&quot;</span></span>, NewOffer.class)
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="keyword">return</span> queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">offers/rental</span><span class="delimiter">&quot;</span></span>, NewOffer.class)
                   .takingAtLeast(<span class="integer">3</span>)
                   .waitingFor(<span class="integer">400</span>)
                   .onError(error -&gt; LOG.error(<span class="string"><span class="delimiter">&quot;</span><span class="content">Failure!</span><span class="delimiter">&quot;</span></span>, error))
@@ -834,7 +892,7 @@ lazy calls to suppliers of data.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-19 21:38:19 +0200
+Last updated 2020-07-20 18:55:11 +0200
 </div>
 </div>
 </body>
