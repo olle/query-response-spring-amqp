@@ -34,7 +34,7 @@ private field. The `findAuthors()` method below, shows how to access the
 
 [source,java]
 ----
-include::{examples-src}/querying/src/main/java/examples/Authors.java[tags=authorsClass]
+include::{examples-src}/querying/src/main/java/examples/Authors.java[tags=class]
 ----
 
 In the example above, the published query is defined by the string **term** 
@@ -190,7 +190,61 @@ have to be observed.
 
 == `ResponseBuilder`
 
-TODO!
+Another entry-point into {qr-name} is the `ResponseBuilder`. It provides a
+fluid builder-API that allows users to create responding services or components.
+
+It is also provided as a bean, when using the `@EnableQueryResponse` annotation
+in a Spring application. It can easily be injected as a dependency to provide
+access from methods in Spring components.
+
+The `respondWithAuthors()`-method below, shows how the injected builder is used
+to create a responding service.
+
+[source,java]
+----
+include::{examples-src}/responding/src/main/java/examples/OnlyThreeAuthors.java[tags=class]
+----
+
+In the example above the responding service is defined by calling the builder
+method `respondTo(..)` with the query **term** parameter `"authors"`. It will
+be bound to publish the given 3 authors as `String.class` entries, whenever it
+consumes a query for the matching string **term** `"authors"`.
+
+This is the most basic premiss of {qr-prx}, that any string or text term may be
+interpreted as a query - it is however up to the publisher to determine what
+the query means.
+
+TIP: We've tried to provide information around the {qr-pfx} _protocol_ and
+     philosophy in the later chapter on <<The Query/Response Protocol>>.
+
+The second parameter is the the type of each element, that will be published in
+the response. It is given both as a type hint for the compiler, as well as a
+parameter to the data mapper. Here it's trivial, the three authors are given as
+`String.class` entries.
+
+Response publishers are built using the `respondTo(..)` _initial_ method. Any
+following call to one of the _terminal_ methods `from(..)` or `suppliedBy(..)`
+will create and register it, as its own consumer in another thread. The
+builder call returns immediately.
+
+The `ResponseBuilder` comes with some methods to allow for _partitioning_ or
+_batching_, which can be used to control the transfer of data to some degree.
+
+The table below shows a summary of the builder methods and types.
+
+[cols="1,1,3"]
+.`ResponseBuilder` fluid API method types
+|===
+| Method              | Type          | Description
+
+| `respondTo(..)`     | _initial_  | Creates a new builder for a query
+| `withAll()`         | _batching_ | Specifies NO batches
+| `withBatchesOf(..)` | _batching_ | Sets the batch size of responses
+| `from(..)`          | _terminal_ | Terminates with some given response data
+| `suppliedBy(..)`    | _terminal_ | Terminates with some supplied response data
+|===
+
+=== `ResponseBuilder` examples
 
 Batch responses provide developers with more options to tune and throttle a
 system using Query/Response across many services.
