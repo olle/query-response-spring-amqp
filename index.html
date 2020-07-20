@@ -1241,8 +1241,9 @@ in a Spring application. It can easily be injected as a dependency to provide
 access from methods in Spring components.</p>
 </div>
 <div class="paragraph">
-<p>The <code>respondWithAuthors()</code>-method below, shows how the injected builder is used
-to create a responding service.</p>
+<p>The <code>respondWithAuthors()</code> method below, shows how the injected builder is used
+to create a responding service. It is invoked by the Spring application context,
+on the <code>ApplicationReadyEvent</code> event.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1273,9 +1274,9 @@ be bound to publish the given 3 authors as <code>String.class</code> entries, wh
 consumes a query for the matching string <strong>term</strong> <code>"authors"</code>.</p>
 </div>
 <div class="paragraph">
-<p>This is the most basic premiss of {qr-prx}, that any string or text term may be
-interpreted as a query - it is however up to the publisher to determine what
-the query means.</p>
+<p>This is the most basic premiss of Query/Response, that any string or text term may be
+interpreted as a query - it is however up to the response publisher to
+determine what the query means.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1285,7 +1286,8 @@ the query means.</p>
 </td>
 <td class="content">
 We&#8217;ve tried to provide information around the Query/Response <em>protocol</em> and
-     philosophy in the later chapter on <a href="#the-queryresponse-protocol">The Query/Response Protocol</a>.
+     philosophy in the later chapter on <a href="#the-queryresponse-protocol">The Query/Response Protocol</a>. Go
+     there to find out more.
 </td>
 </tr>
 </table>
@@ -1351,11 +1353,86 @@ builder call returns immediately.</p>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Let&#8217;s take a closer look at each of the builder method types.</p>
+</div>
 <div class="sect3">
-<h4 id="responsebuilder-examples"><a class="anchor" href="#responsebuilder-examples"></a>4.3.1. <code>ResponseBuilder</code> examples</h4>
+<h4 id="initial-methods-2"><a class="anchor" href="#initial-methods-2"></a>4.3.1. <em>Initial</em> methods</h4>
+<div class="paragraph">
+<p>At the moment there&#8217;s only one <em>initial</em> method for building responses. It is
+declared as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">  <span class="directive">public</span> &lt;T&gt; ChainingResponseBuilder&lt;T&gt; respondTo(<span class="predefined-type">String</span> term, <span class="predefined-type">Class</span>&lt;T&gt; type)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So we can create a response for any <code>String</code> <strong>term</strong> and declare that we intend
+to publish elements of some <strong>type</strong> given as a <code>Class&lt;T&gt;</code>. The returned
+<code>ChainingResponseBuilder&lt;T&gt;</code> provides the capabilities of the fluid API.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="batching-methods"><a class="anchor" href="#batching-methods"></a>4.3.2. <em>Batching</em> methods</h4>
+<div class="paragraph">
+<p>Control over how response elements are published can be made by using the
+<em>batching</em> methods that the builder provides.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>withAll()</code> - defines that <strong>no</strong> batching should be used, and will publish
+all given elements, or try to drain a supplied <code>Iterator</code> all at once.</p>
+</li>
+<li>
+<p><code>withBatchesOf(int size)</code> - defines a batch size, which the response publisher
+will use, to create a series of response messages, with up-to the given <code>size</code>
+of elements.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="terminal-methods-2"><a class="anchor" href="#terminal-methods-2"></a>4.3.3. <em>Terminal</em> methods</h4>
+<div class="paragraph">
+<p>Only one <em>terminal</em> method can be called on the builder, per response. It will
+ensure that a responder is created and added as a query-consumer, a subscriber
+to the query <strong>term</strong> as a topic. It is not attached to the calling thread, so
+the builder call always returns after the <em>terminal</em> call.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>from(..)</code> - declares the source for the provided response data elements. It
+is declared in a few different ways, for alternative use:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>from(T&#8230;&#8203; elements)</code> - vararg elements</p>
+</li>
+<li>
+<p><code>from(Collection&lt;T&gt; elements)</code> - provided collection at <em>build-time</em></p>
+</li>
+<li>
+<p><code>from(Supplier&lt;Iterator&lt;T&gt;&gt; elements)</code> - supplied iterator at <em>build-time</em></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>suppliedBy(Supplier&lt;Collection&lt;T&gt;&gt; elements)</code> - declares that response data
+is supplied at <em>run-time</em>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="responsebuilder-examples"><a class="anchor" href="#responsebuilder-examples"></a>4.3.4. <code>ResponseBuilder</code> examples</h4>
 <div class="paragraph">
 <p>Batch responses provide developers with more options to tune and throttle a
-system using Query/Response across many services.</p>
+system using Query/Response across many services. It may tune and change the profile
+of resource use, in a network.</p>
 </div>
 <div class="listingblock">
 <div class="content">
