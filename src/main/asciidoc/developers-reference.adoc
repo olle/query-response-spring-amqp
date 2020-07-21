@@ -224,6 +224,13 @@ the response. It is given both as a type hint for the compiler, as well as a
 parameter to the data mapper. Here it's trivial, the three authors are given as
 `String.class` entries.
 
+NOTE: The data mapper mentioned above, is in fact the 
+      `com.fasterxml.jackson.databind.ObjectMapper` and {qr-name} currently uses
+      JSON as the transport format. This means that type hints, JSON mapping
+      configuration annotations or custom mappings will apply. However as data
+      mapping on the consumer side is done by coercion, the published format
+      must conform to some agreed upon standard, shape or protocol.
+
 Response publishers are built using the `respondTo(..)` _initial_ method. Any
 following call to one of the _terminal_ methods `from(..)` or `suppliedBy(..)`
 will create and register it, as its own consumer in another thread. The
