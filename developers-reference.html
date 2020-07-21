@@ -936,6 +936,23 @@ the response. It is given both as a type hint for the compiler, as well as a
 parameter to the data mapper. Here it&#8217;s trivial, the three authors are given as
 <code>String.class</code> entries.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The data mapper mentioned above, is in fact the
+      <code>com.fasterxml.jackson.databind.ObjectMapper</code> and Query/Response for Spring AMQP currently uses
+      JSON as the transport format. This means that type hints, JSON mapping
+      configuration annotations or custom mappings will apply. However as data
+      mapping on the consumer side is done by coercion, the published format
+      must conform to some agreed upon standard, shape or protocol.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Response publishers are built using the <code>respondTo(..)</code> <em>initial</em> method. Any
 following call to one of the <em>terminal</em> methods <code>from(..)</code> or <code>suppliedBy(..)</code>
@@ -1096,7 +1113,7 @@ lazy calls to suppliers of data.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-20 21:41:12 +0200
+Last updated 2020-07-21 17:48:47 +0200
 </div>
 </div>
 </body>
