@@ -17,6 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -228,13 +229,53 @@ class Statistics implements Logging {
 
     protected String getPidOrDefault(String defaults) {
 
-        try {
-            return "" + ProcessHandle.current().pid();
-        } catch (UnsupportedOperationException e) {
-            // Dang!
+        Long p1 = maybeGetPid01();
+
+        if (p1 != null) {
+            return "" + p1;
+        }
+
+        Long p2 = maybeGetPid02();
+
+        if (p2 != null) {
+            return "" + p2;
         }
 
         return defaults;
+    }
+
+
+    private Long maybeGetPid01() {
+
+        try {
+            java.lang.management.RuntimeMXBean runtime = java.lang.management.ManagementFactory.getRuntimeMXBean();
+            java.lang.reflect.Field jvm = runtime.getClass().getDeclaredField("jvm");
+            jvm.setAccessible(true);
+
+            @SuppressWarnings("restriction")
+            sun.management.VMManagement mgmt = (sun.management.VMManagement) jvm.get(runtime);
+            java.lang.reflect.Method pid_method = mgmt.getClass().getDeclaredMethod("getProcessId");
+            pid_method.setAccessible(true);
+
+            return (Long) pid_method.invoke(mgmt);
+        } catch (RuntimeException // NOSONAR
+                | IllegalAccessException // NOSONAR
+                | InvocationTargetException // NOSONAR
+                | NoSuchFieldException // NOSONAR
+                | NoSuchMethodException ex) {
+            // Failed, ignored though.
+            return null;
+        }
+    }
+
+
+    private Long maybeGetPid02() {
+
+        try {
+            return Long.valueOf(java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0], 10);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
 
@@ -267,7 +308,7 @@ class Statistics implements Logging {
 
     public void incrementPublishedQueriesCounter() {
 
-        onlyResponses.compareAndExchange(true, false);
+        onlyResponses.compareAndSet(true, false);
         this.publishedQueriesCount.incrementAndGet();
     }
 
