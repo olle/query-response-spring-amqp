@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -61,9 +62,9 @@ class ChainingResponseBuilderTest {
     @DisplayName("builder has iterator for provided collection")
     void ensureBuilderHasCollectionIterator() throws Exception {
 
-        var capture = new AtomicReference<ChainingResponseBuilder<String>>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        List<String> elements = List.of("foo", "bar", "baz");
+        List<String> elements = Arrays.asList("foo", "bar", "baz");
 
         ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
@@ -82,7 +83,7 @@ class ChainingResponseBuilderTest {
     @DisplayName("builder has iterator for varargs")
     void ensureBuilderHasVarargsIterator() throws Exception {
 
-        var capture = new AtomicReference<ChainingResponseBuilder<String>>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
         ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
@@ -101,9 +102,9 @@ class ChainingResponseBuilderTest {
     @DisplayName("builder has supplied iterator")
     void ensureBuilderHasSuppliedIterator() throws Exception {
 
-        var capture = new AtomicReference<ChainingResponseBuilder<String>>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        Supplier<Iterator<String>> elements = List.of("foo", "bar", "baz")::iterator;
+        Supplier<Iterator<String>> elements = Arrays.asList("foo", "bar", "baz")::iterator;
 
         ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
@@ -122,9 +123,9 @@ class ChainingResponseBuilderTest {
     @DisplayName("builder has supplied collection elements")
     void ensureSuppliedByCollection() throws Exception {
 
-        var capture = new AtomicReference<ChainingResponseBuilder<String>>(null);
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        Supplier<Collection<String>> elements = () -> List.of("foo", "bar", "baz");
+        Supplier<Collection<String>> elements = () -> Arrays.asList("foo", "bar", "baz");
 
         ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
@@ -142,7 +143,7 @@ class ChainingResponseBuilderTest {
     @Test
     void ensureBuilderIsCollectionForSingleScalarVararg() throws Exception {
 
-        var builder = new AtomicReference<ChainingResponseBuilder<String>>(null);
+        AtomicReference<ChainingResponseBuilder<String>> builder = new AtomicReference<>(null);
 
         ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(builder::set)
@@ -160,18 +161,18 @@ class ChainingResponseBuilderTest {
 
 
     @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     void ensureBuilderIsCollectionForCoercedCollection() throws Exception {
 
-        var builder = new AtomicReference<ChainingResponseBuilder<?>>(null);
+        AtomicReference<ChainingResponseBuilder<?>> builder = new AtomicReference<>(null);
 
-        var list = List.of("foo", "bar", "baz");
+        Collection list = Arrays.asList("foo", "bar", "baz");
 
         ChainingResponseBuilder.respondTo("some-query", String.class)
             .withSink(builder::set)
             .withAll()
             .from(list);
 
-        @SuppressWarnings("unchecked")
         ChainingResponseBuilder<String> b = (ChainingResponseBuilder<String>) builder.get();
         assertThat(b).isNotNull();
 
@@ -185,7 +186,7 @@ class ChainingResponseBuilderTest {
     @Test
     void ensureBuilderHasSetBatchSize() throws Exception {
 
-        var builder = new AtomicReference<ChainingResponseBuilder<?>>(null);
+        AtomicReference<ChainingResponseBuilder<?>> builder = new AtomicReference<>(null);
 
         ChainingResponseBuilder.respondTo("some-query", String.class)
             .withSink(builder::set)
@@ -213,7 +214,7 @@ class ChainingResponseBuilderTest {
 
             verify(registry).register(responses.capture());
 
-            var builder = responses.getValue();
+            ChainingResponseBuilder<String> builder = responses.getValue();
 
             assertThat(builder).isNotNull();
             assertThat(builder.getBatchSize()).isEqualTo(0);

@@ -42,7 +42,7 @@ public class QueryBuilderApiTest {
     @Test
     void ex1() {
 
-        var authors = ChainingQueryBuilder.queryFor("authors", String.class)
+        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class)
                 .waitingFor(800)
                 .orEmpty();
     }
@@ -51,7 +51,7 @@ public class QueryBuilderApiTest {
     @Test
     void ex2() {
 
-        var authors = ChainingQueryBuilder.queryFor("authors", String.class)
+        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class)
                 .waitingFor(800)
                 .orDefaults(Authors.defaults());
     }
@@ -60,7 +60,7 @@ public class QueryBuilderApiTest {
     @Test
     void ex3() {
 
-        var authors = ChainingQueryBuilder.queryFor("authors", String.class)
+        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class)
                 .takingAtMost(10)
                 .waitingFor(800)
                 .orDefaults(Authors.defaults());
@@ -70,7 +70,7 @@ public class QueryBuilderApiTest {
     @Test
     void ex4() {
 
-        var offers = ChainingQueryBuilder.queryFor("offers/rental", Offer.class)
+        Collection<Offer> offers = ChainingQueryBuilder.queryFor("offers/rental", Offer.class)
                 .takingAtLeast(10)
                 .takingAtMost(20).waitingFor(2, ChronoUnit.SECONDS)
                 .orThrow(TooFewOffersConstraintException::new);
@@ -80,7 +80,7 @@ public class QueryBuilderApiTest {
     @Test
     void ex5() {
 
-        var offers = ChainingQueryBuilder.queryFor("offers/rental", NewOffer.class)
+        Collection<NewOffer> offers = ChainingQueryBuilder.queryFor("offers/rental", NewOffer.class)
                 .takingAtLeast(3).waitingFor(400)
                 .onError(error -> LOG.error("Failure!", error))
                 .orThrow(TooFewOffersConstraintException::new);

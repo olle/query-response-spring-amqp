@@ -38,10 +38,10 @@ class QueryRegistryTest {
     @Test
     void ensureInstanceIsInvokedOnRegister() {
 
-        var mock = Mockito.mock(QueryRegistry.class);
+        QueryRegistry mock = Mockito.mock(QueryRegistry.class);
         QueryRegistry.instance = () -> mock;
 
-        var queryBuilder = new ChainingQueryBuilder<>("foobar", String.class);
+        ChainingQueryBuilder<String> queryBuilder = new ChainingQueryBuilder<>("foobar", String.class);
         new QueryRegistry(null, null).register(queryBuilder);
 
         verify(mock).accept(queryBuilder);
@@ -53,7 +53,7 @@ class QueryRegistryTest {
     @Test
     void ensureAcceptQueries() {
 
-        var queries = new ChainingQueryBuilder<>("foobar", String.class);
+        ChainingQueryBuilder<String> queries = new ChainingQueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
 
         new QueryRegistry(facade, stats).accept(queries);

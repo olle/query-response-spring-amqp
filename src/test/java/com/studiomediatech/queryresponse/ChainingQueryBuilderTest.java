@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -22,7 +22,7 @@ class ChainingQueryBuilderTest {
 
         AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        var nope = ChainingQueryBuilder.queryFor("foobar", String.class)
+        Collection<?> nope = ChainingQueryBuilder.queryFor("foobar", String.class)
                 .withSink(capture::set)
                 .waitingFor(123)
                 .orEmpty();
@@ -97,8 +97,7 @@ class ChainingQueryBuilderTest {
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .takingAtMost(42)
-            .waitingFor(123)
-            .orEmpty();
+            .waitingFor(123).orEmpty();
 
         assertThat(capture.get().getTakingAtMost()).isEqualTo(42);
     }
@@ -112,8 +111,7 @@ class ChainingQueryBuilderTest {
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .takingAtLeast(33)
-            .waitingFor(123)
-            .orEmpty();
+            .waitingFor(123).orEmpty();
 
         assertThat(capture.get().getTakingAtLeast()).isEqualTo(33);
     }
@@ -128,8 +126,7 @@ class ChainingQueryBuilderTest {
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .onError(handler)
+            .waitingFor(123).onError(handler)
             .orEmpty();
 
         assertThat(capture.get().getOnError()).isEqualTo(handler);
@@ -145,8 +142,7 @@ class ChainingQueryBuilderTest {
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .orThrow(throwable);
+            .waitingFor(123).orThrow(throwable);
 
         assertThat(capture.get().getOrThrows()).isEqualTo(throwable);
     }
@@ -157,12 +153,11 @@ class ChainingQueryBuilderTest {
 
         AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        Collection<String> defaults = List.of("foo", "bar", "baz");
+        Collection<String> defaults = Arrays.asList("foo", "bar", "baz");
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .orDefaults(defaults);
+            .waitingFor(123).orDefaults(defaults);
 
         assertThat(capture.get().getOrDefaults()).isNotNull();
         assertThat(capture.get().getOrDefaults().get()).isEqualTo(defaults);
@@ -174,12 +169,11 @@ class ChainingQueryBuilderTest {
 
         AtomicReference<ChainingQueryBuilder<String>> capture = new AtomicReference<>(null);
 
-        Collection<String> defaults = List.of("foo", "bar", "baz");
+        Collection<String> defaults = Arrays.asList("foo", "bar", "baz");
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .orDefaults(() -> defaults);
+            .waitingFor(123).orDefaults(() -> defaults);
 
         assertThat(capture.get().getOrDefaults()).isNotNull();
         assertThat(capture.get().getOrDefaults().get()).isEqualTo(defaults);
@@ -190,7 +184,8 @@ class ChainingQueryBuilderTest {
     void ensureThrowsForMoreTakingAtLeastThanAtMost() {
 
         Assertions.assertThrows(IllegalArgumentException.class,
-            () -> ChainingQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(2));
+            () ->
+                ChainingQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(2));
     }
 
 
@@ -198,6 +193,7 @@ class ChainingQueryBuilderTest {
     void ensureThrowsForEqualTakingAtLeastAsAtMost() {
 
         Assertions.assertThrows(IllegalArgumentException.class,
-            () -> ChainingQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(1));
+            () ->
+                ChainingQueryBuilder.queryFor("foobar", String.class).waitingFor(123).takingAtMost(1).takingAtLeast(1));
     }
 }

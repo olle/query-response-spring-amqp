@@ -16,8 +16,8 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 
 import java.time.Duration;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,7 +46,7 @@ class QueryTest {
     @Test
     void ensureQueryIsPublished() {
 
-        var sut = new Query<>();
+        Query<?> sut = new Query<>();
         sut.queryTerm = "term";
         sut.waitingFor = Duration.ofMillis(123);
         sut.orDefaults = Collections::emptyList;
@@ -68,7 +68,7 @@ class QueryTest {
             .waitingFor(1)
             .orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -94,7 +94,7 @@ class QueryTest {
                 })
             .orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<Foo> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -113,7 +113,7 @@ class QueryTest {
             .waitingFor(1)
             .orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<Foo> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -131,9 +131,9 @@ class QueryTest {
             .withSink(capture::set)
             .waitingFor(1)
             .takingAtLeast(5)
-            .orDefaults(List.of("hello", "world"));
+            .orDefaults(Arrays.asList("hello", "world"));
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -150,10 +150,9 @@ class QueryTest {
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1234)
-            .takingAtMost(3)
-            .orEmpty();
+            .takingAtMost(3).orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -173,10 +172,9 @@ class QueryTest {
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1234)
-            .takingAtMost(6)
-            .orEmpty();
+            .takingAtMost(6).orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -196,10 +194,9 @@ class QueryTest {
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
             .waitingFor(1)
-            .takingAtMost(6)
-            .orEmpty();
+            .takingAtMost(6).orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -218,7 +215,7 @@ class QueryTest {
             .waitingFor(1)
             .orThrow(TimeoutOrThrowsException::new);
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
 
         Assertions.assertThrows(TimeoutOrThrowsException.class, () -> sut.accept(facade, stats));
     }
@@ -235,7 +232,7 @@ class QueryTest {
             .takingAtLeast(10)
             .orThrow(AtLeastOrThrowsException::new);
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -254,11 +251,10 @@ class QueryTest {
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .takingAtLeast(5)
+            .waitingFor(123).takingAtLeast(5)
             .orThrow(AtLeastOrThrowsException::new);
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -277,10 +273,9 @@ class QueryTest {
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .orThrow(AtLeastOrThrowsException::new);
+            .waitingFor(123).orThrow(AtLeastOrThrowsException::new);
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.fail = n -> n > 100 ? true : false;
 
         sut.onMessage(MessageBuilder.withBody(
@@ -298,11 +293,10 @@ class QueryTest {
 
         ChainingQueryBuilder.queryFor("foobar", String.class)
             .withSink(capture::set)
-            .waitingFor(123)
-            .onError(err -> { assertThat(err).isInstanceOf(InterruptedException.class); })
+            .waitingFor(123).onError(err -> { assertThat(err).isInstanceOf(InterruptedException.class); })
             .orEmpty();
 
-        var sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get());
         sut.fail = n -> n > 100 ? true : false;
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
