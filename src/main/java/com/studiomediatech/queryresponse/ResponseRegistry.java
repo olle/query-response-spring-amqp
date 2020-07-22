@@ -36,7 +36,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
 
     public static <T> void register(ChainingResponseBuilder<T> responses) {
 
-        var registry = instance.get();
+        ResponseRegistry registry = instance.get();
 
         if (registry == null) {
             throw new IllegalStateException("No registry is initialized.");
