@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
+import org.springframework.amqp.core.Address;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageListener;
@@ -79,14 +80,14 @@ class Response<T> implements MessageListener, Logging {
             for (Response<T>.PublishedResponseEnvelope<T> response : responses) {
                 byte[] body = writer.writeValueAsBytes(response);
 
-                var responseMessage = MessageBuilder.withBody(body)
+                Message responseMessage = MessageBuilder.withBody(body)
                         .setContentEncoding(StandardCharsets.UTF_8.name())
                         .setContentType(MessageProperties.CONTENT_TYPE_JSON)
                         .build();
 
-                var replyToAddress = properties.getReplyToAddress();
-                var exchangeName = replyToAddress.getExchangeName();
-                var routingKey = replyToAddress.getRoutingKey();
+                Address replyToAddress = properties.getReplyToAddress();
+                String exchangeName = replyToAddress.getExchangeName();
+                String routingKey = replyToAddress.getRoutingKey();
 
                 this.facade.publishResponse(exchangeName, routingKey, responseMessage);
                 incrementPublishedResponseCounterStats();
@@ -143,7 +144,7 @@ class Response<T> implements MessageListener, Logging {
 
     private Response<T>.PublishedResponseEnvelope<T> buildResponse() {
 
-        var response = new PublishedResponseEnvelope<T>();
+        PublishedResponseEnvelope<T> response = new PublishedResponseEnvelope<T>();
 
         Iterator<T> it = this.elements.get();
         it.forEachRemaining(response.elements::add);
