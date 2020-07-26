@@ -3,6 +3,10 @@ package com.studiomediatech.queryresponse;
 import java.util.Collection;
 
 
+/**
+ * The main entry type for query building, provides static factory methods to create a
+ * {@link ChainingQueryBuilder chaining query builder}.
+ */
 public class QueryBuilder {
 
     private final QueryRegistry queryRegistry;
@@ -14,14 +18,13 @@ public class QueryBuilder {
 
     /**
      * Creates a new chaining query-builder for the given term, and the expected type that result elements will be
-     * mapped to.
+     * mapped to. The query {@code term} string, can use any pattern or structure, as defined by the system design. It
+     * expresses some <em>need</em> or interest in information. The given {@code type}, provide the target data type,
+     * that is used to coerce any response elements that are consumed.
      *
-     * <p>The query {@code term} string, can use any pattern or structure, as defined by the system design. It
-     * expresses some <em>need</em> or interest in information. The given {@code type}, provide the data container,
-     * that is used if any responses are consumed.</p>
+     * <p>The type, of the eventually resulting {@link Collection} is also inferred by the {@code type} argument.</p>
      *
-     * <p>The type, of the eventually resulting {@link Collection} is also inferred by the {@code type} argument. For
-     * example:</p>
+     * <p>For example:</p>
      *
      * <pre>
            Collection&lt;String&gt; names = QueryBuilder.queryFor("names/rock-legends", String.class)...

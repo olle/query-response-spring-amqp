@@ -2,6 +2,11 @@
 
 include::attributes.adoc[]
 
+== Java API
+
+We keep a recent link available here to the most recently built and deployed
+link:apidocs/index.html[Java API Documentation] for {qr-name}.
+
 == AMQP Resources & Formats
 
 :AMQP: https://www.rabbitmq.com/protocol.html

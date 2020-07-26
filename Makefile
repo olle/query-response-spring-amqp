@@ -9,7 +9,10 @@ install:
 .PHONY: docs watch-docs
 docs:
 	mvn asciidoctor:process-asciidoc
-	npm run deploy-docs
+	mvn javadoc:javadoc
+	@cp -r target/site/apidocs target/generated-docs/apidocs
+	#npm run deploy-docs
+
 watch-docs:
 	mvn asciidoctor:http
 
