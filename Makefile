@@ -12,3 +12,12 @@ docs:
 	npm run deploy-docs
 watch-docs:
 	mvn asciidoctor:http
+
+.PHONY: ui
+ui: ui/query-response-ui.jar
+
+ui/query-response-ui.jar: ui/target/query-response-ui.jar
+	@cp $< $@
+
+ui/target/query-response-ui.jar: install
+	@$(MAKE) -C ui dist
