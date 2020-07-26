@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 
 /**
- * Providing the entry-point to the fluid builder for responses, through the {@link #respondTo(String)} method.
+ * Providing the entry-point to the fluid builder for responses, through the {@link #respondTo(String, Class)} method.
  *
  * <p>Building a response instance will start a long running query consumer which will respond to any matching queries,
  * for as long as the service is running.</p>
@@ -150,7 +150,7 @@ public class ChainingResponseBuilder<T> {
      * instead making the terminal operation to apply the builder on the given sink. For example:
      *
      * <pre>
-        AtomicReference<ResponseBuilder<String>> capture = new AtomicReference<>(null);
+        AtomicReference&lt;ResponseBuilder&lt;String&gt;&gt; capture = new AtomicReference&lt;&gt;(null);
 
         ResponseBuilder.respondTo("foobar")
             .withSink(capture::set)

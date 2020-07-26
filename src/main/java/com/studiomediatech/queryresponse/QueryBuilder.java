@@ -24,7 +24,7 @@ public class QueryBuilder {
      * example:</p>
      *
      * <pre>
-           Collection<String> names = QueryBuilder.queryFor("names/rock-legends", String.class)...
+           Collection&lt;String&gt; names = QueryBuilder.queryFor("names/rock-legends", String.class)...
      * </pre>
      *
      * @param  <T>  type of the result elements, and the {@code type} argument.

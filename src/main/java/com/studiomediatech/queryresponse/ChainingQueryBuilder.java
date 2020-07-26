@@ -358,7 +358,7 @@ public final class ChainingQueryBuilder<T> {
      * below:
      *
      * <pre>
-       AtomicReference<QueryBuilder<String>> capture = new AtomicReference<>(null);
+       AtomicReference&lt;QueryBuilder&lt;String&gt;&gt; capture = new AtomicReference&lt;&gt;(null);
 
        QueryBuilder.queryFor("foobar", String.class).withSink(capture::set).waitingFor(123).orEmpty();
 
