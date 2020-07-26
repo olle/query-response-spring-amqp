@@ -4,11 +4,11 @@ include::attributes.adoc[]
 
 {qr-name} is intended to be used in a landscape of distributed and highly
 decoupled services that exchange information and data. Being able to monitor and
-observe that is very important.
+observe that is very important. We provide a monitoring and administration
+user interface for this purpose.
 
-We provide a monitoring and administration user interface for this purpose.
-
-TODO: Add link to distributed JAR.
+The latest built version of the {qr-ui-name} can be downloaded as a fat-jar
+from {qr-ui-link}[{qr-ui-link}]. To start {qr-ui-name} simply run:
 
 ....
 $ java -jar query-response-ui.jar

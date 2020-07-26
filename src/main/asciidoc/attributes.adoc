@@ -29,4 +29,6 @@
 :qr-name: {qr-pfx} for {spring-amqp-name}
 :qr-ui-name: {qr-pfx} Monitoring UI
 :qr-name-and-version: {qr-name} {qr-current-version}
+
 :qr-gh-link: https://github.com/olle/query-response-spring-amqp
+:qr-ui-link: https://github.com/olle/query-response-spring-amqp/raw/main/ui/query-response-ui.jar
