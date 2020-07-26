@@ -13,23 +13,20 @@ and wrapped it in a developer friendly library.
 **{java-name-and-version}**, and should work for later releases too. We are
 building and running it successfully with the `2.2.9.RELEASE` version.
 
+== Installation &amp; Configuration
+
 :Maven: https://maven.apache.org
 :Gradle: https://gradle.org
-
-It is distributed as a {Maven}[Maven] dependency, and is known to work well with
-Maven 3.3+. Using the dependency with {Gradle}[Gradle] should work too.
-
 :Quickstart: https://github.com/olle/query-response-spring-amqp#quickstart
 
-The current {Quickstart}[Quickstart] information, available on the projects
-{qr-gh-link}[Github page], provides a short snippet on the currently best way
-to add the Maven dependency.
+It is distributed as a {Maven}[Maven] dependency, and is known to work well with
+Maven 3.3+. Using the dependency with {Gradle}[Gradle] should work too. Please
+see the {Quickstart}[Quickstart] information, available on the project
+{qr-gh-link}[Github page], for information on how to get the Maven dependency.
 
-== Installation
-
-Enabling {qr-name} is done by simply loading the `QueryResponseConfiguration`
-class. The most simple way to do this, is annotating your {spring-boot-name}
-application starter with the `@EnableQueryResponse` annotation.
+Enabling {qr-name} is done by loading the `QueryResponseConfiguration`
+class. The most simple way to do this, is by annotating your {spring-boot-name}
+application with the `@EnableQueryResponse` annotation.
 
 [source,java]
 ----
@@ -42,30 +39,24 @@ NOTE: This annotation will do nothing more but to import the
 That's it! There is no more infrastructure code, wiring or setup that needs to
 be done. **It's just that easy.**
 
+=== Connecting to an AMQP broker
+
 Before you can run your application you need to make sure there is an AMQP
 broker available. By default {spring-amqp-name} tries to connect to a
 https://www.rabbitmq.com[RabbitMQ], running locally on port `5672`.
 
-Add the following `docker-compose.yaml` file to your project root directory.
-
-[source,yaml]
-----
-include::{examples-src}/myapp/docker-compose.yaml[]
-----
-
-NOTE: The `3-management` tag will install and enable the RabbitMQ Management UI.
-      When then broker is running, it can be access at http://localhost:15672
-      with username and password `guest`.
-
-Using https://www.docker.com[Docker] you can start a RabbitMQ instance running
-_detached_ (`-d` option), in the background, in a container.
+Start an and run RabbitMQ using `docker`:
 
 ....
-$ docker-compose up -d
+$ docker run -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ....
 
-Now starting your application, will enable {qr-name} and create all the
-resources necessary on the broker.
+NOTE: The `3-management` tag will enable the RabbitMQ Management UI. When the
+      broker is running, it can be accessed at http://localhost:15672 with
+      username and password `guest`.
+
+Now running your application, will enable {qr-name}, connect to the broker and
+create all the resources necessary on the broker.
 
 ....
 $ mvn spring-boot:run
