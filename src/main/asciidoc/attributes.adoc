@@ -14,13 +14,13 @@
 :test-src: ../../test/java/com/studiomediatech/queryresponse
 :examples-src: ../../../examples
 
-:java-version: 11
+:java-version: 8
 :java-name: Java
 :java-name-and-version: {java-name} {java-version}
 
 :spring-name: Spring
 :spring-amqp-name: Spring AMQP
-:spring-boot-version: 2.2.7.RELEASE
+:spring-boot-version: 2.x
 :spring-boot-name: Spring Boot
 :spring-boot-name-and-version: {spring-boot-name} {spring-boot-version}
 
