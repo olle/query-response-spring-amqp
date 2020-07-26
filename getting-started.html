@@ -528,7 +528,11 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#system-requirements">1. System Requirements</a></li>
-<li><a href="#installation">2. Installation</a></li>
+<li><a href="#installation-configuration">2. Installation &amp; Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#connecting-to-an-amqp-broker">2.1. Connecting to an AMQP broker</a></li>
+</ul>
+</li>
 <li><a href="#queries">3. Queries</a></li>
 <li><a href="#responses">4. Responses</a></li>
 </ul>
@@ -549,27 +553,25 @@ and wrapped it in a developer friendly library.</p>
 <h2 id="system-requirements"><a class="anchor" href="#system-requirements"></a>1. System Requirements</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Query/Response for Spring AMQP 0.0.0-SNAPSHOT requires at least Spring Boot 2.2.7.RELEASE and
-Java 11, and should work for later releases too.</p>
-</div>
-<div class="paragraph">
-<p>It is distributed as a <a href="https://maven.apache.org">Maven</a> dependency, and is known to work well with
-Maven 3.3+. Using the dependency with <a href="https://gradle.org">Gradle</a> should work too.</p>
-</div>
-<div class="paragraph">
-<p>The current <a href="https://github.com/olle/query-response-spring-amqp#quickstart">Quickstart</a> information, available on the projects
-<a href="https://github.com/olle/query-response-spring-amqp">Github page</a>, provides a short snippet on the currently best way
-to add the Maven dependency.</p>
+<p>Query/Response for Spring AMQP 0.0.0-SNAPSHOT requires at least <strong>Spring Boot 2.x</strong> and
+<strong>Java 8</strong>, and should work for later releases too. We are
+building and running it successfully with the <code>2.2.9.RELEASE</code> version.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="installation"><a class="anchor" href="#installation"></a>2. Installation</h2>
+<h2 id="installation-configuration"><a class="anchor" href="#installation-configuration"></a>2. Installation &amp; Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Enabling Query/Response for Spring AMQP is done by simply loading the <code>QueryResponseConfiguration</code>
-class. The most simple way to do this, is annotating your Spring Boot
-application starter with the <code>@EnableQueryResponse</code> annotation.</p>
+<p>It is distributed as a <a href="https://maven.apache.org">Maven</a> dependency, and is known to work well with
+Maven 3.3+. Using the dependency with <a href="https://gradle.org">Gradle</a> should work too. Please
+see the <a href="https://github.com/olle/query-response-spring-amqp#quickstart">Quickstart</a> information, available on the project
+<a href="https://github.com/olle/query-response-spring-amqp">Github page</a>, for information on how to get the Maven dependency.</p>
+</div>
+<div class="paragraph">
+<p>Enabling Query/Response for Spring AMQP is done by loading the <code>QueryResponseConfiguration</code>
+class. The most simple way to do this, is by annotating your Spring Boot
+application with the <code>@EnableQueryResponse</code> annotation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -601,23 +603,19 @@ This annotation will do nothing more but to import the
 <p>That&#8217;s it! There is no more infrastructure code, wiring or setup that needs to
 be done. <strong>It&#8217;s just that easy.</strong></p>
 </div>
+<div class="sect2">
+<h3 id="connecting-to-an-amqp-broker"><a class="anchor" href="#connecting-to-an-amqp-broker"></a>2.1. Connecting to an AMQP broker</h3>
 <div class="paragraph">
 <p>Before you can run your application you need to make sure there is an AMQP
 broker available. By default Spring AMQP tries to connect to a
 <a href="https://www.rabbitmq.com">RabbitMQ</a>, running locally on port <code>5672</code>.</p>
 </div>
 <div class="paragraph">
-<p>Add the following <code>docker-compose.yaml</code> file to your project root directory.</p>
+<p>Start an and run RabbitMQ using <code>docker</code>:</p>
 </div>
-<div class="listingblock">
+<div class="literalblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">version</span>: <span class="string"><span class="content">'3'</span></span>
-<span class="key">services</span>:
-  <span class="key">rabbitmq</span>:
-    <span class="key">image</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">rabbitmq:3-management</span><span class="delimiter">&quot;</span></span>
-    <span class="key">ports</span>:
-      - <span class="string"><span class="delimiter">&quot;</span><span class="content">15672:15672</span><span class="delimiter">&quot;</span></span>
-      - <span class="string"><span class="delimiter">&quot;</span><span class="content">5672:5672</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre>$ docker run -p 5672:5672 -p 15672:15672 rabbitmq:3-management</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -627,25 +625,16 @@ broker available. By default Spring AMQP tries to connect to a
 <div class="title">Note</div>
 </td>
 <td class="content">
-The <code>3-management</code> tag will install and enable the RabbitMQ Management UI.
-      When then broker is running, it can be access at <a href="http://localhost:15672" class="bare">localhost:15672</a>
-      with username and password <code>guest</code>.
+The <code>3-management</code> tag will enable the RabbitMQ Management UI. When the
+      broker is running, it can be accessed at <a href="http://localhost:15672" class="bare">localhost:15672</a> with
+      username and password <code>guest</code>.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Using <a href="https://www.docker.com">Docker</a> you can start a RabbitMQ instance running
-<em>detached</em> (<code>-d</code> option), in the background, in a container.</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ docker-compose up -d</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now starting your application, will enable Query/Response for Spring AMQP and create all the
-resources necessary on the broker.</p>
+<p>Now running your application, will enable Query/Response for Spring AMQP, connect to the broker and
+create all the resources necessary on the broker.</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -656,6 +645,7 @@ resources necessary on the broker.</p>
 <p>Now is a good time to use the RabbitMQ Management UI, available at
 <a href="http://localhost:15672" class="bare">localhost:15672</a>, to inspect the exchange, queues and bindings created
 by Query/Response for Spring AMQP by default.</p>
+</div>
 </div>
 </div>
 </div>
@@ -829,7 +819,7 @@ We are using the <code>@Order</code> annotation in our example only to ensure th
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-14 11:39:10 +0200
+Last updated 2020-07-26 10:42:26 +0200
 </div>
 </div>
 </body>
