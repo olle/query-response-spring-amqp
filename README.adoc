@@ -103,7 +103,7 @@ https://olle.github.io/query-response-spring-amqp/[online documentation].
 Also make sure to check out the working link:./examples/[examples] to get
 started quickly with Query/Response.
 
-Have fun!
+Happy coding!
 
 ---
 
