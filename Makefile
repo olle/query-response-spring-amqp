@@ -11,7 +11,7 @@ docs:
 	mvn asciidoctor:process-asciidoc
 	mvn javadoc:javadoc
 	@cp -r target/site/apidocs target/generated-docs/apidocs
-	#npm run deploy-docs
+	npm run deploy-docs
 
 watch-docs:
 	mvn asciidoctor:http
