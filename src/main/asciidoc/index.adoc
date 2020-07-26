@@ -8,23 +8,26 @@ include::attributes.adoc[]
 :1010: https://twitter.com/fgeorge52
 :1020: https://youtu.be/yPf5MfOZPY0
 
+[.lead]
 _Sometime around 2015 I came across a presentation with {1010}[Fred George],
  about the {1020}[Challenges in Implementing Microservices]. It's a great
  talk, with lots of good and relevant information. Experience comes from
- learning through failures, and at this point in time I sure had learned about
- the problem with distributed services and blocking API calls. I had seen how
- latencies would go up and availability go down the drain, as calls from
- service A to B were actually depending on service B calling service C, calling
- service D. It was a mess._
+ learning through failures, and at this point in time I had just learned a hard
+ lesson about the problems with distributed services and blocking API calls. I
+ had seen how latencies would go up and availability go down the drain, as
+ calls from service A to B were actually depending on service B calling service
+ C, calling service D. It was a mess._
 
+[.lead]
 _In his talk {1010}[George] lands at the question "Synchronous or Asynchronous?"
  and proceeds to describe, what he calls, the "Needs Pattern". Service A would,
- instead of calling service B, publish a **query**, and service B would be
- able to pick it up and send back a **response**. After hearing this I began to
- think a lot about the effects of moving to asynchronous communication between
- services. There was clearly a lot more there than just decoupling. Something
- more profound._
+ instead of calling service B, publish a **query**, and service B would listen
+ for it and send back a **response**. After hearing this I began to think a lot
+ about the effects of moving to asynchronous communication between services.
+ There was clearly a lot more there than just decoupling. Something more
+ fundamental._
 
+[.lead]
 _The **Query/Response** pattern, that I arrived at, challenges developers to
  really think hard about the responsibilities and autonomy of services. It
  provides very few guarantees, which will force decisions around resilience
