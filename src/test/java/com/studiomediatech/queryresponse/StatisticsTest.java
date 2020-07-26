@@ -43,7 +43,7 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
+        MockEnvironment env = new MockEnvironment();
 
         new Statistics(env, ctx).respond();
 
@@ -69,10 +69,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var key = "only_responses";
+        String key = "only_responses";
         Stat s1 = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
 
         assertThat(s1.value).isEqualTo(true);
@@ -92,11 +92,11 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
         sut.pidSupplier = () -> "some-pid";
 
-        var key = "pid";
+        String key = "pid";
         Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
 
         assertThat(stat.value).isEqualTo("some-pid");
@@ -111,11 +111,11 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
         sut.nameSupplier = () -> "some-name";
 
-        var key = "name";
+        String key = "name";
         Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
 
         assertThat(stat.value).isEqualTo("some-name");
@@ -130,11 +130,11 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
         sut.hostSupplier = () -> "some-host";
 
-        var key = "host";
+        String key = "host";
         Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
 
         assertThat(stat.value).isEqualTo("some-host");
@@ -149,11 +149,11 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
         sut.uptimeSupplier = () -> "some-uptime";
 
-        var key = "uptime";
+        String key = "uptime";
         Stat stat = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
 
         assertThat(stat.value).isEqualTo("some-uptime");
@@ -168,10 +168,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var stat = "count_queries";
+        String stat = "count_queries";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -193,10 +193,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var stat = "count_consumed_responses";
+        String stat = "count_consumed_responses";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -218,10 +218,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var stat = "count_published_responses";
+        String stat = "count_published_responses";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -243,10 +243,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var stat = "throughput_queries";
+        String stat = "throughput_queries";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -269,10 +269,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var stat = "throughput_responses";
+        String stat = "throughput_responses";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -296,10 +296,10 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> registry;
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
-        var stat = "count_fallbacks";
+        String stat = "count_fallbacks";
 
         assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
             .findFirst().get()).isEqualTo(0L);
@@ -319,8 +319,8 @@ class StatisticsTest {
     @Test
     void ensureMeasuresAndRetainsLatencyStatisticsInBoundedCollection() throws Exception {
 
-        var env = new MockEnvironment();
-        var sut = new Statistics(env, ctx);
+        MockEnvironment env = new MockEnvironment();
+        Statistics sut = new Statistics(env, ctx);
 
         // NOOP
         sut.measureLatency(null, 43L);

@@ -33,8 +33,8 @@ class ResponseRegistryTest {
 
         ResponseRegistry.instance = () -> null;
 
-        var sut = new ResponseRegistry(null, null);
-        var ctx = Mockito.mock(ApplicationContext.class);
+        ResponseRegistry sut = new ResponseRegistry(null, null);
+        ApplicationContext ctx = Mockito.mock(ApplicationContext.class);
         when(ctx.getBean(ResponseRegistry.class)).thenReturn(sut);
 
         sut.setApplicationContext(ctx);
@@ -74,7 +74,7 @@ class ResponseRegistryTest {
             .withAll()
             .from("foo", "bar", "baz");
 
-        var mock = Mockito.mock(ResponseRegistry.class);
+        ResponseRegistry mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
 
         new ResponseRegistry(null, stats).register(capture.get());

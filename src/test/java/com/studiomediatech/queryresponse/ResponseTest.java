@@ -17,6 +17,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -50,10 +51,10 @@ class ResponseTest {
             .withAll()
             .from("foo", "bar", "baz");
 
-        var sut = Response.from(capture.get());
+        Response<String> sut = Response.from(capture.get());
         sut.accept(facade, stats);
 
-        var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
+        Message query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
         sut.onMessage(query);
 
         verify(facade).publishResponse(eq(""), eq("reply-to"), message.capture());
@@ -74,12 +75,12 @@ class ResponseTest {
         ChainingResponseBuilder.<String>respondTo("some-query", String.class)
             .withSink(capture::set)
             .withAll()
-            .from(() -> List.of("foo", "bar").iterator());
+            .from(() -> Arrays.asList("foo", "bar").iterator());
 
-        var sut = Response.from(capture.get());
+        Response<String> sut = Response.from(capture.get());
         sut.accept(facade, stats);
 
-        var query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
+        Message query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
         sut.onMessage(query);
 
         verify(facade).publishResponse(eq(""), eq("reply-to"), message.capture());
@@ -102,7 +103,7 @@ class ResponseTest {
             .withBatchesOf(2)
             .from("foo", "bar", "baz", "goo", "gar");
 
-        var sut = Response.from(capture.get());
+        Response<String> sut = Response.from(capture.get());
         sut.accept(facade, stats);
 
         sut.onMessage(MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build());

@@ -17,6 +17,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -56,9 +57,9 @@ class Querying {
 
         LOG.info("Publishing query..");
 
-        var defaults = List.of("Neuromancer", "I, Robot");
+        List<String> defaults = Arrays.asList("Neuromancer", "I, Robot");
 
-        var results = queryBuilder.queryFor("books/sci-fi", String.class)
+        List<String> results = queryBuilder.queryFor("books/sci-fi", String.class)
                 .waitingFor(2000)
                 .orDefaults(defaults)
                 .stream()
@@ -75,7 +76,7 @@ class Querying {
 
         LOG.info("Querying for authors...");
 
-        var authors = queryBuilder.queryFor("authors", Author.class)
+        List<Author> authors = queryBuilder.queryFor("authors", Author.class)
                 .takingAtLeast(3)
                 .waitingFor(888)
                 .orEmpty()
@@ -93,7 +94,7 @@ class Querying {
 
         LOG.info("Querying for names...");
 
-        var names = queryBuilder.queryFor("names", String.class)
+        List<String> names = queryBuilder.queryFor("names", String.class)
                 .takingAtLeast(33)
                 .takingAtMost(80)
                 .waitingFor(456).orEmpty()

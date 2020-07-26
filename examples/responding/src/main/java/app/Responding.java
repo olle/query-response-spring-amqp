@@ -43,12 +43,12 @@ public class Responding {
     @EventListener(ApplicationReadyEvent.class)
     void respondToAuthors() {
 
-        var tolkien = new Author("J. R. R. Tolkien", 1892, "South Africa");
-        var lewis = new Author("C. S. Lewis", 1898, "United Kingdom");
-        var asimov = new Author("Isaac Asimov", 1920, "Russia");
-        var gibson = new Author("William Gibson", 1948, "United States");
+        Author tolkien = new Author("J. R. R. Tolkien", 1892, "South Africa");
+        Author lewis = new Author("C. S. Lewis", 1898, "United Kingdom");
+        Author asimov = new Author("Isaac Asimov", 1920, "Russia");
+        Author gibson = new Author("William Gibson", 1948, "United States");
 
-        var authors = List.of(tolkien, lewis, asimov, gibson);
+        List<Author> authors = Arrays.asList(tolkien, lewis, asimov, gibson);
 
         responseBuilder.respondTo("authors", Author.class)
             .withAll()
@@ -59,10 +59,10 @@ public class Responding {
     @EventListener(ApplicationReadyEvent.class)
     void respondToNames() {
 
-        var names = Arrays.asList("Yasir", "Araceli", "Emídio", "Rebekka", "Jack", "Hertha", "Oscar", "Astrid",
-                "Sedef", "Naomi", "Ioque", "Davut", "Edith", "Ortrun", "Eddie", "Noah", "Anthony", "Connor", "Mestan",
-                "Erich", "Marius", "Adrian", "Jenny", "Enio", "Grazia", "Batur", "Fabien", "Oscar", "Rafael", "Efe",
-                "Arthur", "Eva", "Thea", "Finn", "Esat", "Ramon", "Amanda", "Anouchka", "Zachary", "Ece",
+        List<String> names = Arrays.asList("Yasir", "Araceli", "Emídio", "Rebekka", "Jack", "Hertha", "Oscar",
+                "Astrid", "Sedef", "Naomi", "Ioque", "Davut", "Edith", "Ortrun", "Eddie", "Noah", "Anthony", "Connor",
+                "Mestan", "Erich", "Marius", "Adrian", "Jenny", "Enio", "Grazia", "Batur", "Fabien", "Oscar", "Rafael",
+                "Efe", "Arthur", "Eva", "Thea", "Finn", "Esat", "Ramon", "Amanda", "Anouchka", "Zachary", "Ece",
                 "Hans-Günther", "Ebenezer", "Loni", "Ava", "Rose", "Lucy", "Katarina", "Ana", "Jonathan", "Bertram",
                 "Balthasar", "Fletcher", "Annelene", "Alberto", "Matilda", "Juanita", "Levin", "Latife", "Alexandre",
                 "Dylan", "آریا", "Carola", "Oswald", "Noury", "Logan", "Oliver", "Patricia", "Reitze", "Hayley",

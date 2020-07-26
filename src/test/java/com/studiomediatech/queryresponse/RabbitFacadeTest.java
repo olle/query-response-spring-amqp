@@ -21,6 +21,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -53,9 +54,9 @@ class RabbitFacadeTest {
     @Ignore
     void ensureDeclaresQueueForQuery() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var query = new Query<>();
+        Query<?> query = new Query<>();
         sut.declareQueue(query);
 
         verify(admin).declareQueue(queue.capture());
@@ -74,7 +75,7 @@ class RabbitFacadeTest {
     @Ignore
     void ensureDeclaresQueueForResponse() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
         Response<Object> response = new Response<>("some-routing-key");
         sut.declareQueue(response);
@@ -92,15 +93,15 @@ class RabbitFacadeTest {
     @Test
     void ensureAddsListenerForQuery() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var query = new Query<>();
+        Query<?> query = new Query<>();
         sut.addListener(query);
 
         String queueName = query.getQueueName();
         assertThat(sut.containers.containsKey(queueName));
 
-        var listenerContainer = sut.containers.get(queueName);
+        DirectMessageListenerContainer listenerContainer = sut.containers.get(queueName);
         assertThat(listenerContainer.getQueueNames()).contains(queueName);
         assertThat(listenerContainer.getMessageListener()).isSameAs(query);
     }
@@ -109,9 +110,9 @@ class RabbitFacadeTest {
     @Test
     void ensureRemovesQueueForQuery() throws Exception {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var query = new Query<>();
+        Query<?> query = new Query<>();
         sut.removeQueue(query);
 
         verify(admin).deleteQueue(query.getQueueName());
@@ -121,9 +122,9 @@ class RabbitFacadeTest {
     @Test
     void ensureRemovesQueueForResponse() throws Exception {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var response = new Response<>("foobaar");
+        Response<?> response = new Response<>("foobaar");
         sut.removeQueue(response);
 
         verify(admin).deleteQueue(response.getQueueName());
@@ -133,9 +134,9 @@ class RabbitFacadeTest {
     @Test
     void ensureRemovesListenerForQuery() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var query = new Query<>();
+        Query<?> query = new Query<>();
         sut.addListener(query);
 
         String queueName = query.getQueueName();
@@ -151,9 +152,9 @@ class RabbitFacadeTest {
     @Test
     void ensureRemovesListenerForResponse() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var response = new Response<>("bar");
+        Response<?> response = new Response<>("bar");
         sut.addListener(response);
 
         String queueName = response.getQueueName();
@@ -169,9 +170,9 @@ class RabbitFacadeTest {
     @Test
     void ensureDeclaresBindingForResponse() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var response = new Response<>("some-term");
+        Response<?> response = new Response<>("some-term");
         sut.declareBinding(response);
 
         verify(admin).declareBinding(binding.capture());
@@ -185,15 +186,15 @@ class RabbitFacadeTest {
     @Test
     void ensureAddsListenerForResponse() {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        var response = new Response<>("some-term");
+        Response<?> response = new Response<>("some-term");
         sut.addListener(response);
 
         String queueName = response.getQueueName();
         assertThat(sut.containers.containsKey(queueName));
 
-        var listenerContainer = sut.containers.get(queueName);
+        DirectMessageListenerContainer listenerContainer = sut.containers.get(queueName);
         assertThat(listenerContainer.getQueueNames()).contains(queueName);
         assertThat(listenerContainer.getMessageListener()).isSameAs(response);
     }
@@ -202,7 +203,7 @@ class RabbitFacadeTest {
     @Test
     void ensurePublishesQuery() throws Exception {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
         byte[] body = "{}".getBytes();
         sut.publishQuery("some-routing-key", MessageBuilder.withBody(body).build());
@@ -218,7 +219,7 @@ class RabbitFacadeTest {
     @Test
     void ensurePublishesResponse() throws Exception {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
         byte[] body = "{}".getBytes();
         sut.publishResponse("some-exchange", "some-routing-key", MessageBuilder.withBody(body).build());
@@ -234,7 +235,7 @@ class RabbitFacadeTest {
     @Test
     void ensureFailureToPublishResponseIsNotThrown() throws Exception {
 
-        var sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
         Mockito.doThrow(RuntimeException.class).when(template)
             .send(Mockito.anyString(), Mockito.anyString(), Mockito.any(Message.class));

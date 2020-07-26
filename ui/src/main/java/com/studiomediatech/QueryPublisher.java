@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import java.time.temporal.ChronoUnit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -62,7 +63,7 @@ public class QueryPublisher implements Logging {
 
         Optional<Integer> maybe = event.getLimit();
 
-        List<Object> orEmptyResponse = List.of("No responses");
+        List<Object> orEmptyResponse = Arrays.asList("No responses");
 
         if (maybe.isPresent()) {
             int limit = maybe.get();
@@ -138,7 +139,7 @@ public class QueryPublisher implements Logging {
                 .collect(Collectors.groupingBy(s -> s.uuid));
 
         for (Entry<String, List<QueryPublisher.Stat>> node : nodes.entrySet()) {
-            var stat = new Stat();
+            Stat stat = new Stat();
             stat.uuid = node.getKey();
             stat.key = "avg_throughput";
             stat.value = calculateAndAggregateThroughputAvg(queries, responses, node.getKey());

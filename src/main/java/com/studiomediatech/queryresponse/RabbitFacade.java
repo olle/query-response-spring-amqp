@@ -141,7 +141,7 @@ class RabbitFacade implements Logging {
 
         return containers.computeIfAbsent(queueName,
                 key -> {
-                    var container = createNewListenerContainer();
+                    DirectMessageListenerContainer container = createNewListenerContainer();
 
                     container.addQueueNames(key);
                     container.setMessageListener(listener);
@@ -180,7 +180,7 @@ class RabbitFacade implements Logging {
      */
     public void publishQuery(String routingKey, Message message) {
 
-        var m = decorateMessage(message);
+        Message m = decorateMessage(message);
 
         this.template.send(queriesExchange.getName(), routingKey, m);
         logPublished("query", routingKey, m);
@@ -198,7 +198,7 @@ class RabbitFacade implements Logging {
      */
     public void publishResponse(String exchange, String routingKey, Message message) {
 
-        var m = decorateMessage(message);
+        Message m = decorateMessage(message);
 
         try {
             this.template.send(exchange, routingKey, m);

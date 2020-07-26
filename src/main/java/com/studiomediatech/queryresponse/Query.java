@@ -2,6 +2,7 @@ package com.studiomediatech.queryresponse;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -96,7 +97,7 @@ class Query<T> implements MessageListener, Logging {
     private ConsumedResponseEnvelope<T> parseMessage(Message message) {
 
         try {
-            var type = TypeFactory.defaultInstance()
+            JavaType type = TypeFactory.defaultInstance()
                     .constructParametricType(ConsumedResponseEnvelope.class, responseType);
             ConsumedResponseEnvelope<T> response = reader.forType(type).readValue(message.getBody());
             log().debug("Received response: {}", response);
@@ -104,7 +105,7 @@ class Query<T> implements MessageListener, Logging {
             return response;
         } catch (IOException ex) {
             if (onError != null) {
-                var errorMessage = "Failed to parse response to elements of type " + responseType.getSimpleName();
+                String errorMessage = "Failed to parse response to elements of type " + responseType.getSimpleName();
                 onError.accept(new IllegalArgumentException(errorMessage, ex));
             }
 
@@ -175,7 +176,7 @@ class Query<T> implements MessageListener, Logging {
          * In this iteration of the Query/Response library, we block on the
          * calling thread. This is the most simple thing I could think of.
          */
-        var wait = this.waitingFor.toMillis();
+        long wait = this.waitingFor.toMillis();
 
         /*
          * We yield on the thread only to check if the consuming side, has

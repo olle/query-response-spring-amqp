@@ -12,7 +12,7 @@ class DurationFormatterTest {
     @Test
     void millis() {
 
-        var d = Duration.ofMillis(999);
+        Duration d = Duration.ofMillis(999);
         assertThat(DurationFormatter.format(d)).isEqualTo("0 seconds");
     }
 
@@ -20,7 +20,7 @@ class DurationFormatterTest {
     @Test
     void second() throws Exception {
 
-        var d = Duration.ofSeconds(1);
+        Duration d = Duration.ofSeconds(1);
         assertThat(DurationFormatter.format(d)).isEqualTo("1 second");
     }
 
@@ -28,7 +28,7 @@ class DurationFormatterTest {
     @Test
     void seconds() throws Exception {
 
-        var d = Duration.ofSeconds(2);
+        Duration d = Duration.ofSeconds(2);
         assertThat(DurationFormatter.format(d)).isEqualTo("2 seconds");
     }
 
@@ -36,7 +36,7 @@ class DurationFormatterTest {
     @Test
     void minute() throws Exception {
 
-        var d = Duration.ofSeconds(119);
+        Duration d = Duration.ofSeconds(119);
         assertThat(DurationFormatter.format(d)).isEqualTo("1 minute");
     }
 
@@ -44,7 +44,7 @@ class DurationFormatterTest {
     @Test
     void minutes() throws Exception {
 
-        var d = Duration.ofMinutes(23);
+        Duration d = Duration.ofMinutes(23);
         assertThat(DurationFormatter.format(d)).isEqualTo("23 minutes");
     }
 
@@ -52,7 +52,7 @@ class DurationFormatterTest {
     @Test
     void hour() throws Exception {
 
-        var d = Duration.ofHours(1).plusMinutes(12);
+        Duration d = Duration.ofHours(1).plusMinutes(12);
         assertThat(DurationFormatter.format(d)).isEqualTo("1 hour 12min");
     }
 
@@ -60,7 +60,7 @@ class DurationFormatterTest {
     @Test
     void hours() throws Exception {
 
-        var d = Duration.ofHours(4).plusMinutes(33);
+        Duration d = Duration.ofHours(4).plusMinutes(33);
         assertThat(DurationFormatter.format(d)).isEqualTo("4 hours 33min");
     }
 
@@ -68,7 +68,7 @@ class DurationFormatterTest {
     @Test
     void onlyHours() throws Exception {
 
-        var d = Duration.ofHours(12);
+        Duration d = Duration.ofHours(12);
         assertThat(DurationFormatter.format(d)).isEqualTo("12 hours");
     }
 
@@ -76,7 +76,7 @@ class DurationFormatterTest {
     @Test
     void day() throws Exception {
 
-        var d = Duration.ofDays(1).plusHours(3);
+        Duration d = Duration.ofDays(1).plusHours(3);
         assertThat(DurationFormatter.format(d)).isEqualTo("1 day 3h");
     }
 
@@ -84,7 +84,7 @@ class DurationFormatterTest {
     @Test
     void days() throws Exception {
 
-        var d = Duration.ofDays(32).plusHours(1);
+        Duration d = Duration.ofDays(32).plusHours(1);
         assertThat(DurationFormatter.format(d)).isEqualTo("32 days 1h");
     }
 
@@ -92,7 +92,7 @@ class DurationFormatterTest {
     @Test
     void onlyDays() throws Exception {
 
-        var d = Duration.ofDays(77);
+        Duration d = Duration.ofDays(77);
         assertThat(DurationFormatter.format(d)).isEqualTo("77 days");
     }
 
@@ -100,7 +100,7 @@ class DurationFormatterTest {
     @Test
     void year() throws Exception {
 
-        var d = Duration.ofDays(356).plusDays(1);
+        Duration d = Duration.ofDays(356).plusDays(1);
         assertThat(DurationFormatter.format(d)).isEqualTo("1 year 1d");
     }
 
@@ -108,7 +108,7 @@ class DurationFormatterTest {
     @Test
     void years() throws Exception {
 
-        var d = Duration.ofDays(356 * 3).plusDays(44);
+        Duration d = Duration.ofDays(356 * 3).plusDays(44);
         assertThat(DurationFormatter.format(d)).isEqualTo("3 years 44d");
     }
 
@@ -116,7 +116,7 @@ class DurationFormatterTest {
     @Test
     void onlyYears() throws Exception {
 
-        var d = Duration.ofDays(356 * 2);
+        Duration d = Duration.ofDays(356 * 2);
         assertThat(DurationFormatter.format(d)).isEqualTo("2 years");
     }
 }

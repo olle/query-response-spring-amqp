@@ -69,7 +69,7 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
     public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum, long countFallbacksSum,
         double successRate, List<Double> successRates) {
 
-        var json = String.format(Locale.US,
+        String json = String.format(Locale.US,
                 "{\"metrics\": {"
                 + "\"count_queries\": %d,"
                 + "\"count_responses\": %d,"
@@ -84,7 +84,7 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
 
     public void handleLatency(long minLatency, long maxLatency, double avgLatency, List<Double> latencies) {
 
-        var json = String.format(Locale.US,
+        String json = String.format(Locale.US,
                 "{\"metrics\": {"
                 + (minLatency != -1 ? "\"min_latency\": %d," : "") + (maxLatency != -1 ? "\"max_latency\": %d," : "")
                 + "\"avg_latency\": %f,"
@@ -97,7 +97,7 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
 
     public void handleThroughput(double queries, double responses, double avg, List<Double> throughputs) {
 
-        var json = String.format(Locale.US,
+        String json = String.format(Locale.US,
                 "{\"metrics\": {"
                 + "\"throughput_queries\": %f,"
                 + "\"throughput_responses\": %f,"
@@ -127,7 +127,7 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
 
     private void publishTextMessageWithPayload(String json) {
 
-        var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
+        TextMessage message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 
         for (WebSocketSession s : sessionsById.values()) {
             try {
@@ -157,7 +157,7 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
 
     private void publishTextMessageWithPayloadToSession(String id, String json) {
 
-        var message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
+        TextMessage message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
 
         WebSocketSession s = sessionsById.get(id);
 

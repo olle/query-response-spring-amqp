@@ -21,7 +21,13 @@ class AssertsTest {
     @Test
     void ensureThrowsOnTooLongQueryTerm() {
 
-        assertThrows(IllegalArgumentException.class, () -> Asserts.invariantQueryTerm("a".repeat(256)));
+        final StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 256; i++) {
+            sb.append("a");
+        }
+
+        assertThrows(IllegalArgumentException.class, () -> Asserts.invariantQueryTerm(sb.toString()));
     }
 
 

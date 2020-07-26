@@ -51,7 +51,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
      */
     static <T> Collection<T> register(ChainingQueryBuilder<T> queryBuilder) {
 
-        var registry = instance.get();
+        QueryRegistry registry = instance.get();
 
         if (registry == null) {
             throw new IllegalStateException("No registry is initialized.");

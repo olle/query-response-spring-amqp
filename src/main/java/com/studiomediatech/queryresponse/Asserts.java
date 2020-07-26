@@ -1,5 +1,7 @@
 package com.studiomediatech.queryresponse;
 
+import org.springframework.util.StringUtils;
+
 import java.time.Duration;
 
 import java.util.Arrays;
@@ -20,7 +22,7 @@ final class Asserts {
             throw new IllegalArgumentException("Query term may not be null");
         }
 
-        if (term.isEmpty() || term.isBlank()) {
+        if (!StringUtils.hasText(term)) {
             throw new IllegalArgumentException("Query term may not be empty");
         }
 

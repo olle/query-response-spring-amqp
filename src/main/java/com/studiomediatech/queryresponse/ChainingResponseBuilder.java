@@ -87,7 +87,7 @@ public class ChainingResponseBuilder<T> {
             return;
         }
 
-        var es = Asserts.invariantResponseVarargsArray(elements);
+        Collection<T> es = Asserts.invariantResponseVarargsArray(elements);
 
         this.elements = es::iterator;
 
@@ -97,7 +97,7 @@ public class ChainingResponseBuilder<T> {
 
     public void from(Collection<T> elements) {
 
-        var es = Asserts.invariantResponseCollection(elements);
+        Collection<T> es = Asserts.invariantResponseCollection(elements);
 
         this.elements = es::iterator;
 
