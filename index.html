@@ -563,8 +563,9 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#appendicies">7. Appendicies</a>
 <ul class="sectlevel2">
-<li><a href="#amqp-resources-formats">7.1. AMQP Resources &amp; Formats</a></li>
-<li><a href="#trademarks">7.2. Trademarks</a></li>
+<li><a href="#java-api">7.1. Java API</a></li>
+<li><a href="#amqp-resources-formats">7.2. AMQP Resources &amp; Formats</a></li>
+<li><a href="#trademarks">7.3. Trademarks</a></li>
 </ul>
 </li>
 </ul>
@@ -2397,7 +2398,14 @@ This way modules can provide, and fulfill, explicit SLAs if required.</p>
 <h2 id="appendicies"><a class="anchor" href="#appendicies"></a>7. Appendicies</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="amqp-resources-formats"><a class="anchor" href="#amqp-resources-formats"></a>7.1. AMQP Resources &amp; Formats</h3>
+<h3 id="java-api"><a class="anchor" href="#java-api"></a>7.1. Java API</h3>
+<div class="paragraph">
+<p>We keep a recent link available here to the most recently built and deployed
+<a href="apidocs/index.html">Java API Documentation</a> for Query/Response for Spring AMQP.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="amqp-resources-formats"><a class="anchor" href="#amqp-resources-formats"></a>7.2. AMQP Resources &amp; Formats</h3>
 <div class="paragraph">
 <p>The declared <a href="https://www.rabbitmq.com/protocol.html">AMQP</a> broker resources are very limited. Only the
 <code>query-response</code> topic-exchange is created. All active Query/Response services
@@ -2415,7 +2423,7 @@ will automatically declare the required exchange, with the following parameters:
 which are used in the AMQP messages - a mini-protocol:</p>
 </div>
 <div class="sect3">
-<h4 id="query-messages"><a class="anchor" href="#query-messages"></a>7.1.1. Query messages</h4>
+<h4 id="query-messages"><a class="anchor" href="#query-messages"></a>7.2.1. Query messages</h4>
 <div class="paragraph">
 <p>Query messages are very simple in structure and form. The common
 <code>query-response</code> exchanged is published to, and the message <code>routing-key</code> will
@@ -2440,7 +2448,7 @@ placeholder.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="response-messages"><a class="anchor" href="#response-messages"></a>7.1.2. Response messages</h4>
+<h4 id="response-messages"><a class="anchor" href="#response-messages"></a>7.2.2. Response messages</h4>
 <div class="paragraph">
 <p>Published responses also use a common format. They are published to the empty
 (default) exchange, with the <code>query-response-queue</code> from the <code>reply-to</code>
@@ -2469,7 +2477,7 @@ room for extensions in future versions.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="trademarks"><a class="anchor" href="#trademarks"></a>7.2. Trademarks</h3>
+<h3 id="trademarks"><a class="anchor" href="#trademarks"></a>7.3. Trademarks</h3>
 <div class="paragraph">
 <p>Java is a registered trademark of <a href="https://www.oracle.com">Oracle</a> and/or its affiliates.
 Other names may be trademarks of their respective owners.</p>
