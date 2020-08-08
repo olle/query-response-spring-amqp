@@ -99,8 +99,8 @@ public final class ChainingQueryBuilder<T> {
      * amount of time specified.</p>
      *
      * <p>Queries are always bound to a blocking timeout, and will return after at most the given duration. Combined
-     * with the <em>taking...</em> predicates ({@link #takingAtLeast(int)} or {@link #takingAtMost(int)}), this can be
-     * used to either return earlier, use a {@link #orDefaults default} or {@link #orThrow(Supplier) fail}.</p>
+     * with the <em>taking...</em> conditionals ({@link #takingAtLeast(int)} or {@link #takingAtMost(int)}), this can
+     * be used to either return earlier, use a {@link #orDefaults default} or {@link #orThrow(Supplier) fail}.</p>
      *
      * @param  millis  duration to block on the calling thread. At the most {@link Long#MAX_VALUE} milliseconds is
      *                 allowed.
