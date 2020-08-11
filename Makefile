@@ -10,7 +10,7 @@ install:
 docs:
 	mvn asciidoctor:process-asciidoc
 	mvn javadoc:javadoc
-	@cp -r target/site/apidocs target/generated-docs/apidocs
+	cp -R target/site/apidocs target/generated-docs/
 	npm run deploy-docs
 
 watch-docs:
