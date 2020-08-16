@@ -61,6 +61,11 @@ public class ChainingResponseBuilder<T> {
     }
 
 
+    /**
+     * Sets the batching of this builder, to use response entries at once.
+     *
+     * @return  the response builder, for chaining further calls
+     */
     public ChainingResponseBuilder<T> withAll() {
 
         this.batchSize = 0;
@@ -69,6 +74,13 @@ public class ChainingResponseBuilder<T> {
     }
 
 
+    /**
+     * Sets the batching size to be used for responses to the given size.
+     *
+     * @param  size  of each response message, the number of response elements to send in one response
+     *
+     * @return  the response builder, for chaining further calls
+     */
     public ChainingResponseBuilder<T> withBatchesOf(int size) {
 
         this.batchSize = Asserts.invariantBatchSize(size);
