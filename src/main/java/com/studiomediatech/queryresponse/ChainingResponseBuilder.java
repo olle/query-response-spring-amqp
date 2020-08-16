@@ -89,6 +89,11 @@ public class ChainingResponseBuilder<T> {
     }
 
 
+    /**
+     * Sets the provided varargs of elements, to be used in published responses.
+     *
+     * @param  elements  the response elements
+     */
     @SuppressWarnings("unchecked")
     @SafeVarargs
     public final void from(T... elements) {
@@ -107,6 +112,11 @@ public class ChainingResponseBuilder<T> {
     }
 
 
+    /**
+     * Sets the provided collection of elements, to be used in published responses.
+     *
+     * @param  elements  the response elements collection
+     */
     public void from(Collection<T> elements) {
 
         Collection<T> es = Asserts.invariantResponseCollection(elements);
@@ -117,6 +127,11 @@ public class ChainingResponseBuilder<T> {
     }
 
 
+    /**
+     * Sets the supplier for an iterator, that can provide elements to be used in published responses.
+     *
+     * @param  elements  supplier of an iterator
+     */
     public void from(Supplier<Iterator<T>> elements) {
 
         this.elements = Asserts.invariantSupplier(elements);
@@ -125,6 +140,11 @@ public class ChainingResponseBuilder<T> {
     }
 
 
+    /**
+     * Sets the supplier for a collection, that can provide elements to be used in publised responses.
+     *
+     * @param  elements  supplier of a collection
+     */
     public void suppliedBy(Supplier<Collection<T>> elements) {
 
         this.elements = () -> (Iterator<T>) elements.get().iterator();
