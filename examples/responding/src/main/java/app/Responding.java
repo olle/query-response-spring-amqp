@@ -26,8 +26,9 @@ public class Responding {
 
     public static void main(String[] args) {
 
-        // SpringApplication.run(Responding.class, args);
-        new SpringApplicationBuilder(Responding.class).web(WebApplicationType.NONE).run(args);
+        new SpringApplicationBuilder(Responding.class)
+            .web(WebApplicationType.NONE)
+            .run(args);
     }
 
 

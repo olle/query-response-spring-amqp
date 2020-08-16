@@ -130,6 +130,13 @@ public class ChainingResponseBuilder<T> {
     /**
      * Sets the supplier for an iterator, that can provide elements to be used in published responses.
      *
+     * <p>The supplied iterator will be used with respect to the contract of {@link Iterator#hasNext()} and
+     * {@link Iterator#next()}, typically only to ensure that batches can be produced, and that the end of the supplied
+     * elements can be reached.</p>
+     *
+     * <p>Please note that memory or resource use, is not specifically covered by this interface. At run-time, a
+     * request to supply the iterator, may cause great stress on resource use.</p>
+     *
      * @param  elements  supplier of an iterator
      */
     public void from(Supplier<Iterator<T>> elements) {
@@ -141,7 +148,10 @@ public class ChainingResponseBuilder<T> {
 
 
     /**
-     * Sets the supplier for a collection, that can provide elements to be used in publised responses.
+     * Sets the supplier for a collection, that can provide elements to be used in published responses.
+     *
+     * <p>Please note that memory or resource use, is not at all covered by this interface. At run-time, a request to
+     * supply the elements collection, could potentially cause great stress on resource use.</p>
      *
      * @param  elements  supplier of a collection
      */
