@@ -6,7 +6,7 @@
 
     <groupId>com.studiomediatech</groupId>
     <artifactId>query-response-spring-amqp</artifactId>
-    <version>0.0.0-SNAPSHOT</version>
+    <version>0.0.0.SB_1_5_22-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Query/Response for Spring AMQP</name>
