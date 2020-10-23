@@ -4,6 +4,7 @@ import com.studiomediatech.queryresponse.util.Logging;
 
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.AnonymousQueue;
+import org.springframework.amqp.core.AnonymousQueue.NamingStrategy;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Message;
@@ -11,12 +12,13 @@ import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.core.NamingStrategy;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -39,7 +41,7 @@ class RabbitFacade implements Logging {
 
     private TopicExchange queriesExchange;
 
-    protected final Map<String, DirectMessageListenerContainer> containers = new ConcurrentHashMap<>();
+    protected final Map<String, SimpleMessageListenerContainer> containers = new ConcurrentHashMap<>();
 
     public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, ConnectionFactory connectionFactory,
         TopicExchange queriesExchange, GenericApplicationContext ctx) {
@@ -67,7 +69,10 @@ class RabbitFacade implements Logging {
 
         AnonymousQueue queue = log(new AnonymousQueue(name));
         admin.declareQueue(queue);
-        ctx.registerBean(queue.getActualName(), AnonymousQueue.class, () -> queue);
+
+        GenericBeanDefinition def = new GenericBeanDefinition();
+        def.setBeanClass(AnonymousQueue.class);
+        ctx.registerBeanDefinition(queue.getName(), def);
     }
 
 
@@ -85,18 +90,20 @@ class RabbitFacade implements Logging {
         Binding binding = log(new Binding(queueName, DestinationType.QUEUE, queriesExchange.getName(), routingKey,
                     null));
         admin.declareBinding(binding);
-        ctx.registerBean(queueName + "-binding", Binding.class, () -> binding);
+
+        GenericBeanDefinition def = new GenericBeanDefinition();
+        def.setBeanClass(Binding.class);
+        ctx.registerBeanDefinition(queueName + "-binding", def);
     }
 
 
-    private DirectMessageListenerContainer createNewListenerContainer() {
+    private SimpleMessageListenerContainer createNewListenerContainer() {
 
-        DirectMessageListenerContainer container = new DirectMessageListenerContainer(connectionFactory);
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory);
 
         container.setAcknowledgeMode(AcknowledgeMode.NONE);
-        container.setConsumersPerQueue(1);
+        container.setConcurrentConsumers(1);
         container.setPrefetchCount(12);
-        container.setMessagesPerAck(12);
 
         return container;
     }
@@ -128,7 +135,7 @@ class RabbitFacade implements Logging {
 
     private void doRemoveListener(String queueName) {
 
-        DirectMessageListenerContainer container = containers.remove(queueName);
+        SimpleMessageListenerContainer container = containers.remove(queueName);
 
         if (container != null) {
             container.removeQueueNames(queueName);
@@ -137,11 +144,11 @@ class RabbitFacade implements Logging {
     }
 
 
-    private DirectMessageListenerContainer createMessageListenerContainer(MessageListener listener, String queueName) {
+    private SimpleMessageListenerContainer createMessageListenerContainer(MessageListener listener, String queueName) {
 
         return containers.computeIfAbsent(queueName,
                 key -> {
-                    DirectMessageListenerContainer container = createNewListenerContainer();
+                    SimpleMessageListenerContainer container = createNewListenerContainer();
 
                     container.addQueueNames(key);
                     container.setMessageListener(listener);

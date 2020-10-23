@@ -81,7 +81,7 @@ class Query<T> implements MessageListener, Logging {
 
         MessageProperties properties = message.getMessageProperties();
         log().info("|--> Received response message: {}", properties);
-        measureLatency(properties.getHeader(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
+        measureLatency((Long) properties.getHeaders().get(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
         handleResponseEnvelope(parseMessage(message));
     }
 

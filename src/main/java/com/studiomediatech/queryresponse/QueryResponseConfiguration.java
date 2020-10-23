@@ -71,7 +71,7 @@ class QueryResponseConfiguration implements Logging {
     @Bean
     TopicExchange queriesExchange(@Value("${queryresponse.exchange.name:query-response}") String name) {
 
-        return log(ExchangeBuilder.topicExchange(name).autoDelete().build());
+        return log((TopicExchange) ExchangeBuilder.topicExchange(name).autoDelete().build());
     }
 
 

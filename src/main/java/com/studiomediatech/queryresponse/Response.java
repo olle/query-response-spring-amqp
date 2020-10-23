@@ -65,7 +65,7 @@ class Response<T> implements MessageListener, Logging {
         try {
             MessageProperties properties = message.getMessageProperties();
             log().info("|--> Consumed query: " + properties.getReceivedRoutingKey());
-            measureLatency(properties.getHeader(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
+            measureLatency((Long) properties.getHeaders().get(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
 
             List<Response<T>.PublishedResponseEnvelope<T>> responses = new ArrayList<>();
 
