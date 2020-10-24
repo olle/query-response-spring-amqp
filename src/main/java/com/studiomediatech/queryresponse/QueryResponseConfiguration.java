@@ -2,7 +2,6 @@ package com.studiomediatech.queryresponse;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -76,11 +75,14 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    TopicExchange queriesExchange() {
+    TopicExchange queryResponseTopicExchange() {
 
         String name = props.getExchange().getName();
 
-        return log((TopicExchange) ExchangeBuilder.topicExchange(name).autoDelete().build());
+        boolean durable = false;
+        boolean autoDelete = true;
+
+        return log(new TopicExchange(name, durable, autoDelete));
     }
 
 
