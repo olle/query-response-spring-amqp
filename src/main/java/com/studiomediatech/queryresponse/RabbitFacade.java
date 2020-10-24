@@ -216,9 +216,29 @@ class RabbitFacade implements Logging {
     }
 
 
-    private void logPublished(String type, String routingKey, Message message) {
+    protected void logPublished(String type, String routingKey, Message message) {
 
-        log().info("|<-- Published {}: {} - {}", type, routingKey, message);
+        if (log().isDebugEnabled()) {
+            log().debug("|<-- Published {}: {} - {}", type, routingKey, message);
+        } else {
+            log().info("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
+        }
+    }
+
+
+    private String toStringRedacted(Message message) {
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("(");
+        buffer.append("Body:[").append(message.getBody().length).append("]");
+
+        if (message.getMessageProperties() != null) {
+            buffer.append(" ").append(message.getMessageProperties().toString());
+        }
+
+        buffer.append(")");
+
+        return buffer.toString();
     }
 
 
