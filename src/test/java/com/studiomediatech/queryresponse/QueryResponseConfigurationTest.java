@@ -3,6 +3,7 @@ package com.studiomediatech.queryresponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.junit.RabbitAvailable;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -93,5 +94,18 @@ class QueryResponseConfigurationTest {
     void ensureWiresStatisticsComponent() throws Exception {
 
         contextRunner.run(ctx -> assertThat(ctx.getBean(Statistics.class)).isNotNull());
+    }
+
+
+    @Test
+    void ensureQueryResponseTopicExchangeBeanIsNonDurableAndAutoDelete() throws Exception {
+
+        QueryResponseConfiguration sut = new QueryResponseConfiguration(new QueryResponseConfigurationProperties());
+
+        TopicExchange exchange = sut.queryResponseTopicExchange();
+
+        assertThat(exchange.getName()).isEqualTo("query-response");
+        assertThat(exchange.isDurable()).isFalse();
+        assertThat(exchange.isAutoDelete()).isTrue();
     }
 }
