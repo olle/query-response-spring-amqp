@@ -8,12 +8,11 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +31,15 @@ import org.springframework.core.env.Environment;
 @ConditionalOnClass(RabbitAutoConfiguration.class)
 @AutoConfigureAfter(RabbitAutoConfiguration.class)
 @Import(RabbitAutoConfiguration.class)
+@EnableConfigurationProperties(QueryResponseConfigurationProperties.class)
 class QueryResponseConfiguration implements Logging {
+
+    private final QueryResponseConfigurationProperties props;
+
+    public QueryResponseConfiguration(QueryResponseConfigurationProperties props) {
+
+        this.props = props;
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -69,7 +76,9 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    TopicExchange queriesExchange(@Value("${queryresponse.exchange.name:query-response}") String name) {
+    TopicExchange queriesExchange() {
+
+        String name = props.getExchange().getName();
 
         return log((TopicExchange) ExchangeBuilder.topicExchange(name).autoDelete().build());
     }
