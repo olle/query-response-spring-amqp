@@ -80,7 +80,7 @@ class QueryResponseConfiguration implements Logging {
 
         String name = props.getExchange().getName();
 
-        return log(ExchangeBuilder.topicExchange(name).autoDelete().build());
+        return log((TopicExchange) ExchangeBuilder.topicExchange(name).autoDelete().build());
     }
 
 
