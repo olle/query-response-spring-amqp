@@ -72,7 +72,14 @@ class Query<T> implements MessageListener, Logging {
     // Declared protected, for access in unit tests.
     protected Query() {
 
-        this.queueName = UUID.randomUUID().toString();
+        this(UUID.randomUUID().toString());
+    }
+
+
+    // Declared protected, for access in unit tests.
+    protected Query(String queueName) {
+
+        this.queueName = queueName;
         this.elements = new ConcurrentLinkedQueue<>();
     }
 
@@ -128,9 +135,11 @@ class Query<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Query<T> from(ChainingQueryBuilder<T> queryBuilder) {
+    static <T> Query<T> from(ChainingQueryBuilder<T> queryBuilder, QueryResponseConfigurationProperties props) {
 
-        Query<T> query = new Query<>();
+        String queueName = props.getQueue().getPrefix() + UUID.randomUUID().toString();
+
+        Query<T> query = new Query<>(queueName);
 
         query.queryTerm = queryBuilder.getQueryForTerm();
         query.responseType = queryBuilder.getType();

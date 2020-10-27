@@ -23,6 +23,8 @@ class QueryRegistryTest {
     @Mock
     Statistics stats;
 
+    QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
+
     @Test
     void ensureThrowsOnMissingBean() {
 
@@ -42,7 +44,7 @@ class QueryRegistryTest {
         QueryRegistry.instance = () -> mock;
 
         ChainingQueryBuilder<String> queryBuilder = new ChainingQueryBuilder<>("foobar", String.class);
-        new QueryRegistry(null, null).register(queryBuilder);
+        new QueryRegistry(null, null, null).register(queryBuilder);
 
         verify(mock).accept(queryBuilder);
 
@@ -56,7 +58,7 @@ class QueryRegistryTest {
         ChainingQueryBuilder<String> queries = new ChainingQueryBuilder<>("foobar", String.class);
         queries.waitingFor(123);
 
-        new QueryRegistry(facade, stats).accept(queries);
+        new QueryRegistry(facade, stats, props).accept(queries);
 
         verify(facade).declareQueue(Mockito.isA(Query.class));
         verify(facade).addListener(Mockito.isA(Query.class));

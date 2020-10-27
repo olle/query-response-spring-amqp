@@ -11,6 +11,8 @@ public class QueryResponseConfigurationProperties {
 
     private ExchangeProperties exchange = new ExchangeProperties();
 
+    private QueueProperties queue = new QueueProperties();
+
     public ExchangeProperties getExchange() {
 
         return exchange;
@@ -20,6 +22,18 @@ public class QueryResponseConfigurationProperties {
     public void setExchange(ExchangeProperties exchange) {
 
         this.exchange = exchange;
+    }
+
+
+    public QueueProperties getQueue() {
+
+        return queue;
+    }
+
+
+    public void setQueue(QueueProperties queue) {
+
+        this.queue = queue;
     }
 
     public static class ExchangeProperties {
@@ -38,6 +52,25 @@ public class QueryResponseConfigurationProperties {
         public void setName(String name) {
 
             this.name = name;
+        }
+    }
+
+    public static class QueueProperties {
+
+        /**
+         * Prefix for queue names.
+         */
+        private String prefix = "query-response-";
+
+        public String getPrefix() {
+
+            return prefix;
+        }
+
+
+        public void setPrefix(String prefix) {
+
+            this.prefix = prefix;
         }
     }
 }

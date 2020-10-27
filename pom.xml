@@ -143,6 +143,7 @@
                                         <exclude>com.studiomediatech.queryresponse.QueryResponseConfiguration</exclude>
                                         <exclude>com.studiomediatech.queryresponse.QueryResponseConfigurationProperties</exclude>
                                         <exclude>com.studiomediatech.queryresponse.QueryResponseConfigurationProperties.ExchangeProperties</exclude>
+                                        <exclude>com.studiomediatech.queryresponse.QueryResponseConfigurationProperties.QueueProperties</exclude>
                                         <exclude>com.studiomediatech.queryresponse.Statistics</exclude>
                                         <exclude>com.studiomediatech.queryresponse.util.*</exclude>
                                         <exclude>com.studiomediatech.queryresponse.Query.ConsumedResponseEnvelope</exclude>

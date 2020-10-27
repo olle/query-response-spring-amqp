@@ -37,6 +37,8 @@ class QueryTest {
     @Mock
     Statistics stats;
 
+    QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
+
     @Mock
     AbstractMessageListenerContainer listener;
 
@@ -68,7 +70,7 @@ class QueryTest {
             .waitingFor(1)
             .orEmpty();
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -94,7 +96,7 @@ class QueryTest {
                 })
             .orEmpty();
 
-        Query<Foo> sut = Query.from(capture.get());
+        Query<Foo> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -113,7 +115,7 @@ class QueryTest {
             .waitingFor(1)
             .orEmpty();
 
-        Query<Foo> sut = Query.from(capture.get());
+        Query<Foo> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -133,7 +135,7 @@ class QueryTest {
             .takingAtLeast(5)
             .orDefaults(Arrays.asList("hello", "world"));
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 3, 'total': 3, 'elements': ['foo', 'bar', 'baz']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -152,7 +154,7 @@ class QueryTest {
             .waitingFor(1234)
             .takingAtMost(3).orEmpty();
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -174,7 +176,7 @@ class QueryTest {
             .waitingFor(1234)
             .takingAtMost(6).orEmpty();
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -196,7 +198,7 @@ class QueryTest {
             .waitingFor(1)
             .takingAtMost(6).orEmpty();
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -215,7 +217,7 @@ class QueryTest {
             .waitingFor(1)
             .orThrow(TimeoutOrThrowsException::new);
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
 
         Assertions.assertThrows(TimeoutOrThrowsException.class, () -> sut.accept(facade, stats));
     }
@@ -232,7 +234,7 @@ class QueryTest {
             .takingAtLeast(10)
             .orThrow(AtLeastOrThrowsException::new);
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -254,7 +256,7 @@ class QueryTest {
             .waitingFor(123).takingAtLeast(5)
             .orThrow(AtLeastOrThrowsException::new);
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")
                         .replaceAll("'", "\"").getBytes()).build());
@@ -275,7 +277,7 @@ class QueryTest {
             .withSink(capture::set)
             .waitingFor(123).orThrow(AtLeastOrThrowsException::new);
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.fail = n -> n > 100 ? true : false;
 
         sut.onMessage(MessageBuilder.withBody(
@@ -296,7 +298,7 @@ class QueryTest {
             .waitingFor(123).onError(err -> { assertThat(err).isInstanceOf(InterruptedException.class); })
             .orEmpty();
 
-        Query<String> sut = Query.from(capture.get());
+        Query<String> sut = Query.from(capture.get(), props);
         sut.fail = n -> n > 100 ? true : false;
         sut.onMessage(MessageBuilder.withBody(
                     ("{'count': 2, 'total': 2, 'elements': ['hello', 'world']}")

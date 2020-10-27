@@ -20,11 +20,13 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
 
     private final RabbitFacade facade;
     private final Statistics stats;
+    private final QueryResponseConfigurationProperties props;
 
-    public ResponseRegistry(RabbitFacade facade, Statistics stats) {
+    public ResponseRegistry(RabbitFacade facade, Statistics stats, QueryResponseConfigurationProperties props) {
 
         this.facade = facade;
         this.stats = stats;
+        this.props = props;
     }
 
     @Override
@@ -48,7 +50,7 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
 
     <T> void accept(ChainingResponseBuilder<T> responses) {
 
-        doAccept(Response.from(responses));
+        doAccept(Response.from(responses, props));
     }
 
 
