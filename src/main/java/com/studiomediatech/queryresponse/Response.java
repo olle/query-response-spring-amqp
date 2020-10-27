@@ -48,7 +48,14 @@ class Response<T> implements MessageListener, Logging {
     // Visible to tests
     protected Response(String routingKey) {
 
-        this.queueName = UUID.randomUUID().toString();
+        this(routingKey, UUID.randomUUID().toString());
+    }
+
+
+    // Visible to tests
+    protected Response(String routingKey, String queueName) {
+
+        this.queueName = queueName;
         this.routingKey = routingKey;
     }
 
@@ -153,9 +160,11 @@ class Response<T> implements MessageListener, Logging {
     }
 
 
-    static <T> Response<T> from(ChainingResponseBuilder<T> responses) {
+    static <T> Response<T> from(ChainingResponseBuilder<T> responses, QueryResponseConfigurationProperties props) {
 
-        Response<T> response = new Response<>(responses.getRespondToTerm());
+        String queueName = props.getQueue().getPrefix() + UUID.randomUUID().toString();
+
+        Response<T> response = new Response<>(responses.getRespondToTerm(), queueName);
 
         response.elements = responses.elements();
         response.batchSize = responses.getBatchSize();
