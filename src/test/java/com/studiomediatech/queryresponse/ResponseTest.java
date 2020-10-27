@@ -37,6 +37,8 @@ class ResponseTest {
     @Mock
     Statistics stats;
 
+    QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
+
     @Captor
     ArgumentCaptor<Message> message;
 
@@ -51,7 +53,7 @@ class ResponseTest {
             .withAll()
             .from("foo", "bar", "baz");
 
-        Response<String> sut = Response.from(capture.get());
+        Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);
 
         Message query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
@@ -77,7 +79,7 @@ class ResponseTest {
             .withAll()
             .from(() -> Arrays.asList("foo", "bar").iterator());
 
-        Response<String> sut = Response.from(capture.get());
+        Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);
 
         Message query = MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build();
@@ -103,7 +105,7 @@ class ResponseTest {
             .withBatchesOf(2)
             .from("foo", "bar", "baz", "goo", "gar");
 
-        Response<String> sut = Response.from(capture.get());
+        Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);
 
         sut.onMessage(MessageBuilder.withBody("{}".getBytes()).setReplyTo("reply-to").build());

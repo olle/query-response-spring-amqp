@@ -28,12 +28,14 @@ class ResponseRegistryTest {
     @Mock
     Statistics stats;
 
+    QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
+
     @Test
     void ensureInstanceIsInjectedByContextLifecycleMethod() {
 
         ResponseRegistry.instance = () -> null;
 
-        ResponseRegistry sut = new ResponseRegistry(null, null);
+        ResponseRegistry sut = new ResponseRegistry(null, null, props);
         ApplicationContext ctx = Mockito.mock(ApplicationContext.class);
         when(ctx.getBean(ResponseRegistry.class)).thenReturn(sut);
 
@@ -77,7 +79,7 @@ class ResponseRegistryTest {
         ResponseRegistry mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
 
-        new ResponseRegistry(null, stats).register(capture.get());
+        new ResponseRegistry(null, stats, props).register(capture.get());
 
         verify(mock).accept(capture.get());
 
@@ -95,7 +97,7 @@ class ResponseRegistryTest {
             .withAll()
             .from("foo", "bar", "baz");
 
-        new ResponseRegistry(facade, stats).accept(capture.get());
+        new ResponseRegistry(facade, stats, props).accept(capture.get());
 
         verify(facade).declareQueue(Mockito.isA(Response.class));
         verify(facade).declareBinding(Mockito.isA(Response.class));
@@ -107,7 +109,7 @@ class ResponseRegistryTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     void ensureCallsToRemoveListenerAndQueueOnFailure() throws Exception {
 
-        ResponseRegistry sut = new ResponseRegistry(facade, stats);
+        ResponseRegistry sut = new ResponseRegistry(facade, stats, props);
 
         Response response = Mockito.mock(Response.class);
         Mockito.doThrow(new RuntimeException()).when(response).accept(Mockito.any(), Mockito.any());

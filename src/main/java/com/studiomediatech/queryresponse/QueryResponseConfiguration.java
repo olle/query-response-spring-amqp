@@ -96,13 +96,13 @@ class QueryResponseConfiguration implements Logging {
     @Bean
     ResponseRegistry responseRegistry(RabbitFacade facade, Statistics stats) {
 
-        return new ResponseRegistry(facade, stats);
+        return new ResponseRegistry(facade, stats, props);
     }
 
 
     @Bean
     QueryRegistry queryRegistry(RabbitFacade facade, Statistics stats) {
 
-        return new QueryRegistry(facade, stats);
+        return new QueryRegistry(facade, stats, props);
     }
 }

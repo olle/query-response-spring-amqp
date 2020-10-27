@@ -21,11 +21,13 @@ class QueryRegistry implements ApplicationContextAware, Logging {
 
     private final RabbitFacade facade;
     private final Statistics stats;
+    private final QueryResponseConfigurationProperties props;
 
-    public QueryRegistry(RabbitFacade facade, Statistics stats) {
+    public QueryRegistry(RabbitFacade facade, Statistics stats, QueryResponseConfigurationProperties props) {
 
         this.facade = facade;
         this.stats = stats;
+        this.props = props;
     }
 
     @Override
@@ -63,7 +65,7 @@ class QueryRegistry implements ApplicationContextAware, Logging {
 
     <T> Collection<T> accept(ChainingQueryBuilder<T> queryBuilder) throws RuntimeException {
 
-        return doAccept(Query.from(queryBuilder));
+        return doAccept(Query.from(queryBuilder, props));
     }
 
 
