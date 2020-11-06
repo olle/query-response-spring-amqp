@@ -96,6 +96,29 @@ https://olle.github.io/query-response-spring-amqp/[online documentation].
 Also make sure to check out the working link:./examples/[examples] to get
 started quickly with Query/Response.
 
+== Versions &amp; Spring Boot
+
+This project is very much an extension and amalgamation of the AMQP features
+provided in Spring Boot. Therefore, there needs to be a living relationship
+between the generational release versions of Spring Boot and this project.
+
+We will build and tag an initial version `0.9.x` as a _preliminary_ working
+version of Query/Response. This version is tracked in 3 branches, as well as
+the `main` branch.
+
+* `main`              -> Spring Boot 2.3.x.RELEASE
+* `spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
+* `spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
+* `spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
+
+From each branch there will be tagged releases, denoting the version of Spring
+Boot that it is built against. For example `0.9.0-SB2_3_5` from the `main`
+branch, meaning it was built with the Spring Boot `2.3.5.RELEASE` dependency.
+
+There will be no other minor version increment under the initial major version
+`0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
+for an upcoming `1.0.0` version.
+
 Happy coding!
 
 ---
