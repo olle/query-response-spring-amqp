@@ -1,7 +1,6 @@
 package com.studiomediatech.queryresponse;
 
-import org.junit.Ignore;
-
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -51,7 +50,7 @@ class RabbitFacadeTest {
     ArgumentCaptor<Message> message;
 
     @Test
-    @Ignore
+    @Disabled
     void ensureDeclaresQueueForQuery() {
 
         RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
@@ -72,7 +71,7 @@ class RabbitFacadeTest {
 
 
     @Test
-    @Ignore
+    @Disabled
     void ensureDeclaresQueueForResponse() {
 
         RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
