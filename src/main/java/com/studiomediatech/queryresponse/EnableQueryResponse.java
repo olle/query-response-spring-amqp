@@ -18,11 +18,11 @@ import java.lang.annotation.Target;
  * this:</p>
  *
  * <pre>
-   {@literal @}SpringBootApplication
-   {@literal @}EnableQueryResponse
-   public class MyApplication {
-       // ...
-   }
+{@literal @}SpringBootApplication
+{@literal @}EnableQueryResponse
+public class MyApplication {
+    // ...
+}
  * </pre>
  */
 @Target(ElementType.TYPE)
