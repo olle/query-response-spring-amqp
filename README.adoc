@@ -106,14 +106,15 @@ We will build and tag an initial version `0.9.x` as a _preliminary_ working
 version of Query/Response. This version is tracked in 3 branches, as well as
 the `main` branch.
 
-* `main`              -> Spring Boot 2.3.x.RELEASE
+* `main`              -> Spring Boot 2.4.x
+* `spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
 * `spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
 * `spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
 * `spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
 
 From each branch there will be tagged releases, denoting the version of Spring
-Boot that it is built against. For example `0.9.0-SB2_3_5` from the `main`
-branch, meaning it was built with the Spring Boot `2.3.5.RELEASE` dependency.
+Boot that it is built against. For example `0.9.0-SB2_3_6` from the `main`
+branch, meaning it was built with the Spring Boot `2.3.6.RELEASE` dependency.
 
 There will be no other minor version increment under the initial major version
 `0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
