@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.4.RELEASE</version>
+        <version>2.4.2</version>
         <relativePath />
     </parent>
 
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>com.studiomediatech</groupId>
             <artifactId>query-response-spring-amqp</artifactId>
-            <version>0.9.0-SB2_3_4-SNAPSHOT</version>
+            <version>0.9.0-SB2_4_0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,6 +77,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>npm install (initialize)</id>
