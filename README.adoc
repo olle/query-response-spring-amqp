@@ -113,8 +113,8 @@ the `main` branch.
 * `spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
 
 From each branch there will be tagged releases, denoting the version of Spring
-Boot that it is built against. For example `0.9.0-SB2_3_6` from the `main`
-branch, meaning it was built with the Spring Boot `2.3.6.RELEASE` dependency.
+Boot that it is built against. For example `0.9.0-SB2_3_6` means it was built
+with the Spring Boot `2.3.6.RELEASE` dependency.
 
 There will be no other minor version increment under the initial major version
 `0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
