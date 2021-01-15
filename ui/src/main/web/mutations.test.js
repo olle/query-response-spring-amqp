@@ -23,12 +23,13 @@ const initMetrics = {
 };
 
 test("metrics should be  updated", () => {
-  let initState = { otherState: "bla", metrics: initMetrics };
-  let newState = mutations.metrics(initState, {
+  let state = { otherState: "bla", metrics: initMetrics };
+
+  mutations.metrics(state, {
     ...initMetrics,
     count_queries: 2,
   });
 
-  expect(newState.otherState).toBe("bla");
-  expect(newState.metrics.count_queries).toBe(2);
+  expect(state.otherState).toBe("bla");
+  expect(state.metrics.count_queries).toBe(2);
 });
