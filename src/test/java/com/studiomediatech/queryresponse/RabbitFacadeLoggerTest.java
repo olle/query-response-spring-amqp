@@ -17,72 +17,66 @@ import org.springframework.amqp.core.MessageProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.junit.Assert.assertThat;
-
 import static org.mockito.ArgumentMatchers.eq;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 class RabbitFacadeLoggerTest {
 
-    @Mock
-    Logger log;
+	@Mock
+	Logger log;
 
-    @Captor
-    ArgumentCaptor<String> stringCaptor;
+	@Captor
+	ArgumentCaptor<String> stringCaptor;
 
-    @Test
-    void ensureDebugLoggingFormattedWithFullMessage() {
+	@Test
+	void ensureDebugLoggingFormattedWithFullMessage() {
 
-        when(log.isDebugEnabled()).thenReturn(true);
+		when(log.isDebugEnabled()).thenReturn(true);
 
-        LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
+		LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
 
-        Message message = MessageBuilder.withBody("{\"foo\": 1337}".getBytes())
-                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                .build();
+		Message message = MessageBuilder.withBody("{\"foo\": 1337}".getBytes())
+				.setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
 
-        sut.logPublished("type", "routingKey", message);
+		sut.logPublished("type", "routingKey", message);
 
-        verify(log).debug("|<-- Published {}: {} - {}", "type", "routingKey", message);
-    }
+		verify(log).debug("|<-- Published {}: {} - {}", "type", "routingKey", message);
+	}
 
+	@Test
+	void ensureInfoLoggingFormattedWithCustomStringWithoutBodyJson() throws Exception {
 
-    @Test
-    void ensureInfoLoggingFormattedWithCustomStringWithoutBodyJson() throws Exception {
+		when(log.isDebugEnabled()).thenReturn(false);
 
-        when(log.isDebugEnabled()).thenReturn(false);
+		LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
 
-        LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
+		Message message = MessageBuilder.withBody("{\"foo\": 1337}".getBytes())
+				.setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
 
-        Message message = MessageBuilder.withBody("{\"foo\": 1337}".getBytes())
-                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                .build();
+		sut.logPublished("type", "routingKey", message);
 
-        sut.logPublished("type", "routingKey", message);
+		verify(log).info(eq("|<-- Published {}: {} - {}"), eq("type"), eq("routingKey"), stringCaptor.capture());
 
-        verify(log).info(eq("|<-- Published {}: {} - {}"), eq("type"), eq("routingKey"), stringCaptor.capture());
+		assertThat(stringCaptor.getValue()).doesNotContain("{\"foo\": 1337}");
+	}
 
-        assertThat(stringCaptor.getValue()).doesNotContain("{\"foo\": 1337}");
-    }
+	static class LogMockingRabbitFacade extends RabbitFacade {
 
-    static class LogMockingRabbitFacade extends RabbitFacade {
+		private Logger log;
 
-        private Logger log;
+		public LogMockingRabbitFacade(Logger log) {
 
-        public LogMockingRabbitFacade(Logger log) {
+			super(null, null, null, null, null);
+			this.log = log;
+		}
 
-            super(null, null, null, null, null);
-            this.log = log;
-        }
+		@Override
+		public Logger log() {
 
-        @Override
-        public Logger log() {
-
-            return this.log;
-        }
-    }
+			return this.log;
+		}
+	}
 }

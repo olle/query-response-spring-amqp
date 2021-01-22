@@ -1,7 +1,6 @@
 package com.studiomediatech.queryresponse;
 
-import org.junit.Ignore;
-
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -30,222 +29,210 @@ import static org.assertj.core.api.Assertions.fail;
 
 import static org.mockito.Mockito.verify;
 
-
 @ExtendWith(MockitoExtension.class)
 class RabbitFacadeTest {
 
-    @Mock
-    RabbitAdmin admin;
-    @Mock
-    RabbitTemplate template;
-    @Mock
-    ConnectionFactory connectionFactory;
-    @Mock
-    GenericApplicationContext ctx;
+	@Mock
+	RabbitAdmin admin;
+	@Mock
+	RabbitTemplate template;
+	@Mock
+	ConnectionFactory connectionFactory;
+	@Mock
+	GenericApplicationContext ctx;
 
-    @Captor
-    ArgumentCaptor<Queue> queue;
-    @Captor
-    ArgumentCaptor<Binding> binding;
-    @Captor
-    ArgumentCaptor<Message> message;
+	@Captor
+	ArgumentCaptor<Queue> queue;
+	@Captor
+	ArgumentCaptor<Binding> binding;
+	@Captor
+	ArgumentCaptor<Message> message;
 
-    @Test
-    @Ignore
-    void ensureDeclaresQueueForQuery() {
+	@Test
+	@Disabled
+	void ensureDeclaresQueueForQuery() {
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        Query<?> query = new Query<>();
-        sut.declareQueue(query);
+		Query<?> query = new Query<>();
+		sut.declareQueue(query);
 
-        verify(admin).declareQueue(queue.capture());
+		verify(admin).declareQueue(queue.capture());
 
-        Queue q = queue.getValue();
+		Queue q = queue.getValue();
 
-        assertThat(q.getActualName()).isEqualTo(query.getQueueName());
-        assertThat(q.isDurable()).isFalse();
-        assertThat(q.isAutoDelete()).isTrue();
-        assertThat(q.isExclusive()).isTrue();
-        assertThat(q.getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
-    }
+		assertThat(q.getActualName()).isEqualTo(query.getQueueName());
+		assertThat(q.isDurable()).isFalse();
+		assertThat(q.isAutoDelete()).isTrue();
+		assertThat(q.isExclusive()).isTrue();
+		assertThat(q.getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
+	}
 
+	@Test
+	@Disabled
+	void ensureDeclaresQueueForResponse() {
 
-    @Test
-    @Ignore
-    void ensureDeclaresQueueForResponse() {
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		Response<Object> response = new Response<>("some-routing-key");
+		sut.declareQueue(response);
 
-        Response<Object> response = new Response<>("some-routing-key");
-        sut.declareQueue(response);
+		verify(admin).declareQueue(queue.capture());
 
-        verify(admin).declareQueue(queue.capture());
+		assertThat(queue.getValue().getActualName()).isEqualTo(response.getQueueName());
+		assertThat(queue.getValue().isDurable()).isFalse();
+		assertThat(queue.getValue().isAutoDelete()).isTrue();
+		assertThat(queue.getValue().isExclusive()).isTrue();
+		assertThat(queue.getValue().getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
+	}
 
-        assertThat(queue.getValue().getActualName()).isEqualTo(response.getQueueName());
-        assertThat(queue.getValue().isDurable()).isFalse();
-        assertThat(queue.getValue().isAutoDelete()).isTrue();
-        assertThat(queue.getValue().isExclusive()).isTrue();
-        assertThat(queue.getValue().getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
-    }
+	@Test
+	void ensureAddsListenerForQuery() {
 
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-    @Test
-    void ensureAddsListenerForQuery() {
+		Query<?> query = new Query<>();
+		sut.addListener(query);
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		String queueName = query.getQueueName();
+		assertThat(sut.containers.containsKey(queueName));
 
-        Query<?> query = new Query<>();
-        sut.addListener(query);
+		DirectMessageListenerContainer listenerContainer = sut.containers.get(queueName);
+		assertThat(listenerContainer.getQueueNames()).contains(queueName);
+		assertThat(listenerContainer.getMessageListener()).isSameAs(query);
+	}
 
-        String queueName = query.getQueueName();
-        assertThat(sut.containers.containsKey(queueName));
+	@Test
+	void ensureRemovesQueueForQuery() throws Exception {
 
-        DirectMessageListenerContainer listenerContainer = sut.containers.get(queueName);
-        assertThat(listenerContainer.getQueueNames()).contains(queueName);
-        assertThat(listenerContainer.getMessageListener()).isSameAs(query);
-    }
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
+		Query<?> query = new Query<>();
+		sut.removeQueue(query);
 
-    @Test
-    void ensureRemovesQueueForQuery() throws Exception {
+		verify(admin).deleteQueue(query.getQueueName());
+	}
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+	@Test
+	void ensureRemovesQueueForResponse() throws Exception {
 
-        Query<?> query = new Query<>();
-        sut.removeQueue(query);
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        verify(admin).deleteQueue(query.getQueueName());
-    }
+		Response<?> response = new Response<>("foobaar");
+		sut.removeQueue(response);
 
+		verify(admin).deleteQueue(response.getQueueName());
+	}
 
-    @Test
-    void ensureRemovesQueueForResponse() throws Exception {
+	@Test
+	void ensureRemovesListenerForQuery() {
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        Response<?> response = new Response<>("foobaar");
-        sut.removeQueue(response);
+		Query<?> query = new Query<>();
+		sut.addListener(query);
 
-        verify(admin).deleteQueue(response.getQueueName());
-    }
+		String queueName = query.getQueueName();
+		assertThat(sut.containers.containsKey(queueName));
 
+		sut.removeListener(query);
+		sut.removeListener(query); // Idempotent!
 
-    @Test
-    void ensureRemovesListenerForQuery() {
+		assertThat(!sut.containers.containsKey(queueName));
+	}
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+	@Test
+	void ensureRemovesListenerForResponse() {
 
-        Query<?> query = new Query<>();
-        sut.addListener(query);
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        String queueName = query.getQueueName();
-        assertThat(sut.containers.containsKey(queueName));
+		Response<?> response = new Response<>("bar");
+		sut.addListener(response);
 
-        sut.removeListener(query);
-        sut.removeListener(query); // Idempotent!
+		String queueName = response.getQueueName();
+		assertThat(sut.containers.containsKey(queueName));
 
-        assertThat(!sut.containers.containsKey(queueName));
-    }
+		sut.removeListener(response);
+		sut.removeListener(response); // Idempotent!
 
+		assertThat(!sut.containers.containsKey(queueName));
+	}
 
-    @Test
-    void ensureRemovesListenerForResponse() {
+	@Test
+	void ensureDeclaresBindingForResponse() {
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        Response<?> response = new Response<>("bar");
-        sut.addListener(response);
+		Response<?> response = new Response<>("some-term");
+		sut.declareBinding(response);
 
-        String queueName = response.getQueueName();
-        assertThat(sut.containers.containsKey(queueName));
+		verify(admin).declareBinding(binding.capture());
 
-        sut.removeListener(response);
-        sut.removeListener(response); // Idempotent!
+		assertThat(binding.getValue().isDestinationQueue()).isTrue();
+		assertThat(binding.getValue().getExchange()).isEqualTo("queries");
+		assertThat(binding.getValue().getDestination()).isEqualTo(response.getQueueName());
+	}
 
-        assertThat(!sut.containers.containsKey(queueName));
-    }
+	@Test
+	void ensureAddsListenerForResponse() {
 
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-    @Test
-    void ensureDeclaresBindingForResponse() {
+		Response<?> response = new Response<>("some-term");
+		sut.addListener(response);
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		String queueName = response.getQueueName();
+		assertThat(sut.containers.containsKey(queueName));
 
-        Response<?> response = new Response<>("some-term");
-        sut.declareBinding(response);
+		DirectMessageListenerContainer listenerContainer = sut.containers.get(queueName);
+		assertThat(listenerContainer.getQueueNames()).contains(queueName);
+		assertThat(listenerContainer.getMessageListener()).isSameAs(response);
+	}
 
-        verify(admin).declareBinding(binding.capture());
+	@Test
+	void ensurePublishesQuery() throws Exception {
 
-        assertThat(binding.getValue().isDestinationQueue()).isTrue();
-        assertThat(binding.getValue().getExchange()).isEqualTo("queries");
-        assertThat(binding.getValue().getDestination()).isEqualTo(response.getQueueName());
-    }
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
+		byte[] body = "{}".getBytes();
+		sut.publishQuery("some-routing-key", MessageBuilder.withBody(body).build());
 
-    @Test
-    void ensureAddsListenerForResponse() {
+		verify(template).send(Mockito.eq("queries"), Mockito.eq("some-routing-key"), message.capture());
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+		assertThat(message.getValue().getMessageProperties().getDeliveryMode())
+				.isEqualTo(MessageDeliveryMode.NON_PERSISTENT);
+		assertThat(message.getValue().getBody()).isEqualTo(body);
+	}
 
-        Response<?> response = new Response<>("some-term");
-        sut.addListener(response);
+	@Test
+	void ensurePublishesResponse() throws Exception {
 
-        String queueName = response.getQueueName();
-        assertThat(sut.containers.containsKey(queueName));
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        DirectMessageListenerContainer listenerContainer = sut.containers.get(queueName);
-        assertThat(listenerContainer.getQueueNames()).contains(queueName);
-        assertThat(listenerContainer.getMessageListener()).isSameAs(response);
-    }
+		byte[] body = "{}".getBytes();
+		sut.publishResponse("some-exchange", "some-routing-key", MessageBuilder.withBody(body).build());
 
+		verify(template).send(Mockito.eq("some-exchange"), Mockito.eq("some-routing-key"), message.capture());
 
-    @Test
-    void ensurePublishesQuery() throws Exception {
+		assertThat(message.getValue().getMessageProperties().getDeliveryMode())
+				.isEqualTo(MessageDeliveryMode.NON_PERSISTENT);
+		assertThat(message.getValue().getBody()).isEqualTo(body);
+	}
 
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
+	@Test
+	void ensureFailureToPublishResponseIsNotThrown() throws Exception {
 
-        byte[] body = "{}".getBytes();
-        sut.publishQuery("some-routing-key", MessageBuilder.withBody(body).build());
+		RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        verify(template).send(Mockito.eq("queries"), Mockito.eq("some-routing-key"), message.capture());
+		Mockito.doThrow(RuntimeException.class).when(template).send(Mockito.anyString(), Mockito.anyString(),
+				Mockito.any(Message.class));
 
-        assertThat(message.getValue().getMessageProperties().getDeliveryMode()).isEqualTo(
-            MessageDeliveryMode.NON_PERSISTENT);
-        assertThat(message.getValue().getBody()).isEqualTo(body);
-    }
+		try {
+			sut.publishResponse("some-exchange", "some-routing-key", MessageBuilder.withBody("{}".getBytes()).build());
+		} catch (Exception e) {
+			fail("Should not throw");
+		}
 
-
-    @Test
-    void ensurePublishesResponse() throws Exception {
-
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
-
-        byte[] body = "{}".getBytes();
-        sut.publishResponse("some-exchange", "some-routing-key", MessageBuilder.withBody(body).build());
-
-        verify(template).send(Mockito.eq("some-exchange"), Mockito.eq("some-routing-key"), message.capture());
-
-        assertThat(message.getValue().getMessageProperties().getDeliveryMode()).isEqualTo(
-            MessageDeliveryMode.NON_PERSISTENT);
-        assertThat(message.getValue().getBody()).isEqualTo(body);
-    }
-
-
-    @Test
-    void ensureFailureToPublishResponseIsNotThrown() throws Exception {
-
-        RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
-
-        Mockito.doThrow(RuntimeException.class).when(template)
-            .send(Mockito.anyString(), Mockito.anyString(), Mockito.any(Message.class));
-
-        try {
-            sut.publishResponse("some-exchange", "some-routing-key", MessageBuilder.withBody("{}".getBytes()).build());
-        } catch (Exception e) {
-            fail("Should not throw");
-        }
-
-        verify(template).send(Mockito.eq("some-exchange"), Mockito.eq("some-routing-key"), message.capture());
-    }
+		verify(template).send(Mockito.eq("some-exchange"), Mockito.eq("some-routing-key"), message.capture());
+	}
 }
