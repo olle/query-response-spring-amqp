@@ -1,4 +1,6 @@
-.PHONY: run dev dist clean test lint
+JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 11)
+
+.PHONY: run dev build dist clean test lint
 
 #
 # Starting watch for client-side, or frontend assets, and running the backend
@@ -19,8 +21,15 @@ dev: node_modules
 # This target is issued by the Maven `package` goal. Used when building the
 # distribution JAR file.
 #
-dist: node_modules
+build: node_modules
 	npm run build
+
+#
+# Target to ensure packaging of both the Java/Maven build and the client.
+# NOTE: maven triggers the build target (above).
+#
+dist:
+	mvn package
 
 node_modules:
 	npm install
