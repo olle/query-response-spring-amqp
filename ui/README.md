@@ -16,7 +16,7 @@ system.
 ### Running in a container
 
 The Query/Response UI is available as a public published container image, from
-the [ghrc.io] (Github Container Registry) as one of the available packages in
+the [ghcr.io] (Github Container Registry) as one of the available packages in
 this project.
 
 ```
