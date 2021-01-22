@@ -5,11 +5,7 @@ feel free to provide feedback and ideas through issues.**
 
 The Query/Response UI helps you gain insights and observe your active service
 landscape by providing rich information about how queries and responses are
-flowing throughout the system.
-
-![Light Theme](light.png)
-
-![Dark Theme](dark.png)
+flowing throughout the system, in real-time.
 
 ## Getting started
 
@@ -17,23 +13,60 @@ The Query/Response UI makes use of the messaging network, and is _eating its
 own dog food_, by using queries to gather information about the current active
 system.
 
+### Running in a container
+
+The Query/Response UI is available as a public published container image, from
+the [ghrc.io] (Github Container Registry) as one of the available packages in
+this project.
+
+```
+docker pull ghcr.io/olle/query-response-spring-amqp/query-response-ui:latest
+```
+
+To try it out start by ensuring there's a running AMQP broker in a network that
+is accessible by the container.
+
+```
+docker network create --driver bridge qr-net
+docker run -dit -p 15672:15672 --network qr-net --hostname broker rabbitmq:3-management
+```
+
+Check that the RabbitMQ broker is running, by visiting the management UI at
+`http://localhost:15672`. Now you can start the Query/Response UI container,
+connecting it to the network and broker.
+
+```
+docker run -dit -p 8080:8080 \
+--network qr-net \
+-e SPRING_RABBITMQ_HOST=broker \
+ghcr.io/olle/query-response-spring-amqp/query-response-ui:latest
+```
+
+And browse to `http://localhost:8080`.
+
+  [ghrc.io]: https://github.com/users/olle/packages/container/package/query-response-spring-amqp%2Fquery-response-ui
+
+### Running locally
+
 The simplest way to start the UI is to run it locally by issuing `make`. This
 will start the Spring Boot® application. The Query/Response UI application is
 served at http://localhost:8080 by default.
 
-> The default Spring AMQP configuration will attempt to connect to a local
-> broker on port 5672 with `guest/guest`. To use another RabbitMQ or other
-> credentials you can provide the command line arguments:
->
-> - `-Dspring.rabbitmq.host=hostname`
-> - `-Dspring.rabbitmq.username=user`
-> - `-Dspring.rabbitmq.password=password`
->
-> Or set the environment variables:
->
-> - `SPRING_RABBITMQ_HOST`
-> - `SPRING_RABBITMQ_USERNAME`
-> - `SPRING_RABBITMQ_PASSWORD`.
+#### AMQP Broker Configuration
+
+The default Spring AMQP configuration will attempt to connect to a local
+broker on port 5672 with `guest/guest`. To use another RabbitMQ or other
+credentials you can provide the command line arguments:
+
+- `-Dspring.rabbitmq.host=hostname`
+- `-Dspring.rabbitmq.username=user`
+- `-Dspring.rabbitmq.password=password`
+
+Or set the environment variables:
+
+- `SPRING_RABBITMQ_HOST`
+- `SPRING_RABBITMQ_USERNAME`
+- `SPRING_RABBITMQ_PASSWORD`.
 
 ## Development
 
