@@ -73,6 +73,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+	                <image>
+	                    <name>ghcr.io/olle/query-response-spring-amqp/${project.artifactId}</name>
+	                </image>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
