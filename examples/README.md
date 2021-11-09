@@ -8,6 +8,8 @@ Running the examples
 --------------------
 
 1. Start the RabbitMQ server container by running `make` in this directory.
+   Alternatively `make up` for detached-mode, and later `make down` to stop
+   the broker.
 
 2. Open both the `querying/` and `responding/` directories in a terminal window,
    next to each other.
