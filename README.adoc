@@ -106,7 +106,9 @@ We will build and tag an initial version `0.9.x` as a _preliminary_ working
 version of Query/Response. This version is tracked in 3 branches, as well as
 the `main` branch.
 
-* `main`              -> Spring Boot 2.4.x
+* `main`              -> Spring Boot 2.6.x
+* `spring-boot-2.5.x` -> Spring Boot 2.5.x
+* `spring-boot-2.4.x` -> Spring Boot 2.4.x
 * `spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
 * `spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
 * `spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
