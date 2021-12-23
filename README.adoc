@@ -1,6 +1,6 @@
 = Query/Response for Spring® AMQP
 
-image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions?query=workflow%3A%22Java+CI%22"] image:https://img.shields.io/lgtm/grade/java/g/olle/query-response-spring-amqp.svg?logo=lgtm&logoWidth=18[title="Language grade: Java", link="https://lgtm.com/projects/g/olle/query-response-spring-amqp/context:java"] image:https://badges.gitter.im/query-response-spring-amqp/community.svg[title="Join the chat!", link="https://gitter.im/query-response-spring-amqp/community"]
+image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions?query=workflow%3A%22Java+CI%22"] image:https://badges.gitter.im/query-response-spring-amqp/community.svg[title="Join the chat!", link="https://gitter.im/query-response-spring-amqp/community"]
 
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
