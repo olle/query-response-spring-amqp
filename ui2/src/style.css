@@ -53,9 +53,12 @@ body {
   color: var(--fg);
   fill: var(--fg);
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   font-size: 130%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: scroll;
 }
 
@@ -69,6 +72,12 @@ html,
 body,
 #app {
   height: 100%;
+}
+
+#app {
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 
 nav {
