@@ -27,9 +27,14 @@
   </ul>
   <ul>
     <router-link class="disabled" to="settings" tag="li">
-      <settings-icon></settings-icon>
+      <IconSettings />
       <h2>Settings</h2>
     </router-link>
-    <qr-color-scheme-toggle></qr-color-scheme-toggle>
+    <QrColorSchemeToggle />
   </ul>
 </template>
+
+<script setup>
+import IconSettings from "./IconSettings.vue";
+import QrColorSchemeToggle from "./QrColorSchemeToggle.vue";
+</script>

@@ -1,14 +1,14 @@
 <template>
   <nav>
-    <MyNavigation />
+    <QrNavigation />
   </nav>
   <main>
     <router-view></router-view>
-    <MyFooter />
+    <QrFooter />
   </main>
 </template>
 
 <script setup>
-import MyNavigation from "./components/MyNavigation.vue";
-import MyFooter from "./components/MyFooter.vue";
+import QrNavigation from "./components/QrNavigation.vue";
+import QrFooter from "./components/QrFooter.vue";
 </script>
