@@ -5,37 +5,37 @@
   </li>
 </template>
 
-<script>
+<script setup>
 import IconSun from "./IconSun.vue";
 import IconMoon from "./IconMoon.vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 
-export default {
-  name: "qr-color-scheme-toggle",
-  created: function () {
-    let storedTheme = window.localStorage.getItem("theme");
-    if (storedTheme) {
-      this.theme = storedTheme;
-    } else {
-      this.theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    }
-    window.matchMedia("(prefers-color-scheme: dark)").addListener((evt) => {
-      this.theme = evt.matches ? "dark" : "light";
-    });
-  },
-  data: () => ({
-    theme: "light",
-  }),
-  watch: {
-    theme: (theme) => {
-      window.localStorage.setItem("theme", theme);
-      document.querySelector("body").setAttribute("data-theme", theme);
-    },
-  },
-  components: {
-    IconSun,
-    IconMoon,
-  },
+const theme = ref();
+
+watch(theme, (value) => {
+  window.localStorage.setItem("theme", value);
+  document.querySelector("html").setAttribute("data-theme", value);
+});
+
+const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
+
+const onColorSchemeChange = (evt) => {
+  theme.value = evt.matches ? "dark" : "light";
 };
+
+onMounted(() => {
+  let storedTheme = window.localStorage.getItem("theme");
+  if (storedTheme) {
+    theme.value = storedTheme;
+  } else {
+    theme.value = matchMedia.matches ? "dark" : "light";
+  }
+  // Add listener
+  matchMedia.addEventListener("change", onColorSchemeChange);
+});
+
+onBeforeUnmount(() => {
+  // Remove listener
+  matchMedia.removeEventListener("change", onColorSchemeChange);
+});
 </script>
