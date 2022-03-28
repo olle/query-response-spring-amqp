@@ -1,34 +1,77 @@
 <template>
   <ul>
-    <router-link to="/" tag="li">
-      <IconHome />
-      <h2>Overview</h2>
+    <router-link to="/" custom v-slot="{ navigate }">
+      <li @click="navigate" @keypress.enter="navigate" role="link">
+        <IconHome />
+        <h2>Overview</h2>
+      </li>
     </router-link>
-    <router-link class="disabled" to="/queries" tag="li">
-      <IconQueries />
-      <h2>Queries Insight</h2>
+    <router-link to="/queries" custom v-slot="{ navigate }">
+      <li
+        @click="navigate"
+        @keypress.enter="navigate"
+        role="link"
+        class="disabled"
+      >
+        <IconQueries />
+        <h2>Queries Insight</h2>
+      </li>
     </router-link>
-    <router-link class="disabled" to="topology" tag="li">
-      <IconTopology />
-      <h2>Q/R Topology</h2>
+    <router-link to="topology" custom v-slot="{ navigate }">
+      <li
+        @click="navigate"
+        @keypress.enter="navigate"
+        role="link"
+        class="disabled"
+      >
+        <IconTopology />
+        <h2>Q/R Topology</h2>
+      </li>
     </router-link>
-    <router-link class="disabled" to="/live" tag="li">
-      <IconLive />
-      <h2>Live</h2>
+    <router-link to="/live" custom v-slot="{ navigate }">
+      <li
+        @click="navigate"
+        @keypress.enter="navigate"
+        role="link"
+        class="disabled"
+      >
+        <IconLive />
+        <h2>Live</h2>
+      </li>
     </router-link>
-    <router-link class="disabled" to="/logging" tag="li">
-      <IconLogging />
-      <h2>Logs</h2>
+    <router-link to="/logging" custom v-slot="{ navigate }">
+      <li
+        @click="navigate"
+        @keypress.enter="navigate"
+        role="link"
+        class="disabled"
+      >
+        <IconLogging />
+        <h2>Logs</h2>
+      </li>
     </router-link>
-    <router-link to="/cli" tag="li">
-      <IconPrompt />
-      <h2>Query CLI</h2>
+    <router-link to="/cli" custom v-slot="{ navigate }">
+      <li
+        @click="navigate"
+        @keypress.enter="navigate"
+        role="link"
+      >
+        <IconPrompt />
+        <h2>Query CLI</h2>
+      </li>
     </router-link>
   </ul>
   <ul>
-    <router-link class="disabled" to="settings" tag="li">
-      <IconSettings />
-      <h2>Settings</h2>
+    <router-link to="settings" custom v-slot="{ navigate }">
+      <li
+        @click="navigate"
+        @keypress.enter="navigate"
+        role="link"
+        class="disabled"
+      >
+        <IconSettings />
+        <h2>Settings</h2>
+      </li>
     </router-link>
     <QrColorSchemeToggle />
   </ul>
