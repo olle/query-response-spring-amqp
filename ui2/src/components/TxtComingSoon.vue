@@ -11,3 +11,9 @@
     </p>
   </article>
 </template>
+
+<style scoped>
+article {
+  margin-top: 3rem;
+}
+</style>

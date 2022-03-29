@@ -8,3 +8,9 @@
 <script setup>
 import TxtComingSoon from "./TxtComingSoon.vue";
 </script>
+
+<style scoped>
+article {
+  margin-top: 5rem;
+}
+</style>

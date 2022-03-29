@@ -10,6 +10,7 @@ import PageLogging from "./components/PageLogging.vue";
 import PageSettings from "./components/PageSettings.vue";
 
 const app = createApp(App);
+
 app.use(
   createRouter({
     history: createWebHistory(),
@@ -22,4 +23,5 @@ app.use(
     ],
   })
 );
+
 app.mount("#app");
