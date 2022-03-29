@@ -8,6 +8,7 @@ import PageQueries from "./components/PageQueries.vue";
 import PageTopology from "./components/PageTopology.vue";
 import PageLogging from "./components/PageLogging.vue";
 import PageSettings from "./components/PageSettings.vue";
+import PageCli from "./components/PageCli.vue";
 
 const app = createApp(App);
 
@@ -20,6 +21,7 @@ app.use(
       { path: "/topology", component: PageTopology },
       { path: "/logging", component: PageLogging },
       { path: "/settings", component: PageSettings },
+      { path: "/cli", component: PageCli },
     ],
   })
 );

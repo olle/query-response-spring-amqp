@@ -22,6 +22,7 @@ html {
   --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
   --border: 1px solid rgba(182, 182, 182, 0.424);
+  --action: var(--link-high-contrast);
   --success: hsl(157, 30%, 53%);
   --warning: hsl(37, 100%, 55%);
   --error: #fc4979;
@@ -79,6 +80,20 @@ html,
 body,
 #app {
   height: 100%;
+}
+
+/* ANIMATIONS ------------------- */
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
 }
 
 /* COLOR DEMO --------------------------------------------------------------- */
