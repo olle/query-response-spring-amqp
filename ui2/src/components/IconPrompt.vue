@@ -1,7 +1,7 @@
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    class="icon icon-tabler icon-tabler-prompt"
+    class="icon icon-tabler icon-tabler-terminal-2"
     width="24"
     height="24"
     viewBox="0 0 24 24"
@@ -11,14 +11,8 @@
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    <path stroke="none" d="M0 0h24v24H0z" />
-    <polyline points="5 7 10 12 5 17" />
-    <line x1="13" y1="17" x2="19" y2="17" />
+    <path d="M8 9l3 3l-3 3" />
+    <line x1="13" y1="15" x2="16" y2="15" />
+    <rect x="3" y="4" width="18" height="16" rx="2" />
   </svg>
 </template>
-
-<script>
-export default {
-  name: "prompt-icon",
-};
-</script>

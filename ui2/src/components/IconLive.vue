@@ -11,13 +11,6 @@
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    <path stroke="none" d="M0 0h24v24H0z" />
     <polyline points="21 12 17 12 14 20 10 4 7 12 3 12" />
   </svg>
 </template>
-
-<script>
-export default {
-  name: "live-icon",
-};
-</script>

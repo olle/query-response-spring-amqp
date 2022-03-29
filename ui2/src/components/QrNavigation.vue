@@ -51,17 +51,11 @@
       </li>
     </router-link>
     <router-link to="/cli" custom v-slot="{ navigate }">
-      <li
-        @click="navigate"
-        @keypress.enter="navigate"
-        role="link"
-      >
+      <li @click="navigate" @keypress.enter="navigate" role="link">
         <IconPrompt />
         <h2>Query CLI</h2>
       </li>
     </router-link>
-  </ul>
-  <ul>
     <router-link to="settings" custom v-slot="{ navigate }">
       <li
         @click="navigate"
@@ -136,7 +130,7 @@ ul > li.disabled {
 }
 
 ul > li > h2 {
-  font-size: 0.5rem;
+  font-size: 0.54rem;
   text-transform: uppercase;
   font-weight: 600;
 }
