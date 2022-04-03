@@ -195,77 +195,6 @@ time {
 
 /* SECTIONS ----------------------------------------------------------------- */
 
-main > article > section {
-  background: var(--panel);
-  border: var(--border);
-  padding: 0.8rem 1rem;
-}
-
-main > article > section > data,
-main > article > section > time {
-  display: inline-block;
-}
-
-main > article > section > data.big,
-main > article > section > time.big {
-  font-size: 2rem;
-  font-weight: var(--bold);
-}
-
-/* OVERVIEW ----------------------------------------------------------------- */
-
-section.overview {
-  min-width: 37rem;
-  display: grid;
-  grid-template-columns: 5.3rem 1fr 2.1rem 1fr 5.3rem 1fr;
-  column-gap: 1rem;
-  grid-template-rows: 1.7rem 3rem repeat(3, 2rem);
-  grid-template-areas:
-    "t1 t1 t2 t2 t3 t3"
-    "b1 b1 b2 b2 b3 b3"
-    "l1a v1a l2a v2a l3a v3a"
-    "l1b v1b l2b v2b l3b v3b"
-    "l1c v1c . . . .";
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 1000px) {
-  section.overview {
-    grid-template-columns: min-content 5.8rem 1fr 6rem 5.8rem 1fr min-content 5.8rem 1fr;
-    grid-template-rows: 1.7rem 6rem 1rem 2rem;
-    grid-template-areas:
-      "t1 t1 t1 t2 t2 t2 t3 t3 t3"
-      "b1 b1a b1a b2 b2a b2a b3 b3a b3a"
-      "l1a l1b l1c l2a l2b l2c l3a l3b l3c"
-      "v1a v1b v1c v2a v2b v2c v3a v3b v3c";
-  }
-}
-
-section.overview > h2:nth-of-type(1) {
-  grid-area: t1;
-}
-
-section.overview > h2:nth-of-type(2) {
-  grid-area: t2;
-}
-
-section.overview > h2:nth-of-type(3) {
-  grid-area: t3;
-}
-
-section.overview > .big {
-  align-self: end;
-}
-
-section.overview > .big.one {
-  grid-area: b1;
-}
-section.overview > .big.two {
-  grid-area: b2;
-}
-section.overview > .big.three {
-  grid-area: b3;
-}
 
 section.overview > .chart {
   padding-bottom: 0.4rem;
@@ -286,15 +215,7 @@ section.overview > .chart {
   }
 }
 
-section.overview > .chart.one {
-  grid-area: b1a;
-}
-section.overview > .chart.two {
-  grid-area: b2a;
-}
-section.overview > .chart.three {
-  grid-area: b3a;
-}
+
 section.overview > .chart .ct-label,
 section.overview > .chart .ct-grid,
 section.overview > .chart .ct-horizontal {
