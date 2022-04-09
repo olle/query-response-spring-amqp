@@ -61,12 +61,11 @@ const normalChart = {
     showGrid: false,
     offset: 0,
   },
-  height: 100,
   showPoint: false,
   showArea: true,
   fullWidth: true,
   chartPadding: {
-    top: 13,
+    top: 0,
     right: 0,
     bottom: 0,
     left: 0,
@@ -156,7 +155,7 @@ function throughputResponses() {
 </script>
 
 <style scoped>
-main > article > section {
+/* main > article > section {
   background: var(--panel);
   border: var(--border);
   padding: 0.8rem 1rem;
@@ -171,7 +170,7 @@ main > article > section > data.big,
 main > article > section > time.big {
   font-size: 2rem;
   font-weight: var(--bold);
-}
+} */
 
 /* OVERVIEW ----------------------------------------------------------------- */
 
@@ -202,39 +201,39 @@ section.overview {
   }
 }
 
-section.overview > h2:nth-of-type(1) {
+h2:nth-of-type(1) {
   grid-area: t1;
 }
 
-section.overview > h2:nth-of-type(2) {
+h2:nth-of-type(2) {
   grid-area: t2;
 }
 
-section.overview > h2:nth-of-type(3) {
+h2:nth-of-type(3) {
   grid-area: t3;
 }
 
-section.overview > .big {
+.big {
   align-self: end;
 }
 
-section.overview > .big.one {
+.big.one {
   grid-area: b1;
 }
-section.overview > .big.two {
+.big.two {
   grid-area: b2;
 }
-section.overview > .big.three {
+.big.three {
   grid-area: b3;
 }
 
-section.overview > .chart.one {
+.chart.one {
   grid-area: b1a;
 }
-section.overview > .chart.two {
+.chart.two {
   grid-area: b2a;
 }
-section.overview > .chart.three {
+.chart.three {
   grid-area: b3a;
 }
 </style>

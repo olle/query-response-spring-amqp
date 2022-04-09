@@ -58,7 +58,7 @@ html {
 body {
   background: var(--bg);
   color: var(--fg);
-  fill: var(--fg);
+  stroke: var(--fg);
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -195,7 +195,7 @@ time {
 
 /* SECTIONS ----------------------------------------------------------------- */
 
-
+/*
 section.overview > .chart {
   padding-bottom: 0.4rem;
   display: none;
@@ -213,32 +213,6 @@ section.overview > .chart {
   section.overview > .chart {
     width: 100%;
   }
-}
-
-
-section.overview > .chart .ct-label,
-section.overview > .chart .ct-grid,
-section.overview > .chart .ct-horizontal {
-  color: var(--fg-light);
-}
-section.overview > .chart .ct-line {
-  stroke: var(--success);
-}
-section.overview > .chart .ct-area {
-  fill: var(--success);
-  fill-opacity: 0.15;
-}
-section.overview > .chart.failure .ct-line {
-  stroke: var(--error);
-}
-section.overview > .chart.failure .ct-area {
-  fill: var(--error);
-}
-section.overview > .chart.warning .ct-line {
-  stroke: var(--warning);
-}
-section.overview > .chart.warning .ct-area {
-  fill: var(--warning);
 }
 
 section.overview > h3,
@@ -302,6 +276,7 @@ section.overview > data:nth-of-type(6) {
 section.overview > data:nth-of-type(7) {
   grid-area: v3b;
 }
+*/
 
 /* TABLES ------------------------------------------------------------------- */
 
@@ -388,12 +363,10 @@ table.nodes > tbody > tr > td > small > data:not(:first-child) {
 
 .warning {
   color: var(--warning);
-  fill: var(--warning);
 }
 
 .error,
 .danger,
 .failure {
   color: var(--error);
-  fill: var(--error);
 }
