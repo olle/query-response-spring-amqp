@@ -22,6 +22,7 @@ html {
   --link-high-contrast: rgba(50, 121, 187, 1);
   --panel: #fff;
   --border: 1px solid rgba(182, 182, 182, 0.424);
+  --border-radius: 5px;
   --action: var(--link-high-contrast);
   --success: hsl(157, 30%, 53%);
   --warning: hsl(37, 100%, 55%);

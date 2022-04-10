@@ -65,10 +65,10 @@ const normalChart = {
   showArea: true,
   fullWidth: true,
   chartPadding: {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
+    top: 2,
+    right: 2,
+    bottom: 2,
+    left: 2,
   },
 };
 
@@ -155,22 +155,29 @@ function throughputResponses() {
 </script>
 
 <style scoped>
-/* main > article > section {
+
+.overview {
   background: var(--panel);
   border: var(--border);
   padding: 0.8rem 1rem;
+  border-radius: var(--border-radius);
 }
+
+data.big,
+time.big {
+  font-size: 2rem;
+  font-weight: var(--bold);
+}
+
+/*
+
 
 main > article > section > data,
 main > article > section > time {
   display: inline-block;
 }
 
-main > article > section > data.big,
-main > article > section > time.big {
-  font-size: 2rem;
-  font-weight: var(--bold);
-} */
+ */
 
 /* OVERVIEW ----------------------------------------------------------------- */
 

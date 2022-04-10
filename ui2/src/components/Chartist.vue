@@ -72,20 +72,31 @@ const props = defineProps({
 });
 </script>
 
-<style scoped>
+<style>
+.chart {
+  font-size: 11px;
+}
+.ct-line {
+  stroke-width: 4;
+  stroke: var(--success);
+  fill: none;
+}
+.ct-area {
+  fill: var(--success);
+  stroke: none;
+  fill-opacity: 0.15;
+}
+
+.ct-grid {
+  opacity: .1;
+  stroke-width: 1;
+}
+
 .ct-label,
-.ct-grid,
 .ct-horizontal {
   color: var(--fg-light);
 }
 
-.ct-line {
-  stroke: var(--success);
-}
-.ct-area {
-  fill: var(--success);
-  fill-opacity: 0.15;
-}
 .failure .ct-line {
   stroke: var(--error);
 }
