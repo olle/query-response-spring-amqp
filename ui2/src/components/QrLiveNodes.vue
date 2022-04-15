@@ -38,7 +38,9 @@
             }}</data>
           </small>
         </td>
-        <td><data>{{ node.publishedResponses }}</data></td>
+        <td>
+          <data>{{ node.publishedResponses }}</data>
+        </td>
         <td>
           <time>{{ node.avgLatency }}</time>
           <small>
@@ -62,8 +64,7 @@
   </table>
 </template>
 
-<script>
-import store from "../store.js";
+<script setup>
 import {
   toPercent,
   toRateRank,
@@ -71,48 +72,52 @@ import {
   toThroughputPerSecond,
   toMillis,
 } from "../metrics.js";
-import { mapState } from "vuex";
+import { useStore, mapState } from "vuex";
 
-export default {
-  name: "qr-live-nodes",
-  computed: {
-    ...mapState({
-      nodes: (s) => {
-        let results = [];
-        for (let uuid in s.nodes) {
-          let node = { key: uuid };
-          let entry = s.nodes[uuid];
-          for (let i in entry) {
-            node[entry[i].key] = entry[i].value;
-          }
-          node.successRate = toPercent(
-            node.count_consumed_responses,
-            node.count_queries
-          );
-          node.successRateRank = toRateRank(
-            node.count_consumed_responses,
-            node.count_queries
-          );
-          node.countQueries = toNumberWithUnit(node.count_queries);
-          node.countResponses = toNumberWithUnit(node.count_consumed_responses);
-          node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
-          node.publishedResponses = toNumberWithUnit(node.count_published_responses);
-          node.throughputQueries = toThroughputPerSecond(
-            node.throughput_queries
-          );
-          node.throughputResponses = toThroughputPerSecond(
-            node.throughput_responses
-          );
-          node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
-          node.avgLatency = toMillis(node.avg_latency);
-          node.minLatency = toMillis(node.min_latency);
-          node.maxLatency = toMillis(node.max_latency);
-          results.push(node);
-        }
-        return results;
-      },
-    }),
-  },
-  store,
-};
+const store = useStore();
+
+// export default {
+//   name: "qr-live-nodes",
+//   computed: {
+//     ...mapState({
+//       nodes: (s) => {
+//         let results = [];
+//         for (let uuid in s.nodes) {
+//           let node = { key: uuid };
+//           let entry = s.nodes[uuid];
+//           for (let i in entry) {
+//             node[entry[i].key] = entry[i].value;
+//           }
+//           node.successRate = toPercent(
+//             node.count_consumed_responses,
+//             node.count_queries
+//           );
+//           node.successRateRank = toRateRank(
+//             node.count_consumed_responses,
+//             node.count_queries
+//           );
+//           node.countQueries = toNumberWithUnit(node.count_queries);
+//           node.countResponses = toNumberWithUnit(node.count_consumed_responses);
+//           node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
+//           node.publishedResponses = toNumberWithUnit(
+//             node.count_published_responses
+//           );
+//           node.throughputQueries = toThroughputPerSecond(
+//             node.throughput_queries
+//           );
+//           node.throughputResponses = toThroughputPerSecond(
+//             node.throughput_responses
+//           );
+//           node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
+//           node.avgLatency = toMillis(node.avg_latency);
+//           node.minLatency = toMillis(node.min_latency);
+//           node.maxLatency = toMillis(node.max_latency);
+//           results.push(node);
+//         }
+//         return results;
+//       },
+//     }),
+//   },
+//   store,
+// };
 </script>
