@@ -134,54 +134,43 @@ function throughputQueries() {
 function throughputResponses() {
   return toThroughputPerSecond(store.state.metrics.throughput_responses);
 }
-
-// import {
-//   toNumberWithUnit,
-//   toMillis,
-//   toThroughputPerSecond,
-// } from "../metrics.js";
-// import { mapState } from "vuex";
-// import Vue from "vue";
-
-// import Chartist from "vue-chartist";
-// Vue.use(Chartist);
-
-//   computed: {
-//     ...mapState({
-
-//     }),
-//   }
-// };
 </script>
 
 <style scoped>
-
 .overview {
   background: var(--panel);
   border: var(--border);
   padding: 0.8rem 1rem;
   border-radius: var(--border-radius);
+  text-align: left;
+}
+
+.overview > .chart {
+  padding-bottom: 0.4rem;
+  display: none;
+}
+.overview > .chart {
+  width: 13vw;
+  height: 6rem;
+}
+@media (min-width: 1000px) {
+  .overview > .chart {
+    display: initial;
+  }
+}
+@media (min-width: 1200px) {
+  .overview > .chart {
+    width: 100%;
+  }
 }
 
 data.big,
 time.big {
-  font-size: 2rem;
+  font-size: 2.1rem;
   font-weight: var(--bold);
 }
 
-/*
-
-
-main > article > section > data,
-main > article > section > time {
-  display: inline-block;
-}
-
- */
-
-/* OVERVIEW ----------------------------------------------------------------- */
-
-section.overview {
+.overview {
   min-width: 37rem;
   display: grid;
   grid-template-columns: 5.3rem 1fr 2.1rem 1fr 5.3rem 1fr;
@@ -194,10 +183,11 @@ section.overview {
     "l1b v1b l2b v2b l3b v3b"
     "l1c v1c . . . .";
   margin-bottom: 1rem;
+  row-gap: 0.2rem;
 }
 
 @media (min-width: 1000px) {
-  section.overview {
+  .overview {
     grid-template-columns: min-content 5.8rem 1fr 6rem 5.8rem 1fr min-content 5.8rem 1fr;
     grid-template-rows: 1.7rem 6rem 1rem 2rem;
     grid-template-areas:
@@ -206,6 +196,16 @@ section.overview {
       "l1a l1b l1c l2a l2b l2c l3a l3b l3c"
       "v1a v1b v1c v2a v2b v2c v3a v3b v3c";
   }
+}
+
+h2 {
+  font-weight: var(--bold);
+}
+
+h3,
+data:not(.big),
+time:not(.big) {
+  align-self: center;
 }
 
 h2:nth-of-type(1) {
@@ -242,5 +242,61 @@ h2:nth-of-type(3) {
 }
 .chart.three {
   grid-area: b3a;
+}
+
+h3:nth-of-type(1) {
+  grid-area: l1a;
+}
+
+h3:nth-of-type(2) {
+  grid-area: l1b;
+}
+
+h3:nth-of-type(3) {
+  grid-area: l1c;
+}
+
+h3:nth-of-type(4) {
+  grid-area: l2a;
+}
+
+h3:nth-of-type(5) {
+  grid-area: l2b;
+}
+
+h3:nth-of-type(6) {
+  grid-area: l3a;
+}
+
+h3:nth-of-type(7) {
+  grid-area: l3b;
+}
+
+data:nth-of-type(2) {
+  grid-area: v1a;
+}
+
+data:nth-of-type(3) {
+  grid-area: v1b;
+}
+
+data:nth-of-type(4) {
+  grid-area: v1c;
+}
+
+time:nth-of-type(2) {
+  grid-area: v2a;
+}
+
+time:nth-of-type(3) {
+  grid-area: v2b;
+}
+
+data:nth-of-type(6) {
+  grid-area: v3a;
+}
+
+data:nth-of-type(7) {
+  grid-area: v3b;
 }
 </style>

@@ -86,6 +86,9 @@ const props = defineProps({
   stroke: none;
   fill-opacity: 0.15;
 }
+.ct-labels {
+  text-align: right;
+}
 
 .ct-grid {
   opacity: .1;

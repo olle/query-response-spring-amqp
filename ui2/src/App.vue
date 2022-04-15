@@ -42,7 +42,7 @@ nav {
 main {
   grid-area: main;
   height: 100%;
-  padding: 1.2rem 1.2rem 0.4rem 3.2rem;
+  padding: 1.2rem 1.2rem 0.4rem 1.2rem;
   display: flex;
   flex-direction: column;
   text-align: center;
