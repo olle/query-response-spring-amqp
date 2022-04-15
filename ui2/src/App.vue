@@ -5,6 +5,7 @@
     </nav>
     <main>
       <router-view></router-view>
+      <qr-colors />
     </main>
     <footer>
       <QrFooter />
@@ -15,6 +16,7 @@
 <script setup>
 import QrNavigation from "./components/QrNavigation.vue";
 import QrFooter from "./components/QrFooter.vue";
+import QrColors from "./components/QrColors.vue";
 </script>
 
 <style scoped>

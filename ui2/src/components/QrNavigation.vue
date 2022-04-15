@@ -67,7 +67,8 @@
         <h2>Settings</h2>
       </li>
     </router-link>
-    <QrColorSchemeToggle />
+    <qr-color-scheme-toggle />
+    <qr-color-palette-toggle />
   </ul>
 </template>
 
@@ -80,6 +81,7 @@ import IconLive from "./IconLive.vue";
 import IconLogging from "./IconLogging.vue";
 import IconPrompt from "./IconPrompt.vue";
 import QrColorSchemeToggle from "./QrColorSchemeToggle.vue";
+import QrColorPaletteToggle from "./QrColorPaletteToggle.vue";
 </script>
 
 <style scoped>

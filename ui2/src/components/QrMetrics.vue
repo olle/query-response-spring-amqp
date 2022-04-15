@@ -164,6 +164,11 @@ function throughputResponses() {
   }
 }
 
+data,
+time {
+  color: var(--success);
+}
+
 data.big,
 time.big {
   font-size: 2.1rem;
