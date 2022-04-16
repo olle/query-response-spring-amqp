@@ -1,7 +1,8 @@
-# Vue 3 + Vite
+# Query/Response UI
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+**WIP: Driving the goals and implementation of the UI with this README, please
+feel free to provide feedback and ideas through issues.**
 
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+The Query/Response UI helps you gain insights and observe your active service
+landscape by providing rich information about how queries and responses are
+flowing throughout the system, in real-time.

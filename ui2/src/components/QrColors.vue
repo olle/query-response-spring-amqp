@@ -1,5 +1,6 @@
 <template>
   <ul v-if="showColorPalette()">
+    <li class="color color-panel"></li>
     <li class="color color-fg"></li>
     <li class="color color-link"></li>
     <li class="color color-link-hi-c"></li>
@@ -49,5 +50,9 @@ function showColorPalette() {
 
 .color-error {
   background: var(--error);
+}
+
+.color-panel {
+  background: var(--panel);
 }
 </style>
