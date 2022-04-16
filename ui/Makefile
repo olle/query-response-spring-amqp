@@ -1,45 +1,15 @@
 JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 11)
 
-.PHONY: run dev build dist clean test lint
+.PHONY: run build test clean
 
-#
-# Starting watch for client-side, or frontend assets, and running the backend
-# server for e2e integration.
-#
-run: node_modules
-	mvn clean
-	npm run watch & mvn spring-boot:run ; wait
-
-#
-# Focused on client-side, this target will run a front-end only server, so
-# no backend service.
-#
-dev: node_modules
-	npm run serve
-
-#
-# This target is issued by the Maven `package` goal. Used when building the
-# distribution JAR file.
-#
-build: node_modules
-	npm run build
-
-#
-# Target to ensure packaging of both the Java/Maven build and the client.
-# NOTE: maven triggers the build target (above).
-#
-dist:
-	mvn package
-
-node_modules:
-	npm install
+run:
+	mvn spring-boot:run
 
 test:
-	npm run test
+	mvn clean verify
 
-lint:
-	npm run lint
+build:
+	mvn clean package
 
 clean:
 	rm -rf target/
-	rm -rf node_modules/
