@@ -96,6 +96,12 @@ https://olle.github.io/query-response-spring-amqp/[online documentation].
 Also make sure to check out the working link:./examples/[examples] to get
 started quickly with Query/Response.
 
+=== Request For Comments (RFC) &amp; Architectural Design Records (ADR)
+
+Under the link:./docs[docs] folder there are RFC documents, which provide a way
+for anyone to introduce ideas and trigger a discussion, as well as ADR documents
+that describe which important decisions were made, and why.
+
 == Versions &amp; Spring Boot
 
 This project is very much an extension and amalgamation of the AMQP features
