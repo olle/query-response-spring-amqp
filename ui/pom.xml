@@ -79,26 +79,6 @@
 	                </image>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>npm install (initialize)</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <executable>make</executable>
-                            <arguments>
-                                <argument>build</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
