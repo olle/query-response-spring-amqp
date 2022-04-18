@@ -39,4 +39,5 @@ nodes.
 | `count_consumed_responses` | Number | **-** | **YES** | Number of consumed responses
 | `count_published_responses` | Number | **-** | **YES** | Number of published respones
 | `count_fallbacks` | Number | **-** | **YES** | Number of _fallbacks_ (no responses)
+| `max_latency` | Number | **-** | **YES** | Max recorded time between query and response, in milliseconds
 |===
