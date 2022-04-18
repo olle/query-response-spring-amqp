@@ -1,0 +1,39 @@
+= Query/Response Events
+
+== Metrics or "Stats"
+
+Participating nodes in a Query/Response topology will broadcast events of
+structured statistics for the UI and monitoring applications to consume. The
+common data-shape encapsulates a way to communicate measurements, events and
+node-identifying and describing meta-data.
+
+The entry structure and format is encoded as a JSON UTF-8 encoded string.
+
+```json
+{
+    "key": <string>,
+    "value": <string|number>,
+    "timestamp": <OPTIONAL:number>,
+    "uuid": <OPTIONAL:string>
+}
+```
+
+The `key` and `value` property pairs are used to encode any measurement. The
+`timestamp` is an optional property, that can be used to associate a measurement
+with a point in time since the EPOCH, in milliseconds.
+
+The `uuid` property is used to identify the publishing node, during it's
+lifetime - effectively creating an aggregate for statistics to present. This
+means that in practice there are operational metrics which may _come and go_
+as well as logical statistics which may pertain to the topology or cluster of
+nodes.
+
+=== Table of published statistics
+
+[cols="2,2,1,1,3"]
+.Currently known published entries
+|===
+| Key    | Value    | Timestamp    | UUID    | Description
+
+| `count_queries`      | Number    | **no**    | **yes**    | The number of published queries
+|===

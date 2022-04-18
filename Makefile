@@ -27,9 +27,10 @@ ui/query-response-ui.jar: ui/target/query-response-ui.jar
 ui/target/query-response-ui.jar: install
 	@$(MAKE) -C ui dist
 
-.PHONY: up down
+.PHONY: up
 up:
-	docker-compose -d up
+	docker-compose up -d
 
+.PHONY: down
 down:
 	docker-compose down
