@@ -2,7 +2,9 @@ package com.studiomediatech.queryresponse.util;
 
 import java.time.Duration;
 
-
+/**
+ * Provides utilities to format a {@link Duration java duration} as a human readable string. 
+ */
 public final class DurationFormatter {
 
     private static final int MILLIS_PER_SECOND = 1000;
@@ -17,6 +19,13 @@ public final class DurationFormatter {
         // Hidden!
     }
 
+    /**
+     * Formats the given duration as a rounded human readable string. 
+     * 
+     * @param duration to format
+     * 
+     * @return a string representation of the duration, never {@code null} 
+     */
     public static String format(Duration duration) {
 
         try {

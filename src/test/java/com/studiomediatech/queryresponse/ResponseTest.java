@@ -1,32 +1,26 @@
 package com.studiomediatech.queryresponse;
 
-import org.json.JSONException;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.skyscreamer.jsonassert.JSONAssert;
-
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.mockito.ArgumentMatchers.eq;
-
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
+import org.json.JSONException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +36,24 @@ class ResponseTest {
     @Captor
     ArgumentCaptor<Message> message;
 
+
+    @Test
+	void testName() throws Exception {
+		
+        AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
+
+        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
+            .withSink(capture::set)
+            .withAll()
+            .from("foo", "bar", "baz");
+
+        Response<String> sut = Response.from(capture.get(), props);
+        sut.accept(facade, stats);
+
+    	assertThat(sut.getQueueName()).startsWith("query-response-");
+    	assertThat(sut.getRoutingKey()).isEqualTo("some-query");
+	}
+    
     @Test
     @DisplayName("after consuming a query message, a response is published")
     void ensurePublishesResponseOnConsumedQueryMessage() throws JSONException {

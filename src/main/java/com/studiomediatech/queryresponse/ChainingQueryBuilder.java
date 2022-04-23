@@ -79,8 +79,8 @@ public final class ChainingQueryBuilder<T> {
      */
     private Function<ChainingQueryBuilder<T>, Collection<T>> sink = QueryRegistry::register;
 
-    // Declared protected, for access in unit tests.
-    protected ChainingQueryBuilder(String term, Class<T> type) {
+    // Declared package protected, for access in unit tests.
+    ChainingQueryBuilder(String term, Class<T> type) {
 
         this.type = type;
         this.queryForTerm = Asserts.invariantQueryTerm(term);

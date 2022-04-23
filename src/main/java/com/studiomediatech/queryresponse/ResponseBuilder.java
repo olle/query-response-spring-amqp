@@ -8,6 +8,11 @@ public class ResponseBuilder {
 
     private final ResponseRegistry responseRegistry;
 
+    /**
+     * Creates a new response builder, using the given registry.
+     * 
+     * @param responseRegistry for this builder, never {@code null}
+     */
     public ResponseBuilder(ResponseRegistry responseRegistry) {
 
         this.responseRegistry = responseRegistry;
