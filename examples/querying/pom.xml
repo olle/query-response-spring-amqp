@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.studiomediatech</groupId>
       <artifactId>query-response-spring-amqp</artifactId>
-      <version>0.9.0-SB2_6_1-SNAPSHOT</version>
+      <version>0.9.0-SB2_6_4-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
