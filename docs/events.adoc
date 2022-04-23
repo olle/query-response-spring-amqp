@@ -14,7 +14,7 @@ The entry structure and format is encoded as a JSON UTF-8 encoded string.
   "elements": [
     {
       "key": <string>,
-      "value": <string|number>,
+      "value": <string|number|boolean>,
       "timestamp": <OPTIONAL:number>,
       "uuid": <OPTIONAL:string>
     },
@@ -42,13 +42,14 @@ nodes.
 | `pid`    | string | - | &check; | Node process id, or `-`
 | `host`   | string | - | &check; | Node hostname, or `unknown`
 | `uptime` | string | - | &check; | Node uptime, or `-`
-| `count_queries`             | Number | - | &check; | Number of published queries
-| `count_consumed_responses`  | Number | - | &check; | Number of consumed responses
-| `count_published_responses` | Number | - | &check; | Number of published respones
-| `count_fallbacks`      | Number | - | &check; | Number of _fallbacks_ (no responses)
-| `max_latency`          | Number | - | &check; | Largest recorded time between query and response, in milliseconds
-| `min_latency`          | Number | - | &check; | Smallest recorded time between query and response, in milliseconds
-| `avg_latency`          | Number | - | &check; | Average time between query and response, in milliseconds
-| `throughput_queries`   | Number | &check; | &check; | Number of queries published, since last notification
-| `throughput_responses` | Number | &check; | &check; | Number of responses consumed, since last notification
+| `only_responses` | boolean | - | &check; | Whether node has only responded `true`, or published queries `false`
+| `count_queries`             | number | - | &check; | Number of published queries
+| `count_consumed_responses`  | number | - | &check; | Number of consumed responses
+| `count_published_responses` | number | - | &check; | Number of published respones
+| `count_fallbacks`      | number | - | &check; | Number of _fallbacks_ (no responses)
+| `max_latency`          | number | - | &check; | Largest recorded time between query and response, in milliseconds
+| `min_latency`          | number | - | &check; | Smallest recorded time between query and response, in milliseconds
+| `avg_latency`          | number | - | &check; | Average time between query and response, in milliseconds
+| `throughput_queries`   | number | &check; | &check; | Number of queries published, since last notification
+| `throughput_responses` | number | &check; | &check; | Number of responses consumed, since last notification
 |===
