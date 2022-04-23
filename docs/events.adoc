@@ -38,13 +38,13 @@ nodes.
 [cols="2,2,1,1,3"]
 |===
 | Key    | Value    | Timestamp    | UUID    | Description
-| `count_queries`             | Number | **-** | **YES** | Number of published queries
-| `count_consumed_responses`  | Number | **-** | **YES** | Number of consumed responses
-| `count_published_responses` | Number | **-** | **YES** | Number of published respones
-| `count_fallbacks`      | Number | **-** | **YES** | Number of _fallbacks_ (no responses)
-| `max_latency`          | Number | **-** | **YES** | Largest recorded time between query and response, in milliseconds
-| `min_latency`          | Number | **-** | **YES** | Smallest recorded time between query and response, in milliseconds
-| `avg_latency`          | Number | **-** | **YES** | Average time between query and response, in milliseconds
-| `throughput_queries`   | Number | **YES** | **YES** | Number of queries published, since last notification
-| `throughput_responses` | Number | **YES** | **YES** | Number of responses consumed, since last notification
+| `count_queries`             | Number | - | &check; | Number of published queries
+| `count_consumed_responses`  | Number | - | &check; | Number of consumed responses
+| `count_published_responses` | Number | - | &check; | Number of published respones
+| `count_fallbacks`      | Number | - | &check; | Number of _fallbacks_ (no responses)
+| `max_latency`          | Number | - | &check; | Largest recorded time between query and response, in milliseconds
+| `min_latency`          | Number | - | &check; | Smallest recorded time between query and response, in milliseconds
+| `avg_latency`          | Number | - | &check; | Average time between query and response, in milliseconds
+| `throughput_queries`   | Number | &check; | &check; | Number of queries published, since last notification
+| `throughput_responses` | Number | &check; | &check; | Number of responses consumed, since last notification
 |===
