@@ -38,6 +38,10 @@ nodes.
 [cols="2,2,1,1,3"]
 |===
 | Key    | Value    | Timestamp    | UUID    | Description
+| `name`   | string | - | &check; | Name or identity of the node, or `application`
+| `pid`    | string | - | &check; | Node process id, or `-`
+| `host`   | string | - | &check; | Node hostname, or `unknown`
+| `uptime` | string | - | &check; | Node uptime, or `-`
 | `count_queries`             | Number | - | &check; | Number of published queries
 | `count_consumed_responses`  | Number | - | &check; | Number of consumed responses
 | `count_published_responses` | Number | - | &check; | Number of published respones
