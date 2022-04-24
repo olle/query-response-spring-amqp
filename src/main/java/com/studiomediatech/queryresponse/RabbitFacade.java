@@ -29,7 +29,6 @@ import com.studiomediatech.queryresponse.util.Logging;
  */
 class RabbitFacade implements Logging {
 
-    private static final String QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY = "query-response/internal/stats";
 	public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
 
     private final RabbitAdmin admin;
@@ -245,9 +244,9 @@ class RabbitFacade implements Logging {
             .build();
     }
 
-	protected void publishStats(Message message) {
+	protected void publishStats(Message message, String routingKey) {
 
-		this.template.send(queriesExchange.getName(), QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY, decorateMessage(message));
-		logPublished("stats", QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY, message);
+		this.template.send(queriesExchange.getName(), routingKey, decorateMessage(message));
+		logPublished("stats", routingKey, message);
 	}
 }

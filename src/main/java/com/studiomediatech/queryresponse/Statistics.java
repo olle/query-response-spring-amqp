@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -78,13 +79,15 @@ class Statistics implements Logging {
     protected Supplier<String> hostSupplier = () -> getHostnameOrDefault("unknown");
     protected Supplier<String> uptimeSupplier = () -> getUptimeOrDefault("-");
 
+    private final QueryResponseConfigurationProperties props;
 	private final RabbitFacade facade;
 
-    public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade) {
+    public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade, QueryResponseConfigurationProperties props) {
 
         this.env = env;
         this.ctx = ctx;
 		this.facade = facade;
+		this.props = props;
 		
         this.uuid = UUID.randomUUID().toString();
     }
@@ -93,7 +96,10 @@ class Statistics implements Logging {
     protected void publishStats() {
     	
 		try {
-			facade.publishStats(MessageBuilder.withBody(writer.writeValueAsBytes(Map.of("elements", getStats()))).build());
+			String routingKey = props.getStats().getTopic();			
+			Message message = MessageBuilder.withBody(writer.writeValueAsBytes(Map.of("elements", getStats()))).build();
+			
+			facade.publishStats(message, routingKey);
 		} catch (RuntimeException | JsonProcessingException ex) {
 			log().error("Failed to publish stats", ex);
 		} 	

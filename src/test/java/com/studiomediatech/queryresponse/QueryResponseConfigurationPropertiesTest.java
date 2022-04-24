@@ -1,8 +1,8 @@
 package com.studiomediatech.queryresponse;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 
 class QueryResponseConfigurationPropertiesTest {
@@ -25,4 +25,14 @@ class QueryResponseConfigurationPropertiesTest {
         assertThat(props.getQueue()).isNotNull();
         assertThat(props.getQueue().getPrefix()).isEqualTo("query-response-");
     }
+    
+    @Test
+	void ensureCanConfigureStatsTopic() throws Exception {
+		
+    	
+    	QueryResponseConfigurationProperties sut = new QueryResponseConfigurationProperties();
+    	
+    	assertThat(sut.getStats()).isNotNull();
+    	assertThat(sut.getStats().getTopic()).isEqualTo("query-response/internal/stats");
+	}
 }
