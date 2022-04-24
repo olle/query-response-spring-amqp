@@ -1,31 +1,12 @@
 package com.studiomediatech.queryresponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.studiomediatech.queryresponse.util.DurationFormatter;
-import com.studiomediatech.queryresponse.util.Logging;
-
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.EventListener;
-
-import org.springframework.core.env.Environment;
-
-import org.springframework.util.StringUtils;
-
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -37,6 +18,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.studiomediatech.queryresponse.util.DurationFormatter;
+import com.studiomediatech.queryresponse.util.Logging;
 
 
 class Statistics implements Logging {
@@ -79,22 +70,17 @@ class Statistics implements Logging {
     protected Supplier<String> hostSupplier = () -> getHostnameOrDefault("unknown");
     protected Supplier<String> uptimeSupplier = () -> getUptimeOrDefault("-");
 
-    public Statistics(Environment env, ApplicationContext ctx) {
+	private final RabbitFacade facade;
+
+    public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade) {
 
         this.env = env;
         this.ctx = ctx;
+		this.facade = facade;
+		
         this.uuid = UUID.randomUUID().toString();
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    void respond() {
-
-        log().debug("Registering response for statistics queries...");
-
-        ChainingResponseBuilder.respondTo("query-response/stats", Stat.class)
-            .withAll()
-            .suppliedBy(this::getStats);
-    }
 
 
     protected Collection<Stat> getStats() {
