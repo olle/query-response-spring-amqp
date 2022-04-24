@@ -75,14 +75,9 @@ class QueryResponseConfiguration implements Logging {
 
 
     @Bean
-    TopicExchange queryResponseTopicExchange() {
+    QueryResponseTopicExchange queryResponseTopicExchange() {
 
-        String name = props.getExchange().getName();
-
-        boolean durable = false;
-        boolean autoDelete = true;
-
-        return log(new TopicExchange(name, durable, autoDelete));
+        return log(new QueryResponseTopicExchange(props.getExchange().getName()));
     }
 
 
