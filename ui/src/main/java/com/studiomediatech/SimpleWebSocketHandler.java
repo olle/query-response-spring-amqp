@@ -84,14 +84,21 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
 
     public void handleLatency(long minLatency, long maxLatency, double avgLatency, List<Double> latencies) {
 
-        String json = String.format(Locale.US,
-                "{\"metrics\": {"
-                + (minLatency != -1 ? "\"min_latency\": %d," : "") + (maxLatency != -1 ? "\"max_latency\": %d," : "")
-                + "\"avg_latency\": %f,"
-                + "\"avg_latencies\": %s"
-                + "}}", minLatency, maxLatency, avgLatency, latencies);
-
-        publishTextMessageWithPayload(json);
+    	if (minLatency != -1 && maxLatency != -1) {  	
+	        publishTextMessageWithPayload(String.format(Locale.US,
+	                "{\"metrics\": {"
+	                + "\"min_latency\": %d," 
+	                + "\"max_latency\": %d,"
+	                + "\"avg_latency\": %f,"
+	                + "\"avg_latencies\": %s"
+	                + "}}", minLatency, maxLatency, avgLatency, latencies));
+    	} else {
+	        publishTextMessageWithPayload(String.format(Locale.US,
+	                "{\"metrics\": {"
+	                + "\"avg_latency\": %f,"
+	                + "\"avg_latencies\": %s"
+	                + "}}", avgLatency, latencies));    		
+    	}
     }
 
 

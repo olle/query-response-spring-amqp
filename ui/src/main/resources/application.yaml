@@ -1,2 +1,1 @@
 spring.application.name: query-response-ui
-logging.level.ROOT: DEBUG
