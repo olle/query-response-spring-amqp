@@ -1,6 +1,7 @@
 package com.studiomediatech.queryresponse;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.AnonymousQueue;
@@ -17,11 +18,9 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
-
 import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.studiomediatech.queryresponse.util.Logging;
 
 
 /**
@@ -30,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class RabbitFacade implements Logging {
 
-    public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
+    private static final String QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY = "query-response/internal/stats";
+	public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
 
     private final RabbitAdmin admin;
     private final ConnectionFactory connectionFactory;
@@ -244,4 +244,10 @@ class RabbitFacade implements Logging {
             .setHeader(HEADER_X_QR_PUBLISHED, System.currentTimeMillis())
             .build();
     }
+
+	protected void publishStats(Message message) {
+
+		this.template.send(queriesExchange.getName(), QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY, decorateMessage(message));
+		logPublished("stats", QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY, message);
+	}
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,18 +20,25 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.studiomediatech.queryresponse.util.DurationFormatter;
 import com.studiomediatech.queryresponse.util.Logging;
 
 
 class Statistics implements Logging {
+
+    private static final ObjectWriter writer = new ObjectMapper().writer();
 
     // Yes, it's a FIB!!
     private static final int MAX_COLLECTED_LATENCIES = 987;
@@ -81,6 +89,15 @@ class Statistics implements Logging {
         this.uuid = UUID.randomUUID().toString();
     }
 
+    @Scheduled(fixedDelayString = "${queryresponse.stats.delay:11000}")
+    protected void publishStats() {
+    	
+		try {
+			facade.publishStats(MessageBuilder.withBody(writer.writeValueAsBytes(Map.of("elements", getStats()))).build());
+		} catch (RuntimeException | JsonProcessingException ex) {
+			log().error("Failed to publish stats", ex);
+		} 	
+    }
 
 
     protected Collection<Stat> getStats() {
