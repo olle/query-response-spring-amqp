@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import java.util.stream.Stream;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
@@ -102,8 +102,8 @@ class Statistics implements Logging {
     protected void publishStats() {
     	
 		try {
-			String routingKey = props.getStats().getTopic();			
-			Message message = MessageBuilder.withBody(writer.writeValueAsBytes(Map.of("elements", getStats()))).build();
+			String routingKey = props.getStats().getTopic();
+			Message message = MessageBuilder.withBody(writer.writeValueAsBytes(getStatistics())).build();
 			
 			facade.publishStats(message, routingKey);
 		} catch (RuntimeException | JsonProcessingException ex) {
@@ -113,6 +113,13 @@ class Statistics implements Logging {
 		this.scheduler.schedule(this::publishStats, props.getStats().getDelay(), TimeUnit.MILLISECONDS);
     }
 
+    protected Map<String, Object> getStatistics() {
+    	
+    	Map<String, Object> target = new HashMap<>();
+    	target.put("elements", getStats());
+    	
+    	return target;    	
+    }
 
     protected Collection<Stat> getStats() {
 
@@ -366,7 +373,7 @@ class Statistics implements Logging {
 
         latencies.add(latency);
     }
-
+    
     @JsonInclude(Include.NON_NULL)
     public static final class Stat {
 
