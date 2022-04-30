@@ -542,7 +542,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>Query/Response for Spring AMQP is intended to be used in a landscape of distributed and highly
 decoupled services that exchange information and data. Being able to monitor and
-observe that is very important. We provide a monitoring and administration
+observe them is very important. We provide a monitoring and administration
 user interface for this purpose.</p>
 </div>
 <div class="paragraph">
@@ -560,16 +560,19 @@ from <a href="https://github.com/olle/query-response-spring-amqp/raw/main/ui/que
 <h2 id="overview"><a class="anchor" href="#overview"></a>1. Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Query/Response Monitoring UI connects to the RabbitMQ broker and <strong>uses Query/Response</strong>
-to query for information about the live nodes in the current system setup. It
-is available at <a href="http://localhost:8080" class="bare">localhost:8080</a> after starting up.</p>
+<p>The Query/Response Monitoring UI connects to the RabbitMQ broker and listens to metrics and
+monitoring information about the live nodes in the current system setup. It
+is available at <a href="http://localhost:8080" class="bare">localhost:8080</a>.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/ui.png" alt="ui"></span></p>
 </div>
 <div class="paragraph">
-<p>Since we are <em>eating our own dog food</em> we get a very nice effect, where the
-Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node.</p>
+<p>The Query/Response Monitoring UI also provides a simple query-response command line interface,
+where users can publish queries and see responses. Since this features is
+effectively us <em>eating our own dog food</em> we get a very nice effect, where the
+Query/Response Monitoring UI instance is self-visualizing - it shows up as a live-node in the
+overview.</p>
 </div>
 <div class="sect2">
 <h3 id="three-golden-metrics"><a class="anchor" href="#three-golden-metrics"></a>1.1. Three Golden Metrics</h3>
@@ -715,7 +718,7 @@ means any clients using Query/Response for Spring AMQP, that are currently up an
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-04-16 13:23:31 +0200
+Last updated 2022-04-30 14:56:47 +0200
 </div>
 </div>
 </body>
