@@ -86,9 +86,6 @@ class Statistics implements Logging {
 	private final RabbitFacade facade;
 	private final ScheduledExecutorService scheduler;
 
-	@Value("${queryresponse.stats.delay:11000}")
-	private Long queryresponseStatsDelay = 11000L;
-
     public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade, QueryResponseConfigurationProperties props) {
 
         this.env = env;
