@@ -39,6 +39,9 @@ class QueryResponseConfigurationPropertiesTest {
     	
     	assertThat(sut.getStats()).isNotNull();
     	assertThat(sut.getStats().getTopic()).isEqualTo("query-response/internal/stats");
+    	assertThat(sut.getStats().getInitialDelay()).isEqualTo(7000L);
+    	assertThat(sut.getStats().getDelay()).isEqualTo(11000L);
+    	
 	}
     
     @Test
@@ -54,6 +57,8 @@ class QueryResponseConfigurationPropertiesTest {
     	
     	StatsProperties statsProps = new StatsProperties();
     	statsProps.setTopic("other-topic");
+    	statsProps.setInitialDelay(123L);
+    	statsProps.setDelay(1337L);
     	
 		sut.setExchange(exchangeProps);
 		sut.setQueue(queueProps);
@@ -62,7 +67,7 @@ class QueryResponseConfigurationPropertiesTest {
         assertThat(sut.getExchange().getName()).isEqualTo("other-exchange");
         assertThat(sut.getQueue().getPrefix()).isEqualTo("other-prefix");
         assertThat(sut.getStats().getTopic()).isEqualTo("other-topic");
-    	
-    	
+        assertThat(sut.getStats().getInitialDelay()).isEqualTo(123L);
+        assertThat(sut.getStats().getDelay()).isEqualTo(1337L);
 	}
 }

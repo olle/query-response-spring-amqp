@@ -79,6 +79,16 @@ public class QueryResponseConfigurationProperties {
     	 * Topic or routing-key for statistics messages.
     	 */
     	private String topic = "query-response/internal/stats";
+    	
+    	/**
+    	 * Initial delay, before the first published statistics after startup, in milliseconds.
+    	 */
+		private long initialDelay = 7000L;
+
+		/**
+		 * Delay between each publishing of statistics, in milliseconds.
+		 */
+		private long delay = 11000L;
 
 		public String getTopic() {
 			return topic;
@@ -86,6 +96,22 @@ public class QueryResponseConfigurationProperties {
 
 		public void setTopic(String topic) {
 			this.topic = topic;
+		}
+
+		public void setInitialDelay(long initialDelay) {
+			this.initialDelay = initialDelay;
+		}
+		
+		public long getInitialDelay() {
+			return initialDelay;
+		}
+
+		public void setDelay(long delay) {
+			this.delay = delay;
+		}
+		
+		public long getDelay() {
+			return delay;
 		}
     }
 }

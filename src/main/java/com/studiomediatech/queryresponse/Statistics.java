@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
@@ -22,9 +25,9 @@ import java.util.stream.Stream;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -81,6 +84,10 @@ class Statistics implements Logging {
 
     private final QueryResponseConfigurationProperties props;
 	private final RabbitFacade facade;
+	private final ScheduledExecutorService scheduler;
+
+	@Value("${queryresponse.stats.delay:11000}")
+	private Long queryresponseStatsDelay = 11000L;
 
     public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade, QueryResponseConfigurationProperties props) {
 
@@ -90,9 +97,11 @@ class Statistics implements Logging {
 		this.props = props;
 		
         this.uuid = UUID.randomUUID().toString();
+        
+        this.scheduler = Executors.newSingleThreadScheduledExecutor();        
+        this.scheduler.schedule(this::publishStats, props.getStats().getInitialDelay(), TimeUnit.MILLISECONDS);
     }
-
-    @Scheduled(fixedDelayString = "${queryresponse.stats.delay:11000}")
+    
     protected void publishStats() {
     	
 		try {
@@ -103,6 +112,8 @@ class Statistics implements Logging {
 		} catch (RuntimeException | JsonProcessingException ex) {
 			log().error("Failed to publish stats", ex);
 		} 	
+		
+		this.scheduler.schedule(this::publishStats, props.getStats().getDelay(), TimeUnit.MILLISECONDS);
     }
 
 
