@@ -1,24 +1,11 @@
 package com.studiomediatech;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.studiomediatech.events.QueryRecordedEvent;
-
-import com.studiomediatech.queryresponse.QueryBuilder;
-import com.studiomediatech.queryresponse.util.Logging;
-
-import org.springframework.context.event.EventListener;
-
-import org.springframework.scheduling.annotation.Scheduled;
-
-import org.springframework.util.StringUtils;
-
+import java.io.IOException;
 import java.time.temporal.ChronoUnit;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,9 +15,24 @@ import java.util.Optional;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.studiomediatech.events.QueryRecordedEvent;
+import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.util.Logging;
+
 
 public class QueryPublisher implements Logging {
 
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
     private static final int SLIDING_WINDOW = 40;
@@ -78,9 +80,18 @@ public class QueryPublisher implements Logging {
                 .orDefaults(orEmptyResponse), event.getPublisherId());
         }
     }
+    
+    @RabbitListener(queues =  "#{@"+ QueryResponseUIApp.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}")
+    void onQueryResponseStats(Message message) {
 
+    	try {
+			log().info("GOT {}", MAPPER.readValue(message.getBody(), Stats.class));
+		} catch (RuntimeException | IOException ex) {
+			log().error("Failed to consumed stats", ex);
+		}
+    }
+   
 
-    @Scheduled(fixedDelay = 1000 * 7)
     void query() {
 
         Collection<QueryPublisher.Stat> stats = queryBuilder.queryFor("query-response/stats",
@@ -256,6 +267,19 @@ public class QueryPublisher implements Logging {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Stats {
+    	
+    	@JsonProperty
+    	public Collection<Stat> elements;
+    	
+    	@Override
+    	public String toString() {
+
+    		return Optional.ofNullable(elements).orElse(Collections.emptyList()).stream().map(Object::toString).collect(Collectors.joining(", "));
+    	}
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Stat {
 
         @JsonProperty
@@ -274,4 +298,6 @@ public class QueryPublisher implements Logging {
                 + (uuid != null ? " uuid=" + uuid : "");
         }
     }
+    
+
 }

@@ -1,45 +1,48 @@
 package com.studiomediatech.queryresponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.studiomediatech.queryresponse.util.DurationFormatter;
-import com.studiomediatech.queryresponse.util.Logging;
-
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.EventListener;
-
-import org.springframework.core.env.Environment;
-
-import org.springframework.util.StringUtils;
-
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.studiomediatech.queryresponse.util.DurationFormatter;
+import com.studiomediatech.queryresponse.util.Logging;
+
 
 class Statistics implements Logging {
+
+    private static final ObjectWriter writer = new ObjectMapper().writer();
 
     // Yes, it's a FIB!!
     private static final int MAX_COLLECTED_LATENCIES = 987;
@@ -79,23 +82,44 @@ class Statistics implements Logging {
     protected Supplier<String> hostSupplier = () -> getHostnameOrDefault("unknown");
     protected Supplier<String> uptimeSupplier = () -> getUptimeOrDefault("-");
 
-    public Statistics(Environment env, ApplicationContext ctx) {
+    private final QueryResponseConfigurationProperties props;
+	private final RabbitFacade facade;
+	private final ScheduledExecutorService scheduler;
+
+    public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade, QueryResponseConfigurationProperties props) {
 
         this.env = env;
         this.ctx = ctx;
+		this.facade = facade;
+		this.props = props;
+		
         this.uuid = UUID.randomUUID().toString();
+        
+        this.scheduler = Executors.newSingleThreadScheduledExecutor();        
+        this.scheduler.schedule(this::publishStats, props.getStats().getInitialDelay(), TimeUnit.MILLISECONDS);
+    }
+    
+    protected void publishStats() {
+    	
+		try {
+			String routingKey = props.getStats().getTopic();
+			Message message = MessageBuilder.withBody(writer.writeValueAsBytes(getStatistics())).build();
+			
+			facade.publishStats(message, routingKey);
+		} catch (RuntimeException | JsonProcessingException ex) {
+			log().error("Failed to publish stats", ex);
+		} 	
+		
+		this.scheduler.schedule(this::publishStats, props.getStats().getDelay(), TimeUnit.MILLISECONDS);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    void respond() {
-
-        log().debug("Registering response for statistics queries...");
-
-        ChainingResponseBuilder.respondTo("query-response/stats", Stat.class)
-            .withAll()
-            .suppliedBy(this::getStats);
+    protected Map<String, Object> getStatistics() {
+    	
+    	Map<String, Object> target = new HashMap<>();
+    	target.put("elements", getStats());
+    	
+    	return target;    	
     }
-
 
     protected Collection<Stat> getStats() {
 
@@ -349,7 +373,7 @@ class Statistics implements Logging {
 
         latencies.add(latency);
     }
-
+    
     @JsonInclude(Include.NON_NULL)
     public static final class Stat {
 

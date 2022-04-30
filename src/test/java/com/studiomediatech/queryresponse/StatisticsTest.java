@@ -1,28 +1,18 @@
 package com.studiomediatech.queryresponse;
 
-import com.studiomediatech.queryresponse.Statistics.Stat;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.springframework.context.ApplicationContext;
-
-import org.springframework.mock.env.MockEnvironment;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
+import org.springframework.mock.env.MockEnvironment;
+
+import com.studiomediatech.queryresponse.Statistics.Stat;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -33,36 +23,15 @@ class StatisticsTest {
 
     @Mock
     ResponseRegistry registry;
+    
+    @Mock
+    RabbitFacade facade;
 
     @Captor
     ArgumentCaptor<ChainingResponseBuilder<?>> responses;
-
-    @SuppressWarnings("static-access")
-    @Test
-    void ensureBuildsResponseOnApplicationReady() throws InterruptedException {
-
-        ResponseRegistry.instance = () -> registry;
-
-        MockEnvironment env = new MockEnvironment();
-
-        new Statistics(env, ctx).respond();
-
-        verify(registry).register(responses.capture());
-
-        ChainingResponseBuilder<?> builder = responses.getValue();
-        assertThat(builder).isNotNull();
-
-        assertThat(builder.getRespondToTerm()).isEqualTo("query-response/stats");
-        assertThat(builder.elements().get()).isNotNull();
-        assertThat(builder.elements().get().hasNext()).isTrue();
-
-        List<Stat> stats = new ArrayList<>();
-        builder.elements().get().forEachRemaining(obj -> stats.add((Stat) obj));
-        assertThat(stats.stream().map(s -> s.key).collect(Collectors.toList())).contains("count_queries");
-
-        ResponseRegistry.instance = () -> null;
-    }
-
+    
+    private QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
+    
 
     @Test
     void ensureMetaWithPublishingOnlyStatus() throws Exception {
@@ -70,7 +39,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String key = "only_responses";
         Stat s1 = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
@@ -93,7 +62,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
         sut.pidSupplier = () -> "some-pid";
 
         String key = "pid";
@@ -112,7 +81,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
         sut.nameSupplier = () -> "some-name";
 
         String key = "name";
@@ -131,7 +100,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
         sut.hostSupplier = () -> "some-host";
 
         String key = "host";
@@ -150,7 +119,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
         sut.uptimeSupplier = () -> "some-uptime";
 
         String key = "uptime";
@@ -169,7 +138,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String stat = "count_queries";
 
@@ -194,7 +163,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String stat = "count_consumed_responses";
 
@@ -219,7 +188,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String stat = "count_published_responses";
 
@@ -244,7 +213,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String stat = "throughput_queries";
 
@@ -270,7 +239,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String stat = "throughput_responses";
 
@@ -297,7 +266,7 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         String stat = "count_fallbacks";
 
@@ -320,7 +289,7 @@ class StatisticsTest {
     void ensureMeasuresAndRetainsLatencyStatisticsInBoundedCollection() throws Exception {
 
         MockEnvironment env = new MockEnvironment();
-        Statistics sut = new Statistics(env, ctx);
+        Statistics sut = new Statistics(env, ctx, facade, props);
 
         // NOOP
         sut.measureLatency(null, 43L);
