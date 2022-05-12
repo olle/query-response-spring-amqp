@@ -17,14 +17,19 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     </properties>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.7</version>
-    </parent>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+		        <groupId>org.springframework.boot</groupId>
+		        <artifactId>spring-boot-dependencies</artifactId>
+		        <version>2.6.7</version>
+		        <type>pom</type>
+		        <scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -74,7 +79,9 @@
     <build>
         <plugins>
             <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -86,7 +93,9 @@
                 </configuration>
             </plugin>
             <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -97,7 +106,9 @@
                 </executions>
             </plugin>
             <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
                 <configuration>
                 	<doclint>missing</doclint>
                 </configuration>
@@ -107,54 +118,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>CLASS</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>BRANCH</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.60</minimum>
-                                        </limit>
-                                    </limits>
-                                    <excludes>
-                                        <exclude>com.studiomediatech.queryresponse.QueryResponseConfiguration</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.QueryResponseConfigurationProperties</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.QueryResponseConfigurationProperties.ExchangeProperties</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.QueryResponseConfigurationProperties.QueueProperties</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.Statistics</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.util.*</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.Query.ConsumedResponseEnvelope</exclude>
-                                        <exclude>com.studiomediatech.queryresponse.Response.PublishedResponseEnvelope</exclude>
-                                    </excludes>
-                                </rule>
-                            </rules>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

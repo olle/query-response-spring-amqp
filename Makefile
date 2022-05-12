@@ -34,3 +34,7 @@ up:
 .PHONY: down
 down:
 	docker-compose down
+
+.PHONY: repo-clean
+repo-clean:
+	rm -rf ~/.m2/repository/com/studiomediatech/query-response-spring-amqp
