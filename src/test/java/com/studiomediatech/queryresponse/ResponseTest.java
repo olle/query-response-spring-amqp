@@ -35,6 +35,16 @@ class ResponseTest {
     @Captor
     ArgumentCaptor<Message> message;
 
+    @Test
+	void ensureGeneratesQueueNameIfNotProvided() throws Exception {
+    	
+    	Response<?> r1 = new Response<>("some-routing-key");
+    	assertThat(r1.getQueueName()).isNotEmpty();
+    	Response<?> r2 = new Response<>("some-routing-key", "static-queue-name");
+    	assertThat(r2.getQueueName()).isEqualTo("static-queue-name");
+    	
+	}
+    
 
     @Test
 	void testName() throws Exception {

@@ -27,7 +27,7 @@ import com.studiomediatech.queryresponse.util.Logging;
 @Configuration
 @ConditionalOnClass(RabbitAutoConfiguration.class)
 @AutoConfigureAfter(RabbitAutoConfiguration.class)
-@Import({ RabbitAutoConfiguration.class, SchedulingConfiguration.class })
+@Import({ RabbitAutoConfiguration.class })
 @EnableConfigurationProperties(QueryResponseConfigurationProperties.class)
 class QueryResponseConfiguration implements Logging {
 
