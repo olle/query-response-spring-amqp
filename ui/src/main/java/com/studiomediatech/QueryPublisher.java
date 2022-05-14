@@ -1,7 +1,6 @@
 package com.studiomediatech;
 
 import java.io.IOException;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +22,6 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.util.Logging;
@@ -85,40 +83,50 @@ public class QueryPublisher implements Logging {
     void onQueryResponseStats(Message message) {
 
     	try {
-			log().info("GOT {}", MAPPER.readValue(message.getBody(), Stats.class));
+			handle(MAPPER.readValue(message.getBody(), Stats.class).elements);
 		} catch (RuntimeException | IOException ex) {
 			log().error("Failed to consumed stats", ex);
 		}
     }
-   
+  
 
-    void query() {
+	protected void handle(Collection<QueryPublisher.Stat> stats) {
+		
+		stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
 
-        Collection<QueryPublisher.Stat> stats = queryBuilder.queryFor("query-response/stats",
-                    QueryPublisher.Stat.class)
-                .waitingFor(2L, ChronoUnit.SECONDS).orEmpty();
+        handleCounts(stats);
+        handleLatencies(stats);
+        handleThroughput(stats);
+        handleNodes(stats);
+	}
 
-        stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
+	private void handleNodes(Collection<QueryPublisher.Stat> stats) {
+		Map<String, List<QueryPublisher.Stat>> nodes = stats.stream()
+                .filter(s -> StringUtils.hasText(s.uuid))
+                .collect(Collectors.groupingBy(s -> s.uuid));
 
-        long countQueriesSum = stats.stream()
-                .filter(stat -> "count_queries".equals(stat.key))
-                .mapToLong(statToLong)
-                .sum();
+        for (Entry<String, List<QueryPublisher.Stat>> node : nodes.entrySet()) {
+            Stat stat = new Stat();
+            stat.uuid = node.getKey();
+            stat.key = "avg_throughput";
+            stat.value = calculateAndAggregateThroughputAvg(queries, responses, node.getKey());
+            node.getValue().add(stat);
+        }
 
-        long countResponsesSum = stats.stream()
-                .filter(stat -> "count_consumed_responses".equals(stat.key))
-                .mapToLong(statToLong).sum();
+        handler.handleNodes(nodes);
+	}
 
-        long countFallbacksSum = stats.stream()
-                .filter(stat -> "count_fallbacks".equals(stat.key))
-                .mapToLong(statToLong).sum();
+	private void handleThroughput(Collection<QueryPublisher.Stat> stats) {
+		// Order is important!!
+        double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
+        double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
+        double throughputAvg = calculateAndAggregateThroughputAvg(queries, responses, null);
 
-        double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
+        handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
+	}
 
-        handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
-            successRates);
-
-        Long minLatency = stats.stream()
+	private void handleLatencies(Collection<QueryPublisher.Stat> stats) {
+		Long minLatency = stats.stream()
                 .filter(stat -> "min_latency".equals(stat.key))
                 .mapToLong(statToLong).min()
                 .orElse(-1);
@@ -137,28 +145,27 @@ public class QueryPublisher implements Logging {
         aggregateLatencies(avgLatency);
 
         handler.handleLatency(minLatency, maxLatency, avgLatency, latencies);
+	}
 
-        // Order is important!!
-        double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
-        double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
-        double throughputAvg = calculateAndAggregateThroughputAvg(queries, responses, null);
+	private void handleCounts(Collection<QueryPublisher.Stat> stats) {
+		long countQueriesSum = stats.stream()
+                .filter(stat -> "count_queries".equals(stat.key))
+                .mapToLong(statToLong)
+                .sum();
 
-        handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
+        long countResponsesSum = stats.stream()
+                .filter(stat -> "count_consumed_responses".equals(stat.key))
+                .mapToLong(statToLong).sum();
 
-        Map<String, List<QueryPublisher.Stat>> nodes = stats.stream()
-                .filter(s -> StringUtils.hasText(s.uuid))
-                .collect(Collectors.groupingBy(s -> s.uuid));
+        long countFallbacksSum = stats.stream()
+                .filter(stat -> "count_fallbacks".equals(stat.key))
+                .mapToLong(statToLong).sum();
 
-        for (Entry<String, List<QueryPublisher.Stat>> node : nodes.entrySet()) {
-            Stat stat = new Stat();
-            stat.uuid = node.getKey();
-            stat.key = "avg_throughput";
-            stat.value = calculateAndAggregateThroughputAvg(queries, responses, node.getKey());
-            node.getValue().add(stat);
-        }
+        double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
 
-        handler.handleNodes(nodes);
-    }
+        handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
+            successRates);
+	}
 
 
     private void aggregateLatencies(double avgLatency) {

@@ -10,8 +10,6 @@ public class ApiController {
 
 	@GetMapping("/api")
 	public Map<String, Object> getApiRoot() {
-
 		return Map.of("version", "v1");
 	}
-
 }
