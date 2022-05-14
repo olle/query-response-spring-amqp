@@ -94,7 +94,7 @@ public class QueryPublisher implements Logging {
 
 	protected void handle(Collection<QueryPublisher.Stat> stats) {
 		
-		stats.forEach(stat -> System.out.println("GOT STAT: " + stat));
+		stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
 
         handleCounts(stats);
         handleLatencies(stats);
