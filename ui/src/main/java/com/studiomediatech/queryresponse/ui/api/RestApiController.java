@@ -1,4 +1,4 @@
-package com.studiomediatech.queryresponse;
+package com.studiomediatech.queryresponse.ui.api;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ApiController {
+public class RestApiController {
 
 	@GetMapping("/api")
 	public Map<String, Object> getApiRoot() {

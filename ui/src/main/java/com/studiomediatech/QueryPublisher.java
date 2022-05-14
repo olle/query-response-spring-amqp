@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
 import com.studiomediatech.queryresponse.util.Logging;
 
 
@@ -45,9 +47,9 @@ public class QueryPublisher implements Logging {
     private List<Double> tps = new LinkedList<>();
 
     private final QueryBuilder queryBuilder;
-    private final SimpleWebSocketHandler handler;
+    private final WebSocketApiHandler handler;
 
-    public QueryPublisher(SimpleWebSocketHandler handler, QueryBuilder queryBuilder) {
+    public QueryPublisher(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;

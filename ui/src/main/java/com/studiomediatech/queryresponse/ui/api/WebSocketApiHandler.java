@@ -1,13 +1,12 @@
-package com.studiomediatech;
+package com.studiomediatech.queryresponse.ui.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.studiomediatech.events.EventEmitter;
-import com.studiomediatech.events.QueryRecordedEvent;
-
-import com.studiomediatech.queryresponse.util.Logging;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -15,18 +14,16 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
-
-import java.nio.charset.StandardCharsets;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.studiomediatech.QueryPublisher;
+import com.studiomediatech.events.EventEmitter;
+import com.studiomediatech.events.QueryRecordedEvent;
+import com.studiomediatech.queryresponse.util.Logging;
 
 
-public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logging {
+public class WebSocketApiHandler extends TextWebSocketHandler implements Logging {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
     private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;
@@ -36,7 +33,7 @@ public class SimpleWebSocketHandler extends TextWebSocketHandler implements Logg
     private final EventEmitter emitter;
     private final ObjectMapper objectMapper;
 
-    public SimpleWebSocketHandler(EventEmitter emitter) {
+    public WebSocketApiHandler(EventEmitter emitter) {
 
         this.emitter = emitter;
 

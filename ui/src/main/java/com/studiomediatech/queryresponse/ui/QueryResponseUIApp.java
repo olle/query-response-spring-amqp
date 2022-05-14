@@ -1,4 +1,4 @@
-package com.studiomediatech;
+package com.studiomediatech.queryresponse.ui;
 
 import org.springframework.amqp.core.AnonymousQueue;
 import org.springframework.amqp.core.Binding;
@@ -20,11 +20,13 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+import com.studiomediatech.QueryPublisher;
 import com.studiomediatech.events.AsyncEventEmitter;
 import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.QueryResponseTopicExchange;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
 
 
 @SpringBootApplication
@@ -68,14 +70,14 @@ public class QueryResponseUIApp {
 
 
         @Bean
-        SimpleWebSocketHandler handler(EventEmitter emitter) {
+        WebSocketApiHandler handler(EventEmitter emitter) {
 
-            return new SimpleWebSocketHandler(emitter);
+            return new WebSocketApiHandler(emitter);
         }
 
 
         @Bean
-        QueryPublisher querier(SimpleWebSocketHandler handler, QueryBuilder queryBuilder) {
+        QueryPublisher querier(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
 
             return new QueryPublisher(handler, queryBuilder);
         }
@@ -97,9 +99,9 @@ public class QueryResponseUIApp {
     @Configuration
     static class WebSocketConfig implements WebSocketConfigurer {
 
-        private final SimpleWebSocketHandler webSocketHandler;
+        private final WebSocketApiHandler webSocketHandler;
 
-        public WebSocketConfig(SimpleWebSocketHandler webSocketHandler) {
+        public WebSocketConfig(WebSocketApiHandler webSocketHandler) {
 
             this.webSocketHandler = webSocketHandler;
         }
