@@ -100,7 +100,7 @@ public class QueryResponseUIApp {
     static class WebSocketConfig implements WebSocketConfigurer {
 
         private final WebSocketApiHandler webSocketHandler;
-
+        
         public WebSocketConfig(WebSocketApiHandler webSocketHandler) {
 
             this.webSocketHandler = webSocketHandler;
@@ -109,7 +109,8 @@ public class QueryResponseUIApp {
         @Override
         public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-            registry.addHandler(webSocketHandler, "/ws");
+        	// TODO: DO NOT ALLOW ORIGINS * !!!
+            registry.addHandler(webSocketHandler, "/ws").setAllowedOrigins("*");
         }
     }
 }
