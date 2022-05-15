@@ -61,6 +61,12 @@ app.use(
       toggleShowColorPalette(state) {
         state.showColorPalette = !state.showColorPalette;
       },
+      metrics(state, metrics) {
+        state.metrics = { ...state.metrics, ...metrics };
+      },
+      nodes(state, nodes) {
+        state.nodes = { ...state.nodes, ...nodes };
+      },
     },
   })
 );
