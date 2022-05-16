@@ -26,7 +26,7 @@ const store = useStore();
 addListener((msg) => {
   try {
     var message = JSON.parse(msg.data);
-    console.log("got message", message);
+    // console.log("got message", message);
      if (message.metrics) {
       store.commit('metrics', message.metrics);
     }

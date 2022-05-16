@@ -84,8 +84,7 @@ const percentChart = {
 const store = useStore();
 
 function successRates() {
-  return { series: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 33, 44, 55, 66, 77]] };
-  //return { series: [[...store.state.metrics.success_rates]] };
+  return { series: [[...Object.values(store.state.metrics.success_rates)]] };
 }
 function successRate() {
   return `${store.state.metrics.success_rate}%`;
@@ -110,7 +109,7 @@ function countFallbacks() {
 }
 
 function latencies() {
-  return { series: [[...store.state.metrics.avg_latencies]] };
+  return { series: [[...Object.values(store.state.metrics.avg_latencies)]] };
 }
 function avgLatency() {
   return toMillis(store.state.metrics.avg_latency);
@@ -123,7 +122,7 @@ function maxLatency() {
 }
 
 function throughputs() {
-  return { series: [[...store.state.metrics.avg_throughputs]] };
+  return { series: [[...Object.values(store.state.metrics.avg_throughputs)]] };
 }
 function avgThroughput() {
   return toThroughputPerSecond(store.state.metrics.avg_throughput);

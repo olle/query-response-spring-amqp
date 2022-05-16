@@ -76,89 +76,40 @@ import { computed } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
-const nodes = computed(() => store.state.nodes);
-
-// const nodes = computed(() =>
-//   mapState({
-//     nodes: (s) => {
-//       let results = [{ key: 123, name: "Hello" }];
-// for (let uuid in s.store.nodes) {
-//   let node = { key: uuid };
-//   let entry = s.nodes[uuid];
-//   for (let i in entry) {
-//     node[entry[i].key] = entry[i].value;
-//   }
-//   node.successRate = toPercent(
-//     node.count_consumed_responses,
-//     node.count_queries
-//   );
-//   node.successRateRank = toRateRank(
-//     node.count_consumed_responses,
-//     node.count_queries
-//   );
-//   node.countQueries = toNumberWithUnit(node.count_queries);
-//   node.countResponses = toNumberWithUnit(node.count_consumed_responses);
-//   node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
-//   node.publishedResponses = toNumberWithUnit(
-//     node.count_published_responses
-//   );
-//   node.throughputQueries = toThroughputPerSecond(node.throughput_queries);
-//   node.throughputResponses = toThroughputPerSecond(
-//     node.throughput_responses
-//   );
-//   node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
-//   node.avgLatency = toMillis(node.avg_latency);
-//   node.minLatency = toMillis(node.min_latency);
-//   node.maxLatency = toMillis(node.max_latency);
-//   results.push(node);
-// }
-//       return results;
-//     },
-//   })
-// );
-
-// export default {
-//   name: "qr-live-nodes",
-//   computed: {
-//     ...mapState({
-//       nodes: (s) => {
-//         let results = [];
-//         for (let uuid in s.nodes) {
-//           let node = { key: uuid };
-//           let entry = s.nodes[uuid];
-//           for (let i in entry) {
-//             node[entry[i].key] = entry[i].value;
-//           }
-//           node.successRate = toPercent(
-//             node.count_consumed_responses,
-//             node.count_queries
-//           );
-//           node.successRateRank = toRateRank(
-//             node.count_consumed_responses,
-//             node.count_queries
-//           );
-//           node.countQueries = toNumberWithUnit(node.count_queries);
-//           node.countResponses = toNumberWithUnit(node.count_consumed_responses);
-//           node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
-//           node.publishedResponses = toNumberWithUnit(
-//             node.count_published_responses
-//           );
-//           node.throughputQueries = toThroughputPerSecond(
-//             node.throughput_queries
-//           );
-//           node.throughputResponses = toThroughputPerSecond(
-//             node.throughput_responses
-//           );
-//           node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
-//           node.avgLatency = toMillis(node.avg_latency);
-//           node.minLatency = toMillis(node.min_latency);
-//           node.maxLatency = toMillis(node.max_latency);
-//           results.push(node);
-//         }
-//         return results;
-//       },
-//     }),
-//   },
-//   store,
-// };
+const nodes = computed(() => {
+  let results = [];
+  for (let uuid in store.state.nodes) {
+    let node = { key: uuid };
+    let entry = store.state.nodes[uuid];
+    for (let i in entry) {
+      node[entry[i].key] = entry[i].value;
+    }
+    node.successRate = toPercent(
+      node.count_consumed_responses,
+      node.count_queries
+    );
+    node.successRateRank = toRateRank(
+      node.count_consumed_responses,
+      node.count_queries
+    );
+    node.countQueries = toNumberWithUnit(node.count_queries);
+    node.countResponses = toNumberWithUnit(node.count_consumed_responses);
+    node.countFallbacks = toNumberWithUnit(node.count_fallbacks);
+    node.publishedResponses = toNumberWithUnit(node.count_published_responses);
+    node.throughputQueries = toThroughputPerSecond(node.throughput_queries);
+    node.throughputResponses = toThroughputPerSecond(node.throughput_responses);
+    node.avgThroughput = toThroughputPerSecond(node.avg_throughput);
+    node.avgLatency = toMillis(node.avg_latency);
+    node.minLatency = toMillis(node.min_latency);
+    node.maxLatency = toMillis(node.max_latency);
+    results.push(node);
+  }
+  return results;
+});
 </script>
+
+<style scoped>
+table {
+  text-align: left;
+}
+</style>
