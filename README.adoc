@@ -109,16 +109,11 @@ provided in Spring Boot. Therefore, there needs to be a living relationship
 between the generational release versions of Spring Boot and this project.
 
 We will build and tag an initial version `0.9.x` as a _preliminary_ working
-version of Query/Response. This version is tracked in 3 branches, as well as
-the `main` branch.
+version of Query/Response. This version is tracked in branches supporting the
+active Spring Boot versions, as well as the `main` branch.
 
 * `main`              -> Spring Boot 2.6.x
 * `spring-boot-2.5.x` -> Spring Boot 2.5.x
-* `spring-boot-2.4.x` -> Spring Boot 2.4.x
-* `spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
-* `spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
-* `spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
-* `spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
 
 From each branch there will be tagged releases, denoting the version of Spring
 Boot that it is built against. For example `0.9.0-SB2_3_6` means it was built
@@ -127,6 +122,18 @@ with the Spring Boot `2.3.6.RELEASE` dependency.
 There will be no other minor version increment under the initial major version
 `0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
 for an upcoming `1.0.0` version.
+
+=== No longer active
+
+The following branches and versions are no longer actively supported or
+back-ported to. The intent is to never linger behind the list of active Spring
+Boot versions.
+
+* `spring-boot-2.4.x` -> Spring Boot 2.4.x
+* `spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
+* `spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
+* `spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
+* `spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
 
 Happy coding!
 
