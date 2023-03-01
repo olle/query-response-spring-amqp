@@ -45,9 +45,9 @@ public interface Logging {
     default void logPublished(String type, String routingKey, Message message) {
 
         if (log().isTraceEnabled()) {
-        	log().trace("|<-- Published {}: {} - {}", type, routingKey, message);
+        	log().debug("|<-- Published {}: {} - {}", type, routingKey, message);
         } else {
-            log().debug("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
+            log().info("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
         }
     }
 

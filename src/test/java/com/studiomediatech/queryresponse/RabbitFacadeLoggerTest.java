@@ -35,7 +35,7 @@ class RabbitFacadeLoggerTest {
     @Test
     void ensureDebugLoggingFormattedWithFullMessage() {
 
-        when(log.isDebugEnabled()).thenReturn(true);
+        when(log.isTraceEnabled()).thenReturn(true);
 
         LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
 
@@ -52,7 +52,7 @@ class RabbitFacadeLoggerTest {
     @Test
     void ensureInfoLoggingFormattedWithCustomStringWithoutBodyJson() throws Exception {
 
-        when(log.isDebugEnabled()).thenReturn(false);
+        when(log.isTraceEnabled()).thenReturn(false);
 
         LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
 
