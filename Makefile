@@ -1,4 +1,4 @@
-JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 1.8)
+JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 17)
 
 .PHONY: verify
 verify:
