@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.mockito.Mockito.verify;
 
-
 @ExtendWith(MockitoExtension.class)
 class QueryRegistryTest {
 
@@ -28,13 +27,11 @@ class QueryRegistryTest {
     @Test
     void ensureThrowsOnMissingBean() {
 
-        assertThrows(IllegalStateException.class,
-            () -> {
-                QueryRegistry.instance = () -> null;
-                QueryRegistry.register(new ChainingQueryBuilder<>("foobar", String.class));
-            });
+        assertThrows(IllegalStateException.class, () -> {
+            QueryRegistry.instance = () -> null;
+            QueryRegistry.register(new ChainingQueryBuilder<>("foobar", String.class));
+        });
     }
-
 
     @SuppressWarnings("static-access")
     @Test
@@ -50,7 +47,6 @@ class QueryRegistryTest {
 
         QueryRegistry.instance = () -> null;
     }
-
 
     @Test
     void ensureAcceptQueries() {

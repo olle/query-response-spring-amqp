@@ -22,14 +22,13 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-
 /**
  * Provides an abstraction between the use of RabbitMQ and the capabilities in Spring Boot AMQP, and the structured
  * registry code in this library.
  */
 class RabbitFacade implements Logging {
 
-	public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
+    public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
 
     private final RabbitAdmin admin;
     private final ConnectionFactory connectionFactory;
@@ -41,7 +40,7 @@ class RabbitFacade implements Logging {
     protected final Map<String, DirectMessageListenerContainer> containers = new ConcurrentHashMap<>();
 
     public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, ConnectionFactory connectionFactory,
-        TopicExchange queriesExchange, GenericApplicationContext ctx) {
+            TopicExchange queriesExchange, GenericApplicationContext ctx) {
 
         this.admin = admin;
         this.template = template;
@@ -55,12 +54,10 @@ class RabbitFacade implements Logging {
         declareAndRegisterQueue(response::getQueueName);
     }
 
-
     public void declareQueue(Query<?> query) {
 
         declareAndRegisterQueue(query::getQueueName);
     }
-
 
     private void declareAndRegisterQueue(NamingStrategy name) {
 
@@ -68,7 +65,6 @@ class RabbitFacade implements Logging {
         admin.declareQueue(queue);
         ctx.registerBean(queue.getActualName(), AnonymousQueue.class, () -> queue);
     }
-
 
     public void declareBinding(Response<?> response) {
 
@@ -78,15 +74,13 @@ class RabbitFacade implements Logging {
         declareAndRegisterBinding(queueName, routingKey);
     }
 
-
     private void declareAndRegisterBinding(String queueName, String routingKey) {
 
-        Binding binding = log(new Binding(queueName, DestinationType.QUEUE, queriesExchange.getName(), routingKey,
-                    null));
+        Binding binding = log(
+                new Binding(queueName, DestinationType.QUEUE, queriesExchange.getName(), routingKey, null));
         admin.declareBinding(binding);
         ctx.registerBean(queueName + "-binding", Binding.class, () -> binding);
     }
-
 
     private DirectMessageListenerContainer createNewListenerContainer() {
 
@@ -100,30 +94,25 @@ class RabbitFacade implements Logging {
         return container;
     }
 
-
     public void addListener(Response<?> response) {
 
         createMessageListenerContainer(response, response.getQueueName());
     }
-
 
     public void addListener(Query<?> query) {
 
         createMessageListenerContainer(query, query.getQueueName());
     }
 
-
     public void removeListener(Query<?> query) {
 
         doRemoveListener(query.getQueueName());
     }
 
-
     public void removeListener(Response<?> response) {
 
         doRemoveListener(response.getQueueName());
     }
-
 
     private void doRemoveListener(String queueName) {
 
@@ -135,47 +124,44 @@ class RabbitFacade implements Logging {
         }
     }
 
-
     private DirectMessageListenerContainer createMessageListenerContainer(MessageListener listener, String queueName) {
 
-        return containers.computeIfAbsent(queueName,
-                key -> {
-                    DirectMessageListenerContainer container = createNewListenerContainer();
+        return containers.computeIfAbsent(queueName, key -> {
+            DirectMessageListenerContainer container = createNewListenerContainer();
 
-                    container.addQueueNames(key);
-                    container.setMessageListener(listener);
-                    container.start();
+            container.addQueueNames(key);
+            container.setMessageListener(listener);
+            container.start();
 
-                    return container;
-                });
+            return container;
+        });
     }
-
 
     public void removeQueue(Query<?> query) {
 
         doRemoveQueue(query.getQueueName());
     }
 
-
     public void removeQueue(Response<?> response) {
 
         doRemoveQueue(response.getQueueName());
     }
-
 
     private void doRemoveQueue(String queueName) {
 
         admin.deleteQueue(queueName);
     }
 
-
     /**
      * Publishes a query to the Query/Response exchange, with the given routing key and message.
      *
-     * @param  routingKey  query, or query-term to publish
-     * @param  message  to publish
+     * @param routingKey
+     *            query, or query-term to publish
+     * @param message
+     *            to publish
      *
-     * @throws  RuntimeException  if publishing failed
+     * @throws RuntimeException
+     *             if publishing failed
      */
     public void publishQuery(String routingKey, Message message) {
 
@@ -185,15 +171,19 @@ class RabbitFacade implements Logging {
         logPublished("query", routingKey, m);
     }
 
-
     /**
      * Publishes a response to the given exchange and routing key, with the provided response message.
      *
-     * <p>Any {@link RuntimeException} failures are caught, logged and ignored.</p>
+     * <p>
+     * Any {@link RuntimeException} failures are caught, logged and ignored.
+     * </p>
      *
-     * @param  exchange  address
-     * @param  routingKey  address
-     * @param  message  to publish
+     * @param exchange
+     *            address
+     * @param routingKey
+     *            address
+     * @param message
+     *            to publish
      */
     public void publishResponse(String exchange, String routingKey, Message message) {
 
@@ -207,20 +197,16 @@ class RabbitFacade implements Logging {
         }
     }
 
-
     private Message decorateMessage(Message message) {
 
-        return MessageBuilder.fromMessage(message)
-            .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
-            .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-            .setContentLength(message.getBody().length)
-            .setHeader(HEADER_X_QR_PUBLISHED, System.currentTimeMillis())
-            .build();
+        return MessageBuilder.fromMessage(message).setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
+                .setContentType(MessageProperties.CONTENT_TYPE_JSON).setContentLength(message.getBody().length)
+                .setHeader(HEADER_X_QR_PUBLISHED, System.currentTimeMillis()).build();
     }
 
-	protected void publishStats(Message message, String routingKey) {
+    protected void publishStats(Message message, String routingKey) {
 
-		this.template.send(queriesExchange.getName(), routingKey, decorateMessage(message));
-		logPublished("stats", routingKey, message);
-	}
+        this.template.send(queriesExchange.getName(), routingKey, decorateMessage(message));
+        logPublished("stats", routingKey, message);
+    }
 }

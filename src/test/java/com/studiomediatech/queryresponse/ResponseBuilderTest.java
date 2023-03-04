@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.Mockito.verify;
 
-
 @ExtendWith(MockitoExtension.class)
 class ResponseBuilderTest {
 
@@ -28,7 +27,6 @@ class ResponseBuilderTest {
         ChainingResponseBuilder<String> builder = sut.respondTo("foobar", String.class);
         assertThat(builder).isNotNull();
     }
-
 
     @Test
     void ensureUsesInjectedRegistry() {

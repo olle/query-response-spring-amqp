@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-
 /**
  * Represents a declared and registered response to some {@link Query query}, an active message listener.
  *
- * @param  <T>  type of the provided response elements.
+ * @param <T>
+ *            type of the provided response elements.
  */
 class Response<T> implements MessageListener, Logging {
 
@@ -51,7 +51,6 @@ class Response<T> implements MessageListener, Logging {
         this(routingKey, UUID.randomUUID().toString());
     }
 
-
     // Visible to tests
     protected Response(String routingKey, String queueName) {
 
@@ -64,7 +63,6 @@ class Response<T> implements MessageListener, Logging {
 
         return "Response [query='" + routingKey + "', queue=" + queueName + "]";
     }
-
 
     @Override
     public void onMessage(Message message) {
@@ -89,8 +87,7 @@ class Response<T> implements MessageListener, Logging {
 
                 Message responseMessage = MessageBuilder.withBody(body)
                         .setContentEncoding(StandardCharsets.UTF_8.name())
-                        .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                        .build();
+                        .setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
 
                 Address replyToAddress = properties.getReplyToAddress();
                 String exchangeName = replyToAddress.getExchangeName();
@@ -104,7 +101,6 @@ class Response<T> implements MessageListener, Logging {
         }
     }
 
-
     private void measureLatency(Long published, Long now) {
 
         if (stats != null) {
@@ -112,14 +108,12 @@ class Response<T> implements MessageListener, Logging {
         }
     }
 
-
     private void incrementPublishedResponseCounterStats() {
 
         if (stats != null) {
             stats.incrementPublishedResponsesCounter();
         }
     }
-
 
     private List<Response<T>.PublishedResponseEnvelope<T>> buildResponses() {
 
@@ -148,7 +142,6 @@ class Response<T> implements MessageListener, Logging {
         return responses;
     }
 
-
     private Response<T>.PublishedResponseEnvelope<T> buildResponse() {
 
         PublishedResponseEnvelope<T> response = new PublishedResponseEnvelope<T>();
@@ -158,7 +151,6 @@ class Response<T> implements MessageListener, Logging {
 
         return response;
     }
-
 
     static <T> Response<T> from(ChainingResponseBuilder<T> responses, QueryResponseConfigurationProperties props) {
 
@@ -172,19 +164,16 @@ class Response<T> implements MessageListener, Logging {
         return response;
     }
 
-
     public void accept(RabbitFacade facade, Statistics stats) {
 
         this.facade = facade;
         this.stats = stats;
     }
 
-
     public String getQueueName() {
 
         return this.queueName;
     }
-
 
     public String getRoutingKey() {
 

@@ -13,87 +13,87 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 @RabbitAvailable
 class QueryResponseConfigurationTest {
 
-	ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(QueryResponseConfiguration.class, RabbitAutoConfiguration.class));
+    ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(QueryResponseConfiguration.class, RabbitAutoConfiguration.class));
 
-	@Test
-	void ensureProvidesQueryBuilderBean() throws Exception {
+    @Test
+    void ensureProvidesQueryBuilderBean() throws Exception {
 
-		contextRunner.run(ctx -> {
-			assertThat(ctx.getBean(QueryBuilder.class)).isNotNull();
-			assertThat(ctx.getBean("queryBuilder")).isNotNull();
-		});
-	}
+        contextRunner.run(ctx -> {
+            assertThat(ctx.getBean(QueryBuilder.class)).isNotNull();
+            assertThat(ctx.getBean("queryBuilder")).isNotNull();
+        });
+    }
 
-	@Test
-	void ensureProvidesResponseBuilderBean() throws Exception {
+    @Test
+    void ensureProvidesResponseBuilderBean() throws Exception {
 
-		contextRunner.run(ctx -> {
-			assertThat(ctx.getBean(ResponseBuilder.class)).isNotNull();
-			assertThat(ctx.getBean("responseBuilder")).isNotNull();
-		});
-	}
+        contextRunner.run(ctx -> {
+            assertThat(ctx.getBean(ResponseBuilder.class)).isNotNull();
+            assertThat(ctx.getBean("responseBuilder")).isNotNull();
+        });
+    }
 
-	@Test
-	void ensureConfiguresRabbitFacade() throws Exception {
+    @Test
+    void ensureConfiguresRabbitFacade() throws Exception {
 
-		contextRunner.run(ctx -> assertThat(ctx.getBean(RabbitFacade.class)).isNotNull());
-	}
+        contextRunner.run(ctx -> assertThat(ctx.getBean(RabbitFacade.class)).isNotNull());
+    }
 
-	@Test
-	@DisplayName("query registry bean is created")
-	void ensureConfiguresQueryRegistry() {
+    @Test
+    @DisplayName("query registry bean is created")
+    void ensureConfiguresQueryRegistry() {
 
-		contextRunner.run(ctx -> assertThat(ctx.getBean(QueryRegistry.class)).isNotNull());
-	}
+        contextRunner.run(ctx -> assertThat(ctx.getBean(QueryRegistry.class)).isNotNull());
+    }
 
-	@Test
-	@DisplayName("query registry bean is provided as instance")
-	void ensureConfiguresQueryRegistryAndSelfInjects() {
+    @Test
+    @DisplayName("query registry bean is provided as instance")
+    void ensureConfiguresQueryRegistryAndSelfInjects() {
 
-		contextRunner.run(ctx -> {
-			QueryRegistry bean = ctx.getBean(QueryRegistry.class);
+        contextRunner.run(ctx -> {
+            QueryRegistry bean = ctx.getBean(QueryRegistry.class);
 
-			assertThat(bean).isNotNull();
-			assertThat(QueryRegistry.instance.get()).isEqualTo(bean);
-		});
-	}
+            assertThat(bean).isNotNull();
+            assertThat(QueryRegistry.instance.get()).isEqualTo(bean);
+        });
+    }
 
-	@Test
-	@DisplayName("response registry bean is created")
-	void ensureConfiguresResponseRegistry() {
+    @Test
+    @DisplayName("response registry bean is created")
+    void ensureConfiguresResponseRegistry() {
 
-		contextRunner.run(ctx -> assertThat(ctx.getBean(ResponseRegistry.class)).isNotNull());
-	}
+        contextRunner.run(ctx -> assertThat(ctx.getBean(ResponseRegistry.class)).isNotNull());
+    }
 
-	@Test
-	@DisplayName("response registry bean is provided as instance")
-	void ensureConfiguresResponseRegistryAndSelfInjects() {
+    @Test
+    @DisplayName("response registry bean is provided as instance")
+    void ensureConfiguresResponseRegistryAndSelfInjects() {
 
-		contextRunner.run(ctx -> {
-			ResponseRegistry bean = ctx.getBean(ResponseRegistry.class);
+        contextRunner.run(ctx -> {
+            ResponseRegistry bean = ctx.getBean(ResponseRegistry.class);
 
-			assertThat(bean).isNotNull();
-			assertThat(ResponseRegistry.instance.get()).isEqualTo(bean);
-		});
-	}
+            assertThat(bean).isNotNull();
+            assertThat(ResponseRegistry.instance.get()).isEqualTo(bean);
+        });
+    }
 
-	@Test
-	@DisplayName("a statistics component bean is wired by the configuration")
-	void ensureWiresStatisticsComponent() throws Exception {
+    @Test
+    @DisplayName("a statistics component bean is wired by the configuration")
+    void ensureWiresStatisticsComponent() throws Exception {
 
-		contextRunner.run(ctx -> assertThat(ctx.getBean(Statistics.class)).isNotNull());
-	}
+        contextRunner.run(ctx -> assertThat(ctx.getBean(Statistics.class)).isNotNull());
+    }
 
-	@Test
-	void ensureQueryResponseTopicExchangeBeanIsNonDurableAndAutoDelete() throws Exception {
+    @Test
+    void ensureQueryResponseTopicExchangeBeanIsNonDurableAndAutoDelete() throws Exception {
 
-		QueryResponseConfiguration sut = new QueryResponseConfiguration(new QueryResponseConfigurationProperties());
+        QueryResponseConfiguration sut = new QueryResponseConfiguration(new QueryResponseConfigurationProperties());
 
-		TopicExchange exchange = sut.queryResponseTopicExchange();
+        TopicExchange exchange = sut.queryResponseTopicExchange();
 
-		assertThat(exchange.getName()).isEqualTo("query-response");
-		assertThat(exchange.isDurable()).isFalse();
-		assertThat(exchange.isAutoDelete()).isTrue();
-	}
+        assertThat(exchange.getName()).isEqualTo("query-response");
+        assertThat(exchange.isDurable()).isFalse();
+        assertThat(exchange.isAutoDelete()).isTrue();
+    }
 }

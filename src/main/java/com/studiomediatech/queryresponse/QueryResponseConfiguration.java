@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.SchedulingConfiguration;
 
 import com.studiomediatech.queryresponse.util.Logging;
 
-
 /**
  * Configures the required components for a Query/Response client, ensuring the availability of the necessary AMQP
  * resources as well as a {@link QueryRegistry} and a {@link ResponseRegistry}.
@@ -45,14 +44,12 @@ class QueryResponseConfiguration implements Logging {
         return new QueryBuilder(registry);
     }
 
-
     @Bean
     @ConditionalOnMissingBean
     public ResponseBuilder responseBuilder(ResponseRegistry registry) {
 
         return new ResponseBuilder(registry);
     }
-
 
     @Bean
     @ConditionalOnMissingBean
@@ -61,16 +58,14 @@ class QueryResponseConfiguration implements Logging {
         return new RabbitAdmin(connectionFactory);
     }
 
-
     @Bean
     RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, ConnectionFactory connectionFactory,
-        TopicExchange queriesExchange, GenericApplicationContext ctx) {
+            TopicExchange queriesExchange, GenericApplicationContext ctx) {
 
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 
         return new RabbitFacade(rabbitAdmin, rabbitTemplate, connectionFactory, queriesExchange, ctx);
     }
-
 
     @Bean
     QueryResponseTopicExchange queryResponseTopicExchange() {
@@ -78,20 +73,17 @@ class QueryResponseConfiguration implements Logging {
         return log(new QueryResponseTopicExchange(props.getExchange().getName()));
     }
 
-
     @Bean
     Statistics statistics(Environment env, ApplicationContext ctx, RabbitFacade facade) {
 
         return new Statistics(env, ctx, facade, props);
     }
 
-
     @Bean
     ResponseRegistry responseRegistry(RabbitFacade facade, Statistics stats) {
 
         return new ResponseRegistry(facade, stats, props);
     }
-
 
     @Bean
     QueryRegistry queryRegistry(RabbitFacade facade, Statistics stats) {

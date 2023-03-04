@@ -8,14 +8,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * Enables support for Query/Response with AMQP or RabbitMQ as the shared broker. Configures all the required
- * components for a Query/Response client, ensuring the necessary AMQP resources are declared, as well as a
- * initializing the {@link QueryRegistry} and a {@link ResponseRegistry} beans.
+ * Enables support for Query/Response with AMQP or RabbitMQ as the shared broker. Configures all the required components
+ * for a Query/Response client, ensuring the necessary AMQP resources are declared, as well as a initializing the
+ * {@link QueryRegistry} and a {@link ResponseRegistry} beans.
  *
- * <p>Easy to use on Spring and Spring Boot applications, simply by adding it in the application starter class like
- * this:</p>
+ * <p>
+ * Easy to use on Spring and Spring Boot applications, simply by adding it in the application starter class like this:
+ * </p>
  *
  * <pre>
 {@literal @}SpringBootApplication

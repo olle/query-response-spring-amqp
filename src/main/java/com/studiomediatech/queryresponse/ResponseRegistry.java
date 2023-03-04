@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.util.function.Supplier;
 
-
 /**
  * Provides a way to create and register responses.
  */
@@ -35,7 +34,6 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
         ResponseRegistry.instance = () -> applicationContext.getBean(getClass());
     }
 
-
     public static <T> void register(ChainingResponseBuilder<T> responses) {
 
         ResponseRegistry registry = instance.get();
@@ -47,12 +45,10 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
         registry.accept(responses);
     }
 
-
     <T> void accept(ChainingResponseBuilder<T> responses) {
 
         doAccept(Response.from(responses, props));
     }
-
 
     protected <T> void doAccept(Response<T> response) {
 

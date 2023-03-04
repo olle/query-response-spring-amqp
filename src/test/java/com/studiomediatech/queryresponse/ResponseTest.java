@@ -21,7 +21,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 
-
 @ExtendWith(MockitoExtension.class)
 class ResponseTest {
 
@@ -36,43 +35,38 @@ class ResponseTest {
     ArgumentCaptor<Message> message;
 
     @Test
-	void ensureGeneratesQueueNameIfNotProvided() throws Exception {
-    	
-    	Response<?> r1 = new Response<>("some-routing-key");
-    	assertThat(r1.getQueueName()).isNotEmpty();
-    	Response<?> r2 = new Response<>("some-routing-key", "static-queue-name");
-    	assertThat(r2.getQueueName()).isEqualTo("static-queue-name");
-    	
-	}
-    
+    void ensureGeneratesQueueNameIfNotProvided() throws Exception {
+
+        Response<?> r1 = new Response<>("some-routing-key");
+        assertThat(r1.getQueueName()).isNotEmpty();
+        Response<?> r2 = new Response<>("some-routing-key", "static-queue-name");
+        assertThat(r2.getQueueName()).isEqualTo("static-queue-name");
+
+    }
 
     @Test
-	void testName() throws Exception {
-		
+    void testName() throws Exception {
+
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withAll()
-            .from("foo", "bar", "baz");
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withAll()
+                .from("foo", "bar", "baz");
 
         Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);
 
-    	assertThat(sut.getQueueName()).startsWith("query-response-");
-    	assertThat(sut.getRoutingKey()).isEqualTo("some-query");
-	}
-    
+        assertThat(sut.getQueueName()).startsWith("query-response-");
+        assertThat(sut.getRoutingKey()).isEqualTo("some-query");
+    }
+
     @Test
     @DisplayName("after consuming a query message, a response is published")
     void ensurePublishesResponseOnConsumedQueryMessage() throws JSONException {
 
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withAll()
-            .from("foo", "bar", "baz");
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withAll()
+                .from("foo", "bar", "baz");
 
         Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);
@@ -88,17 +82,14 @@ class ResponseTest {
         JSONAssert.assertEquals(new String(m.getBody()), "{elements: ['foo', 'bar', 'baz']}", true);
     }
 
-
     @Test
     @DisplayName("response is built from iterator after a query message is consumed")
     void ensureCallsElementsIteratorAfterQueryConsumed() throws Exception {
 
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withAll()
-            .from(() -> Arrays.asList("foo", "bar").iterator());
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withAll()
+                .from(() -> Arrays.asList("foo", "bar").iterator());
 
         Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);
@@ -114,17 +105,14 @@ class ResponseTest {
         JSONAssert.assertEquals(new String(m.getBody()), "{elements: ['foo', 'bar']}", true);
     }
 
-
     @Test
     @DisplayName("responses are published as batches of a given size, plus leftover")
     void ensurePublishedBatchResponses() throws Exception {
 
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withBatchesOf(2)
-            .from("foo", "bar", "baz", "goo", "gar");
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withBatchesOf(2)
+                .from("foo", "bar", "baz", "goo", "gar");
 
         Response<String> sut = Response.from(capture.get(), props);
         sut.accept(facade, stats);

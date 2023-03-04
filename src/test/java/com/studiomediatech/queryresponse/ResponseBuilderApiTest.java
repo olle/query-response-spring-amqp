@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 
-
 public class ResponseBuilderApiTest {
 
     @Test
@@ -21,17 +20,14 @@ public class ResponseBuilderApiTest {
 
         // EXAMPLES --------
 
-        ChainingResponseBuilder.respondTo("authors", String.class)
-            .withAll()
-            .from("William Gibson", "Isaac Asimov", "J.R.R. Tolkien");
+        ChainingResponseBuilder.respondTo("authors", String.class).withAll().from("William Gibson", "Isaac Asimov",
+                "J.R.R. Tolkien");
 
-        ChainingResponseBuilder.respondTo("offers/monday", Offer.class)
-            .withBatchesOf(20)
-            .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+        ChainingResponseBuilder.respondTo("offers/monday", Offer.class).withBatchesOf(20)
+                .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 
-        ChainingResponseBuilder.respondTo("users/current", Token.class)
-            .withBatchesOf(256)
-            .suppliedBy(userTokenService::findAllCurrentUserTokens);
+        ChainingResponseBuilder.respondTo("users/current", Token.class).withBatchesOf(256)
+                .suppliedBy(userTokenService::findAllCurrentUserTokens);
 
         // CLEANUP --------
 

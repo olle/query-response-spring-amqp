@@ -3,7 +3,7 @@ package com.studiomediatech.queryresponse.util;
 import java.time.Duration;
 
 /**
- * Provides utilities to format a {@link Duration java duration} as a human readable string. 
+ * Provides utilities to format a {@link Duration java duration} as a human readable string.
  */
 public final class DurationFormatter {
 
@@ -20,11 +20,12 @@ public final class DurationFormatter {
     }
 
     /**
-     * Formats the given duration as a rounded human readable string. 
-     * 
-     * @param duration to format
-     * 
-     * @return a string representation of the duration, never {@code null} 
+     * Formats the given duration as a rounded human readable string.
+     *
+     * @param duration
+     *            to format
+     *
+     * @return a string representation of the duration, never {@code null}
      */
     public static String format(Duration duration) {
 
@@ -67,7 +68,6 @@ public final class DurationFormatter {
         return (years < 2 ? "1 year" : years + " years") + daysUnlessZero(duration);
     }
 
-
     private static String minutesUnlessZero(Duration duration) {
 
         int minutes = (int) (duration.toMinutes() % MINUTES_PER_HOUR);
@@ -75,14 +75,12 @@ public final class DurationFormatter {
         return minutes != 0 ? " " + minutes + "min" : "";
     }
 
-
     private static String hoursUnlessZero(Duration duration) {
 
         int hours = (int) (duration.toHours() % HOURS_PER_DAY);
 
         return hours != 0 ? " " + hours + "h" : "";
     }
-
 
     private static String daysUnlessZero(Duration duration) {
 

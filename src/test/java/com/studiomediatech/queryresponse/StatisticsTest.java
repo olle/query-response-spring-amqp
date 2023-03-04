@@ -14,7 +14,6 @@ import org.springframework.mock.env.MockEnvironment;
 
 import com.studiomediatech.queryresponse.Statistics.Stat;
 
-
 @ExtendWith(MockitoExtension.class)
 class StatisticsTest {
 
@@ -23,15 +22,14 @@ class StatisticsTest {
 
     @Mock
     ResponseRegistry registry;
-    
+
     @Mock
     RabbitFacade facade;
 
     @Captor
     ArgumentCaptor<ChainingResponseBuilder<?>> responses;
-    
+
     private QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
-    
 
     @Test
     void ensureMetaWithPublishingOnlyStatus() throws Exception {
@@ -55,7 +53,6 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureMetaWithPidPartOfStats() throws Exception {
 
@@ -73,7 +70,6 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> null;
     }
-
 
     @Test
     void ensureMetaWithNamePartOfStats() throws Exception {
@@ -93,7 +89,6 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureMetaWithHostPartOfStats() throws Exception {
 
@@ -111,7 +106,6 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> null;
     }
-
 
     @Test
     void ensureMetaWithUptimePartOfStats() throws Exception {
@@ -131,7 +125,6 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureQueriesCountPartOfStats() throws Exception {
 
@@ -142,8 +135,8 @@ class StatisticsTest {
 
         String stat = "count_queries";
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(0L);
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value).findFirst().get())
+                .isEqualTo(0L);
 
         sut.incrementPublishedQueriesCounter();
         sut.incrementPublishedQueriesCounter();
@@ -155,7 +148,6 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> null;
     }
-
 
     @Test
     void ensureConsumedResponsesCountPartOfStats() throws Exception {
@@ -167,8 +159,8 @@ class StatisticsTest {
 
         String stat = "count_consumed_responses";
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(0L);
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value).findFirst().get())
+                .isEqualTo(0L);
 
         sut.incrementConsumedResponsesCounter();
         sut.incrementConsumedResponsesCounter();
@@ -180,7 +172,6 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> null;
     }
-
 
     @Test
     void ensurePublishedResponsesCountPartOfStats() throws Exception {
@@ -192,8 +183,8 @@ class StatisticsTest {
 
         String stat = "count_published_responses";
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(0L);
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value).findFirst().get())
+                .isEqualTo(0L);
 
         sut.incrementPublishedResponsesCounter();
         sut.incrementPublishedResponsesCounter();
@@ -206,7 +197,6 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureQueriesThroughputPartOfStats() throws Exception {
 
@@ -217,8 +207,8 @@ class StatisticsTest {
 
         String stat = "throughput_queries";
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(0L);
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value).findFirst().get())
+                .isEqualTo(0L);
 
         sut.incrementPublishedQueriesCounter();
         sut.incrementPublishedQueriesCounter();
@@ -232,7 +222,6 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureResponsesThroughputPartOfStats() throws Exception {
 
@@ -243,8 +232,8 @@ class StatisticsTest {
 
         String stat = "throughput_responses";
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(0L);
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value).findFirst().get())
+                .isEqualTo(0L);
 
         sut.incrementPublishedResponsesCounter();
         sut.incrementPublishedResponsesCounter();
@@ -259,7 +248,6 @@ class StatisticsTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureFallbacksCountPartOfStats() throws Exception {
 
@@ -270,8 +258,8 @@ class StatisticsTest {
 
         String stat = "count_fallbacks";
 
-        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value)
-            .findFirst().get()).isEqualTo(0L);
+        assertThat(sut.getStats().stream().filter(s -> stat.equals(s.key)).map(s -> (long) s.value).findFirst().get())
+                .isEqualTo(0L);
 
         sut.incrementFallbacksCounter();
         sut.incrementFallbacksCounter();
@@ -283,7 +271,6 @@ class StatisticsTest {
 
         ResponseRegistry.instance = () -> null;
     }
-
 
     @Test
     void ensureMeasuresAndRetainsLatencyStatisticsInBoundedCollection() throws Exception {
@@ -335,7 +322,6 @@ class StatisticsTest {
         assertThat(sut.getAvgLatency()).isEqualTo(100.0, within(1.0));
     }
 
-
     @Test
     void ensureCanHaveStatWithOrWithoutTimestampAndUUID() throws Exception {
 
@@ -345,7 +331,6 @@ class StatisticsTest {
         assertThat(s1.timestamp).isNull();
         assertThat(s2.timestamp).isNotNull();
     }
-
 
     @Test
     void ensurePrettyToStringForStats() throws Exception {

@@ -5,14 +5,16 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-
 /**
  * Providing the entry-point to the fluid builder for responses, through the {@link #respondTo(String, Class)} method.
  *
- * <p>Building a response instance will start a long running query consumer which will respond to any matching queries,
- * for as long as the service is running.</p>
+ * <p>
+ * Building a response instance will start a long running query consumer which will respond to any matching queries, for
+ * as long as the service is running.
+ * </p>
  *
- * @param  <T>  the type of response entries or elements.
+ * @param <T>
+ *            the type of response entries or elements.
  */
 public class ChainingResponseBuilder<T> {
 
@@ -44,11 +46,14 @@ public class ChainingResponseBuilder<T> {
     /**
      * Constructs a response builder, with the given term to respond to.
      *
-     * <p>NOTE: This is the only available constructor for a response builder. It is desirable to only provide the
-     * builder API, also for use in testing. Developers can use the {@link #withSink(Consumer)} method, to capture the
-     * builder, and avoid the call to the registry.</p>
+     * <p>
+     * NOTE: This is the only available constructor for a response builder. It is desirable to only provide the builder
+     * API, also for use in testing. Developers can use the {@link #withSink(Consumer)} method, to capture the builder,
+     * and avoid the call to the registry.
+     * </p>
      *
-     * @param  term  to respond to
+     * @param term
+     *            to respond to
      */
     private ChainingResponseBuilder(String term, Class<T> type) {
 
@@ -60,11 +65,10 @@ public class ChainingResponseBuilder<T> {
         return new ChainingResponseBuilder<>(term, type);
     }
 
-
     /**
      * Sets the batching of this builder, to use response entries at once.
      *
-     * @return  the response builder, for chaining further calls
+     * @return the response builder, for chaining further calls
      */
     public ChainingResponseBuilder<T> withAll() {
 
@@ -73,13 +77,13 @@ public class ChainingResponseBuilder<T> {
         return this;
     }
 
-
     /**
      * Sets the batching size to be used for responses to the given size.
      *
-     * @param  size  of each response message, the number of response elements to send in one response
+     * @param size
+     *            of each response message, the number of response elements to send in one response
      *
-     * @return  the response builder, for chaining further calls
+     * @return the response builder, for chaining further calls
      */
     public ChainingResponseBuilder<T> withBatchesOf(int size) {
 
@@ -88,11 +92,11 @@ public class ChainingResponseBuilder<T> {
         return this;
     }
 
-
     /**
      * Sets the provided varargs of elements, to be used in published responses.
      *
-     * @param  elements  the response elements
+     * @param elements
+     *            the response elements
      */
     @SuppressWarnings("unchecked")
     @SafeVarargs
@@ -111,11 +115,11 @@ public class ChainingResponseBuilder<T> {
         register();
     }
 
-
     /**
      * Sets the provided collection of elements, to be used in published responses.
      *
-     * @param  elements  the response elements collection
+     * @param elements
+     *            the response elements collection
      */
     public void from(Collection<T> elements) {
 
@@ -126,18 +130,22 @@ public class ChainingResponseBuilder<T> {
         register();
     }
 
-
     /**
      * Sets the supplier for an iterator, that can provide elements to be used in published responses.
      *
-     * <p>The supplied iterator will be used with respect to the contract of {@link Iterator#hasNext()} and
+     * <p>
+     * The supplied iterator will be used with respect to the contract of {@link Iterator#hasNext()} and
      * {@link Iterator#next()}, typically only to ensure that batches can be produced, and that the end of the supplied
-     * elements can be reached.</p>
+     * elements can be reached.
+     * </p>
      *
-     * <p>Please note that memory or resource use, is not specifically covered by this interface. At run-time, a
-     * request to supply the iterator, may cause great stress on resource use.</p>
+     * <p>
+     * Please note that memory or resource use, is not specifically covered by this interface. At run-time, a request to
+     * supply the iterator, may cause great stress on resource use.
+     * </p>
      *
-     * @param  elements  supplier of an iterator
+     * @param elements
+     *            supplier of an iterator
      */
     public void from(Supplier<Iterator<T>> elements) {
 
@@ -146,14 +154,16 @@ public class ChainingResponseBuilder<T> {
         register();
     }
 
-
     /**
      * Sets the supplier for a collection, that can provide elements to be used in published responses.
      *
-     * <p>Please note that memory or resource use, is not at all covered by this interface. At run-time, a request to
-     * supply the elements collection, could potentially cause great stress on resource use.</p>
+     * <p>
+     * Please note that memory or resource use, is not at all covered by this interface. At run-time, a request to
+     * supply the elements collection, could potentially cause great stress on resource use.
+     * </p>
      *
-     * @param  elements  supplier of a collection
+     * @param elements
+     *            supplier of a collection
      */
     public void suppliedBy(Supplier<Collection<T>> elements) {
 
@@ -162,51 +172,46 @@ public class ChainingResponseBuilder<T> {
         register();
     }
 
-
     private void register() {
 
         sink.accept(this);
     }
-
 
     String getRespondToTerm() {
 
         return this.respondToTerm;
     }
 
-
     int getBatchSize() {
 
         return this.batchSize;
     }
-
 
     Supplier<Iterator<T>> elements() {
 
         return this.elements;
     }
 
-
     /**
      * Replaces the current sink for this builder, effectively removing the {@link ResponseRegistry registry} and
      * instead making the terminal operation to apply the builder on the given sink. For example:
      *
      * <pre>
-        AtomicReference&lt;ResponseBuilder&lt;String&gt;&gt; capture = new AtomicReference&lt;&gt;(null);
-
-        ResponseBuilder.respondTo("foobar")
-            .withSink(capture::set)
-            .withAll()
-            .from("hello", "world!");
-
-        assertThat(capture.get()).isNotNull();
+     * AtomicReference&lt;ResponseBuilder&lt;String&gt;&gt; capture = new AtomicReference&lt;&gt;(null);
+     *
+     * ResponseBuilder.respondTo("foobar").withSink(capture::set).withAll().from("hello", "world!");
+     *
+     * assertThat(capture.get()).isNotNull();
      * </pre>
      *
-     * <p>This method is protected, in order to reduce visibility and only make it available to tests.</p>
+     * <p>
+     * This method is protected, in order to reduce visibility and only make it available to tests.
+     * </p>
      *
-     * @param  sink  to consume this builder, in the terminal operation call to any {@code from(...)} method.
+     * @param sink
+     *            to consume this builder, in the terminal operation call to any {@code from(...)} method.
      *
-     * @return  this builder, for chaining.
+     * @return this builder, for chaining.
      */
     protected ChainingResponseBuilder<T> withSink(Consumer<ChainingResponseBuilder<T>> sink) {
 
@@ -214,7 +219,6 @@ public class ChainingResponseBuilder<T> {
 
         return this;
     }
-
 
     ChainingResponseBuilder<T> withRegistry(ResponseRegistry responseRegistry) {
 

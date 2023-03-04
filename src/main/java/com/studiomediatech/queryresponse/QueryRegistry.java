@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationContextAware;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-
 /**
  * Provides a way to register and execute queries.
  */
@@ -36,20 +35,21 @@ class QueryRegistry implements ApplicationContextAware, Logging {
         QueryRegistry.instance = () -> applicationContext.getBean(QueryRegistry.class);
     }
 
-
     /**
      * Accepts a queries configuration (builder), ensuring that a {@link Query query} is created, initialized,
      * registered as a message listener and executed.
      *
-     * @param  <T>  the type of elements in the returned collection
-     * @param  queryBuilder  configuration to use when initializing the {@link Query query} to register
+     * @param <T>
+     *            the type of elements in the returned collection
+     * @param queryBuilder
+     *            configuration to use when initializing the {@link Query query} to register
      *
-     * @return  the collection of results from the executed query, which may be empty based on the configuration, but
-     *          it never returns {@code null}
+     * @return the collection of results from the executed query, which may be empty based on the configuration, but it
+     *         never returns {@code null}
      *
-     * @throws  Throwable  an optionally configured unchecked {@link Throwable exception} or an
-     *                     {@link IllegalStateException} if the query registry could not be resolved, at the time of
-     *                     the call.
+     * @throws Throwable
+     *             an optionally configured unchecked {@link Throwable exception} or an {@link IllegalStateException} if
+     *             the query registry could not be resolved, at the time of the call.
      */
     static <T> Collection<T> register(ChainingQueryBuilder<T> queryBuilder) {
 
@@ -62,12 +62,10 @@ class QueryRegistry implements ApplicationContextAware, Logging {
         return registry.accept(queryBuilder);
     }
 
-
     <T> Collection<T> accept(ChainingQueryBuilder<T> queryBuilder) throws RuntimeException {
 
         return doAccept(Query.from(queryBuilder, props));
     }
-
 
     protected <T> Collection<T> doAccept(Query<T> query) {
 

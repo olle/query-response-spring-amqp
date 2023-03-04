@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.Mockito.verify;
 
-
 @ExtendWith(MockitoExtension.class)
 class QueryBuilderTest {
 
@@ -28,7 +27,6 @@ class QueryBuilderTest {
         ChainingQueryBuilder<String> builder = sut.queryFor("foobar", String.class);
         assertThat(builder).isNotNull();
     }
-
 
     @Test
     void ensureUsesInjectedRegistry() {

@@ -27,12 +27,12 @@ import java.util.function.LongPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-
 /**
  * Represents an active published query, and the registered message listener for any responses, handling aggregation,
  * fallback, failure delegation and throwing, all depending on the configuration of this query.
  *
- * @param  <T>  expected type of the coerced result elements.
+ * @param <T>
+ *            expected type of the coerced result elements.
  */
 class Query<T> implements MessageListener, Logging {
 
@@ -45,9 +45,8 @@ class Query<T> implements MessageListener, Logging {
     private final String queueName;
 
     /*
-     * For the taking-at-most/least feature, the concurrent append from a
-     * consumer, would cause structural change to a list type collection, so we
-     * need to use a more more modern queue collection type.
+     * For the taking-at-most/least feature, the concurrent append from a consumer, would cause structural change to a
+     * list type collection, so we need to use a more more modern queue collection type.
      */
     protected ConcurrentLinkedQueue<T> elements;
 
@@ -61,9 +60,8 @@ class Query<T> implements MessageListener, Logging {
     protected Supplier<RuntimeException> orThrows;
 
     /*
-     * A protected boolean function, tested with an integer, and always
-     * returning false, by default. This enables testability, as it's protected
-     * and may compute other results.
+     * A protected boolean function, tested with an integer, and always returning false, by default. This enables
+     * testability, as it's protected and may compute other results.
      */
     protected LongPredicate fail = l -> false;
 
@@ -74,7 +72,6 @@ class Query<T> implements MessageListener, Logging {
 
         this(UUID.randomUUID().toString());
     }
-
 
     // Declared protected, for access in unit tests.
     protected Query(String queueName) {
@@ -92,7 +89,6 @@ class Query<T> implements MessageListener, Logging {
         handleResponseEnvelope(parseMessage(message));
     }
 
-
     private void measureLatency(Long published, Long now) {
 
         if (stats != null) {
@@ -100,12 +96,11 @@ class Query<T> implements MessageListener, Logging {
         }
     }
 
-
     private ConsumedResponseEnvelope<T> parseMessage(Message message) {
 
         try {
-            JavaType type = TypeFactory.defaultInstance()
-                    .constructParametricType(ConsumedResponseEnvelope.class, responseType);
+            JavaType type = TypeFactory.defaultInstance().constructParametricType(ConsumedResponseEnvelope.class,
+                    responseType);
             ConsumedResponseEnvelope<T> response = reader.forType(type).readValue(message.getBody());
             log().debug("Received response: {}", response);
 
@@ -122,7 +117,6 @@ class Query<T> implements MessageListener, Logging {
         return ConsumedResponseEnvelope.empty();
     }
 
-
     void handleResponseEnvelope(ConsumedResponseEnvelope<T> envelope) {
 
         if (envelope.elements.isEmpty()) {
@@ -133,7 +127,6 @@ class Query<T> implements MessageListener, Logging {
 
         elements.addAll(envelope.elements);
     }
-
 
     static <T> Query<T> from(ChainingQueryBuilder<T> queryBuilder, QueryResponseConfigurationProperties props) {
 
@@ -153,27 +146,27 @@ class Query<T> implements MessageListener, Logging {
         return query;
     }
 
-
     public String getQueueName() {
 
         return this.queueName;
     }
-
 
     /**
      * Accepts the RabbitMQ facade, in order to start the life-cycle, and publish this query to the broker. This method
      * always blocks on the calling thread, and the query configuration requires users (programmers) to <strong>
      * always</strong> declare a timeout.
      *
-     * @param  facade  to the broker methods, used for publishing, never {@code null}
-     * @param  stats  service, allows reporting of success or failure to queries and response.
+     * @param facade
+     *            to the broker methods, used for publishing, never {@code null}
+     * @param stats
+     *            service, allows reporting of success or failure to queries and response.
      *
-     * @return  the consumed response elements collection. May be empty, if the query was configured that way, but this
-     *          method call never returns {@code null}.
+     * @return the consumed response elements collection. May be empty, if the query was configured that way, but this
+     *         method call never returns {@code null}.
      *
-     * @throws  RuntimeException  if the query was configured that way. Please note that the internals of query
-     *                            publishing, and response consumption <strong>never throws</strong>. Exceptions or
-     *                            failures will be caught and logged.
+     * @throws RuntimeException
+     *             if the query was configured that way. Please note that the internals of query publishing, and
+     *             response consumption <strong>never throws</strong>. Exceptions or failures will be caught and logged.
      */
     public Collection<T> accept(RabbitFacade facade, Statistics stats) throws RuntimeException {
 
@@ -182,21 +175,19 @@ class Query<T> implements MessageListener, Logging {
         publishQuery(facade);
 
         /*
-         * In this iteration of the Query/Response library, we block on the
-         * calling thread. This is the most simple thing I could think of.
+         * In this iteration of the Query/Response library, we block on the calling thread. This is the most simple
+         * thing I could think of.
          */
         long wait = this.waitingFor.toMillis();
 
         /*
-         * We yield on the thread only to check if the consuming side, has
-         * filled up our collection. If we have to bail for other reasons, that
-         * could be added to this loop.
+         * We yield on the thread only to check if the consuming side, has filled up our collection. If we have to bail
+         * for other reasons, that could be added to this loop.
          */
         while (wait-- > 0) {
             /*
-             * Check the current aggregate. Shady thread safety on the elements
-             * collection, but we know it's append only and we pick out the
-             * sub-list even if overrun in size.
+             * Check the current aggregate. Shady thread safety on the elements collection, but we know it's append only
+             * and we pick out the sub-list even if overrun in size.
              */
             if (atMost > 0 && elements.size() >= atMost) {
                 stats.incrementConsumedResponsesCounter();
@@ -221,8 +212,7 @@ class Query<T> implements MessageListener, Logging {
                 Thread.currentThread().interrupt();
 
                 /*
-                 * If we're configured for it, we may throw an unchecked runtime
-                 * exception.
+                 * If we're configured for it, we may throw an unchecked runtime exception.
                  */
                 if (this.orThrows != null) {
                     stats.incrementFallbacksCounter();
@@ -241,8 +231,8 @@ class Query<T> implements MessageListener, Logging {
         boolean notEnoughResponses = atLeast > 0 && elements.size() < atLeast;
 
         /*
-         * Queries always either returns with the collected response elements,
-         * defaults or throws by configuration of the user.
+         * Queries always either returns with the collected response elements, defaults or throws by configuration of
+         * the user.
          */
         if (elements.isEmpty() || notEnoughResponses) {
             stats.incrementFallbacksCounter();
@@ -259,12 +249,11 @@ class Query<T> implements MessageListener, Logging {
         return elements;
     }
 
-
     private void publishQuery(RabbitFacade facade) {
 
         try {
             facade.publishQuery(this.queryTerm,
-                MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
+                    MessageBuilder.withBody("{}".getBytes()).setReplyTo(this.queueName).build());
             incrementPublishedQueriesCounterStats();
         } catch (RuntimeException ex) {
             if (this.onError != null) {
@@ -274,7 +263,6 @@ class Query<T> implements MessageListener, Logging {
             log().error("Failed to publish query message", ex);
         }
     }
-
 
     private void incrementPublishedQueriesCounterStats() {
 
@@ -293,7 +281,6 @@ class Query<T> implements MessageListener, Logging {
 
             return new ConsumedResponseEnvelope<>();
         }
-
 
         @Override
         public String toString() {

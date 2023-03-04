@@ -29,7 +29,6 @@ import static org.assertj.core.api.Assertions.fail;
 
 import static org.mockito.Mockito.verify;
 
-
 @ExtendWith(MockitoExtension.class)
 class RabbitFacadeTest {
 
@@ -69,7 +68,6 @@ class RabbitFacadeTest {
         assertThat(q.getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
     }
 
-
     @Test
     @Disabled
     void ensureDeclaresQueueForResponse() {
@@ -88,7 +86,6 @@ class RabbitFacadeTest {
         assertThat(queue.getValue().getArguments().get("x-queue-master-locator")).isEqualTo("client-local");
     }
 
-
     @Test
     void ensureAddsListenerForQuery() {
 
@@ -105,7 +102,6 @@ class RabbitFacadeTest {
         assertThat(listenerContainer.getMessageListener()).isSameAs(query);
     }
 
-
     @Test
     void ensureRemovesQueueForQuery() throws Exception {
 
@@ -117,7 +113,6 @@ class RabbitFacadeTest {
         verify(admin).deleteQueue(query.getQueueName());
     }
 
-
     @Test
     void ensureRemovesQueueForResponse() throws Exception {
 
@@ -128,7 +123,6 @@ class RabbitFacadeTest {
 
         verify(admin).deleteQueue(response.getQueueName());
     }
-
 
     @Test
     void ensureRemovesListenerForQuery() {
@@ -147,7 +141,6 @@ class RabbitFacadeTest {
         assertThat(!sut.containers.containsKey(queueName));
     }
 
-
     @Test
     void ensureRemovesListenerForResponse() {
 
@@ -165,7 +158,6 @@ class RabbitFacadeTest {
         assertThat(!sut.containers.containsKey(queueName));
     }
 
-
     @Test
     void ensureDeclaresBindingForResponse() {
 
@@ -180,7 +172,6 @@ class RabbitFacadeTest {
         assertThat(binding.getValue().getExchange()).isEqualTo("queries");
         assertThat(binding.getValue().getDestination()).isEqualTo(response.getQueueName());
     }
-
 
     @Test
     void ensureAddsListenerForResponse() {
@@ -198,7 +189,6 @@ class RabbitFacadeTest {
         assertThat(listenerContainer.getMessageListener()).isSameAs(response);
     }
 
-
     @Test
     void ensurePublishesQuery() throws Exception {
 
@@ -209,11 +199,10 @@ class RabbitFacadeTest {
 
         verify(template).send(Mockito.eq("queries"), Mockito.eq("some-routing-key"), message.capture());
 
-        assertThat(message.getValue().getMessageProperties().getDeliveryMode()).isEqualTo(
-            MessageDeliveryMode.NON_PERSISTENT);
+        assertThat(message.getValue().getMessageProperties().getDeliveryMode())
+                .isEqualTo(MessageDeliveryMode.NON_PERSISTENT);
         assertThat(message.getValue().getBody()).isEqualTo(body);
     }
-
 
     @Test
     void ensurePublishesResponse() throws Exception {
@@ -225,19 +214,18 @@ class RabbitFacadeTest {
 
         verify(template).send(Mockito.eq("some-exchange"), Mockito.eq("some-routing-key"), message.capture());
 
-        assertThat(message.getValue().getMessageProperties().getDeliveryMode()).isEqualTo(
-            MessageDeliveryMode.NON_PERSISTENT);
+        assertThat(message.getValue().getMessageProperties().getDeliveryMode())
+                .isEqualTo(MessageDeliveryMode.NON_PERSISTENT);
         assertThat(message.getValue().getBody()).isEqualTo(body);
     }
-
 
     @Test
     void ensureFailureToPublishResponseIsNotThrown() throws Exception {
 
         RabbitFacade sut = new RabbitFacade(admin, template, connectionFactory, new TopicExchange("queries"), ctx);
 
-        Mockito.doThrow(RuntimeException.class).when(template)
-            .send(Mockito.anyString(), Mockito.anyString(), Mockito.any(Message.class));
+        Mockito.doThrow(RuntimeException.class).when(template).send(Mockito.anyString(), Mockito.anyString(),
+                Mockito.any(Message.class));
 
         try {
             sut.publishResponse("some-exchange", "some-routing-key", MessageBuilder.withBody("{}".getBytes()).build());

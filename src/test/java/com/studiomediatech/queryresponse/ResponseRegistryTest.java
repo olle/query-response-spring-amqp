@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 class ResponseRegistryTest {
 
@@ -46,24 +45,19 @@ class ResponseRegistryTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureThrowsOnMissingBean() {
 
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withAll()
-            .from("foo", "bar", "baz");
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withAll()
+                .from("foo", "bar", "baz");
 
-        assertThrows(IllegalStateException.class,
-            () -> {
-                ResponseRegistry.instance = () -> null;
-                ResponseRegistry.register(capture.get());
-            });
+        assertThrows(IllegalStateException.class, () -> {
+            ResponseRegistry.instance = () -> null;
+            ResponseRegistry.register(capture.get());
+        });
     }
-
 
     @SuppressWarnings("static-access")
     @Test
@@ -71,10 +65,8 @@ class ResponseRegistryTest {
 
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withAll()
-            .from("foo", "bar", "baz");
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withAll()
+                .from("foo", "bar", "baz");
 
         ResponseRegistry mock = Mockito.mock(ResponseRegistry.class);
         ResponseRegistry.instance = () -> mock;
@@ -86,16 +78,13 @@ class ResponseRegistryTest {
         ResponseRegistry.instance = () -> null;
     }
 
-
     @Test
     void ensureAcceptResponses() {
 
         AtomicReference<ChainingResponseBuilder<String>> capture = new AtomicReference<>(null);
 
-        ChainingResponseBuilder.<String>respondTo("some-query", String.class)
-            .withSink(capture::set)
-            .withAll()
-            .from("foo", "bar", "baz");
+        ChainingResponseBuilder.<String> respondTo("some-query", String.class).withSink(capture::set).withAll()
+                .from("foo", "bar", "baz");
 
         new ResponseRegistry(facade, stats, props).accept(capture.get());
 
@@ -103,7 +92,6 @@ class ResponseRegistryTest {
         verify(facade).declareBinding(Mockito.isA(Response.class));
         verify(facade).addListener(Mockito.isA(Response.class));
     }
-
 
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })

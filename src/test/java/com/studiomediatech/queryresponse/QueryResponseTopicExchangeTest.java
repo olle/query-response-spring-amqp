@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 class QueryResponseTopicExchangeTest {
 
-	@Test
-	void ensureQueryResponseTopicExchangeProperties() {
-		
-		QueryResponseTopicExchange sut = new QueryResponseTopicExchange("some-name");
+    @Test
+    void ensureQueryResponseTopicExchangeProperties() {
 
-		assertThat(sut.isAutoDelete()).isTrue();
-		assertThat(sut.isDurable()).isFalse();
-	}
+        QueryResponseTopicExchange sut = new QueryResponseTopicExchange("some-name");
+
+        assertThat(sut.isAutoDelete()).isTrue();
+        assertThat(sut.isDurable()).isFalse();
+    }
 }

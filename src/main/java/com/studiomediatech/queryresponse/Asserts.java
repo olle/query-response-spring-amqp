@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-
 final class Asserts {
 
     private Asserts() {
@@ -27,15 +26,12 @@ final class Asserts {
         }
 
         if (term.length() > 255) {
-            throw new IllegalArgumentException(""
-                + "Query term was too long "
-                + "(" + term.length() + ") "
-                + "max 255 characters allowed");
+            throw new IllegalArgumentException(
+                    "" + "Query term was too long " + "(" + term.length() + ") " + "max 255 characters allowed");
         }
 
         return term;
     }
-
 
     public static Duration invariantDuration(Duration duration) {
 
@@ -50,7 +46,6 @@ final class Asserts {
         return duration;
     }
 
-
     public static int invariantAtLeast(int atLeast) {
 
         if (atLeast < 1) {
@@ -59,7 +54,6 @@ final class Asserts {
 
         return atLeast;
     }
-
 
     public static int invariantAtMost(int atMost) {
 
@@ -70,7 +64,6 @@ final class Asserts {
         return atMost;
     }
 
-
     public static int invariantBatchSize(int size) {
 
         if (size < 1) {
@@ -79,7 +72,6 @@ final class Asserts {
 
         return size;
     }
-
 
     public static <T> Collection<T> invariantResponseCollection(Collection<T> ts) {
 
@@ -96,7 +88,6 @@ final class Asserts {
         return ts;
     }
 
-
     public static <T> Collection<T> invariantResponseVarargsArray(T[] ts) {
 
         if (ts == null || ts.length == 0) {
@@ -105,7 +96,6 @@ final class Asserts {
 
         return invariantResponseCollection(Arrays.asList(ts));
     }
-
 
     public static <T> Supplier<T> invariantSupplier(Supplier<T> it) {
 

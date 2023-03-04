@@ -20,7 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 
 import static org.mockito.Mockito.when;
 
-
 @SuppressWarnings("unused")
 @ExtendWith(MockitoExtension.class)
 public class QueryBuilderApiTest {
@@ -38,51 +37,38 @@ public class QueryBuilderApiTest {
         QueryRegistry.instance = () -> registry;
     }
 
-
     @Test
     void ex1() {
 
-        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class)
-                .waitingFor(800)
-                .orEmpty();
+        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class).waitingFor(800).orEmpty();
     }
-
 
     @Test
     void ex2() {
 
-        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class)
-                .waitingFor(800)
+        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class).waitingFor(800)
                 .orDefaults(Authors.defaults());
     }
-
 
     @Test
     void ex3() {
 
-        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class)
-                .takingAtMost(10)
-                .waitingFor(800)
-                .orDefaults(Authors.defaults());
+        Collection<String> authors = ChainingQueryBuilder.queryFor("authors", String.class).takingAtMost(10)
+                .waitingFor(800).orDefaults(Authors.defaults());
     }
-
 
     @Test
     void ex4() {
 
-        Collection<Offer> offers = ChainingQueryBuilder.queryFor("offers/rental", Offer.class)
-                .takingAtLeast(10)
-                .takingAtMost(20).waitingFor(2, ChronoUnit.SECONDS)
-                .orThrow(TooFewOffersConstraintException::new);
+        Collection<Offer> offers = ChainingQueryBuilder.queryFor("offers/rental", Offer.class).takingAtLeast(10)
+                .takingAtMost(20).waitingFor(2, ChronoUnit.SECONDS).orThrow(TooFewOffersConstraintException::new);
     }
-
 
     @Test
     void ex5() {
 
-        Collection<NewOffer> offers = ChainingQueryBuilder.queryFor("offers/rental", NewOffer.class)
-                .takingAtLeast(3).waitingFor(400)
-                .onError(error -> LOG.error("Failure!", error))
+        Collection<NewOffer> offers = ChainingQueryBuilder.queryFor("offers/rental", NewOffer.class).takingAtLeast(3)
+                .waitingFor(400).onError(error -> LOG.error("Failure!", error))
                 .orThrow(TooFewOffersConstraintException::new);
     }
 
