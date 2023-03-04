@@ -41,6 +41,9 @@ public class QueryResponseConfigurationProperties {
 
 
 
+	/**
+	 * Configuration properties that declares and defines the topic exchange resources to be used.
+	 */
 	public static class ExchangeProperties {
 
         /**
@@ -48,11 +51,25 @@ public class QueryResponseConfigurationProperties {
          */
         private String name = "query-response";
 
+        /**
+         * Retrieves the globally shared Query/Response topic exchange name.
+         * 
+         * @return exchange name string
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Sets the globally shared Query/Response topic exchange name, by default {@value ExchangeProperties#name}.
+         * 
+         * NOTE: Changing this name will create a new distinct Query/Response network, where any other participating
+         *       modules will have to provide the same name configuration.
+         * 
+         * @param name to use for the topic-exchange resource, never empty or {@code null}
+         */
         public void setName(String name) {
+        	Assert.isTrue(StringUtils.hasText(name), "Topic exchange name can not be empty.");
             this.name = name;
         }
     }
