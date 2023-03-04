@@ -1,7 +1,6 @@
 package com.studiomediatech.queryresponse;
 
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
