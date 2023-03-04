@@ -2590,12 +2590,10 @@ private field. The <code>findAuthors()</code> method below, shows how to access 
     <span class="directive">private</span> <span class="directive">final</span> QueryBuilder queryBuilder;
 
     <span class="directive">public</span> Authors(QueryBuilder queryBuilder) {
-
         <span class="local-variable">this</span>.queryBuilder = queryBuilder;
     }
 
     <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;<span class="predefined-type">String</span>&gt; findAuthors() {
-
         <span class="keyword">return</span> queryBuilder.queryFor(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
             .waitingFor(<span class="integer">800</span>)
             .orEmpty();
@@ -2885,13 +2883,11 @@ on the <code>ApplicationReadyEvent</code> event.</p>
     <span class="directive">private</span> <span class="directive">final</span> ResponseBuilder responseBuilder;
 
     <span class="directive">public</span> OnlyThreeAuthors(ResponseBuilder responseBuilder) {
-
         <span class="local-variable">this</span>.responseBuilder = responseBuilder;
     }
 
     <span class="annotation">@EventListener</span>(ApplicationReadyEvent.class)
     <span class="directive">public</span> <span class="type">void</span> respondWithAuthors() {
-
         responseBuilder.respondTo(<span class="string"><span class="delimiter">&quot;</span><span class="content">authors</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)
             .withAll()
             .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">Tolkien</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Lewis</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Rowling</span><span class="delimiter">&quot;</span></span>);
