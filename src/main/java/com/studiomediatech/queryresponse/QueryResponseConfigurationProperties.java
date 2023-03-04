@@ -15,26 +15,56 @@ public class QueryResponseConfigurationProperties {
     private QueueProperties queue = new QueueProperties();
     private StatsProperties stats = new StatsProperties();
 
+    /**
+     * Retrieves the Query/Response exchange configuration.
+     * 
+     * @return configuration properties bean
+     */
     public ExchangeProperties getExchange() {
         return exchange;
     }
 
+    /**
+     * Sets the Query/Response exchange configuration.
+     * 
+     * @param exchange configuration properties bean
+     */
     public void setExchange(ExchangeProperties exchange) {
         this.exchange = exchange;
     }
 
+    /**
+     * Retrieves the Query/Response queue configuration.
+     * 
+     * @return configuration properties bean
+     */
     public QueueProperties getQueue() {
         return queue;
     }
 
+    /**
+     * Sets the Query/Response queue configuration.
+     * 
+     * @param queue configuration properties bean
+     */
     public void setQueue(QueueProperties queue) {
         this.queue = queue;
     }
 
+    /**
+     * Retrieves the Query/Response metrics and statistics configuration.
+     * 
+     * @return configuration properties bean
+     */
     public StatsProperties getStats() {
 		return stats;
 	}
 
+    /**
+     * Sets the Query/Response metrics and statistics configuration.
+     * 
+     * @param stats configuration properties bean
+     */
 	public void setStats(StatsProperties stats) {
 		this.stats = stats;
 	}
@@ -62,7 +92,7 @@ public class QueryResponseConfigurationProperties {
         }
 
         /**
-         * Sets the globally shared Query/Response topic exchange name, by default {@value #DEFAULT_QUERY_RESPONSE_TOPIC_EXCHANGE}.
+         * Sets the globally shared Query/Response topic exchange name.
          * 
          * NOTE: Changing this name will create a new distinct Query/Response network, where any other participating
          *       modules will have to provide the same name configuration.
@@ -98,7 +128,7 @@ public class QueryResponseConfigurationProperties {
         }
 
         /**
-         * Sets the Query/Response prefix, used when naming messaging resources, by default {@value #DEFAULT_QUERY_RESPONSE_PREFIX}.
+         * Sets the Query/Response prefix, used when naming messaging resources.
          * 
          * @param prefix string to use, never empty or {@code null}.
          */
@@ -114,7 +144,6 @@ public class QueryResponseConfigurationProperties {
      */
     public static class StatsProperties {
     	
-
     	private static final long DEFAULT_INITIAL_DELAY = 7000L;
     	private static final long DEFAULT_DELAY = 11000L;
 		private static final String DEFAULT_QUERY_RESPONSE_INTERNAL_STATS_TOPIC = "query-response/internal/stats";
@@ -135,7 +164,7 @@ public class QueryResponseConfigurationProperties {
 		private long delay = DEFAULT_DELAY;
 
 		/**
-		 * Retrieves the configured topic routing key, by default {@value #DEFAULT_QUERY_RESPONSE_INTERNAL_STATS_TOPIC}.
+		 * Retrieves the configured topic routing key.
 		 * 
 		 * @return the topic string
 		 */
@@ -154,7 +183,7 @@ public class QueryResponseConfigurationProperties {
 		}
 
 		/**
-		 * Sets the initial delay before statistics and metrics messaging is to begin, default {@value #DEFAULT_INITIAL_DELAY}.
+		 * Sets the initial delay before statistics and metrics messaging is to begin.
 		 * 
 		 * @param initialDelay in milliseconds
 		 */
@@ -172,7 +201,7 @@ public class QueryResponseConfigurationProperties {
 		}
 
 		/**
-		 * Sets the delay used in gathering and publishing of metrics and statistics, by default {@value #DEFAULT_DELAY}.
+		 * Sets the delay used in gathering and publishing of metrics and statistics.
 		 * 
 		 * @param delay in milliseconds
 		 */
