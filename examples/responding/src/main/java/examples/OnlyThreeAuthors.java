@@ -16,13 +16,11 @@ public class OnlyThreeAuthors {
     private final ResponseBuilder responseBuilder;
 
     public OnlyThreeAuthors(ResponseBuilder responseBuilder) {
-
         this.responseBuilder = responseBuilder;
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void respondWithAuthors() {
-
         responseBuilder.respondTo("authors", String.class)
             .withAll()
             .from("Tolkien", "Lewis", "Rowling");

@@ -14,12 +14,10 @@ public class Authors {
     private final QueryBuilder queryBuilder;
 
     public Authors(QueryBuilder queryBuilder) {
-
         this.queryBuilder = queryBuilder;
     }
 
     public Collection<String> findAuthors() {
-
         return queryBuilder.queryFor("authors", String.class)
             .waitingFor(800)
             .orEmpty();
