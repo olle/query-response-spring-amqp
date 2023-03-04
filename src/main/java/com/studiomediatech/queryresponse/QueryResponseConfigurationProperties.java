@@ -46,10 +46,11 @@ public class QueryResponseConfigurationProperties {
 	 */
 	public static class ExchangeProperties {
 
-        /**
+        private static final String DEFAULT_QUERY_RESPONSE_TOPIC_EXCHANGE = "query-response";
+		/**
          * Name of the shared topic exchange for queries.
          */
-        private String name = "query-response";
+        private String name = DEFAULT_QUERY_RESPONSE_TOPIC_EXCHANGE;
 
         /**
          * Retrieves the globally shared Query/Response topic exchange name.
@@ -61,7 +62,7 @@ public class QueryResponseConfigurationProperties {
         }
 
         /**
-         * Sets the globally shared Query/Response topic exchange name, by default {@value ExchangeProperties#name}.
+         * Sets the globally shared Query/Response topic exchange name, by default {@value #DEFAULT_QUERY_RESPONSE_TOPIC_EXCHANGE}.
          * 
          * NOTE: Changing this name will create a new distinct Query/Response network, where any other participating
          *       modules will have to provide the same name configuration.
@@ -75,18 +76,34 @@ public class QueryResponseConfigurationProperties {
     }
 
 	
+	/**
+	 * Configuration properties that pertain to declared and generated queue resources.
+	 */
     public static class QueueProperties {
 
-        /**
+        private static final String DEFAULT_QUERY_RESPONSE_PREFIX = "query-response-";
+        
+		/**
          * Prefix for queue names.
          */
-        private String prefix = "query-response-";
+        private String prefix = DEFAULT_QUERY_RESPONSE_PREFIX;
 
+        /**
+         * Retrieves the Query/Response naming prefix.
+         * 
+         * @return prefix string
+         */
         public String getPrefix() {
             return prefix;
         }
 
+        /**
+         * Sets the Query/Response prefix, used when naming messaging resources, by default {@value #DEFAULT_QUERY_RESPONSE_PREFIX}.
+         * 
+         * @param prefix string to use, never empty or {@code null}.
+         */
         public void setPrefix(String prefix) {
+        	Assert.isTrue(StringUtils.hasText(prefix), "Prefix must not be empty.");
             this.prefix = prefix;
         }
     }
