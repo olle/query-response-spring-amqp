@@ -11,7 +11,8 @@ and wrapped it in a developer friendly library.
 
 {qr-name-and-version} requires at least **{spring-boot-name-and-version}** and
 **{java-name-and-version}**, and should work for later releases too. We are
-building and running it successfully with the `2.2.9.RELEASE` version.
+building and running it successfully with **{java-name-and-latest-version}** and
+the **{spring-boot-name-and-verified-version}** version.
 
 == Installation &amp; Configuration
 

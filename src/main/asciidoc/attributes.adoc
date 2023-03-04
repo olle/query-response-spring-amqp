@@ -14,15 +14,18 @@
 :test-src: ../../test/java/com/studiomediatech/queryresponse
 :examples-src: ../../../examples
 
-:java-version: 8
+:java-required-version: 11
 :java-name: Java
-:java-name-and-version: {java-name} {java-version}
+:java-name-and-version: {java-name} {java-required-version}
+:java-name-and-latest-version: {java-name} {java-version}
 
 :spring-name: Spring
 :spring-amqp-name: Spring AMQP
 :spring-boot-version: 2.x
+:spring-boot-verified-version: 3.0.3
 :spring-boot-name: Spring Boot
 :spring-boot-name-and-version: {spring-boot-name} {spring-boot-version}
+:spring-boot-name-and-verified-version: {spring-boot-name} {spring-boot-verified-version}
 
 :qr-current-version: 0.0.0-SNAPSHOT
 :qr-pfx: Query/Response
