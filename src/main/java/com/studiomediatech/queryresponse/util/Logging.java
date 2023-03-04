@@ -37,11 +37,27 @@ public interface Logging {
         return obj;
     }
     
+    /**
+     * Logs a pre-formatted debug line for some published message, either with rich or redacted message information,
+     * depending on the current logging level.
+     * 
+     * @param type of publish
+     * @param routingKey that is published
+     * @param message that is published
+     */
 	default void debugLogPublished(String type, String routingKey, Message message) {
 
 		log().debug("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
 	}
 	
+	/**
+	 * Logs a pre-formatted info or debug line, for some published message, either with rich or redacted message
+	 * information, depending on the current logging level.
+	 * 
+	 * @param type of publish
+	 * @param routingKey that is published
+	 * @param message that is published
+	 */
     default void logPublished(String type, String routingKey, Message message) {
 
         if (log().isTraceEnabled()) {
@@ -52,6 +68,13 @@ public interface Logging {
     }
 
 
+    /**
+     * Builds a string of redacted information from the given message.
+     * 
+     * @param message used to build the information from
+     * 
+     * @return a string of redacted information, never empty or {@code null}
+     */
     static String toStringRedacted(Message message) {
 
         StringBuilder buffer = new StringBuilder();

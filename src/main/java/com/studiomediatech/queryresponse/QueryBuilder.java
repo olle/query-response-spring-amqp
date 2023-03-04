@@ -2,6 +2,8 @@ package com.studiomediatech.queryresponse;
 
 import java.util.Collection;
 
+import org.springframework.util.Assert;
+
 
 /**
  * The main entry type for query building, provides static factory methods to create a
@@ -11,8 +13,14 @@ public class QueryBuilder {
 
     private final QueryRegistry queryRegistry;
 
+    /**
+     * Creates a new query builder using the given registry.
+     * 
+     * @param queryRegistry used by the new builder, not {@code null}
+     */
     public QueryBuilder(QueryRegistry queryRegistry) {
 
+    	Assert.notNull(queryRegistry, "Registry must not be empty");
         this.queryRegistry = queryRegistry;
     }
 
