@@ -13,6 +13,40 @@ html {
 /* THEME -------------------------------------------------------------------- */
 
 :root {
+  --color-black: rgba(44, 62, 80, 0.9);
+
+  --color-fuchsia-100: hsl(344, 97%, 95%);
+  --color-fuchsia-200: hsl(344, 97%, 90%);
+  --color-fuchsia-300: hsl(344, 97%, 85%);
+  --color-fuchsia-400: hsl(344, 97%, 75%);
+  --color-fuchsia-500: hsl(344, 97%, 64%);
+  --color-fuchsia-600: hsl(344, 97%, 54%);
+  --color-fuchsia-700: hsl(344, 97%, 44%);
+  --color-fuchsia-800: hsl(344, 97%, 34%);
+  --color-fuchsia-900: hsl(344, 97%, 20%);
+  
+  --color-petrol-100: hsl(157, 30%, 95%);
+  --color-petrol-200: hsl(157, 30%, 90%);
+  --color-petrol-300: hsl(157, 30%, 80%);
+  --color-petrol-400: hsl(157, 30%, 70%);
+  --color-petrol-500: hsl(157, 30%, 63%);
+  --color-petrol-600: hsl(157, 30%, 53%);
+  --color-petrol-700: hsl(157, 30%, 40%);
+  --color-petrol-800: hsl(157, 30%, 30%);
+  --color-petrol-900: hsl(157, 30%, 20%);
+
+  --color-blue-100: hsla(209, 58%, 95%);
+  --color-blue-200: hsla(209, 58%, 80%);
+  --color-blue-300: hsla(209, 58%, 70%);
+  --color-blue-400: hsla(209, 58%, 60%);
+  --color-blue-500: hsla(209, 58%, 50%);
+  --color-blue-600: hsla(209, 58%, 46%);
+  --color-blue-700: hsla(209, 58%, 36%);
+  --color-blue-800: hsla(209, 58%, 30%);
+  --color-blue-900: hsl(209, 59%, 20%);
+
+  --color-amber: hsl(37, 100%, 55%);
+
   --bg: #f3f2eb;
   --bg-hover: rgba(123, 154, 255, 0.07);
   --bg-even: hsla(226, 10%, 50%, 0.07);
@@ -24,9 +58,9 @@ html {
   --border: 1px solid rgba(182, 182, 182, 0.424);
   --border-radius: 5px;
   --action: var(--link-high-contrast);
-  --success: hsl(157, 30%, 53%);
+  --success: var(--color-petrol-600);
   --warning: hsl(37, 100%, 55%);
-  --error: #fc4979;
+  --error: var(--color-fuchsia-500);
   --bold: 600;
   --thin: 400;
   --bold-letter-spacing: 0.1rem;
@@ -42,9 +76,9 @@ html {
   --link-high-contrast: rgb(104, 176, 243);
   --panel: hsl(30, 1%, 38%);
   --border: 1px solid rgba(0, 0, 0, 0.3);
-  --success: hsl(157, 30%, 63%);
+  --success: var(--color-petrol-500);
   --warning: #ffba4c;
-  --error: hsl(344, 84%, 67%);
+  --error: var(--color-fuchsia-400);
   --bold: 500;
   --thin: 300;
   --bold-letter-spacing: 0.127rem;

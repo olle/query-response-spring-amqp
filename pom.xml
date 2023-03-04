@@ -138,10 +138,16 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <version>2.2.2</version>
                 <configuration>
+                    <sourceDirectory>src/main/asciidoc</sourceDirectory>
                     <backend>html5</backend>
-                    <sourceHighlighter>coderay</sourceHighlighter>
                     <attributes>
+                        <enable-verbose>true</enable-verbose>
                         <toc>left</toc>
+                        <imagesdir>images</imagesdir>
+                        <source-highlighter>coderay</source-highlighter>
+                        <!-- Uncomment during development! -->
+                        <!-- <linkcss>true</linkcss> -->
+                        <stylesheet>css/style.css</stylesheet>
                     </attributes>
                 </configuration>
             </plugin>
