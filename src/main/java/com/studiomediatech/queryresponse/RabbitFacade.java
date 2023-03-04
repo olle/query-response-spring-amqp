@@ -207,6 +207,6 @@ class RabbitFacade implements Logging {
     protected void publishStats(Message message, String routingKey) {
 
         this.template.send(queriesExchange.getName(), routingKey, decorateMessage(message));
-        logPublished("stats", routingKey, message);
+        debugLogPublished("stats", routingKey, message);
     }
 }
