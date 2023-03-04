@@ -33,7 +33,7 @@ up:
 
 .PHONY: down
 down:
-	docker-compose down
+	docker-compose down --remove-orphans
 
 .PHONY: repo-clean
 repo-clean:
