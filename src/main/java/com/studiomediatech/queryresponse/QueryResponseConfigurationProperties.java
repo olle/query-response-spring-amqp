@@ -114,23 +114,28 @@ public class QueryResponseConfigurationProperties {
      */
     public static class StatsProperties {
     	
-    	/**
+
+    	private static final long DEFAULT_INITIAL_DELAY = 7000L;
+    	private static final long DEFAULT_DELAY = 11000L;
+		private static final String DEFAULT_QUERY_RESPONSE_INTERNAL_STATS_TOPIC = "query-response/internal/stats";
+
+		/**
     	 * Topic or routing-key for statistics messages.
     	 */
-    	private String topic = "query-response/internal/stats";
+    	private String topic = DEFAULT_QUERY_RESPONSE_INTERNAL_STATS_TOPIC;
     	
     	/**
     	 * Initial delay, before the first published statistics after startup, in milliseconds.
     	 */
-		private long initialDelay = 7000L;
+		private long initialDelay = DEFAULT_INITIAL_DELAY;
 
 		/**
 		 * Delay between each publishing of statistics, in milliseconds.
 		 */
-		private long delay = 11000L;
+		private long delay = DEFAULT_DELAY;
 
 		/**
-		 * Retrieves the configured topic routing key, by default {@value StatsProperties#topic}.
+		 * Retrieves the configured topic routing key, by default {@value #DEFAULT_QUERY_RESPONSE_INTERNAL_STATS_TOPIC}.
 		 * 
 		 * @return the topic string
 		 */
@@ -149,7 +154,7 @@ public class QueryResponseConfigurationProperties {
 		}
 
 		/**
-		 * Sets the initial delay before statistics and metrics messaging is to begin.
+		 * Sets the initial delay before statistics and metrics messaging is to begin, default {@value #DEFAULT_INITIAL_DELAY}.
 		 * 
 		 * @param initialDelay in milliseconds
 		 */
@@ -167,7 +172,7 @@ public class QueryResponseConfigurationProperties {
 		}
 
 		/**
-		 * Sets the delay used in gathering and publishing of metrics and statistics, by default {@value StatsProperties#delay}.
+		 * Sets the delay used in gathering and publishing of metrics and statistics, by default {@value #DEFAULT_DELAY}.
 		 * 
 		 * @param delay in milliseconds
 		 */
