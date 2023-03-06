@@ -25,7 +25,7 @@ ui/query-response-ui.jar: ui/target/query-response-ui.jar
 	@cp $< $@
 
 ui/target/query-response-ui.jar: install
-	@$(MAKE) -C ui dist
+	@$(MAKE) -C ui build
 
 .PHONY: up
 up:
