@@ -8,6 +8,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@tabler/icons-vue": "^2.8.0",
     "chartist": "0.11.0",
     "vue": "^3.2.31",
     "vue-router": "^4.0.14",

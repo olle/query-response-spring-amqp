@@ -7,62 +7,37 @@
       </li>
     </router-link>
     <router-link to="/queries" custom v-slot="{ navigate }">
-      <li
-        @click="navigate"
-        @keypress.enter="navigate"
-        role="link"
-        class="disabled"
-      >
-        <IconQueries />
+      <li @click="navigate" @keypress.enter="navigate" role="link" class="disabled">
+        <IconMessage2 />
         <h2>Queries Insight</h2>
       </li>
     </router-link>
     <router-link to="topology" custom v-slot="{ navigate }">
-      <li
-        @click="navigate"
-        @keypress.enter="navigate"
-        role="link"
-        class="disabled"
-      >
-        <IconTopology />
+      <li @click="navigate" @keypress.enter="navigate" role="link" class="disabled">
+        <IconRoute />
         <h2>Q/R Topology</h2>
       </li>
     </router-link>
     <router-link to="/live" custom v-slot="{ navigate }">
-      <li
-        @click="navigate"
-        @keypress.enter="navigate"
-        role="link"
-        class="disabled"
-      >
-        <IconLive />
+      <li @click="navigate" @keypress.enter="navigate" role="link" class="disabled">
+        <IconActivity />
         <h2>Live</h2>
       </li>
     </router-link>
     <router-link to="/logging" custom v-slot="{ navigate }">
-      <li
-        @click="navigate"
-        @keypress.enter="navigate"
-        role="link"
-        class="disabled"
-      >
-        <IconLogging />
+      <li @click="navigate" @keypress.enter="navigate" role="link" class="disabled">
+        <IconFileText />
         <h2>Logs</h2>
       </li>
     </router-link>
     <router-link to="/cli" custom v-slot="{ navigate }">
       <li @click="navigate" @keypress.enter="navigate" role="link">
-        <IconPrompt />
+        <IconTerminal2 />
         <h2>Query CLI</h2>
       </li>
     </router-link>
     <router-link to="settings" custom v-slot="{ navigate }">
-      <li
-        @click="navigate"
-        @keypress.enter="navigate"
-        role="link"
-        class="disabled"
-      >
+      <li @click="navigate" @keypress.enter="navigate" role="link" class="disabled">
         <IconSettings />
         <h2>Settings</h2>
       </li>
@@ -73,13 +48,16 @@
 </template>
 
 <script setup>
-import IconSettings from "./IconSettings.vue";
-import IconHome from "./IconHome.vue";
-import IconQueries from "./IconQueries.vue";
-import IconTopology from "./IconTopology.vue";
-import IconLive from "./IconLive.vue";
-import IconLogging from "./IconLogging.vue";
-import IconPrompt from "./IconPrompt.vue";
+import {
+  IconSettings,
+  IconHome,
+  IconMessage2,
+  IconRoute,
+  IconActivity,
+  IconFileText,
+  IconTerminal2,
+} from "@tabler/icons-vue";
+
 import QrColorSchemeToggle from "./QrColorSchemeToggle.vue";
 import QrColorPaletteToggle from "./QrColorPaletteToggle.vue";
 </script>
