@@ -1,5 +1,6 @@
 <template>
   <ul v-if="showColorPalette()">
+    <li class="color color-bg"></li>
     <li class="color color-panel"></li>
     <li class="color color-fg"></li>
     <li class="color color-link"></li>
@@ -28,8 +29,14 @@ function showColorPalette() {
   margin: 0.3rem;
 }
 
+
+.color-bg {
+  background: var(--bg);
+  border: 1px solid var(--fg);
+}
 .color-fg {
   background: var(--fg);
+  border: 1px solid var(--bg);
 }
 
 .color-link {
