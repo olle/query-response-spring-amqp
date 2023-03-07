@@ -1,11 +1,11 @@
 <template>
   <li @click="toggleShowColors()">
-    <icon-palette />
+    <IconPalette />
   </li>
 </template>
 
 <script setup>
-import IconPalette from "./IconPalette.vue";
+import { IconPalette } from "@tabler/icons-vue";
 import { useStore } from "vuex";
 const store = useStore();
 function toggleShowColors() {

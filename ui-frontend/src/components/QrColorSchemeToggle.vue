@@ -6,8 +6,7 @@
 </template>
 
 <script setup>
-import IconSun from "./IconSun.vue";
-import IconMoon from "./IconMoon.vue";
+import { IconSun, IconMoon } from "@tabler/icons-vue"
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 
 const theme = ref();
