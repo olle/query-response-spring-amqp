@@ -1,0 +1,95 @@
+/*! Based on the Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+
+:root {
+  --color-black: rgba(44, 62, 80, 0.9);
+
+  --color-fuchsia-100: hsl(344, 97%, 95%);
+  --color-fuchsia-200: hsl(344, 97%, 90%);
+  --color-fuchsia-300: hsl(344, 97%, 85%);
+  --color-fuchsia-400: hsl(344, 97%, 75%);
+  --color-fuchsia-500: hsl(344, 97%, 64%);
+  --color-fuchsia-600: hsl(344, 97%, 54%);
+  --color-fuchsia-700: hsl(344, 97%, 44%);
+  --color-fuchsia-800: hsl(344, 97%, 34%);
+  --color-fuchsia-900: hsl(344, 97%, 20%);
+
+  --color-petrol-100: hsl(157, 30%, 95%);
+  --color-petrol-200: hsl(157, 30%, 90%);
+  --color-petrol-300: hsl(157, 30%, 80%);
+  --color-petrol-400: hsl(157, 30%, 70%);
+  --color-petrol-500: hsl(157, 30%, 63%);
+  --color-petrol-600: hsl(157, 30%, 53%);
+  --color-petrol-700: hsl(157, 30%, 40%);
+  --color-petrol-800: hsl(157, 30%, 30%);
+  --color-petrol-900: hsl(157, 30%, 20%);
+
+  --color-blue-100: hsla(209, 58%, 95%);
+  --color-blue-200: hsla(209, 58%, 80%);
+  --color-blue-300: hsla(209, 58%, 70%);
+  --color-blue-400: hsla(209, 58%, 60%);
+  --color-blue-500: hsla(209, 58%, 50%);
+  --color-blue-600: hsla(209, 58%, 46%);
+  --color-blue-700: hsla(209, 58%, 36%);
+  --color-blue-800: hsla(209, 58%, 30%);
+  --color-blue-900: hsl(209, 59%, 20%);
+
+  --color-amber: hsl(37, 100%, 55%);
+
+  --color-amber-100: hsl(37, 100%, 95%);
+  --color-amber-200: hsl(37, 100%, 80%);
+  --color-amber-300: hsl(37, 100%, 70%);
+  --color-amber-400: hsl(37, 100%, 60%);
+  --color-amber-500: hsl(37, 100%, 55%);
+  --color-amber-600: hsl(37, 100%, 45%);
+  --color-amber-700: hsl(37, 100%, 35%);
+  --color-amber-800: hsl(37, 100%, 25%);
+  --color-amber-900: hsl(37, 100%, 20%);
+
+  /* ----------------------------------------------------------------------- */
+
+  --fg: #000;
+  --bg: #fff;
+  --lh: 1;
+  --title-color: var(--color-fuchsia-800);
+  --title-lh: 1.45;
+  --title-weight: 400;
+  --header-color: var(--color-petrol-800);
+  --hx-color: var(--color-fuchsia-700);
+  --hx-weight: 500;
+  --link-color: var(--color-blue-700);
+  --link-active-color: var(--color-blue-300);
+  --code-color: rgba(0, 0, 0, 0.9);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  -webkit-text-size-adjust: 100%;
+}
+
+.top-nav {
+  background-color: var(--color-petrol-700);
+}
+
+.caption span,
+.nav-bar-cell1-rev ,
+  div.table-tabs > button.active-table-tab {
+  background-color: var(--color-blue-300);
+}
+
+div.table-tabs > button.table-tab {
+  background-color: var(--color-blue-600);
+}
+
+.block > pre {
+  padding: 1rem;
+  color: var(--color-fuchsia-700);
+  background: var(--color-petrol-100);
+}
+
+a,
+a:link,
+a:visited {
+  color: var(--color-blue-600);
+}
