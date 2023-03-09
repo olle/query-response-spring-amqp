@@ -123,6 +123,9 @@
                 <version>3.5.0</version>
                 <configuration>
                 	<doclint>missing</doclint>
+                    <addStylesheets>
+                        <addStylesheet>style.css</addStylesheet>
+                    </addStylesheets>
                 </configuration>
                 <executions>
                     <execution>
