@@ -35,6 +35,16 @@
 
   --color-amber: hsl(37, 100%, 55%);
 
+  --color-amber-100: hsl(37, 100%, 95%);
+  --color-amber-200: hsl(37, 100%, 80%);
+  --color-amber-300: hsl(37, 100%, 70%);
+  --color-amber-400: hsl(37, 100%, 60%);
+  --color-amber-500: hsl(37, 100%, 55%);
+  --color-amber-600: hsl(37, 100%, 45%);
+  --color-amber-700: hsl(37, 100%, 35%);
+  --color-amber-800: hsl(37, 100%, 25%);
+  --color-amber-900: hsl(37, 100%, 20%);
+
   /* ----------------------------------------------------------------------- */
 
   --fg: #000;
@@ -200,7 +210,7 @@ table {
 }
 html,
 body {
-  font-size: 100%;
+  font-size: 104%;
 }
 body {
   background: var(--bg);
@@ -901,6 +911,8 @@ body.toc2 #header > h1:nth-last-child(2) {
 @media screen and (min-width: 768px) {
   #content {
     margin-bottom: 1.25em;
+    padding-left: 3em;
+    padding-right: 5em;
   }
   .sect1 {
     padding-bottom: 1.25em;
