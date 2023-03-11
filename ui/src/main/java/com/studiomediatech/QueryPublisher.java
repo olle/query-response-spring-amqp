@@ -1,6 +1,7 @@
 package com.studiomediatech;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,8 +60,12 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     @Override
     public Map<String, Object> query(String q) {
 
-        return Map.of("responses", queryBuilder.queryFor(q, Object.class).waitingFor(DEFAULT_QUERY_TIMEOUT)
-                .orDefaults(List.of("No responses")));
+        long start = System.nanoTime();
+
+        Collection<Object> responses = queryBuilder.queryFor(q, Object.class).waitingFor(DEFAULT_QUERY_TIMEOUT)
+                .orDefaults(List.of("No responses"));
+
+        return Map.of("responses", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
     }
 
     @EventListener
