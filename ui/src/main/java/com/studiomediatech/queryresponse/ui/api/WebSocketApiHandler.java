@@ -22,7 +22,6 @@ import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.util.Logging;
 
-
 public class WebSocketApiHandler extends TextWebSocketHandler implements Logging {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
@@ -45,9 +44,8 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
         sessionsById.put(session.getId(),
-            new ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, SEND_BUFFER_SIZE_LIMIT));
+                new ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, SEND_BUFFER_SIZE_LIMIT));
     }
-
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -55,63 +53,46 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
         sessionsById.remove(session.getId());
     }
 
-
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
         emitter.emitEvent(QueryRecordedEvent.valueOf(message.getPayload(), session.getId()));
     }
 
-
     public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum, long countFallbacksSum,
-        double successRate, List<Double> successRates) {
+            double successRate, List<Double> successRates) {
 
         String json = String.format(Locale.US,
-                "{\"metrics\": {"
-                + "\"count_queries\": %d,"
-                + "\"count_responses\": %d,"
-                + "\"count_fallbacks\": %d,"
-                + "\"success_rate\": %f,"
-                + "\"success_rates\": %s"
-                + "}}", countQueriesSum, countResponsesSum, countFallbacksSum, successRate, successRates);
+                "{\"metrics\": {" + "\"count_queries\": %d," + "\"count_responses\": %d," + "\"count_fallbacks\": %d,"
+                        + "\"success_rate\": %f," + "\"success_rates\": %s" + "}}",
+                countQueriesSum, countResponsesSum, countFallbacksSum, successRate, successRates);
 
         publishTextMessageWithPayload(json);
     }
 
-
     public void handleLatency(long minLatency, long maxLatency, double avgLatency, List<Double> latencies) {
 
-    	if (minLatency != -1 && maxLatency != -1) {  	
-	        publishTextMessageWithPayload(String.format(Locale.US,
-	                "{\"metrics\": {"
-	                + "\"min_latency\": %d," 
-	                + "\"max_latency\": %d,"
-	                + "\"avg_latency\": %f,"
-	                + "\"avg_latencies\": %s"
-	                + "}}", minLatency, maxLatency, avgLatency, latencies));
-    	} else {
-	        publishTextMessageWithPayload(String.format(Locale.US,
-	                "{\"metrics\": {"
-	                + "\"avg_latency\": %f,"
-	                + "\"avg_latencies\": %s"
-	                + "}}", avgLatency, latencies));    		
-    	}
+        if (minLatency != -1 && maxLatency != -1) {
+            publishTextMessageWithPayload(String.format(
+                    Locale.US, "{\"metrics\": {" + "\"min_latency\": %d," + "\"max_latency\": %d,"
+                            + "\"avg_latency\": %f," + "\"avg_latencies\": %s" + "}}",
+                    minLatency, maxLatency, avgLatency, latencies));
+        } else {
+            publishTextMessageWithPayload(String.format(Locale.US,
+                    "{\"metrics\": {" + "\"avg_latency\": %f," + "\"avg_latencies\": %s" + "}}", avgLatency,
+                    latencies));
+        }
     }
-
 
     public void handleThroughput(double queries, double responses, double avg, List<Double> throughputs) {
 
         String json = String.format(Locale.US,
-                "{\"metrics\": {"
-                + "\"throughput_queries\": %f,"
-                + "\"throughput_responses\": %f,"
-                + "\"avg_throughput\": %f,"
-                + "\"avg_throughputs\": %s"
-                + "}}", queries, responses, avg, throughputs);
+                "{\"metrics\": {" + "\"throughput_queries\": %f," + "\"throughput_responses\": %f,"
+                        + "\"avg_throughput\": %f," + "\"avg_throughputs\": %s" + "}}",
+                queries, responses, avg, throughputs);
 
         publishTextMessageWithPayload(json);
     }
-
 
     public void handleNodes(Map<String, List<QueryPublisher.Stat>> nodes) {
 
@@ -128,7 +109,6 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
         }
     }
 
-
     private void publishTextMessageWithPayload(String json) {
 
         TextMessage message = new TextMessage(json.getBytes(StandardCharsets.UTF_8));
@@ -141,7 +121,6 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
             }
         }
     }
-
 
     public void handleResponse(Collection<Object> response, String id) {
 
@@ -157,7 +136,6 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
             e.printStackTrace();
         }
     }
-
 
     private void publishTextMessageWithPayloadToSession(String id, String json) {
 

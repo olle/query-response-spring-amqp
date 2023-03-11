@@ -2,7 +2,6 @@ package com.studiomediatech.events;
 
 import java.util.Optional;
 
-
 public final class QueryRecordedEvent {
 
     private static final int DEFAULT_TIMEOUT_MS = 150;
@@ -21,25 +20,21 @@ public final class QueryRecordedEvent {
         return query.split(" ")[0];
     }
 
-
     public String getPublisherId() {
 
         return publisherId;
     }
-
 
     public static QueryRecordedEvent valueOf(String query, String publisher) {
 
         return new QueryRecordedEvent(query, publisher);
     }
 
-
     @Override
     public String toString() {
 
         return "QueryRecordedEvent [query=" + query + ", publisherId=" + publisherId + "]";
     }
-
 
     public long getTimeout() {
 
@@ -49,7 +44,6 @@ public final class QueryRecordedEvent {
             return 1000;
         }
     }
-
 
     public Optional<Integer> getLimit() {
 

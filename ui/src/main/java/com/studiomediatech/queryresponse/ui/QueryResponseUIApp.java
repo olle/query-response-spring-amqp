@@ -28,15 +28,14 @@ import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.QueryResponseTopicExchange;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
 
-
 @SpringBootApplication
 @EnableQueryResponse
 @EnableScheduling
 @EnableWebSocket
 public class QueryResponseUIApp {
 
-	public static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
-	
+    public static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
+
     public static void main(String[] args) {
 
         SpringApplication.run(QueryResponseUIApp.class);
@@ -46,13 +45,11 @@ public class QueryResponseUIApp {
     @Configuration
     static class AppConfig {
 
-
-		@Bean
+        @Bean
         ConnectionNameStrategy connectionNameStrategy(Environment env) {
 
             return connectionFactory -> env.getProperty("spring.application.name", "query-response-ui");
         }
-
 
         @Bean
         @Primary
@@ -61,13 +58,11 @@ public class QueryResponseUIApp {
             return new ThreadPoolTaskScheduler();
         }
 
-
         @Bean
         EventEmitter eventEmitter(TaskScheduler scheduler, ApplicationEventPublisher publisher) {
 
             return new AsyncEventEmitter(scheduler, publisher);
         }
-
 
         @Bean
         WebSocketApiHandler handler(EventEmitter emitter) {
@@ -75,23 +70,23 @@ public class QueryResponseUIApp {
             return new WebSocketApiHandler(emitter);
         }
 
-
         @Bean
         QueryPublisher querier(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
 
             return new QueryPublisher(handler, queryBuilder);
         }
-        
+
         @Bean(QUERY_RESPONSE_STATS_QUEUE_BEAN)
         Queue queryResponseStatsQueue() {
-        	
-        	return new AnonymousQueue();
+
+            return new AnonymousQueue();
         }
-        
+
         @Bean
         Binding queryResponseStatsQueueBinding(QueryResponseTopicExchange queryResponseTopicExchange) {
-        	
-        	return BindingBuilder.bind(queryResponseStatsQueue()).to(queryResponseTopicExchange).with("query-response/internal/stats");
+
+            return BindingBuilder.bind(queryResponseStatsQueue()).to(queryResponseTopicExchange)
+                    .with("query-response/internal/stats");
         }
     }
 
@@ -100,7 +95,7 @@ public class QueryResponseUIApp {
     static class WebSocketConfig implements WebSocketConfigurer {
 
         private final WebSocketApiHandler webSocketHandler;
-        
+
         public WebSocketConfig(WebSocketApiHandler webSocketHandler) {
 
             this.webSocketHandler = webSocketHandler;
@@ -109,7 +104,7 @@ public class QueryResponseUIApp {
         @Override
         public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-        	// TODO: DO NOT ALLOW ORIGINS * !!!
+            // TODO: DO NOT ALLOW ORIGINS * !!!
             registry.addHandler(webSocketHandler, "/ws").setAllowedOrigins("*");
         }
     }

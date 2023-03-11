@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestApiController {
 
-	@GetMapping("/api")
-	public Map<String, Object> getApiRoot() {
-		return Map.of("version", "v1");
-	}
+    @GetMapping("/api")
+    public Map<String, Object> getApiRoot() {
+        return Map.of("version", "v1");
+    }
 }

@@ -6,7 +6,6 @@ import org.springframework.scheduling.TaskScheduler;
 
 import java.time.Instant;
 
-
 /**
  * An implementation that ensures decoupling from the calling thread.
  */

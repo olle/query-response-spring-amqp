@@ -28,11 +28,10 @@ import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
 import com.studiomediatech.queryresponse.util.Logging;
 
-
 public class QueryPublisher implements Logging {
 
-	private static final ObjectMapper MAPPER = new ObjectMapper();
-	
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
     private static final int SLIDING_WINDOW = 40;
@@ -70,41 +69,37 @@ public class QueryPublisher implements Logging {
         if (maybe.isPresent()) {
             int limit = maybe.get();
 
-            handler.handleResponse(queryBuilder.queryFor(query, Object.class)
-                .waitingFor(timeout)
-                .takingAtMost(limit)
-                .orDefaults(orEmptyResponse), event.getPublisherId());
+            handler.handleResponse(queryBuilder.queryFor(query, Object.class).waitingFor(timeout).takingAtMost(limit)
+                    .orDefaults(orEmptyResponse), event.getPublisherId());
         } else {
-            handler.handleResponse(queryBuilder.queryFor(query, Object.class)
-                .waitingFor(timeout)
-                .orDefaults(orEmptyResponse), event.getPublisherId());
+            handler.handleResponse(
+                    queryBuilder.queryFor(query, Object.class).waitingFor(timeout).orDefaults(orEmptyResponse),
+                    event.getPublisherId());
         }
     }
-    
-    @RabbitListener(queues =  "#{@"+ QueryResponseUIApp.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}")
+
+    @RabbitListener(queues = "#{@" + QueryResponseUIApp.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}")
     void onQueryResponseStats(Message message) {
 
-    	try {
-			handle(MAPPER.readValue(message.getBody(), Stats.class).elements);
-		} catch (RuntimeException | IOException ex) {
-			log().error("Failed to consumed stats", ex);
-		}
+        try {
+            handle(MAPPER.readValue(message.getBody(), Stats.class).elements);
+        } catch (RuntimeException | IOException ex) {
+            log().error("Failed to consumed stats", ex);
+        }
     }
-  
 
-	protected void handle(Collection<QueryPublisher.Stat> stats) {
-		
-		stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
+    protected void handle(Collection<QueryPublisher.Stat> stats) {
+
+        stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
 
         handleCounts(stats);
         handleLatencies(stats);
         handleThroughput(stats);
         handleNodes(stats);
-	}
+    }
 
-	private void handleNodes(Collection<QueryPublisher.Stat> stats) {
-		Map<String, List<QueryPublisher.Stat>> nodes = stats.stream()
-                .filter(s -> StringUtils.hasText(s.uuid))
+    private void handleNodes(Collection<QueryPublisher.Stat> stats) {
+        Map<String, List<QueryPublisher.Stat>> nodes = stats.stream().filter(s -> StringUtils.hasText(s.uuid))
                 .collect(Collectors.groupingBy(s -> s.uuid));
 
         for (Entry<String, List<QueryPublisher.Stat>> node : nodes.entrySet()) {
@@ -116,59 +111,47 @@ public class QueryPublisher implements Logging {
         }
 
         handler.handleNodes(nodes);
-	}
+    }
 
-	private void handleThroughput(Collection<QueryPublisher.Stat> stats) {
-		// Order is important!!
+    private void handleThroughput(Collection<QueryPublisher.Stat> stats) {
+        // Order is important!!
         double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
         double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
         double throughputAvg = calculateAndAggregateThroughputAvg(queries, responses, null);
 
         handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
-	}
+    }
 
-	private void handleLatencies(Collection<QueryPublisher.Stat> stats) {
-		Long minLatency = stats.stream()
-                .filter(stat -> "min_latency".equals(stat.key))
-                .mapToLong(statToLong).min()
+    private void handleLatencies(Collection<QueryPublisher.Stat> stats) {
+        Long minLatency = stats.stream().filter(stat -> "min_latency".equals(stat.key)).mapToLong(statToLong).min()
                 .orElse(-1);
 
-        long maxLatency = stats.stream()
-                .filter(stat -> "max_latency".equals(stat.key))
-                .mapToLong(statToLong).max()
+        long maxLatency = stats.stream().filter(stat -> "max_latency".equals(stat.key)).mapToLong(statToLong).max()
                 .orElse(-1);
 
-        double avgLatency = stats.stream()
-                .filter(stat -> "avg_latency".equals(stat.key))
-                .mapToDouble(stat -> (double) stat.value)
-                .average()
-                .orElse(0.0d);
+        double avgLatency = stats.stream().filter(stat -> "avg_latency".equals(stat.key))
+                .mapToDouble(stat -> (double) stat.value).average().orElse(0.0d);
 
         aggregateLatencies(avgLatency);
 
         handler.handleLatency(minLatency, maxLatency, avgLatency, latencies);
-	}
+    }
 
-	private void handleCounts(Collection<QueryPublisher.Stat> stats) {
-		long countQueriesSum = stats.stream()
-                .filter(stat -> "count_queries".equals(stat.key))
-                .mapToLong(statToLong)
+    private void handleCounts(Collection<QueryPublisher.Stat> stats) {
+        long countQueriesSum = stats.stream().filter(stat -> "count_queries".equals(stat.key)).mapToLong(statToLong)
                 .sum();
 
-        long countResponsesSum = stats.stream()
-                .filter(stat -> "count_consumed_responses".equals(stat.key))
+        long countResponsesSum = stats.stream().filter(stat -> "count_consumed_responses".equals(stat.key))
                 .mapToLong(statToLong).sum();
 
-        long countFallbacksSum = stats.stream()
-                .filter(stat -> "count_fallbacks".equals(stat.key))
-                .mapToLong(statToLong).sum();
+        long countFallbacksSum = stats.stream().filter(stat -> "count_fallbacks".equals(stat.key)).mapToLong(statToLong)
+                .sum();
 
         double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
 
         handler.handleCountQueriesAndResponses(countQueriesSum, countResponsesSum, countFallbacksSum, successRate,
-            successRates);
-	}
-
+                successRates);
+    }
 
     private void aggregateLatencies(double avgLatency) {
 
@@ -178,7 +161,6 @@ public class QueryPublisher implements Logging {
 
         latencies.add(avgLatency);
     }
-
 
     private double calculateAndAggregateSuccessRate(long countQueriesSum, long countResponsesSum) {
 
@@ -196,9 +178,8 @@ public class QueryPublisher implements Logging {
         return rate;
     }
 
-
     private double calculateAndAggregateThroughputAvg(List<QueryPublisher.Stat> queries,
-        List<QueryPublisher.Stat> responses, String node) {
+            List<QueryPublisher.Stat> responses, String node) {
 
         List<QueryPublisher.Stat> all = new ArrayList<>();
 
@@ -243,9 +224,8 @@ public class QueryPublisher implements Logging {
         return avg;
     }
 
-
     private double calculateThroughput(String key, Collection<QueryPublisher.Stat> source,
-        List<QueryPublisher.Stat> dest) {
+            List<QueryPublisher.Stat> dest) {
 
         List<QueryPublisher.Stat> ts = source.stream().filter(stat -> key.equals(stat.key))
                 .sorted(Comparator.comparing(s -> s.timestamp)).collect(Collectors.toList());
@@ -277,15 +257,16 @@ public class QueryPublisher implements Logging {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Stats {
-    	
-    	@JsonProperty
-    	public Collection<Stat> elements;
-    	
-    	@Override
-    	public String toString() {
 
-    		return Optional.ofNullable(elements).orElse(Collections.emptyList()).stream().map(Object::toString).collect(Collectors.joining(", "));
-    	}
+        @JsonProperty
+        public Collection<Stat> elements;
+
+        @Override
+        public String toString() {
+
+            return Optional.ofNullable(elements).orElse(Collections.emptyList()).stream().map(Object::toString)
+                    .collect(Collectors.joining(", "));
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -304,9 +285,8 @@ public class QueryPublisher implements Logging {
         public String toString() {
 
             return key + "=" + value + (timestamp != null ? " " + timestamp : "")
-                + (uuid != null ? " uuid=" + uuid : "");
+                    + (uuid != null ? " uuid=" + uuid : "");
         }
     }
-    
 
 }
