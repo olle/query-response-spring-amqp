@@ -28,6 +28,6 @@ public class RestApiController {
 
     @GetMapping(path = "/api/v1", params = "q")
     public Map<String, Object> query(String q) {
-        return Map.of("nope", "nop2");
+        return adapter.query(q);
     }
 }

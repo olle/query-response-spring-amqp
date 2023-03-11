@@ -25,16 +25,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
+import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
 import com.studiomediatech.queryresponse.util.Logging;
 
-public class QueryPublisher implements Logging {
+public class QueryPublisher implements Logging, RestApiAdapter {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
     private static final int SLIDING_WINDOW = 40;
+    private static final int DEFAULT_QUERY_TIMEOUT = 1500;
 
     static ToLongFunction<QueryPublisher.Stat> statToLong = s -> ((Number) s.value).longValue();
 
@@ -52,6 +54,13 @@ public class QueryPublisher implements Logging {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;
+    }
+
+    @Override
+    public Map<String, Object> query(String q) {
+
+        return Map.of("responses", queryBuilder.queryFor(q, Object.class).waitingFor(DEFAULT_QUERY_TIMEOUT)
+                .orDefaults(List.of("No responses")));
     }
 
     @EventListener
