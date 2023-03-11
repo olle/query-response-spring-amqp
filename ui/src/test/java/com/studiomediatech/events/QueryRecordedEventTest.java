@@ -1,27 +1,18 @@
 package com.studiomediatech.events;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class QueryRecordedEventTest {
 
-    @Test
-    void ensureGetsQueryTermFromQueryWithoutWhitespace() {
+    @ParameterizedTest
+    @ValueSource(strings = { "some-query", "some-query  ", " some-query", "  some-query    " })
+    void ensureGetsQueryTermFromQueryWithoutWhitespace(String arg) {
 
-        assertThat(QueryRecordedEvent.valueOf("some-query", "").getQuery()).isEqualTo("some-query");
-    }
-
-    @Test
-    void ensureGetsQueryTermFromQueryWithTrailingWhitespace() {
-
-        assertThat(QueryRecordedEvent.valueOf("some-query  ", "").getQuery()).isEqualTo("some-query");
-    }
-
-    @Test
-    void ensureGetsQueryTermFromQueryWithLeadingWhitespace() {
-
-        assertThat(QueryRecordedEvent.valueOf(" some-query", "").getQuery()).isEqualTo("some-query");
+        assertThat(QueryRecordedEvent.valueOf(arg, "").getQuery()).isEqualTo("some-query");
     }
 
     @Test
