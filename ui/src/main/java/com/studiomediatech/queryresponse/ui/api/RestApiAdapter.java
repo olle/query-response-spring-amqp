@@ -11,7 +11,7 @@ public interface RestApiAdapter {
         };
     }
 
-    default Map<String, Object> query(String q) {
+    default Map<String, Object> query(String q, int timeout, int limit) {
         return Collections.emptyMap();
     }
 }

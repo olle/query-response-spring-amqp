@@ -58,14 +58,24 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     }
 
     @Override
-    public Map<String, Object> query(String q) {
+    public Map<String, Object> query(String q, int timeout, int limit) {
+
+        long queryTimeout = timeout > 0 ? timeout : DEFAULT_QUERY_TIMEOUT;
+
+        List<Object> defaults = List.of("No responses");
+
+        final Collection<Object> responses;
 
         long start = System.nanoTime();
 
-        Collection<Object> responses = queryBuilder.queryFor(q, Object.class).waitingFor(DEFAULT_QUERY_TIMEOUT)
-                .orDefaults(List.of("No responses"));
+        if (limit > 0) {
+            responses = queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).takingAtMost(limit)
+                    .orDefaults(defaults);
+        } else {
+            responses = queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).orDefaults(defaults);
+        }
 
-        return Map.of("responses", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
+        return Map.of("response", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
     }
 
     @EventListener
