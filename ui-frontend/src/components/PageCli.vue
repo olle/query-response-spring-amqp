@@ -32,26 +32,35 @@ onMounted(() => {
   document.querySelector("input").focus();
 });
 
+function reset(value) {
+  response.value = value || `# ERROR ${new Date()}`;
+  query.value = "";
+  spinner.value = false;
+  document.querySelector("input").focus();
+}
+
 function publish() {
   let q = query.value;
   setTimeout(() => {
     spinner.value = true;
     response.value = "...";
   }, 1);
-  setTimeout(() => {
-    publishQuery(q).then((resp) => {
-      if (resp.ok) {
-        resp.json().then((json) => {
-          response.value = JSON.stringify(json, null, 2);
-        });
-      } else {
-        response.value = `# ${new Date()}`;
-      }
-      query.value = "";
-      spinner.value = false;
-      document.querySelector("input").focus();
-    });
-  }, 100);
+  try {
+    publishQuery(q).then(
+      (resp) => {
+        if (resp.ok) {
+          resp.json().then((json) => {
+            reset(JSON.stringify(json, null, 2));
+          });
+        } else {
+          reset();
+        }
+      },
+      (err) => reset()
+    );
+  } catch (err) {
+    reset();
+  }
 }
 </script>
 

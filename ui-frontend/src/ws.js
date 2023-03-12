@@ -40,7 +40,7 @@ const connectSocket = () => {
     };
 
     sock.onmessage = (msg) => {
-      console.log("RECEIVED EVENT", msg);
+      //console.log("RECEIVED EVENT", msg);
       listeners.forEach((listener) => listener(msg));
     };
   } catch (err) {

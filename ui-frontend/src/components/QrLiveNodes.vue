@@ -10,6 +10,7 @@
         <th class="h3">Address</th>
         <th class="h3">Uptime</th>
         <th class="h3">Success Rate</th>
+        <th class="h3">Queries</th>
         <th class="h3">Responses</th>
         <th class="h3">Latency</th>
         <th class="h3">Throughput</th>
@@ -37,6 +38,9 @@
               node.countFallbacks
             }}</data>
           </small>
+        </td>
+        <td>
+          <data>{{ node.countQueries }}</data>
         </td>
         <td>
           <data>{{ node.publishedResponses }}</data>
