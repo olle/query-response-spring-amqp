@@ -39,9 +39,14 @@ function publish() {
     response.value = "...";
   }, 1);
   setTimeout(() => {
-    publishQuery(q)
-    .then((r) => {      
-      response.value = JSON.stringify(r, null, 2);
+    publishQuery(q).then((resp) => {
+      if (resp.ok) {
+        resp.json().then((json) => {
+          response.value = JSON.stringify(json, null, 2);
+        });
+      } else {
+        response.value = `# ${new Date()}`;
+      }
       query.value = "";
       spinner.value = false;
       document.querySelector("input").focus();
