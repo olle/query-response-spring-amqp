@@ -200,7 +200,10 @@ class Query<T> implements MessageListener, Logging {
                     throw new InterruptedException();
                 }
 
-                Thread.sleep(ONE_MILLIS);
+                if (wait % 2 == 0 || wait % 3 == 0 || wait % 5 == 0 || wait % 7 == 0) {
+                    Thread.sleep(ONE_MILLIS);
+                }
+
             } catch (InterruptedException e) {
                 // Soft handler for the exception, may be informed.
                 if (this.onError != null) {
