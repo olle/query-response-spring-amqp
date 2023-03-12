@@ -18,7 +18,7 @@ import QrNavigation from "./components/QrNavigation.vue";
 import QrFooter from "./components/QrFooter.vue";
 import QrColors from "./components/QrColors.vue";
 
-import { useStore } from "vuex"
+import { useStore } from "vuex";
 import { addListener } from "./ws";
 
 const store = useStore();
@@ -26,12 +26,11 @@ const store = useStore();
 addListener((msg) => {
   try {
     var message = JSON.parse(msg.data);
-    // console.log("got message", message);
-     if (message.metrics) {
-      store.commit('metrics', message.metrics);
+    if (message.metrics) {
+      store.commit("metrics", message.metrics);
     }
     if (message.nodes) {
-      store.commit('nodes', message.nodes)
+      store.commit("nodes", message.nodes);
     }
   } catch (err) {
     console.error("unexpected payload", msg.data);
@@ -78,4 +77,3 @@ main > article {
   flex: 1;
 }
 </style>
-;

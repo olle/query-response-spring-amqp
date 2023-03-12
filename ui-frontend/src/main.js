@@ -6,8 +6,6 @@ import App from "./App.vue";
 // CSS Styles
 import "./style.css";
 
-import { addListener } from "./ws";
-
 import PageOverview from "./components/PageOverview.vue";
 import PageLive from "./components/PageLive.vue";
 import PageQueries from "./components/PageQueries.vue";
