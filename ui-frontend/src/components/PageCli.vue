@@ -46,7 +46,7 @@ function publish() {
       spinner.value = false;
       document.querySelector("input").focus();
     });
-  }, 10);
+  }, 100);
 }
 </script>
 
