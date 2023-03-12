@@ -2,16 +2,19 @@ package com.studiomediatech;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
@@ -39,10 +42,10 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     private static final int SLIDING_WINDOW = 40;
     private static final int DEFAULT_QUERY_TIMEOUT = 1500;
 
-    static ToLongFunction<QueryPublisher.Stat> statToLong = s -> ((Number) s.value).longValue();
+    static ToLongFunction<Stat> statToLong = s -> ((Number) s.value()).longValue();
 
-    private List<QueryPublisher.Stat> queries = new LinkedList<>();
-    private List<QueryPublisher.Stat> responses = new LinkedList<>();
+    private List<Stat> queries = new LinkedList<>();
+    private List<Stat> responses = new LinkedList<>();
     private List<Double> successRates = new LinkedList<>();
     private List<Double> latencies = new LinkedList<>();
     private List<Double> throughputs = new LinkedList<>();
@@ -50,6 +53,8 @@ public class QueryPublisher implements Logging, RestApiAdapter {
 
     private final QueryBuilder queryBuilder;
     private final WebSocketApiHandler handler;
+
+    private final Set<String> nodes = Collections.synchronizedSet(new HashSet<>());
 
     public QueryPublisher(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
 
@@ -142,7 +147,7 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         }
     }
 
-    protected void handle(Collection<QueryPublisher.Stat> stats) {
+    protected void handle(Collection<Stat> stats) {
 
         stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
 
@@ -152,54 +157,59 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         handleNodes(stats);
     }
 
-    private void handleNodes(Collection<QueryPublisher.Stat> stats) {
-        Map<String, List<QueryPublisher.Stat>> nodes = stats.stream().filter(s -> StringUtils.hasText(s.uuid))
-                .collect(Collectors.groupingBy(s -> s.uuid));
+    private void handleNodes(Collection<Stat> stats) {
 
-        for (Entry<String, List<QueryPublisher.Stat>> node : nodes.entrySet()) {
-            Stat stat = new Stat();
-            stat.uuid = node.getKey();
-            stat.key = "avg_throughput";
-            stat.value = calculateAndAggregateThroughputAvg(queries, responses, node.getKey());
-            node.getValue().add(stat);
+        Map<String, List<Stat>> nodes = stats.stream().filter(stat -> StringUtils.hasText(stat.uuid()))
+                .collect(Collectors.groupingBy(stat -> stat.uuid()));
+
+        for (Entry<String, List<Stat>> node : nodes.entrySet()) {
+
+            String uuid = node.getKey();
+            this.nodes.add(uuid);
+
+            double value = calculateAndAggregateThroughputAvg(queries, responses, uuid);
+
+            node.getValue().add(new Stat(Stat.AVG_THROUGHPUT, value, Instant.now().toEpochMilli(), uuid));
         }
 
         handler.handleNodes(nodes);
+
+        log().info("KNOWN NODES: {}", this.nodes);
     }
 
-    private void handleThroughput(Collection<QueryPublisher.Stat> stats) {
+    private void handleThroughput(Collection<Stat> stats) {
         // Order is important!!
-        double throughputQueries = calculateThroughput("throughput_queries", stats, queries);
-        double throughputResponses = calculateThroughput("throughput_responses", stats, responses);
+        double throughputQueries = calculateThroughput(Stat.THROUGHPUT_QUERIES, stats, queries);
+        double throughputResponses = calculateThroughput(Stat.THROUGHPUT_RESPONSES, stats, responses);
         double throughputAvg = calculateAndAggregateThroughputAvg(queries, responses, null);
 
         handler.handleThroughput(throughputQueries, throughputResponses, throughputAvg, throughputs);
     }
 
-    private void handleLatencies(Collection<QueryPublisher.Stat> stats) {
-        Long minLatency = stats.stream().filter(stat -> "min_latency".equals(stat.key)).mapToLong(statToLong).min()
+    private void handleLatencies(Collection<Stat> stats) {
+        Long minLatency = stats.stream().filter(stat -> Stat.MIN_LATENCY.equals(stat.key())).mapToLong(statToLong).min()
                 .orElse(-1);
 
-        long maxLatency = stats.stream().filter(stat -> "max_latency".equals(stat.key)).mapToLong(statToLong).max()
+        long maxLatency = stats.stream().filter(stat -> Stat.MAX_LATENCY.equals(stat.key())).mapToLong(statToLong).max()
                 .orElse(-1);
 
-        double avgLatency = stats.stream().filter(stat -> "avg_latency".equals(stat.key))
-                .mapToDouble(stat -> (double) stat.value).average().orElse(0.0d);
+        double avgLatency = stats.stream().filter(stat -> Stat.AVG_LATENCY.equals(stat.key()))
+                .mapToDouble(stat -> (double) stat.value()).average().orElse(0.0d);
 
         aggregateLatencies(avgLatency);
 
         handler.handleLatency(minLatency, maxLatency, avgLatency, latencies);
     }
 
-    private void handleCounts(Collection<QueryPublisher.Stat> stats) {
-        long countQueriesSum = stats.stream().filter(stat -> "count_queries".equals(stat.key)).mapToLong(statToLong)
-                .sum();
-
-        long countResponsesSum = stats.stream().filter(stat -> "count_consumed_responses".equals(stat.key))
+    private void handleCounts(Collection<Stat> stats) {
+        long countQueriesSum = stats.stream().filter(stat -> Stat.COUNT_QUERIES.equals(stat.key()))
                 .mapToLong(statToLong).sum();
 
-        long countFallbacksSum = stats.stream().filter(stat -> "count_fallbacks".equals(stat.key)).mapToLong(statToLong)
-                .sum();
+        long countResponsesSum = stats.stream().filter(stat -> Stat.COUNT_CONSUMED_RESPONSES.equals(stat.key()))
+                .mapToLong(statToLong).sum();
+
+        long countFallbacksSum = stats.stream().filter(stat -> Stat.COUNT_FALLBACKS.equals(stat.key()))
+                .mapToLong(statToLong).sum();
 
         double successRate = calculateAndAggregateSuccessRate(countQueriesSum, countResponsesSum);
 
@@ -232,27 +242,26 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         return rate;
     }
 
-    private double calculateAndAggregateThroughputAvg(List<QueryPublisher.Stat> queries,
-            List<QueryPublisher.Stat> responses, String node) {
+    private double calculateAndAggregateThroughputAvg(List<Stat> queries, List<Stat> responses, String node) {
 
-        List<QueryPublisher.Stat> all = new ArrayList<>();
+        List<Stat> all = new ArrayList<>();
 
         if (node != null) {
-            all.addAll(queries.stream().filter(s -> node.equals(s.uuid)).collect(Collectors.toList()));
-            all.addAll(responses.stream().filter(s -> node.equals(s.uuid)).collect(Collectors.toList()));
+            all.addAll(queries.stream().filter(s -> node.equals(s.uuid())).collect(Collectors.toList()));
+            all.addAll(responses.stream().filter(s -> node.equals(s.uuid())).collect(Collectors.toList()));
         } else {
             all.addAll(queries);
             all.addAll(responses);
         }
 
-        all.sort(Comparator.comparing(s -> s.timestamp));
+        all.sort(Comparator.comparing(s -> s.timestamp()));
 
         if (all.size() < 2) {
             return 0.0;
         }
 
-        long newest = all.get(all.size() - 1).timestamp;
-        long oldest = all.get(0).timestamp;
+        long newest = all.get(all.size() - 1).timestamp();
+        long oldest = all.get(0).timestamp();
         long duration = (newest - oldest) / 1000;
 
         if (duration < 1) {
@@ -278,13 +287,12 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         return avg;
     }
 
-    private double calculateThroughput(String key, Collection<QueryPublisher.Stat> source,
-            List<QueryPublisher.Stat> dest) {
+    private double calculateThroughput(String key, Collection<Stat> source, List<Stat> dest) {
 
-        List<QueryPublisher.Stat> ts = source.stream().filter(stat -> key.equals(stat.key))
-                .sorted(Comparator.comparing(s -> s.timestamp)).collect(Collectors.toList());
+        List<Stat> ts = source.stream().filter(stat -> key.equals(stat.key()))
+                .sorted(Comparator.comparing(s -> s.timestamp())).collect(Collectors.toList());
 
-        for (QueryPublisher.Stat stat : ts) {
+        for (Stat stat : ts) {
             if (dest.size() > MAX_SIZE) {
                 dest.remove(0);
             }
@@ -296,8 +304,8 @@ public class QueryPublisher implements Logging, RestApiAdapter {
             return 0.0;
         }
 
-        long newest = dest.get(dest.size() - 1).timestamp;
-        long oldest = dest.get(0).timestamp;
+        long newest = dest.get(dest.size() - 1).timestamp();
+        long oldest = dest.get(0).timestamp();
         long duration = (newest - oldest) / 1000;
 
         if (duration < 1) {
@@ -320,26 +328,6 @@ public class QueryPublisher implements Logging, RestApiAdapter {
 
             return Optional.ofNullable(elements).orElse(Collections.emptyList()).stream().map(Object::toString)
                     .collect(Collectors.joining(", "));
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Stat {
-
-        @JsonProperty
-        public String key;
-        @JsonProperty
-        public Object value;
-        @JsonProperty
-        public Long timestamp;
-        @JsonProperty
-        public String uuid;
-
-        @Override
-        public String toString() {
-
-            return key + "=" + value + (timestamp != null ? " " + timestamp : "")
-                    + (uuid != null ? " uuid=" + uuid : "");
         }
     }
 

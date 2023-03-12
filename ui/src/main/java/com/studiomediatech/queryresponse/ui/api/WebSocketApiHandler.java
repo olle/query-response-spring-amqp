@@ -17,7 +17,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studiomediatech.QueryPublisher;
+import com.studiomediatech.Stat;
 import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.util.Logging;
@@ -94,7 +94,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
         publishTextMessageWithPayload(json);
     }
 
-    public void handleNodes(Map<String, List<QueryPublisher.Stat>> nodes) {
+    public void handleNodes(Map<String, List<Stat>> nodes) {
 
         try {
             StringBuilder sb = new StringBuilder();

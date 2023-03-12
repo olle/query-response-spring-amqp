@@ -1,0 +1,66 @@
+{
+  "elements": [
+    {
+      "key": "count_queries",
+      "value": 10,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "count_consumed_responses",
+      "value": 0,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "count_published_responses",
+      "value": 0,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "count_fallbacks",
+      "value": 9,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "name",
+      "value": "querying-example",
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "host",
+      "value": "mullen",
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "pid",
+      "value": "78322",
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "uptime",
+      "value": "1 minute",
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "only_responses",
+      "value": false,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "avg_latency",
+      "value": 0.0,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "throughput_queries",
+      "value": 2,
+      "timestamp": 1678643991268,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    },
+    {
+      "key": "throughput_responses",
+      "value": 0,
+      "timestamp": 1678643991268,
+      "uuid": "ce45dce0-3ff2-4cb7-b2bd-caa72a675542"
+    }
+  ]
+}

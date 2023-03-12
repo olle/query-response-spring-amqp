@@ -84,8 +84,6 @@ The SPA source files and modules can all be found under `src/main/web`.
 The client SPA is both served and supported by a Java, Spring Boot application.
 The backend supports web sockets, and publishes updates to the client UI.
 
-There is currently no command, RPC or REST-ful API in the backend.
-
 Happy hacking!
 
 ### Architecture & Design
