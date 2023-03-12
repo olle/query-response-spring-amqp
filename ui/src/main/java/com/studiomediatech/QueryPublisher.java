@@ -1,6 +1,7 @@
 package com.studiomediatech;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -9,12 +10,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
@@ -54,7 +57,7 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     private final QueryBuilder queryBuilder;
     private final WebSocketApiHandler handler;
 
-    private final Set<String> nodes = Collections.synchronizedSet(new HashSet<>());
+    private final Map<String, Instant> nodes = new ConcurrentHashMap<>();
 
     public QueryPublisher(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
 
@@ -157,24 +160,38 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         handleNodes(stats);
     }
 
+    @Override
+    public Map<String, Object> nodes() {
+        return Map.of("nodes", this.nodes, "timestamp", Instant.now(Clock.systemUTC()));
+    }
+
     private void handleNodes(Collection<Stat> stats) {
 
         Map<String, List<Stat>> nodes = stats.stream().filter(stat -> StringUtils.hasText(stat.uuid()))
                 .collect(Collectors.groupingBy(stat -> stat.uuid()));
 
         for (Entry<String, List<Stat>> node : nodes.entrySet()) {
-
             String uuid = node.getKey();
-            this.nodes.add(uuid);
 
-            double value = calculateAndAggregateThroughputAvg(queries, responses, uuid);
+            this.nodes.put(uuid, Instant.now());
 
-            node.getValue().add(new Stat(Stat.AVG_THROUGHPUT, value, Instant.now().toEpochMilli(), uuid));
+            node.getValue().add(new Stat(Stat.AVG_THROUGHPUT,
+                    calculateAndAggregateThroughputAvg(queries, responses, uuid), Instant.now().toEpochMilli(), uuid));
         }
 
-        handler.handleNodes(nodes);
+        evictNoLongerActiveNodes();
 
-        log().info("KNOWN NODES: {}", this.nodes);
+        handler.handleNodes(nodes);
+    }
+
+    private void evictNoLongerActiveNodes() {
+        Iterator<Entry<String, Instant>> it = this.nodes.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<String, Instant> entry = it.next();
+            if (entry.getValue().isBefore(Instant.now().minus(Duration.ofMinutes(2)))) {
+                it.remove();
+            }
+        }
     }
 
     private void handleThroughput(Collection<Stat> stats) {

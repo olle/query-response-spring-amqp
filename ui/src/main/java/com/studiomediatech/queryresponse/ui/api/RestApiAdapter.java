@@ -14,4 +14,8 @@ public interface RestApiAdapter {
     default Map<String, Object> query(String q, int timeout, int limit) {
         return Collections.emptyMap();
     }
+
+    default Map<String, Object> nodes() {
+        return Collections.emptyMap();
+    }
 }

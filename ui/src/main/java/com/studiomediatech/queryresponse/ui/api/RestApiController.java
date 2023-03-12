@@ -35,4 +35,9 @@ public class RestApiController {
             @RequestParam(name = "l", required = false, defaultValue = "0") int l) {
         return adapter.query(q, Math.max(0, Math.max(timeout, t)), Math.max(0, Math.max(limit, l)));
     }
+
+    @GetMapping("/api/v1/nodes")
+    public Map<String, Object> nodes() {
+        return adapter.nodes();
+    }
 }
