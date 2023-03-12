@@ -60,22 +60,52 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     @Override
     public Map<String, Object> query(String q, int timeout, int limit) {
 
-        long queryTimeout = timeout > 0 ? timeout : DEFAULT_QUERY_TIMEOUT;
-
         List<Object> defaults = List.of("No responses");
 
         final Collection<Object> responses;
 
         long start = System.nanoTime();
 
-        if (limit > 0) {
-            responses = queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).takingAtMost(limit)
-                    .orDefaults(defaults);
+        if (q.contains(" ")) {
+            responses = queryParsed(q, defaults);
         } else {
-            responses = queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).orDefaults(defaults);
+            responses = queryStrict(q, timeout, limit, defaults);
         }
 
         return Map.of("response", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
+    }
+
+    private Collection<Object> queryParsed(String q, List<Object> defaults) {
+
+        var query = QueryRecordedEvent.valueOf(q, "none");
+
+        query.getQuery();
+        query.getTimeout();
+
+        Optional<Integer> maybe = query.getLimit();
+
+        if (maybe.isPresent()) {
+
+            return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
+                    .takingAtMost(maybe.get()).orDefaults(defaults);
+
+        }
+
+        return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
+                .orDefaults(defaults);
+
+    }
+
+    private Collection<Object> queryStrict(String q, int timeout, int limit, List<Object> defaults) {
+        long queryTimeout = timeout > 0 ? timeout : DEFAULT_QUERY_TIMEOUT;
+
+        if (limit > 0) {
+            return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).takingAtMost(limit)
+                    .orDefaults(defaults);
+        }
+
+        return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).orDefaults(defaults);
+
     }
 
     @EventListener
