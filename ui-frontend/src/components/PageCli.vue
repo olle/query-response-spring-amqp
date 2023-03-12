@@ -9,29 +9,7 @@
           :autofocus="'autofocus'"
           placeholder="query [timeout [limit]]"
         />
-        <span v-if="spinner" class="spinner">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="icon icon-tabler icon-tabler-hourglass"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M6.5 7h11" />
-            <path d="M6.5 17h11" />
-            <path
-              d="M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z"
-            />
-            <path
-              d="M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z"
-            />
-          </svg>
-        </span>
+        <IconSpinner v-if="spinner" />
       </div>
     </form>
     <div class="output-wrapper">
@@ -43,6 +21,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { publishQuery } from "../api";
+
+import IconSpinner from "./IconSpinner.vue";
 
 const query = ref("");
 const response = ref(`# ${new Date()}`);
@@ -59,10 +39,13 @@ function publish() {
     response.value = "...";
   }, 1);
   setTimeout(() => {
-    response.value = publishQuery(q);
-    query.value = "";
-    spinner.value = false;
-    document.querySelector("input").focus();
+    publishQuery(q)
+    .then((r) => {      
+      response.value = JSON.stringify(r, null, 2);
+      query.value = "";
+      spinner.value = false;
+      document.querySelector("input").focus();
+    });
   }, 10);
 }
 </script>
@@ -79,6 +62,7 @@ function publish() {
 }
 
 .output-wrapper {
+  text-align: left;
   margin-top: 0.1rem;
 }
 
@@ -99,13 +83,5 @@ input {
   color: inherit;
   border: none;
   outline: none;
-}
-
-.spinner {
-  color: var(--action);
-}
-.spinner > svg {
-  transform-origin: 12px 12px;
-  animation: rotation 0.8s infinite both;
 }
 </style>
