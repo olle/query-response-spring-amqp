@@ -12,9 +12,6 @@ import com.studiomediatech.queryresponse.EnableQueryResponse;
 @EnableScheduling
 @EnableWebSocket
 public class QueryResponseUIApp {
-
-    public static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
-
     public static void main(String[] args) {
         SpringApplication.run(QueryResponseUIApp.class);
     }
