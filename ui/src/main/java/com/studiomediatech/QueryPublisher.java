@@ -1,6 +1,5 @@
 package com.studiomediatech;
 
-import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -18,22 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
-import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
 import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
+import com.studiomediatech.queryresponse.ui.messaging.MessageConsumerAdatper;
 import com.studiomediatech.queryresponse.util.Logging;
 
-public class QueryPublisher implements Logging, RestApiAdapter {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+public class QueryPublisher implements Logging, RestApiAdapter, MessageConsumerAdatper {
 
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
@@ -135,25 +129,16 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         }
     }
 
-    @RabbitListener(queues = "#{@" + QueryResponseUIApp.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}")
-    void onQueryResponseStats(Message message) {
-
-        try {
-            handle(MAPPER.readValue(message.getBody(), Stats.class).elements());
-        } catch (RuntimeException | IOException ex) {
-            log().error("Failed to consumed stats", ex);
-        }
-    }
-
-    protected void handle(Collection<Stat> stats) {
-
-        stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
-
-        handleCounts(stats);
-        handleLatencies(stats);
-        handleThroughput(stats);
-        handleNodes(stats);
-    }
+    // @Override
+    // public void handle(Collection<Stat> stats) {
+    //
+    // stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
+    //
+    // handleCounts(stats);
+    // handleLatencies(stats);
+    // handleThroughput(stats);
+    // handleNodes(stats);
+    // }
 
     @Override
     public Map<String, Object> nodes() {
