@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,8 +23,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
@@ -142,7 +139,7 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
     void onQueryResponseStats(Message message) {
 
         try {
-            handle(MAPPER.readValue(message.getBody(), Stats.class).elements);
+            handle(MAPPER.readValue(message.getBody(), Stats.class).elements());
         } catch (RuntimeException | IOException ex) {
             logger().error("Failed to consumed stats", ex);
         }
@@ -169,6 +166,7 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
                 .collect(Collectors.groupingBy(stat -> stat.uuid()));
 
         for (Entry<String, List<Stat>> node : nodes.entrySet()) {
+
             String uuid = node.getKey();
 
             this.nodes.put(uuid, Instant.now());
@@ -330,20 +328,6 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
         double sum = 1.0 * dest.stream().mapToLong(statToLong).sum();
 
         return Math.round((sum / duration) * 1000000.0) / 1000000.0;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Stats {
-
-        @JsonProperty
-        public Collection<Stat> elements;
-
-        @Override
-        public String toString() {
-
-            return Optional.ofNullable(elements).orElse(Collections.emptyList()).stream().map(Object::toString)
-                    .collect(Collectors.joining(", "));
-        }
     }
 
 }
