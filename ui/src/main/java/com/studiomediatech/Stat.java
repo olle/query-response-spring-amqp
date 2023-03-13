@@ -12,10 +12,4 @@ public record Stat(String key, Object value, Long timestamp, String uuid) {
     public static final String THROUGHPUT_RESPONSES = "throughput_responses";
     public static final String AVG_THROUGHPUT = "avg_throughput";
 
-    // @Override
-    // public String toString() {
-    //
-    // return key + "=" + value + (timestamp != null ? " " + timestamp : "")
-    // + (uuid != null ? " uuid=" + uuid : "");
-    // }
 }
