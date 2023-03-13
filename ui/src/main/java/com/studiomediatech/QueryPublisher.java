@@ -1,6 +1,5 @@
 package com.studiomediatech;
 
-import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -18,22 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
-import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
 import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
+import com.studiomediatech.queryresponse.ui.messaging.MessageConsumerAdatper;
 import com.studiomediatech.queryresponse.util.Loggable;
 
-public class QueryPublisher implements Loggable, RestApiAdapter {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+public class QueryPublisher implements Loggable, RestApiAdapter, MessageConsumerAdatper {
 
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
