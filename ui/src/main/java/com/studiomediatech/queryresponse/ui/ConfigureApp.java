@@ -26,12 +26,6 @@ import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
 class ConfigureApp {
 
     @Bean
-    ConnectionNameStrategy connectionNameStrategy(Environment env) {
-
-        return connectionFactory -> env.getProperty("spring.application.name", "query-response-ui");
-    }
-
-    @Bean
     @Primary
     TaskScheduler taskScheduler() {
 
@@ -56,16 +50,4 @@ class ConfigureApp {
         return new QueryPublisher(handler, queryBuilder);
     }
 
-    @Bean(QueryResponseUIApp.QUERY_RESPONSE_STATS_QUEUE_BEAN)
-    Queue queryResponseStatsQueue() {
-
-        return new AnonymousQueue();
-    }
-
-    @Bean
-    Binding queryResponseStatsQueueBinding(QueryResponseTopicExchange queryResponseTopicExchange) {
-
-        return BindingBuilder.bind(queryResponseStatsQueue()).to(queryResponseTopicExchange)
-                .with("query-response/internal/stats");
-    }
 }
