@@ -3,37 +3,47 @@ package com.studiomediatech.queryresponse.ui.messaging;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.support.AmqpHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studiomediatech.Stats;
+import com.studiomediatech.queryresponse.stats.Stats;
 import com.studiomediatech.queryresponse.ui.ConfigureMessaging;
+import com.studiomediatech.queryresponse.ui.service.StatsHandlerAdapter;
 import com.studiomediatech.queryresponse.util.Logging;
 
+/**
+ * Consumes Query/Response messages from the internal topics, and directly delegates for handling via the abstract
+ * adapter.
+ */
 @Component
-public class MessageConsumer implements Logging {
+class MessageConsumer implements Logging {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final MessageConsumerAdatper adapter;
+    /**
+     * {@link AcknowledgeMode#NONE}
+     */
+    private static final String ACK_MODE = "NONE";
+    private static final String CONSUMERS_MIN = "3";
+    private static final String CONSUMERS_MAX = "11";
 
-    public MessageConsumer(Optional<MessageConsumerAdatper> maybe) {
-        this.adapter = maybe.orElse(MessageConsumerAdatper.empty());
+    private final StatsHandlerAdapter adapter;
+
+    public MessageConsumer(Optional<StatsHandlerAdapter> maybe) {
+        this.adapter = maybe.orElse(StatsHandlerAdapter.empty());
     }
 
-    @RabbitListener(queues = "#{@" + ConfigureMessaging.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}")
-    void onQueryResponseStats(Message message, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) String key) {
-
-        if (ConfigureMessaging.QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY.equals(key)) {
-            try {
-                adapter.handle(MAPPER.readValue(message.getBody(), Stats.class).elements());
-            } catch (RuntimeException | IOException ex) {
-                log().error("Failed to consumed stats", ex);
-            }
+    @RabbitListener(//
+            queues = "#{@" + ConfigureMessaging.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}", //
+            ackMode = ACK_MODE, concurrency = CONSUMERS_MIN + "-" + CONSUMERS_MAX)
+    void onQueryResponseStats(Message message) {
+        try {
+            adapter.handleConsumed(MAPPER.readValue(message.getBody(), Stats.class));
+        } catch (RuntimeException | IOException ex) {
+            log().error("Failed to consumed stats", ex);
         }
     }
 }
