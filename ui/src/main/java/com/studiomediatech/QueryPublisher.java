@@ -22,12 +22,12 @@ import org.springframework.util.StringUtils;
 
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.stats.Stat;
 import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
-import com.studiomediatech.queryresponse.ui.messaging.MessageConsumerAdatper;
 import com.studiomediatech.queryresponse.util.Loggable;
 
-public class QueryPublisher implements Loggable, RestApiAdapter, MessageConsumerAdatper {
+public class QueryPublisher implements Loggable, RestApiAdapter {
 
     // This is a Fib!
     private static final int MAX_SIZE = 2584;

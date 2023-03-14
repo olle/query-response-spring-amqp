@@ -1,4 +1,4 @@
-package com.studiomediatech;
+package com.studiomediatech.queryresponse.stats;
 
 import java.util.Collection;
 
