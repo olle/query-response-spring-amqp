@@ -1,2 +1,2 @@
 spring.application.name: query-response-ui
-logging.level.com.studiomediatech.QueryPublisher: DEBUG
+logging.level.com.studiomediatech.queryresponse.ui: DEBUG
