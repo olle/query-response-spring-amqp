@@ -1,6 +1,8 @@
 package com.studiomediatech.queryresponse.ui.api;
 
-import java.util.Collections;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,12 +21,12 @@ public class RestApiController {
 
     @GetMapping("/api")
     public Map<String, Object> getApiRoot() {
-        return Map.of("version", "v1");
+        return Response.from(Map.of("now", Instant.now().toString())).withLinks("v1", "/api/v1");
     }
 
     @GetMapping("/api/v1")
     public Map<String, Object> none() {
-        return Collections.emptyMap();
+        return Response.from(Map.of("version", "v1")).withLinks("query-response", "/api/v1?q=query");
     }
 
     @GetMapping(path = "/api/v1", params = "q")
@@ -33,11 +35,50 @@ public class RestApiController {
             @RequestParam(name = "t", required = false, defaultValue = "0") int t,
             @RequestParam(name = "limit", required = false, defaultValue = "0") int limit,
             @RequestParam(name = "l", required = false, defaultValue = "0") int l) {
-        return adapter.query(q, Math.max(0, Math.max(timeout, t)), Math.max(0, Math.max(limit, l)));
+
+        int normalizedTimeout = Math.max(0, Math.max(timeout, t));
+        int normalizedLimit = Math.max(0, Math.max(limit, l));
+
+        return adapter.query(q, normalizedTimeout, normalizedLimit);
     }
 
     @GetMapping("/api/v1/nodes")
     public Map<String, Object> nodes() {
         return adapter.nodes();
     }
+
+    protected interface Response {
+        public static ResponseBuilder from(Map<String, Object> map) {
+            return new ResponseBuilder(map);
+        }
+    }
+
+    static class ResponseBuilder {
+
+        private final Map<String, Object> map;
+
+        private ResponseBuilder(Map<String, Object> map) {
+            this.map = map;
+        }
+
+        public Map<String, Object> withLinks(String... args) {
+
+            var links = new ArrayList<Link>();
+
+            for (int i = 0; i < args.length; i = i + 2) {
+                var rel = args[i];
+                var val = args[i + 1];
+                links.add(new Link(rel, val));
+            }
+
+            var results = new LinkedHashMap<>(map);
+            results.put("_links", links);
+            return results;
+        }
+    }
+
+    protected record Link(String rel, String href) {
+    	// OK
+    }
+
 }
