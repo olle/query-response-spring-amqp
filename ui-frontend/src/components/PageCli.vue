@@ -1,7 +1,7 @@
 <template>
   <article>
     <h1>Query Command Line Interface</h1>
-    <form v-on:submit.prevent="publish">
+    <form v-on:submit.prevent="publish" v-on:keyup="peek">
       <div class="input-wrapper">
         <label>&gt;</label>
         <input
@@ -24,6 +24,7 @@ import { publishQuery } from "../api";
 
 import IconSpinner from "./IconSpinner.vue";
 
+const history = ref([]);
 const query = ref("");
 const response = ref(`# ${new Date()}`);
 const spinner = ref(false);
@@ -39,8 +40,22 @@ function reset(value) {
   document.querySelector("input").focus();
 }
 
+function peek(ev) {
+  var code = ev.keyCode;
+  if (code === 38) {
+    var lastQ = history.value.shift();
+    query.value = lastQ;
+    history.value.push(lastQ);
+  } else if (code === 40) {
+    query.value = "";
+  }
+}
+
 function publish() {
   let q = query.value;
+  if (q !== "") {
+    history.value.unshift(q);
+  }
   setTimeout(() => {
     spinner.value = true;
     response.value = "...";
