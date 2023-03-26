@@ -1,6 +1,5 @@
 package com.studiomediatech;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
     private static final int SLIDING_WINDOW = 40;
-    private static final int DEFAULT_QUERY_TIMEOUT = 1500;
 
     static ToLongFunction<Stat> statToLong = s -> ((Number) s.value()).longValue();
 
@@ -52,57 +50,6 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;
-    }
-
-    @Override
-    public Map<String, Object> query(String q, int timeout, int limit) {
-
-        List<Object> defaults = List.of("No responses");
-
-        final Collection<Object> responses;
-
-        long start = System.nanoTime();
-
-        if (q.contains(" ")) {
-            responses = queryParsed(q, defaults);
-        } else {
-            responses = queryStrict(q, timeout, limit, defaults);
-        }
-
-        return Map.of("response", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
-    }
-
-    private Collection<Object> queryParsed(String q, List<Object> defaults) {
-
-        var query = QueryRecordedEvent.valueOf(q, "none");
-
-        query.getQuery();
-        query.getTimeout();
-
-        Optional<Integer> maybe = query.getLimit();
-
-        if (maybe.isPresent()) {
-
-            return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
-                    .takingAtMost(maybe.get()).orDefaults(defaults);
-
-        }
-
-        return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
-                .orDefaults(defaults);
-
-    }
-
-    private Collection<Object> queryStrict(String q, int timeout, int limit, List<Object> defaults) {
-        long queryTimeout = timeout > 0 ? timeout : DEFAULT_QUERY_TIMEOUT;
-
-        if (limit > 0) {
-            return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).takingAtMost(limit)
-                    .orDefaults(defaults);
-        }
-
-        return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).orDefaults(defaults);
-
     }
 
     @EventListener
@@ -147,11 +94,6 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
         handleLatencies(stats);
         handleThroughput(stats);
         handleNodes(stats);
-    }
-
-    @Override
-    public Map<String, Object> nodes() {
-        return Map.of("nodes", this.nodes, "timestamp", Instant.now(Clock.systemUTC()));
     }
 
     private void handleNodes(Collection<Stat> stats) {
