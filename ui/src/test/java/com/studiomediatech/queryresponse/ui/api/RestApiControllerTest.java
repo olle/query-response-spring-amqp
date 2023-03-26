@@ -19,7 +19,7 @@ class RestApiControllerTest {
 
     @BeforeEach
     void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new RestApiController(Optional.empty())).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new RestApiControllerPort(Optional.empty())).build();
     }
 
     @Test
@@ -29,7 +29,7 @@ class RestApiControllerTest {
 
     @Test
     void ensureHandlesNodesRequest() throws Exception {
-        mockMvc.perform(get("/api/v1/nodes")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v0/nodes")).andExpect(status().isOk());
     }
 
 }

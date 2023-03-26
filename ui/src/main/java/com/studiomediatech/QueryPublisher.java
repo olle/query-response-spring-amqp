@@ -23,8 +23,8 @@ import org.springframework.util.StringUtils;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.stats.Stat;
-import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
-import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandlerPort;
+import com.studiomediatech.queryresponse.ui.app.RestApiAdapter;
 import com.studiomediatech.queryresponse.util.Logging;
 
 public class QueryPublisher implements Logging, RestApiAdapter {
@@ -44,11 +44,11 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     private List<Double> tps = new LinkedList<>();
 
     private final QueryBuilder queryBuilder;
-    private final WebSocketApiHandler handler;
+    private final WebSocketApiHandlerPort handler;
 
     private final Map<String, Instant> nodes = new ConcurrentHashMap<>();
 
-    public QueryPublisher(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
+    public QueryPublisher(WebSocketApiHandlerPort handler, QueryBuilder queryBuilder) {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;
