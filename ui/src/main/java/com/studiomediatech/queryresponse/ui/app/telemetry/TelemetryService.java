@@ -4,11 +4,18 @@ import java.util.Map;
 
 import com.studiomediatech.queryresponse.ui.app.adapter.MessageHandlerAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.RestApiAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
 import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.ui.messaging.Stats;
 import com.studiomediatech.queryresponse.util.Logging;
 
 public class TelemetryService implements Logging, MessageHandlerAdapter, RestApiAdapter {
+
+    private final WebSocketApiAdapter webSocketApiAdapter;
+
+    public TelemetryService(WebSocketApiAdapter webSocketApiAdapter) {
+        this.webSocketApiAdapter = webSocketApiAdapter;
+    }
 
     @Override
     public Map<String, Object> nodes() {
