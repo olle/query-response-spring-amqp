@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.queryresponse.stats.Stats;
-import com.studiomediatech.queryresponse.ui.ConfigureMessaging;
 import com.studiomediatech.queryresponse.ui.service.StatsHandlerAdapter;
 import com.studiomediatech.queryresponse.util.Logging;
 
@@ -37,11 +36,12 @@ class MessageConsumer implements Logging {
     }
 
     @RabbitListener(//
-            queues = "#{@" + ConfigureMessaging.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}", //
+            queues = "#{@" + Messaging.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}", //
             ackMode = ACK_MODE, concurrency = CONSUMERS_MIN + "-" + CONSUMERS_MAX)
     void onQueryResponseStats(Message message) {
         try {
-            adapter.handleConsumed(MAPPER.readValue(message.getBody(), Stats.class));
+            Stats stats = MAPPER.readValue(message.getBody(), Stats.class);
+            adapter.handleConsumed(stats);
         } catch (RuntimeException | IOException ex) {
             log().error("Failed to consumed stats", ex);
         }

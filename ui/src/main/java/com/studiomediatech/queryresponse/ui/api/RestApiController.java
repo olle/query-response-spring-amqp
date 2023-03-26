@@ -20,13 +20,24 @@ public class RestApiController {
     }
 
     @GetMapping("/api")
-    public Map<String, Object> getApiRoot() {
-        return Response.from(Map.of("now", Instant.now().toString())).withLinks("v1", "/api/v1");
+    public Map<String, Object> showApi() {
+        return Response.from(Map.of("now", Instant.now())).withLinks("v0", "/api/v0", "v1", "/api/v1");
+    }
+
+    @GetMapping("/api/v0")
+    public Map<String, Object> v0() {
+        return Response.from(Map.of("version", "v0", "now", Instant.now())).withLinks("nodes", "/api/v0/nodes");
+    }
+
+    @GetMapping("/api/v0/nodes")
+    public Map<String, Object> nodes() {
+        return adapter.nodes();
     }
 
     @GetMapping("/api/v1")
-    public Map<String, Object> none() {
-        return Response.from(Map.of("version", "v1")).withLinks("query-response", "/api/v1?q=query");
+    public Map<String, Object> v1() {
+        return Response.from(Map.of("version", "v1", "now", Instant.now())).withLinks("query-response",
+                "/api/v1?q=query");
     }
 
     @GetMapping(path = "/api/v1", params = "q")
@@ -40,11 +51,6 @@ public class RestApiController {
         int normalizedLimit = Math.max(0, Math.max(limit, l));
 
         return adapter.query(q, normalizedTimeout, normalizedLimit);
-    }
-
-    @GetMapping("/api/v1/nodes")
-    public Map<String, Object> nodes() {
-        return adapter.nodes();
     }
 
     protected interface Response {
@@ -78,7 +84,7 @@ public class RestApiController {
     }
 
     protected record Link(String rel, String href) {
-    	// OK
+        // OK
     }
 
 }
