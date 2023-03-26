@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.events.QueryRecordedEvent;
-import com.studiomediatech.queryresponse.stats.Stat;
+import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.util.Logging;
 
 public class WebSocketApiHandlerPort extends TextWebSocketHandler implements Logging {
