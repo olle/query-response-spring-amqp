@@ -10,11 +10,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import com.studiomediatech.queryresponse.EnableQueryResponse;
 import com.studiomediatech.queryresponse.QueryResponseTopicExchange;
 
+/**
+ * Configuration for ports that enable messaging, specifically AMQP including Query/Response.
+ */
 @Configuration
-@ComponentScan(basePackageClasses = Messaging.class)
-public class Messaging {
+@EnableQueryResponse
+@ComponentScan(basePackageClasses = MessagingConfig.class)
+public class MessagingConfig {
 
     static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
     static final String QUERY_RESPONSE_QUERIES_QUEUE_BEAN = "queryResponseQueriesQueue";

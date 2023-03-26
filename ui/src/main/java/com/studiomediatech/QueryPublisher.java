@@ -44,11 +44,11 @@ public class QueryPublisher implements Loggable, RestApiAdapter {
     private List<Double> tps = new LinkedList<>();
 
     private final QueryBuilder queryBuilder;
-    private final WebSocketApiHandler handler;
+    private final WebSocketApiHandlerPort handler;
 
     private final Map<String, Instant> nodes = new ConcurrentHashMap<>();
 
-    public QueryPublisher(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
+    public QueryPublisher(WebSocketApiHandlerPort handler, QueryBuilder queryBuilder) {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;

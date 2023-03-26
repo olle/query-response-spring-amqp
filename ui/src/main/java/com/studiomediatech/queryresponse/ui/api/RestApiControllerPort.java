@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.studiomediatech.queryresponse.ui.app.RestApiAdapter;
+
 @RestController
-public class RestApiController {
+public class RestApiControllerPort {
 
     private final RestApiAdapter adapter;
 
-    public RestApiController(Optional<RestApiAdapter> maybe) {
+    public RestApiControllerPort(Optional<RestApiAdapter> maybe) {
         this.adapter = maybe.orElse(RestApiAdapter.empty());
     }
 

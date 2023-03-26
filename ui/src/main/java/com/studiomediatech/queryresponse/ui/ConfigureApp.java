@@ -19,7 +19,7 @@ import com.studiomediatech.events.AsyncEventEmitter;
 import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.QueryResponseTopicExchange;
-import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandlerPort;
 
 @Order(10)
 @Configuration
@@ -39,13 +39,13 @@ class ConfigureApp {
     }
 
     @Bean
-    WebSocketApiHandler handler(EventEmitter emitter) {
+    WebSocketApiHandlerPort handler(EventEmitter emitter) {
 
-        return new WebSocketApiHandler(emitter);
+        return new WebSocketApiHandlerPort(emitter);
     }
 
     @Bean
-    QueryPublisher querier(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
+    QueryPublisher querier(WebSocketApiHandlerPort handler, QueryBuilder queryBuilder) {
 
         return new QueryPublisher(handler, queryBuilder);
     }
