@@ -23,6 +23,7 @@ public class MessagingConfig {
 
     static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
     static final String QUERY_RESPONSE_QUERIES_QUEUE_BEAN = "queryResponseQueriesQueue";
+    static final String QUERY_RESPONSE_STATS_QUEUE_BINDING_BEAN = "queryResponseQueriesQueueBinding";
     static final String QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY = "query-response/internal/stats";
 
     @Bean
@@ -35,7 +36,7 @@ public class MessagingConfig {
         return new AnonymousQueue();
     }
 
-    @Bean
+    @Bean(QUERY_RESPONSE_STATS_QUEUE_BINDING_BEAN)
     Binding queryResponseStatsQueueBinding(QueryResponseTopicExchange queryResponseTopicExchange) {
         return BindingBuilder.bind(queryResponseStatsQueue()).to(queryResponseTopicExchange)
                 .with(QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY);
