@@ -1,15 +1,15 @@
-package com.studiomediatech.queryresponse.ui.app;
+package com.studiomediatech.queryresponse.ui.app.adapter;
 
-import com.studiomediatech.queryresponse.stats.Stats;
+import com.studiomediatech.queryresponse.ui.messaging.Stats;
 import com.studiomediatech.queryresponse.util.Logging;
 
 /**
  * Declares the capabilities of the incoming side for statistics to aggregate.
  */
-public interface StatsHandlerAdapter extends Logging {
+public interface MessageHandlerAdapter extends Logging {
 
-    static StatsHandlerAdapter empty() {
-        return new StatsHandlerAdapter() {
+    static MessageHandlerAdapter empty() {
+        return new MessageHandlerAdapter() {
             // OK
         };
     }

@@ -9,8 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studiomediatech.queryresponse.stats.Stats;
-import com.studiomediatech.queryresponse.ui.app.StatsHandlerAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.MessageHandlerAdapter;
 import com.studiomediatech.queryresponse.util.Logging;
 
 /**
@@ -29,10 +28,10 @@ class MessageConsumerPort implements Logging {
     private static final String CONSUMERS_MIN = "3";
     private static final String CONSUMERS_MAX = "11";
 
-    private final StatsHandlerAdapter adapter;
+    private final MessageHandlerAdapter adapter;
 
-    public MessageConsumerPort(Optional<StatsHandlerAdapter> maybe) {
-        this.adapter = maybe.orElse(StatsHandlerAdapter.empty());
+    public MessageConsumerPort(Optional<MessageHandlerAdapter> maybe) {
+        this.adapter = maybe.orElse(MessageHandlerAdapter.empty());
     }
 
     @RabbitListener(//

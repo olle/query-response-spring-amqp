@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.studiomediatech.queryresponse.ui.api.ApiConfig;
+import com.studiomediatech.queryresponse.ui.infra.InfraConfig;
 import com.studiomediatech.queryresponse.ui.messaging.MessagingConfig;
 
 @EnableScheduling
@@ -18,7 +19,7 @@ public class QueryResponseUIApp {
     }
 
     @Configuration
-    @Import({ MessagingConfig.class, ApiConfig.class })
+    @Import({ MessagingConfig.class, ApiConfig.class, InfraConfig.class })
     static class Setup {
         // OK
     }
