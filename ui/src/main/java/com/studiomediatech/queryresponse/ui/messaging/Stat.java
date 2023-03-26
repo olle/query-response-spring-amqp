@@ -1,4 +1,4 @@
-package com.studiomediatech.queryresponse.stats;
+package com.studiomediatech.queryresponse.ui.messaging;
 
 public record Stat(String key, Object value, Long timestamp, String uuid) {
 

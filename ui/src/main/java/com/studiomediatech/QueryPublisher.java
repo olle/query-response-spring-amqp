@@ -22,10 +22,10 @@ import org.springframework.util.StringUtils;
 
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
-import com.studiomediatech.queryresponse.stats.Stat;
-import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
-import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
-import com.studiomediatech.queryresponse.util.Loggable;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandlerPort;
+import com.studiomediatech.queryresponse.ui.app.adapter.RestApiAdapter;
+import com.studiomediatech.queryresponse.ui.messaging.Stat;
+import com.studiomediatech.queryresponse.util.Logging;
 
 public class QueryPublisher implements Loggable, RestApiAdapter {
 
