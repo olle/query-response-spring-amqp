@@ -22,7 +22,7 @@ import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.stats.Stat;
 import com.studiomediatech.queryresponse.util.Logging;
 
-public class WebSocketApiHandler extends TextWebSocketHandler implements Logging {
+public class WebSocketApiHandlerPort extends TextWebSocketHandler implements Logging {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
     private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;
@@ -32,7 +32,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
     private final EventEmitter emitter;
     private final ObjectMapper objectMapper;
 
-    public WebSocketApiHandler(EventEmitter emitter) {
+    public WebSocketApiHandlerPort(EventEmitter emitter) {
 
         this.emitter = emitter;
 

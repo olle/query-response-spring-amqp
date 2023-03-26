@@ -5,14 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
-import com.studiomediatech.queryresponse.EnableQueryResponse;
-import com.studiomediatech.queryresponse.ui.messaging.Messaging;
+import com.studiomediatech.queryresponse.ui.api.ApiConfig;
+import com.studiomediatech.queryresponse.ui.messaging.MessagingConfig;
 
-@EnableWebSocket
 @EnableScheduling
-@EnableQueryResponse
 @SpringBootApplication
 public class QueryResponseUIApp {
 
@@ -21,7 +18,8 @@ public class QueryResponseUIApp {
     }
 
     @Configuration
-    @Import({ Messaging.class })
+    @Import({ MessagingConfig.class, ApiConfig.class })
     static class Setup {
+        // OK
     }
 }

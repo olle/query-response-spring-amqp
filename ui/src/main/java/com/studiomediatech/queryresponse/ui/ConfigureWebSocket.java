@@ -5,15 +5,15 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandlerPort;
 
 @Order(100)
 @Configuration
 class ConfigureWebSocket implements WebSocketConfigurer {
 
-    private final WebSocketApiHandler webSocketHandler;
+    private final WebSocketApiHandlerPort webSocketHandler;
 
-    public ConfigureWebSocket(WebSocketApiHandler webSocketHandler) {
+    public ConfigureWebSocket(WebSocketApiHandlerPort webSocketHandler) {
 
         this.webSocketHandler = webSocketHandler;
     }
