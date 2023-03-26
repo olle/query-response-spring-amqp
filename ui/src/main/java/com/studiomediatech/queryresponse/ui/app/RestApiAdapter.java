@@ -1,4 +1,4 @@
-package com.studiomediatech.queryresponse.ui.api;
+package com.studiomediatech.queryresponse.ui.app;
 
 import java.util.Collections;
 import java.util.Map;

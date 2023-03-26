@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.studiomediatech.queryresponse.stats.Stat;
 import com.studiomediatech.queryresponse.stats.Stats;
+import com.studiomediatech.queryresponse.ui.app.StatsHandlerAdapter;
 import com.studiomediatech.queryresponse.util.Logging;
 
 @Service

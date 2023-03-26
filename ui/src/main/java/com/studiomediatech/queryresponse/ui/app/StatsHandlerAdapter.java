@@ -1,4 +1,4 @@
-package com.studiomediatech.queryresponse.ui.service;
+package com.studiomediatech.queryresponse.ui.app;
 
 import com.studiomediatech.queryresponse.stats.Stats;
 import com.studiomediatech.queryresponse.util.Logging;

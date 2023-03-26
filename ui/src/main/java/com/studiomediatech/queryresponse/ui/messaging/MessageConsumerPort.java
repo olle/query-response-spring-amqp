@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.queryresponse.stats.Stats;
-import com.studiomediatech.queryresponse.ui.service.StatsHandlerAdapter;
+import com.studiomediatech.queryresponse.ui.app.StatsHandlerAdapter;
 import com.studiomediatech.queryresponse.util.Logging;
 
 /**
@@ -18,7 +18,7 @@ import com.studiomediatech.queryresponse.util.Logging;
  * adapter.
  */
 @Component
-class MessageConsumer implements Logging {
+class MessageConsumerPort implements Logging {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -31,12 +31,12 @@ class MessageConsumer implements Logging {
 
     private final StatsHandlerAdapter adapter;
 
-    public MessageConsumer(Optional<StatsHandlerAdapter> maybe) {
+    public MessageConsumerPort(Optional<StatsHandlerAdapter> maybe) {
         this.adapter = maybe.orElse(StatsHandlerAdapter.empty());
     }
 
     @RabbitListener(//
-            queues = "#{@" + Messaging.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}", //
+            queues = "#{@" + MessagingConfig.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}", //
             ackMode = ACK_MODE, concurrency = CONSUMERS_MIN + "-" + CONSUMERS_MAX)
     void onQueryResponseStats(Message message) {
         try {
