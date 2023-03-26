@@ -1,4 +1,4 @@
-package com.studiomediatech.queryresponse.ui;
+package com.studiomediatech.queryresponse.ui.messaging;
 
 import org.springframework.amqp.core.AnonymousQueue;
 import org.springframework.amqp.core.Binding;
@@ -6,17 +6,19 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import com.studiomediatech.queryresponse.QueryResponseTopicExchange;
 
 @Configuration
-public class ConfigureMessaging {
+@ComponentScan(basePackageClasses = Messaging.class)
+public class Messaging {
 
-    public static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
-    public static final String QUERY_RESPONSE_QUERIES_QUEUE_BEAN = "queryResponseQueriesQueue";
-    public static final String QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY = "query-response/internal/stats";
+    static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
+    static final String QUERY_RESPONSE_QUERIES_QUEUE_BEAN = "queryResponseQueriesQueue";
+    static final String QUERY_RESPONSE_INTERNAL_STATS_ROUTING_KEY = "query-response/internal/stats";
 
     @Bean
     ConnectionNameStrategy connectionNameStrategy(Environment env) {
