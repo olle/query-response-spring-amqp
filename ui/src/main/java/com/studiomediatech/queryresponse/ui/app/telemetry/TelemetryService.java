@@ -1,8 +1,13 @@
 package com.studiomediatech.queryresponse.ui.app.telemetry;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import com.studiomediatech.queryresponse.ui.app.adapter.MessageHandlerAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.QueryPublisherAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
 import com.studiomediatech.queryresponse.ui.messaging.Stat;
@@ -12,26 +17,74 @@ import com.studiomediatech.queryresponse.util.Logging;
 public class TelemetryService implements Logging, MessageHandlerAdapter, RestApiAdapter {
 
     private final WebSocketApiAdapter webSocketApiAdapter;
+    private final NodeRepository nodeRepository;
+    private final QueryPublisherAdapter queryPublisherAdapter;
 
-    public TelemetryService(WebSocketApiAdapter webSocketApiAdapter) {
+    public TelemetryService(WebSocketApiAdapter webSocketApiAdapter, NodeRepository nodeRepository,
+            QueryPublisherAdapter queryPublisherAdapter) {
         this.webSocketApiAdapter = webSocketApiAdapter;
+        this.nodeRepository = nodeRepository;
+        this.queryPublisherAdapter = queryPublisherAdapter;
+    }
+
+    @Override
+    public Map<String, Object> query(String q, int timeout, int limit) {
+        return queryPublisherAdapter.query(q, timeout, limit);
     }
 
     @Override
     public Map<String, Object> nodes() {
-        return Map.of("nodes", "none");
+        return Map.of("elements", nodeRepository.findAll());
     }
 
     @Override
     public void handleConsumed(Stats stats) {
-
         log().info("Consumed stats with {} elements", stats.elements().size());
 
-        stats.elements().stream().filter(s -> s.timestamp() != null).map(Stat::toString)
-                .forEach(str -> log().debug("STAT VALUE: {}", str));
+        Collection<Node> nodes = parseToNodesCollection(stats);
+        updateNodes(nodes);
 
-        stats.elements().stream().filter(s -> s.timestamp() == null).map(Stat::toString)
-                .forEach(str -> log().debug("STAT INFO: {}", str));
-
+        // stats.elements().stream().filter(s -> s.timestamp() !=
+        // null).map(Stat::toString)
+        // .forEach(str -> log().debug("STAT VALUE: {}", str));
+        //
+        // stats.elements().stream().filter(s -> s.timestamp() ==
+        // null).map(Stat::toString)
+        // .forEach(str -> log().debug("STAT INFO: {}", str));
     }
+
+    private void updateNodes(Collection<Node> nodes) {
+        for (Node node : nodes) {
+            Optional<Node> maybe = nodeRepository.findOneByUUID(node.getUUID());
+            if (maybe.isPresent()) {
+                Node updated = maybe.get().update(node);
+                nodeRepository.save(updated);
+            } else {
+                nodeRepository.save(node);
+            }
+        }
+    }
+
+    protected Collection<Node> parseToNodesCollection(Stats stats) {
+
+        Map<UUID, Node> nodes = new HashMap<>();
+
+        for (Stat stat : stats.elements()) {
+
+            UUID uuid = UUID.fromString(stat.uuid());
+            Node node = nodes.computeIfAbsent(uuid, key -> Node.from(key));
+
+            stat.whenKey("name", node::setName);
+            stat.whenKey("pid", node::setPid);
+            stat.whenKey("host", node::setHost);
+            stat.whenKey("uptime", node::setUptime);
+        }
+
+        return nodes.values();
+    }
+
+    public void publishNodes() {
+        webSocketApiAdapter.publishNodes(nodeRepository.findAll());
+    }
+
 }
