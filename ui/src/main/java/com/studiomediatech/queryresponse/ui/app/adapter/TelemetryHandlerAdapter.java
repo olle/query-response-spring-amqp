@@ -6,10 +6,10 @@ import com.studiomediatech.queryresponse.util.Logging;
 /**
  * Declares the capabilities of the incoming side for statistics to aggregate.
  */
-public interface MessageHandlerAdapter extends Logging {
+public interface TelemetryHandlerAdapter extends Logging {
 
-    static MessageHandlerAdapter empty() {
-        return new MessageHandlerAdapter() {
+    static TelemetryHandlerAdapter empty() {
+        return new TelemetryHandlerAdapter() {
             // OK
         };
     }
