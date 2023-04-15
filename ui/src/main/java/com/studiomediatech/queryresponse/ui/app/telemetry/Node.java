@@ -31,15 +31,6 @@ public class Node {
         return new Node(uuid);
     }
 
-    @Override
-    public String toString() {
-        return "Node [uuid=%s]".formatted(uuid);
-    }
-
-    public UUID getUUID() {
-        return uuid;
-    }
-
     public Node update(Node other) {
 
         Assert.isTrue(other.uuid.equals(this.uuid), "Must be same node.");
@@ -52,7 +43,16 @@ public class Node {
         return this;
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
+        return "Node [uuid=%s]".formatted(uuid);
+    }
+
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    private String getName() {
         return name;
     }
 
@@ -60,27 +60,16 @@ public class Node {
         this.name = name;
     }
 
-    public String getPid() {
-        return pid;
-    }
-
     public void setPid(String pid) {
         this.pid = pid;
-    }
-
-    public String getHost() {
-        return host;
     }
 
     public void setHost(String host) {
         this.host = host;
     }
 
-    public String getUptime() {
-        return uptime;
-    }
-
     public void setUptime(String uptime) {
         this.uptime = uptime;
     }
+
 }
