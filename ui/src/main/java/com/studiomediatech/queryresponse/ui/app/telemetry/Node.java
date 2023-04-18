@@ -5,7 +5,9 @@ import java.util.UUID;
 
 import org.springframework.util.Assert;
 
-public class Node {
+import com.studiomediatech.queryresponse.util.Logging;
+
+public class Node implements Logging {
 
     public static final Comparator<Node> SORT = Comparator.comparing(Node::getName).thenComparing(Node::getUUID);
 
@@ -35,6 +37,8 @@ public class Node {
 
         Assert.isTrue(other.uuid.equals(this.uuid), "Must be same node.");
 
+        log().info("Updating {} with {}", this, other);
+
         this.host = other.host;
         this.name = other.name;
         this.uptime = other.uptime;
@@ -48,11 +52,7 @@ public class Node {
         return "Node [uuid=%s]".formatted(uuid);
     }
 
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    private String getName() {
+    public String getName() {
         return name;
     }
 
@@ -60,16 +60,32 @@ public class Node {
         this.name = name;
     }
 
+    public String getPid() {
+        return pid;
+    }
+
     public void setPid(String pid) {
         this.pid = pid;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public void setHost(String host) {
         this.host = host;
     }
 
+    public String getUptime() {
+        return uptime;
+    }
+
     public void setUptime(String uptime) {
         this.uptime = uptime;
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
 }
