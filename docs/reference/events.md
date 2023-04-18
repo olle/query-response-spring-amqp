@@ -1,10 +1,10 @@
 # Query/Response Events
 
-## Metrics or "Stats"
+## Telemetry
 
-Participating nodes in a Query/Response topology will broadcast events of structured statistics for the UI and monitoring applications to consume. The common data-shape encapsulates a way to communicate measurements, events, and node-identifying and describing meta-data.
+Participating nodes in a Query/Response network topology will broadcast events with structured telemetry for the UI and monitoring applications to consume. The common data-shape encapsulates a way to communicate measurements, events and node-identifying and describing meta data.
 
-The entry structure and format is encoded as a JSON UTF-8 encoded string.
+The entry structure and format is encoded as a JSON UTF-8 encoded string payload.
 
 ```json
 {
@@ -24,7 +24,7 @@ The `key` and `value` property pairs are used to encode any measurement. The `ti
 
 The `uuid` property is used to identify the publishing node during its lifetime—effectively creating an aggregate for statistics to present. This means that in practice there are operational metrics which may _come and go_ as well as logical statistics which may pertain to the topology or cluster of nodes.
 
-### Table of published statistics
+### Table of published telemetry
 
 | Key                       | Value   | Timestamp | UUID   | Description                                                                 |
 |---------------------------|---------|-----------|--------|-----------------------------------------------------------------------------|
