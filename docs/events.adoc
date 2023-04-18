@@ -1,13 +1,14 @@
 = Query/Response Events
 
-== Metrics or "Stats"
+== Telemetry
 
-Participating nodes in a Query/Response topology will broadcast events of
-structured statistics for the UI and monitoring applications to consume. The
+Participating nodes in a Query/Response network topology will broadcast events
+with structured telemetry for the UI and monitoring applications to consume. The
 common data-shape encapsulates a way to communicate measurements, events and
-node-identifying and describing meta-data.
+node-identifying and describing meta data.
 
-The entry structure and format is encoded as a JSON UTF-8 encoded string.
+The entry structure and format is encoded as a JSON UTF-8 encoded string
+payload.
 
 ```json
 {
@@ -33,7 +34,7 @@ means that in practice there are operational metrics which may _come and go_
 as well as logical statistics which may pertain to the topology or cluster of
 nodes.
 
-=== Table of published statistics
+=== Table of published telemetry
 
 [cols="2,2,1,1,3"]
 |===
