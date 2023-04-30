@@ -21,10 +21,23 @@ class MessagingConfigIT {
         Queue queue = (Queue) ctx.getBean(MessagingConfig.QUERY_RESPONSE_STATS_QUEUE_BEAN);
         assertThat(queue).isNotNull();
 
-        Binding binding = (Binding) ctx.getBean(MessagingConfig.QUERY_RESPONSE_STATS_QUEUE_BINDING_BEAN);
+        Binding binding = (Binding) ctx.getBean(MessagingConfig.QUERY_RESPONSE_STATS_BINDING);
         assertThat(binding).isNotNull();
         assertThat(binding.getDestination()).isEqualTo(queue.getName());
         assertThat(binding.getRoutingKey()).isEqualTo("query-response/internal/stats");
         assertThat(binding.getExchange()).isEqualTo("query-response");
     }
+    
+    @Test
+	void ensure_has_telemetry_queue_with_modernised_binding() throws Exception {
+    	
+        Queue queue = (Queue) ctx.getBean(MessagingConfig.QUERY_RESPONSE_STATS_QUEUE_BEAN);
+        assertThat(queue).isNotNull();
+
+        Binding binding = (Binding) ctx.getBean(MessagingConfig.QUERY_RESPONSE_TELEMETRY_BINDING);
+        assertThat(binding).isNotNull();
+        assertThat(binding.getDestination()).isEqualTo(queue.getName());
+        assertThat(binding.getRoutingKey()).isEqualTo("query-response/internal/telemetry");
+        assertThat(binding.getExchange()).isEqualTo("query-response");
+	}
 }
