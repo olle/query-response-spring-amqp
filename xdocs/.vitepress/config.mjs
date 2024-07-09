@@ -5,6 +5,9 @@ export default defineConfig({
   description: "A VitePress Site",
   lastUpdated: true,
   themeConfig: {
+    search: {
+      provider: "local",
+    },
     nav: [{ text: "Home", link: "/" }],
     sidebar: [
       {
