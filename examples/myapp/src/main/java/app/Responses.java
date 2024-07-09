@@ -13,7 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 
-// tag::response[]
+// #region response
 @Component
 public class Responses {
 
@@ -29,4 +29,4 @@ public class Responses {
         .from("polo", "yolo"); // <3>
     }
 }
-// end::response[]
+// #endregion response
