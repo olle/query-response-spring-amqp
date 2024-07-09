@@ -33,6 +33,10 @@ features:
     details: Be better prepared for system evolution.
 ---
 
+<script setup>
+import "../ui-frontend/src/vars.css";
+</script>
+
 ## Change the way you think and design, by using Query/Response for Spring AMQP.
 
 _Sometime around 2015 I came across a presentation with [Fred George](https://twitter.com/fgeorge52),
@@ -60,9 +64,10 @@ It literally turns things around - an inversion of responsibility - which I
 truly believe we can benefit from._
 
 _Olle Törnström, 2019_
+
 <style>
 :root {
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #13a8a6 30%, #4161ff);
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--color-blue-400) 30%, var(--color-fuchsia-500));
 }
 </style>
