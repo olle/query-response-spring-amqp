@@ -1,4 +1,4 @@
-# Query/Response Specification
+# Query/Response Protocol
 
 I'd like to describe the Query/Response pattern in a more formal but not
 too strict way, since it's not in any way some type of _standard_ or

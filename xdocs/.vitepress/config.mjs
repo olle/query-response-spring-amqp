@@ -15,15 +15,19 @@ export default defineConfig({
             link: "/guide/what-is-query-response",
           },
           { text: "Getting started", link: "/guide/getting-started" },
-          { text: "Example revisited", link: "/guide/the-example-revisited"}
+          { text: "Example revisited", link: "/guide/the-example-revisited" },
         ],
       },
       {
         text: "Reference",
         items: [
           {
-            text: "Specification",
-            link: "/reference/the-query-response-specification",
+            text: "Developers Reference",
+            link: "/reference/developers-reference",
+          },
+          {
+            text: "Query/Response Protocol",
+            link: "/reference/the-query-response-protocol",
           },
           {
             text: "Maturity Model",
