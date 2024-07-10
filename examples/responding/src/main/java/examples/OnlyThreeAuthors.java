@@ -9,7 +9,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 
-//tag::class[]
+// #region class
 @Component
 public class OnlyThreeAuthors {
 
@@ -26,4 +26,4 @@ public class OnlyThreeAuthors {
             .from("Tolkien", "Lewis", "Rowling");
     }
 }
-//end::class[]
+// #endregion class

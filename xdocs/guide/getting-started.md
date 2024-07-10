@@ -1,17 +1,17 @@
 <script setup>
-const BRAND = "Query/Response for Spring® AMQP";
+import * as attr from "../attributes.js";
 </script>
 
 # Getting Started
 
-{{BRAND}} makes it really easy to extend Spring Boot stand-alone,
+{{attr.BRAND}} makes it really easy to extend Spring Boot stand-alone,
 production-grade applications, that are using Spring AMQP. We have taken
 a working pattern for building highly decoupled evolving service architectures,
 and wrapped it in a developer friendly library.
 
 ## System Requirements
 
-{{BRAND}} requires at least **Spring Boot 2.x** and **Java 11**, and should work
+{{attr.BRAND}} requires at least **Spring Boot 2.x** and **Java 11**, and should work
 for later releases too. We are building and running it successfully with
 **Java 11** and the **Spring Boot 3.0.3** version.
 
@@ -23,7 +23,7 @@ should work too. Please see the [Quickstart](https://github.com/olle/query-respo
 information, available on the project [Github page](https://github.com/olle/query-response-spring-amqp),
 for information on how to get the Maven dependency.
 
-Enabling {{BRAND}} is done by loading the `QueryResponseConfiguration`
+Enabling {{attr.BRAND}} is done by loading the `QueryResponseConfiguration`
 class. The most simple way to do this, is by annotating your Spring Boot
 application with the `@EnableQueryResponse` annotation.
 
@@ -38,7 +38,7 @@ be done. **It's just that easy.**
 ### Connecting to an AMQP broker
 
 Before you can run your application you need to make sure there is an AMQP
-broker available. By default {{BRAND}} tries to connect to a
+broker available. By default {{attr.BRAND}} tries to connect to a
 https://www.rabbitmq.com[RabbitMQ], running locally on port `5672`.
 
 Start an and run RabbitMQ using `docker`:
@@ -51,7 +51,7 @@ NOTE: The `3-management` tag will enable the RabbitMQ Management UI. When the
 broker is running, it can be accessed at http://localhost:15672 with
 username and password `guest/guest`.
 
-Now running your application, will enable {{BRAND}}, connect to the broker and
+Now running your application, will enable {{attr.BRAND}}, connect to the broker and
 create all the resources necessary on the broker.
 
 ```sh
@@ -60,7 +60,7 @@ $ mvn spring-boot:run
 
 Now is a good time to use the RabbitMQ Management UI, available at
 http://localhost:15672, to inspect the exchange, queues and bindings created
-by {{BRAND}} by default.
+by {{attr.BRAND}} by default.
 
 ## Queries
 
@@ -68,7 +68,7 @@ Publishing **queries** is a way for your application to ask for information that
 it may need in order to accomplish tasks. Queries express a _need_, and are not
 addressed to any specific service or component.
 
-{{BRAND}} makes it really really easy, to create and publish a query using
+{{attr.BRAND}} makes it really really easy, to create and publish a query using
 the `QueryBuilder`.
 
 <<<@../../examples/myapp/src/main/java/app/Queries.java#query{java}
@@ -116,7 +116,7 @@ second, nothing is printed `STDOUT`.
 ## Responses
 
 Building services, medium, large or _micro_ (who cares), that publish
-**responses** to queries is also really easy with {{BRAND}}, using the
+**responses** to queries is also really easy with {{attr.BRAND}}, using the
 `ResponseBuilder`.
 
 <<<@../../examples/myapp/src/main/java/app/Responses.java#response{java}
