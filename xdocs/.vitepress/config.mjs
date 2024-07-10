@@ -4,6 +4,8 @@ export default defineConfig({
   title: "Query/Response",
   description: "A VitePress Site",
   lastUpdated: true,
+  footer: true,
+  ignoreDeadLinks: true,
   themeConfig: {
     search: {
       provider: "local",
