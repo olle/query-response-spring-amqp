@@ -63,7 +63,6 @@ composition of _initial_, _conditional_, an optional _informal_ and
 exactly one _terminal_ method call. In the table below is a short review of the
 different builder methods and their types.
 
-
 ### `QueryBuilder` fluid API method types
 
 | Method              | Type          | Description                                                     |
@@ -190,11 +189,11 @@ The _informal_ builder feature, allows for transparency into queries that may
 have to be observed.
 
 ```java
-  return queryBuilder.queryFor("offers/rental", NewOffer.class)
-                  .takingAtLeast(3)
-                  .waitingFor(400)
-                  .onError(error -> LOG.error("Failure!", error))
-                  .orThrow(TooFewOffersConstraintException::new);
+return queryBuilder.queryFor("offers/rental", NewOffer.class)
+                .takingAtLeast(3)
+                .waitingFor(400)
+                .onError(error -> LOG.error("Failure!", error))
+                .orThrow(TooFewOffersConstraintException::new);
 ```
 
 ## `ResponseBuilder`
@@ -251,17 +250,15 @@ _batching_, which can be used to control the transfer of data to some degree.
 
 The table below shows a summary of the builder methods and types.
 
-[cols="1,1,3"]
-.`ResponseBuilder` fluid API method types
-|===
-| Method | Type | Description
+### `ResponseBuilder` fluid API method types
 
-| `respondTo(..)` | _initial_ | Creates a new builder for a query
-| `withAll()` | _batching_ | Specifies NO batches
-| `withBatchesOf(..)` | _batching_ | Sets the batch size of responses
-| `from(..)` | _terminal_ | Terminates with some given response data
-| `suppliedBy(..)` | _terminal_ | Terminates with some supplied response data
-|===
+| Method              | Type       | Description                                 |
+| ------------------- | ---------- | ------------------------------------------- |
+| `respondTo(..)`     | _initial_  | Creates a new builder for a query           |
+| `withAll()`         | _batching_ | Specifies NO batches                        |
+| `withBatchesOf(..)` | _batching_ | Sets the batch size of responses            |
+| `from(..)`          | _terminal_ | Terminates with some given response data    |
+| `suppliedBy(..)`    | _terminal_ | Terminates with some supplied response data |
 
 Let's take a closer look at each of the builder method types.
 
@@ -271,7 +268,7 @@ At the moment there's only one _initial_ method for building responses. It is
 declared as:
 
 ```java
-  public <T> ChainingResponseBuilder<T> respondTo(String term, Class<T> type)
+public <T> ChainingResponseBuilder<T> respondTo(String term, Class<T> type)
 ```
 
 So we can create a response for any `String` **term** and declare that we intend
@@ -300,9 +297,9 @@ the builder call always returns after the _terminal_ call.
 - `from(..)` - declares the source for the provided response data elements. It
   is declared in a few different ways, for alternative use:
 
-** `from(T... elements)` - vararg elements
-** `from(Collection<T> elements)` - provided collection at _build-time_
-\*\* `from(Supplier<Iterator<T>> elements)` - supplied iterator at _build-time_
+  - `from(T... elements)` - vararg elements
+  - `from(Collection<T> elements)` - provided collection at _build-time_
+  - `from(Supplier<Iterator<T>> elements)` - supplied iterator at _build-time_
 
 - `suppliedBy(Supplier<Collection<T>> elements)` - declares that response data
   is supplied at _run-time_.
@@ -314,16 +311,16 @@ system using Query/Response across many services. It may tune and change the pro
 of resource use, in a network.
 
 ```java
-  responseBuilder.respondTo("offers/monday", Offer.class)
-      .withBatchesOf(20)
-      .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
+responseBuilder.respondTo("offers/monday", Offer.class)
+    .withBatchesOf(20)
+    .from(offers.findAllOffersByDayOfWeek(Calendar.MONDAY));
 ```
 
 Dynamic responses are easy to build, with an API that suits modern Java, using
 lazy calls to suppliers of data.
 
 ```java
-  responseBuilder.respondTo("users/current", Token.class)
-      .withBatchesOf(128)
-      .suppliedBy(userTokenService::findAllCurrentUserTokens);
+responseBuilder.respondTo("users/current", Token.class)
+    .withBatchesOf(128)
+    .suppliedBy(userTokenService::findAllCurrentUserTokens);
 ```

@@ -8,7 +8,11 @@ export default defineConfig({
     search: {
       provider: "local",
     },
-    nav: [{ text: "Home", link: "/" }],
+    nav: [
+      { text: "Home", link: "/" },
+      { text: "Guide", link: "/guide/what-is-query-response" },
+      { text: "Reference", link: "/reference/developers-reference" },
+    ],
     sidebar: [
       {
         text: "Guide",
