@@ -6,7 +6,7 @@
     "vitepress": "^1.2.3"
   },
   "scripts": {
-    "deploy-docs": "gh-pages -d target/generated-docs",
+    "deploy-docs": "gh-pages -d xdocs/.vitepress/dist",
     "docs:dev": "vitepress dev xdocs",
     "docs:build": "vitepress build xdocs",
     "docs:preview": "vitepress preview xdocs"
