@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 
-//tag::class[]
+// #region class
 @Component
 public class Authors {
 
@@ -23,4 +23,4 @@ public class Authors {
             .orEmpty();
     }
 }
-//end::class[]
+// #endregion class

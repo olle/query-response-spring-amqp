@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 
-// tag::query[]
+// #region query
 @Component
 public class Queries {
 
@@ -34,4 +34,4 @@ public class Queries {
         polos.stream().map("marco? "::concat).forEach(System.out::println);
     }
 }
-// end::query[]
+// #endregion query

@@ -10,9 +10,9 @@ install:
 
 .PHONY: docs watch-docs
 docs:
-	mvn asciidoctor:process-asciidoc
+	npm run docs:build
 	mvn javadoc:javadoc
-	cp -R target/site/apidocs target/generated-docs/
+	cp -R target/site/apidocs xdocs/.vitepress/dist/
 	npm run deploy-docs
 
 watch-docs:

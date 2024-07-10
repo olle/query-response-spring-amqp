@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-// tag::install[]
+// #region install
 @SpringBootApplication
 @EnableQueryResponse
 public class MyApp {
@@ -16,4 +16,4 @@ public class MyApp {
         SpringApplication.run(MyApp.class, args);
     }
 }
-// end::install[]
+// #endregion install
