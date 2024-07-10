@@ -6,6 +6,7 @@ export default defineConfig({
   lastUpdated: true,
   footer: true,
   ignoreDeadLinks: true,
+  base: "/query-response-spring-amqp/",
   themeConfig: {
     search: {
       provider: "local",
