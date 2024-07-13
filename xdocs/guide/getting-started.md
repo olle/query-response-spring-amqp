@@ -133,7 +133,7 @@ The response `withAll()` will publish all elements in one single response.
 ::: tip <3>
 And finally this response is provided the elements `"polo", "yolo"` as the
 actual data to publish. _The builder varags method, used here, is mostly
-for trying out {qr-name}, or for static responses._
+for trying out Query/Response, or for static responses._
 :::
 
 _Again, the builder makes it really easy to create a responding service, without
