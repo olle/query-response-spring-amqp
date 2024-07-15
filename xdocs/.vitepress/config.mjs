@@ -2,7 +2,8 @@ import { defineConfig } from "vitepress";
 
 export default defineConfig({
   title: "Query/Response",
-  description: "A VitePress Site",
+  description:
+    "A messaging pattern for building highly decoupled evolving service architectures.",
   lastUpdated: true,
   footer: true,
   ignoreDeadLinks: true,
