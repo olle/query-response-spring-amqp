@@ -15,6 +15,12 @@ public class QueryResponseConfigurationProperties {
     private StatsProperties stats = new StatsProperties();
 
     /**
+     * Creates a new Query/Response configuration properties instance.
+     */
+    public QueryResponseConfigurationProperties() {
+    }
+
+    /**
      * Retrieves the Query/Response exchange configuration.
      *
      * @return configuration properties bean
@@ -83,6 +89,12 @@ public class QueryResponseConfigurationProperties {
         private String name = DEFAULT_QUERY_RESPONSE_TOPIC_EXCHANGE;
 
         /**
+         * Creates a new instance of exchange configuration properties for Query/Response.
+         */
+        public ExchangeProperties() {
+        }
+
+        /**
          * Retrieves the globally shared Query/Response topic exchange name.
          *
          * @return exchange name string
@@ -117,6 +129,12 @@ public class QueryResponseConfigurationProperties {
          * Prefix for queue names.
          */
         private String prefix = DEFAULT_QUERY_RESPONSE_PREFIX;
+
+        /**
+         * Creates a new instance of queue properties for Query/Response.
+         */
+        public QueueProperties() {
+        }
 
         /**
          * Retrieves the Query/Response naming prefix.
@@ -162,6 +180,12 @@ public class QueryResponseConfigurationProperties {
          * Delay between each publishing of statistics, in milliseconds.
          */
         private long delay = DEFAULT_DELAY;
+
+        /**
+         * Creates a new instance of statistics properties for Query/Response.
+         */
+        public StatsProperties() {
+        }
 
         /**
          * Retrieves the configured topic routing key.
