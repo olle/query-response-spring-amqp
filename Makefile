@@ -1,4 +1,4 @@
-JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 17)
+JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 21)
 
 .PHONY: verify
 verify:
@@ -29,11 +29,11 @@ ui/target/query-response-ui.jar: install
 
 .PHONY: up
 up:
-	docker-compose up -d
+	docker compose up -d
 
 .PHONY: down
 down:
-	docker-compose down --remove-orphans
+	docker compose down --remove-orphans
 
 .PHONY: repo-clean
 repo-clean:
