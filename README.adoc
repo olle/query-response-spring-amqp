@@ -5,8 +5,6 @@ image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/bad
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
 
-_Coming in 2024: support only for the latest Spring Boot **CURRENT** version._
-
 Build safer and more resilient distributed services. Get the benefits of an
 _always async_ approach to data exchange. Ensure decoupling of components. Be
 better prepared for system evolution. Create more scalable solutions. Change the
@@ -111,21 +109,14 @@ provided in Spring Boot. Therefore, there needs to be a living relationship
 between the generational release versions of Spring Boot and this project.
 
 We will build and tag an initial version `0.9.x` as a _preliminary_ working
-version of Query/Response. This version is tracked in branches supporting the
-active Spring Boot versions, as well as the `main` branch.
+version of Query/Response. This version will only support the current and latest
+version of Spring Boot, in our `main` branch.
 
-* `main`              -> Spring Boot 3.0.x
-* `spring-boot-2.7.x` -> Spring Boot 2.7.x
-* `spring-boot-2.6.x` -> Spring Boot 2.6.x
-* `spring-boot-2.5.x` -> Spring Boot 2.5.x
-
-From each branch there will be tagged releases, denoting the version of Spring
-Boot that it is built against. For example `0.9.0-SB2_3_6` means it was built
-with the Spring Boot `2.3.6.RELEASE` dependency.
+* `main` -> Spring Boot 3.3.x
 
 There will be no other minor version increment under the initial major version
 `0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
-for an upcoming `1.0.0` version.
+for an upcoming stable `1.0.0` version.
 
 === No longer active
 
@@ -133,15 +124,17 @@ The following branches and versions are no longer actively supported or
 back-ported to. The intent is to never linger behind the list of active Spring
 Boot versions.
 
-* `spring-boot-2.4.x` -> Spring Boot 2.4.x
-* `spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
-* `spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
-* `spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
-* `spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
+* `inactive/spring-boot-2.7.x` -> Spring Boot 2.7.x
+* `inactive/spring-boot-2.6.x` -> Spring Boot 2.6.x
+* `inactive/spring-boot-2.5.x` -> Spring Boot 2.5.x
+* `inactive/spring-boot-2.4.x` -> Spring Boot 2.4.x
+* `inactive/spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
+* `inactive/spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
+* `inactive/spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
+* `inactive/spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
 
 Happy coding!
 
 ---
 
-Spring and Spring Boot are trademarks of Pivotal Software, Inc. in the U.S. and
-other countries.
+Spring and Spring Boot is a trademark of Broadcom Inc. and/or its subsidiaries.
