@@ -1,13 +1,13 @@
 <template>
-  <li @click="toggleShowColors()">
+  <li @click="store.toggle()">
     <IconPalette />
   </li>
 </template>
 
 <script setup>
 import { IconPalette } from "@tabler/icons-vue";
-import { useStore } from "vuex";
-const store = useStore();
+import { useColorPaletteStore } from "../stores/useColorPaletteStore";
+const store = useColorPaletteStore();
 function toggleShowColors() {
   store.commit("toggleShowColorPalette");
 }

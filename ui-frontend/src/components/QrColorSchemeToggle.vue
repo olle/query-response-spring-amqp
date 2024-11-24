@@ -1,40 +1,14 @@
 <template>
-  <li v-on:click="theme = theme === 'light' ? 'dark' : 'light'">
-    <IconSun v-if="theme === 'light'"></IconSun>
-    <IconMoon v-if="theme === 'dark'"></IconMoon>
+  <li @click="toggleDark()">
+    <IconMoon v-if="isDark"></IconMoon>
+    <IconSun v-if="!isDark"></IconSun>
   </li>
 </template>
 
 <script setup>
-import { IconSun, IconMoon } from "@tabler/icons-vue"
-import { ref, watch, onMounted, onBeforeUnmount } from "vue";
+import { IconSun, IconMoon } from "@tabler/icons-vue";
+import { useDark, useToggle } from "@vueuse/core";
 
-const theme = ref();
-
-watch(theme, (value) => {
-  window.localStorage.setItem("theme", value);
-  document.querySelector("html").setAttribute("data-theme", value);
-});
-
-const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
-
-const onColorSchemeChange = (evt) => {
-  theme.value = evt.matches ? "dark" : "light";
-};
-
-onMounted(() => {
-  let storedTheme = window.localStorage.getItem("theme");
-  if (storedTheme) {
-    theme.value = storedTheme;
-  } else {
-    theme.value = matchMedia.matches ? "dark" : "light";
-  }
-  // Add listener
-  matchMedia.addEventListener("change", onColorSchemeChange);
-});
-
-onBeforeUnmount(() => {
-  // Remove listener
-  matchMedia.removeEventListener("change", onColorSchemeChange);
-});
+const isDark = useDark({ attribute: "data-theme" });
+const toggleDark = useToggle(isDark);
 </script>

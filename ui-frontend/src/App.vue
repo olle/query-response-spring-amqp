@@ -17,25 +17,31 @@
 import QrNavigation from "./components/QrNavigation.vue";
 import QrFooter from "./components/QrFooter.vue";
 import QrColors from "./components/QrColors.vue";
+import { useWebSocket } from "@vueuse/core";
+import { watch } from "vue";
 
-import { useStore } from "vuex";
-import { addListener } from "./ws";
+const { status, data, close } = useWebSocket("ws://websocketurl", {
+  autoReconnect: true,
+  heartbeat: true,
+});
 
-const store = useStore();
-
-addListener((msg) => {
+watch(data, (msg) => {
   try {
     var message = JSON.parse(msg.data);
     if (message.metrics) {
-      store.commit("metrics", message.metrics);
+      //store.commit("metrics", message.metrics);
     }
     if (message.nodes) {
-      store.commit("nodes", message.nodes);
+      //store.commit("nodes", message.nodes);
     }
   } catch (err) {
     console.error("unexpected payload", msg.data);
   }
 });
+
+// import { addListener } from "./ws";
+// addListener((msg) => {
+// });
 </script>
 
 <style scoped>
