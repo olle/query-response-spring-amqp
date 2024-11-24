@@ -1,49 +1,36 @@
 package com.studiomediatech;
 
-import java.io.IOException;
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
-import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
-import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
-import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
+import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandlerPort;
+import com.studiomediatech.queryresponse.ui.app.adapter.RestApiAdapter;
+import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.util.Logging;
 
 public class QueryPublisher implements Logging, RestApiAdapter {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
     private static final int SLIDING_WINDOW = 40;
-    private static final int DEFAULT_QUERY_TIMEOUT = 1500;
 
     static ToLongFunction<Stat> statToLong = s -> ((Number) s.value()).longValue();
 
@@ -55,65 +42,14 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     private List<Double> tps = new LinkedList<>();
 
     private final QueryBuilder queryBuilder;
-    private final WebSocketApiHandler handler;
+    private final WebSocketApiHandlerPort handler;
 
     private final Map<String, Instant> nodes = new ConcurrentHashMap<>();
 
-    public QueryPublisher(WebSocketApiHandler handler, QueryBuilder queryBuilder) {
+    public QueryPublisher(WebSocketApiHandlerPort handler, QueryBuilder queryBuilder) {
 
         this.handler = handler;
         this.queryBuilder = queryBuilder;
-    }
-
-    @Override
-    public Map<String, Object> query(String q, int timeout, int limit) {
-
-        List<Object> defaults = List.of("No responses");
-
-        final Collection<Object> responses;
-
-        long start = System.nanoTime();
-
-        if (q.contains(" ")) {
-            responses = queryParsed(q, defaults);
-        } else {
-            responses = queryStrict(q, timeout, limit, defaults);
-        }
-
-        return Map.of("response", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
-    }
-
-    private Collection<Object> queryParsed(String q, List<Object> defaults) {
-
-        var query = QueryRecordedEvent.valueOf(q, "none");
-
-        query.getQuery();
-        query.getTimeout();
-
-        Optional<Integer> maybe = query.getLimit();
-
-        if (maybe.isPresent()) {
-
-            return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
-                    .takingAtMost(maybe.get()).orDefaults(defaults);
-
-        }
-
-        return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
-                .orDefaults(defaults);
-
-    }
-
-    private Collection<Object> queryStrict(String q, int timeout, int limit, List<Object> defaults) {
-        long queryTimeout = timeout > 0 ? timeout : DEFAULT_QUERY_TIMEOUT;
-
-        if (limit > 0) {
-            return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).takingAtMost(limit)
-                    .orDefaults(defaults);
-        }
-
-        return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).orDefaults(defaults);
-
     }
 
     @EventListener
@@ -140,30 +76,16 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         }
     }
 
-    @RabbitListener(queues = "#{@" + QueryResponseUIApp.QUERY_RESPONSE_STATS_QUEUE_BEAN + "}")
-    void onQueryResponseStats(Message message) {
-
-        try {
-            handle(MAPPER.readValue(message.getBody(), Stats.class).elements);
-        } catch (RuntimeException | IOException ex) {
-            log().error("Failed to consumed stats", ex);
-        }
-    }
-
-    protected void handle(Collection<Stat> stats) {
-
-        stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
-
-        handleCounts(stats);
-        handleLatencies(stats);
-        handleThroughput(stats);
-        handleNodes(stats);
-    }
-
-    @Override
-    public Map<String, Object> nodes() {
-        return Map.of("nodes", this.nodes, "timestamp", Instant.now(Clock.systemUTC()));
-    }
+    // @Override
+    // public void handle(Collection<Stat> stats) {
+    //
+    // stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
+    //
+    // handleCounts(stats);
+    // handleLatencies(stats);
+    // handleThroughput(stats);
+    // handleNodes(stats);
+    // }
 
     private void handleNodes(Collection<Stat> stats) {
 
@@ -171,6 +93,7 @@ public class QueryPublisher implements Logging, RestApiAdapter {
                 .collect(Collectors.groupingBy(stat -> stat.uuid()));
 
         for (Entry<String, List<Stat>> node : nodes.entrySet()) {
+
             String uuid = node.getKey();
 
             this.nodes.put(uuid, Instant.now());
@@ -332,20 +255,6 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         double sum = 1.0 * dest.stream().mapToLong(statToLong).sum();
 
         return Math.round((sum / duration) * 1000000.0) / 1000000.0;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Stats {
-
-        @JsonProperty
-        public Collection<Stat> elements;
-
-        @Override
-        public String toString() {
-
-            return Optional.ofNullable(elements).orElse(Collections.emptyList()).stream().map(Object::toString)
-                    .collect(Collectors.joining(", "));
-        }
     }
 
 }

@@ -40,8 +40,8 @@ const connectSocket = () => {
     };
 
     sock.onmessage = (msg) => {
-      // console.log("RECEIVED EVENT", msg);
-      // console.log("RECEIVED EVENT PAYLOAD", JSON.stringify(JSON.parse(msg.data)));
+      //console.log("RECEIVED EVENT", msg);
+      console.log("RECEIVED EVENT PAYLOAD", JSON.stringify(JSON.parse(msg.data)));
       listeners.forEach((listener) => listener(msg));
     };
   } catch (err) {

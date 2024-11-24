@@ -1,4 +1,6 @@
-package com.studiomediatech;
+package com.studiomediatech.queryresponse.ui.messaging;
+
+import java.util.function.Consumer;
 
 public record Stat(String key, Object value, Long timestamp, String uuid) {
 
@@ -12,10 +14,10 @@ public record Stat(String key, Object value, Long timestamp, String uuid) {
     public static final String THROUGHPUT_RESPONSES = "throughput_responses";
     public static final String AVG_THROUGHPUT = "avg_throughput";
 
-    // @Override
-    // public String toString() {
-    //
-    // return key + "=" + value + (timestamp != null ? " " + timestamp : "")
-    // + (uuid != null ? " uuid=" + uuid : "");
-    // }
+    @SuppressWarnings("unchecked")
+    public <T> void whenKey(String key, Consumer<T> target) {
+        if (this.key.equals(key)) {
+            target.accept((T) value);
+        }
+    }
 }
