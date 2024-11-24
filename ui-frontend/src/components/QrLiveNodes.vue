@@ -77,14 +77,15 @@ import {
   toMillis,
 } from "../metrics.js";
 import { computed } from "vue";
-import { useStore } from "vuex";
+import { useLiveNodesStore } from "../stores/useLiveNodesStore.js";
 
-const store = useStore();
+const store = useLiveNodesStore();
+
 const nodes = computed(() => {
   let results = [];
-  for (let uuid in store.state.nodes) {
+  for (let uuid in store.nodes) {
     let node = { key: uuid };
-    let entry = store.state.nodes[uuid];
+    let entry = store.nodes[uuid];
     for (let i in entry) {
       node[entry[i].key] = entry[i].value;
     }

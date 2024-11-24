@@ -6,6 +6,7 @@
         <h2>Overview</h2>
       </li>
     </router-link>
+    <!--
     <router-link to="/queries" custom v-slot="{ navigate }">
       <li @click="navigate" @keypress.enter="navigate" role="link" class="disabled">
         <IconMessage2 />
@@ -42,6 +43,7 @@
         <h2>Settings</h2>
       </li>
     </router-link>
+    -->
     <qr-color-scheme-toggle />
     <qr-color-palette-toggle />
   </ul>

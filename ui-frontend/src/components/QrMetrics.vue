@@ -48,7 +48,7 @@
 
 <script setup>
 import Chartist from "./Chartist.vue";
-import { useStore } from "vuex";
+import { useMetricsStore } from "../stores/useMetricsStore.js";
 import {
   toNumberWithUnit,
   toMillis,
@@ -81,16 +81,16 @@ const percentChart = {
   },
 };
 
-const store = useStore();
+const store = useMetricsStore();
 
 function successRates() {
-  return { series: [[...Object.values(store.state.metrics.success_rates)]] };
+  return { series: [[...Object.values(store.metrics.success_rates)]] };
 }
 function successRate() {
-  return `${store.state.metrics.success_rate}%`;
+  return `${store.metrics.success_rate}%`;
 }
 function successRateRank() {
-  var rate = store.state.metrics.success_rate;
+  var rate = store.metrics.success_rate;
   if (rate < 20.0) {
     return "failure";
   } else if (rate < 60.0) {
@@ -99,39 +99,39 @@ function successRateRank() {
 }
 
 function countQueries() {
-  return toNumberWithUnit(store.state.metrics.count_queries);
+  return toNumberWithUnit(store.metrics.count_queries);
 }
 function countResponses() {
-  return toNumberWithUnit(store.state.metrics.count_responses);
+  return toNumberWithUnit(store.metrics.count_responses);
 }
 function countFallbacks() {
-  return toNumberWithUnit(store.state.metrics.count_fallbacks);
+  return toNumberWithUnit(store.metrics.count_fallbacks);
 }
 
 function latencies() {
-  return { series: [[...Object.values(store.state.metrics.avg_latencies)]] };
+  return { series: [[...Object.values(store.metrics.avg_latencies)]] };
 }
 function avgLatency() {
-  return toMillis(store.state.metrics.avg_latency);
+  return toMillis(store.metrics.avg_latency);
 }
 function minLatency() {
-  return toMillis(store.state.metrics.min_latency);
+  return toMillis(store.metrics.min_latency);
 }
 function maxLatency() {
-  return toMillis(store.state.metrics.max_latency);
+  return toMillis(store.metrics.max_latency);
 }
 
 function throughputs() {
-  return { series: [[...Object.values(store.state.metrics.avg_throughputs)]] };
+  return { series: [[...Object.values(store.metrics.avg_throughputs)]] };
 }
 function avgThroughput() {
-  return toThroughputPerSecond(store.state.metrics.avg_throughput);
+  return toThroughputPerSecond(store.metrics.avg_throughput);
 }
 function throughputQueries() {
-  return toThroughputPerSecond(store.state.metrics.throughput_queries);
+  return toThroughputPerSecond(store.metrics.throughput_queries);
 }
 function throughputResponses() {
-  return toThroughputPerSecond(store.state.metrics.throughput_responses);
+  return toThroughputPerSecond(store.metrics.throughput_responses);
 }
 </script>
 

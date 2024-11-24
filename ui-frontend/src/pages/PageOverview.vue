@@ -7,6 +7,6 @@
 </template>
 
 <script setup>
-import QrMetrics from "./QrMetrics.vue";
-import QrLiveNodes from "./QrLiveNodes.vue";
+import QrMetrics from "../components/QrMetrics.vue";
+import QrLiveNodes from "../components/QrLiveNodes.vue";
 </script>

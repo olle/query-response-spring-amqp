@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="showColorPalette()">
+  <ul v-if="show">
     <li class="color color-bg"></li>
     <li class="color color-panel"></li>
     <li class="color color-fg"></li>
@@ -12,12 +12,10 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
-const store = useStore();
-
-function showColorPalette() {
-  return store.state.showColorPalette;
-}
+import { storeToRefs } from "pinia";
+import { useColorPaletteStore } from "../stores/useColorPaletteStore";
+const store = useColorPaletteStore();
+const { show } = storeToRefs(store);
 </script>
 
 <style scoped>
@@ -28,7 +26,6 @@ function showColorPalette() {
   border-radius: 50%;
   margin: 0.3rem;
 }
-
 
 .color-bg {
   background: var(--bg);
