@@ -43,6 +43,8 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
+        log().info("CONNECTED {}", session);
+
         sessionsById.put(session.getId(),
                 new ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, SEND_BUFFER_SIZE_LIMIT));
     }
@@ -55,6 +57,11 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+
+        if ("ping".equals(message.getPayload())) {
+            session.sendMessage(new TextMessage("pong"));
+            return;
+        }
 
         emitter.emitEvent(QueryRecordedEvent.valueOf(message.getPayload(), session.getId()));
     }

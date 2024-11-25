@@ -1,4 +1,4 @@
-JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 17)
+JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 21)
 
 .PHONY: run build test verify clean tidy
 
