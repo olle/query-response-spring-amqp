@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { reactive } from "vue";
+import { ref } from "vue";
 
 const INITIAL_METRICS = {
   count_queries: 0,
@@ -18,8 +18,14 @@ const INITIAL_METRICS = {
 };
 
 export const useMetricsStore = defineStore("metrics", () => {
-  const metrics = reactive({ ...INITIAL_METRICS });
+  const metrics = ref({ ...INITIAL_METRICS });
+
+  function update(nextMetrics) {
+    metrics.value = { ...nextMetrics };
+  }
+
   return {
     metrics,
+    update,
   };
 });

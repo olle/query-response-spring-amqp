@@ -20,22 +20,39 @@ import QrColors from "./components/QrColors.vue";
 import { useWebSocket } from "@vueuse/core";
 import { watch } from "vue";
 
-const { status, data, close } = useWebSocket("ws://websocketurl", {
+import { useMetricsStore } from "./stores/useMetricsStore.js";
+import { useLiveNodesStore } from "./stores/useLiveNodesStore.js";
+
+const metricsStore = useMetricsStore();
+const liveNodesStore = useLiveNodesStore();
+
+// Web socket URL, resolved from current location
+var protocol = window.location.protocol === "https:" ? "wss" : "ws";
+var hostname = window.location.host;
+//var url = `${protocol}://${hostname}/ws`;
+var url = "ws://localhost:8080/ws";
+
+const { status, data, close } = useWebSocket(url, {
   autoReconnect: true,
   heartbeat: true,
 });
 
 watch(data, (msg) => {
+  if (msg === "pong") {
+    return;
+  }
   try {
-    var message = JSON.parse(msg.data);
+    var message = JSON.parse(msg);
     if (message.metrics) {
-      //store.commit("metrics", message.metrics);
+      console.log("GOT METRICS", message.metrics);
+      metricsStore.update(message.metrics);
     }
     if (message.nodes) {
-      //store.commit("nodes", message.nodes);
+      console.log("GOT NODES", message.nodes);
+      liveNodesStore.update(message.nodes);
     }
   } catch (err) {
-    console.error("unexpected payload", msg.data);
+    console.error("unexpected payload", msg);
   }
 });
 
