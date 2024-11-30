@@ -1,15 +1,15 @@
 JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 21)
 
-.PHONY: verify
-verify:
+.PHONY: verify v
+verify v:
 	./mvnw verify
 
-.PHONY: install
-install:
+.PHONY: install i
+install i:
 	./mvnw install
 
-.PHONY: tidy format
-tidy format:
+.PHONY: tidy format pretty f
+tidy pretty format f:
 	./mvnw formatter:format
 
 .PHONY: docs watch-docs
