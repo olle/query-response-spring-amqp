@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 import org.springframework.amqp.core.Address;
 import org.springframework.amqp.core.Message;
@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * @param <T>
  *            type of the provided response elements.
  */
-class Response<T> implements MessageListener, Logging {
+class Response<T> implements MessageListener, Loggable {
 
     private static final String HEADER_X_QR_PUBLISHED = RabbitFacade.HEADER_X_QR_PUBLISHED;
 
@@ -69,7 +69,7 @@ class Response<T> implements MessageListener, Logging {
 
         try {
             MessageProperties properties = message.getMessageProperties();
-            log().info("|--> Consumed query: " + properties.getReceivedRoutingKey());
+            logger().info("|--> Consumed query: " + properties.getReceivedRoutingKey());
             measureLatency(properties.getHeader(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
 
             List<Response<T>.PublishedResponseEnvelope<T>> responses = new ArrayList<>();
@@ -80,7 +80,7 @@ class Response<T> implements MessageListener, Logging {
                 responses.addAll(buildResponses());
             }
 
-            log().debug("Prepared response(s) {}", responses);
+            logger().debug("Prepared response(s) {}", responses);
 
             for (Response<T>.PublishedResponseEnvelope<T> response : responses) {
                 byte[] body = writer.writeValueAsBytes(response);
@@ -97,7 +97,7 @@ class Response<T> implements MessageListener, Logging {
                 incrementPublishedResponseCounterStats();
             }
         } catch (RuntimeException | JsonProcessingException e) {
-            log().error("Failed to publish response message", e);
+            logger().error("Failed to publish response message", e);
         }
     }
 

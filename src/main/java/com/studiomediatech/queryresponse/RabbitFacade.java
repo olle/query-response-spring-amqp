@@ -20,13 +20,13 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 import org.springframework.context.support.GenericApplicationContext;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 /**
  * Provides an abstraction between the use of RabbitMQ and the capabilities in Spring Boot AMQP, and the structured
  * registry code in this library.
  */
-class RabbitFacade implements Logging {
+class RabbitFacade implements Loggable {
 
     public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
 
@@ -61,7 +61,7 @@ class RabbitFacade implements Logging {
 
     private void declareAndRegisterQueue(NamingStrategy name) {
 
-        AnonymousQueue queue = log(new AnonymousQueue(name));
+        AnonymousQueue queue = info(new AnonymousQueue(name));
         admin.declareQueue(queue);
         ctx.registerBean(queue.getActualName(), AnonymousQueue.class, () -> queue);
     }
@@ -76,7 +76,7 @@ class RabbitFacade implements Logging {
 
     private void declareAndRegisterBinding(String queueName, String routingKey) {
 
-        Binding binding = log(
+        Binding binding = info(
                 new Binding(queueName, DestinationType.QUEUE, queriesExchange.getName(), routingKey, null));
         admin.declareBinding(binding);
         ctx.registerBean(queueName + "-binding", Binding.class, () -> binding);
@@ -193,7 +193,7 @@ class RabbitFacade implements Logging {
             this.template.send(exchange, routingKey, m);
             logPublished("response", routingKey, m);
         } catch (RuntimeException e) {
-            log().error("Failed to publish response", e);
+            logger().error("Failed to publish response", e);
         }
     }
 

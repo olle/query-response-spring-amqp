@@ -1,6 +1,6 @@
 package com.studiomediatech.queryresponse;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 import org.springframework.beans.BeansException;
 
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * Provides a way to create and register responses.
  */
-class ResponseRegistry implements ApplicationContextAware, Logging {
+class ResponseRegistry implements ApplicationContextAware, Loggable {
 
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<ResponseRegistry> instance = () -> null;
@@ -58,9 +58,9 @@ class ResponseRegistry implements ApplicationContextAware, Logging {
             facade.addListener(response);
 
             response.accept(facade, stats);
-            log().info("Registered {}", response);
+            logger().info("Registered {}", response);
         } catch (Throwable th) {
-            log().error("Failed to register response", th);
+            logger().error("Failed to register response", th);
             facade.removeListener(response);
             facade.removeQueue(response);
         }

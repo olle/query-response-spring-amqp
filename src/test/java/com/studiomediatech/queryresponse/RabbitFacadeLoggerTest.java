@@ -76,7 +76,7 @@ class RabbitFacadeLoggerTest {
         }
 
         @Override
-        public Logger log() {
+        public Logger logger() {
 
             return this.log;
         }

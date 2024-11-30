@@ -8,14 +8,14 @@ import org.springframework.amqp.core.Message;
 /**
  * Trait for logging, with convenient access to a default instance based logger.
  */
-public interface Logging {
+public interface Loggable {
 
     /**
      * Provides a default logger
      *
      * @return a logger instance, never {@code null}
      */
-    default Logger log() {
+    default Logger logger() {
 
         return LoggerFactory.getLogger(getClass());
     }
@@ -30,9 +30,9 @@ public interface Logging {
      *
      * @return the current logger, for chaining
      */
-    default <T extends Declarable> T log(T obj) {
+    default <T extends Declarable> T info(T obj) {
 
-        log().info("//> Declared {}", obj);
+        logger().info("//> Declared {}", obj);
 
         return obj;
     }
@@ -50,7 +50,7 @@ public interface Logging {
      */
     default void debugLogPublished(String type, String routingKey, Message message) {
 
-        log().debug("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
+        logger().debug("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
     }
 
     /**
@@ -66,10 +66,10 @@ public interface Logging {
      */
     default void logPublished(String type, String routingKey, Message message) {
 
-        if (log().isTraceEnabled()) {
-            log().debug("|<-- Published {}: {} - {}", type, routingKey, message);
+        if (logger().isTraceEnabled()) {
+            logger().debug("|<-- Published {}: {} - {}", type, routingKey, message);
         } else {
-            log().info("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
+            logger().info("|<-- Published {}: {} - {}", type, routingKey, toStringRedacted(message));
         }
     }
 

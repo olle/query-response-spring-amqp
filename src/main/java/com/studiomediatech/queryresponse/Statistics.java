@@ -37,9 +37,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.studiomediatech.queryresponse.util.DurationFormatter;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
-class Statistics implements Logging {
+class Statistics implements Loggable {
 
     private static final ObjectWriter writer = new ObjectMapper().writer();
 
@@ -107,7 +107,7 @@ class Statistics implements Logging {
 
             facade.publishStats(message, routingKey);
         } catch (RuntimeException | JsonProcessingException ex) {
-            log().error("Failed to publish stats", ex);
+            logger().error("Failed to publish stats", ex);
         }
 
         this.scheduler.schedule(this::publishStats, props.getStats().getDelay(), TimeUnit.MILLISECONDS);

@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 /**
  * Configures the required components for a Query/Response client, ensuring the availability of the necessary AMQP
@@ -27,7 +27,7 @@ import com.studiomediatech.queryresponse.util.Logging;
 @AutoConfigureAfter(RabbitAutoConfiguration.class)
 @Import({ RabbitAutoConfiguration.class })
 @EnableConfigurationProperties(QueryResponseConfigurationProperties.class)
-class QueryResponseConfiguration implements Logging {
+class QueryResponseConfiguration implements Loggable {
 
     private final QueryResponseConfigurationProperties props;
 
@@ -69,7 +69,7 @@ class QueryResponseConfiguration implements Logging {
     @Bean
     QueryResponseTopicExchange queryResponseTopicExchange() {
 
-        return log(new QueryResponseTopicExchange(props.getExchange().getName()));
+        return info(new QueryResponseTopicExchange(props.getExchange().getName()));
     }
 
     @Bean

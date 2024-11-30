@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @param <T>
  *            expected type of the coerced result elements.
  */
-class Query<T> implements MessageListener, Logging {
+class Query<T> implements MessageListener, Loggable {
 
     private static final String HEADER_X_QR_PUBLISHED = RabbitFacade.HEADER_X_QR_PUBLISHED;
 
@@ -84,7 +84,7 @@ class Query<T> implements MessageListener, Logging {
     public void onMessage(Message message) {
 
         MessageProperties properties = message.getMessageProperties();
-        log().info("|--> Received response message: {}", properties);
+        logger().info("|--> Received response message: {}", properties);
         measureLatency(properties.getHeader(HEADER_X_QR_PUBLISHED), System.currentTimeMillis());
         handleResponseEnvelope(parseMessage(message));
     }
@@ -102,7 +102,7 @@ class Query<T> implements MessageListener, Logging {
             JavaType type = TypeFactory.defaultInstance().constructParametricType(ConsumedResponseEnvelope.class,
                     responseType);
             ConsumedResponseEnvelope<T> response = reader.forType(type).readValue(message.getBody());
-            log().debug("Received response: {}", response);
+            logger().debug("Received response: {}", response);
 
             return response;
         } catch (IOException ex) {
@@ -111,7 +111,7 @@ class Query<T> implements MessageListener, Logging {
                 onError.accept(new IllegalArgumentException(errorMessage, ex));
             }
 
-            log().error("Failed to parse received response.", ex);
+            logger().error("Failed to parse received response.", ex);
         }
 
         return ConsumedResponseEnvelope.empty();
@@ -120,7 +120,7 @@ class Query<T> implements MessageListener, Logging {
     void handleResponseEnvelope(ConsumedResponseEnvelope<T> envelope) {
 
         if (envelope.elements.isEmpty()) {
-            log().warn("Received empty response: {}", envelope);
+            logger().warn("Received empty response: {}", envelope);
 
             return;
         }
@@ -211,7 +211,7 @@ class Query<T> implements MessageListener, Logging {
                 }
 
                 // Reset interrupted state, before moving on.
-                log().error("Sleep interrupted with still {} ms to go", wait, e);
+                logger().error("Sleep interrupted with still {} ms to go", wait, e);
                 Thread.currentThread().interrupt();
 
                 /*
@@ -263,7 +263,7 @@ class Query<T> implements MessageListener, Logging {
                 this.onError.accept(ex);
             }
 
-            log().error("Failed to publish query message", ex);
+            logger().error("Failed to publish query message", ex);
         }
     }
 

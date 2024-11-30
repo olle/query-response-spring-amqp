@@ -1,6 +1,6 @@
 package com.studiomediatech.queryresponse;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 import org.springframework.beans.BeansException;
 
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * Provides a way to register and execute queries.
  */
-class QueryRegistry implements ApplicationContextAware, Logging {
+class QueryRegistry implements ApplicationContextAware, Loggable {
 
     // WARNING: Non-exemplary use of static supplier, for lazy access to bean instance.
     protected static Supplier<QueryRegistry> instance = () -> null;
