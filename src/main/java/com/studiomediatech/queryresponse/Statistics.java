@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -235,34 +236,19 @@ class Statistics implements Logging {
     }
 
     protected String getPidOrDefault(String defaults) {
-
-        Long p1 = maybeGetPid01();
-
-        if (p1 != null) {
-            return "" + p1;
-        }
-
-        Long p2 = maybeGetPid02();
-
-        if (p2 != null) {
-            return "" + p2;
-        }
-
-        return defaults;
+        return maybeGetPid01().or(this::maybeGetPid02).map(String::valueOf).orElse(defaults);
     }
 
-    private Long maybeGetPid01() {
-
-        return ProcessHandle.current().pid();
-
+    private Optional<Long> maybeGetPid01() {
+        return Optional.ofNullable(ProcessHandle.current().pid());
     }
 
-    private Long maybeGetPid02() {
-
+    private Optional<Long> maybeGetPid02() {
         try {
-            return Long.valueOf(java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0], 10);
+            return Optional.ofNullable(Long
+                    .valueOf(java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0], 10));
         } catch (RuntimeException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
