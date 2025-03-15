@@ -3,6 +3,8 @@ package com.studiomediatech.queryresponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -31,10 +33,18 @@ class StatisticsTest {
 
     private QueryResponseConfigurationProperties props = new QueryResponseConfigurationProperties();
 
+    @BeforeEach
+    void setup() {
+        ResponseRegistry.instance = () -> registry;
+    }
+
+    @AfterEach
+    void teardown() {
+        ResponseRegistry.instance = () -> null;
+    }
+
     @Test
     void ensureMetaWithPublishingOnlyStatus() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -50,13 +60,10 @@ class StatisticsTest {
         Stat s2 = sut.getStats().stream().filter(s -> key.equals(s.key)).findFirst().get();
         assertThat(s2.value).isEqualTo(false);
 
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureMetaWithPidPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -67,14 +74,10 @@ class StatisticsTest {
 
         assertThat(stat.value).isEqualTo("some-pid");
         assertThat(stat.uuid).isEqualTo(sut.uuid);
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureMetaWithNamePartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -85,14 +88,10 @@ class StatisticsTest {
 
         assertThat(stat.value).isEqualTo("some-name");
         assertThat(stat.uuid).isNotEmpty();
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureMetaWithHostPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -103,14 +102,10 @@ class StatisticsTest {
 
         assertThat(stat.value).isEqualTo("some-host");
         assertThat(stat.uuid).isNotEmpty();
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureMetaWithUptimePartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -121,14 +116,10 @@ class StatisticsTest {
 
         assertThat(stat.value).isEqualTo("some-uptime");
         assertThat(stat.uuid).isNotEmpty();
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureQueriesCountPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -145,14 +136,10 @@ class StatisticsTest {
         Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
         assertThat((long) s.value).isEqualTo(3L);
         assertThat(s.uuid).isEqualTo(sut.uuid);
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureConsumedResponsesCountPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -169,14 +156,10 @@ class StatisticsTest {
         Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
         assertThat((long) s.value).isEqualTo(3L);
         assertThat(s.uuid).isEqualTo(sut.uuid);
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensurePublishedResponsesCountPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -193,14 +176,10 @@ class StatisticsTest {
         Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
         assertThat((long) s.value).isEqualTo(3L);
         assertThat(s.uuid).isEqualTo(sut.uuid);
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureQueriesThroughputPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -218,14 +197,10 @@ class StatisticsTest {
         assertThat((long) s.value).isEqualTo(3L);
         assertThat(s.uuid).isEqualTo(sut.uuid);
         assertThat(s.timestamp).isNotNull();
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureResponsesThroughputPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -244,14 +219,10 @@ class StatisticsTest {
         assertThat((long) s.value).isEqualTo(4L);
         assertThat(s.uuid).isEqualTo(sut.uuid);
         assertThat(s.timestamp).isNotNull();
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
     void ensureFallbacksCountPartOfStats() throws Exception {
-
-        ResponseRegistry.instance = () -> registry;
 
         MockEnvironment env = new MockEnvironment();
         Statistics sut = new Statistics(env, ctx, facade, props);
@@ -268,8 +239,6 @@ class StatisticsTest {
         Stat s = sut.getStats().stream().filter(obj -> stat.equals(obj.key)).findFirst().get();
         assertThat((long) s.value).isEqualTo(3L);
         assertThat(s.uuid).isEqualTo(sut.uuid);
-
-        ResponseRegistry.instance = () -> null;
     }
 
     @Test
