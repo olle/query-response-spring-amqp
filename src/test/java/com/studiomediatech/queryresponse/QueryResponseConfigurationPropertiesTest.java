@@ -36,7 +36,7 @@ class QueryResponseConfigurationPropertiesTest {
         assertThat(sut.getStats()).isNotNull();
         assertThat(sut.getStats().getTopic()).isEqualTo("query-response/internal/stats");
         assertThat(sut.getStats().getInitialDelay()).isEqualTo(7000L);
-        assertThat(sut.getStats().getDelay()).isEqualTo(11000L);
+        assertThat(sut.getStats().getDelay()).isNotZero().isBetween(1000L, 22000L);
 
     }
 

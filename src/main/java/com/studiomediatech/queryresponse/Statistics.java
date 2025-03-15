@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -83,7 +84,9 @@ class Statistics implements Loggable {
 
     private final QueryResponseConfigurationProperties props;
     private final RabbitFacade facade;
+
     private final ScheduledExecutorService scheduler;
+    private final ExecutorService executor;
 
     public Statistics(Environment env, ApplicationContext ctx, RabbitFacade facade,
             QueryResponseConfigurationProperties props) {
@@ -96,7 +99,10 @@ class Statistics implements Loggable {
         this.uuid = UUID.randomUUID().toString();
 
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
-        this.scheduler.schedule(this::publishStats, props.getStats().getInitialDelay(), TimeUnit.MILLISECONDS);
+        this.executor = Executors.newVirtualThreadPerTaskExecutor();
+
+        this.scheduler.schedule(() -> this.executor.execute(this::publishStats), props.getStats().getInitialDelay(),
+                TimeUnit.MILLISECONDS);
     }
 
     protected void publishStats() {
@@ -110,7 +116,8 @@ class Statistics implements Loggable {
             logger().error("Failed to publish stats", ex);
         }
 
-        this.scheduler.schedule(this::publishStats, props.getStats().getDelay(), TimeUnit.MILLISECONDS);
+        this.scheduler.schedule(() -> this.executor.execute(this::publishStats), props.getStats().getDelay(),
+                TimeUnit.MILLISECONDS);
     }
 
     protected Map<String, Object> getStatistics() {

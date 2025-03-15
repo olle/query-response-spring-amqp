@@ -1,5 +1,6 @@
 package com.studiomediatech.queryresponse;
 
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -52,7 +53,7 @@ class QueryResponseConfiguration implements Loggable {
 
     @Bean
     @ConditionalOnMissingBean
-    RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+    AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
 
         return new RabbitAdmin(connectionFactory);
     }
