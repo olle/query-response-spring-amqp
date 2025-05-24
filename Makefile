@@ -45,10 +45,10 @@ repo-clean:
 
 .PHONY: demo run-demo
 demo: install up
-	${MAKE} -j4 run-demo
+	${MAKE} -j3 run-demo
 
-.PHONY: run-demo run-query run-response run-ui start-ui
-run-demo: run-ui start-ui run-query run-response
+.PHONY: run-demo run-query run-response run-ui
+run-demo: run-ui run-query run-response
 
 run-query:
 	sleep 10
@@ -60,6 +60,3 @@ run-response:
 
 run-ui:
 	${MAKE} -C ui/
-
-start-ui:
-	${MAKE} -C ui-frontend/
