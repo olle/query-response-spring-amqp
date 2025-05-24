@@ -1,6 +1,6 @@
 = Query/Response for Spring® AMQP
 
-image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions?query=workflow%3A%22Java+CI%22"] image:https://badges.gitter.im/query-response-spring-amqp/community.svg[title="Join the chat!", link="https://gitter.im/query-response-spring-amqp/community"]
+image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions?query=workflow%3A%22Java+CI%22"]
 
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
@@ -112,7 +112,7 @@ We will build and tag an initial version `0.9.x` as a _preliminary_ working
 version of Query/Response. This version will only support the current and latest
 version of Spring Boot, in our `main` branch.
 
-* `main` -> Spring Boot 3.3.x
+* `main` -> Spring Boot 3.5.x
 
 There will be no other minor version increment under the initial major version
 `0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
@@ -124,14 +124,19 @@ The following branches and versions are no longer actively supported or
 back-ported to. The intent is to never linger behind the list of active Spring
 Boot versions.
 
-* `inactive/spring-boot-2.7.x` -> Spring Boot 2.7.x
-* `inactive/spring-boot-2.6.x` -> Spring Boot 2.6.x
-* `inactive/spring-boot-2.5.x` -> Spring Boot 2.5.x
-* `inactive/spring-boot-2.4.x` -> Spring Boot 2.4.x
-* `inactive/spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
-* `inactive/spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
-* `inactive/spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
-* `inactive/spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
+* `zzz/spring-boot-2.7.x` -> Spring Boot 2.7.x
+* `zzz/spring-boot-2.6.x` -> Spring Boot 2.6.x
+* `zzz/spring-boot-2.5.x` -> Spring Boot 2.5.x
+* `zzz/spring-boot-2.4.x` -> Spring Boot 2.4.x
+* `zzz/spring-boot-2.3.x` -> Spring Boot 2.3.x.RELEASE
+* `zzz/spring-boot-2.2.x` -> Spring Boot 2.2.x.RELEASE
+* `zzz/spring-boot-2.1.x` -> Spring Boot 2.1.x.RELEASE
+* `zzz/spring-boot-1.5.x` -> Spring Boot 1.5.x.RELEASE
+
+However, I'm sure that anyone who still needs to use an older version of
+Spring Boot can find the code in the `zzz/` branches, and use it as a
+reference for their own projects. The code in these branches will not be
+actively maintained, but will remain available for reference.
 
 Happy coding!
 
