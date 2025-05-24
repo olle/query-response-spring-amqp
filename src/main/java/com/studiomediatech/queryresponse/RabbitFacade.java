@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AnonymousQueue;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -15,7 +16,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.core.NamingStrategy;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 import org.springframework.context.support.GenericApplicationContext;
@@ -30,7 +30,7 @@ class RabbitFacade implements Loggable {
 
     public static final String HEADER_X_QR_PUBLISHED = "x-qr-published";
 
-    private final RabbitAdmin admin;
+    private final AmqpAdmin admin;
     private final ConnectionFactory connectionFactory;
     private final RabbitTemplate template;
     private final GenericApplicationContext ctx;
@@ -39,10 +39,10 @@ class RabbitFacade implements Loggable {
 
     protected final Map<String, DirectMessageListenerContainer> containers = new ConcurrentHashMap<>();
 
-    public RabbitFacade(RabbitAdmin admin, RabbitTemplate template, ConnectionFactory connectionFactory,
+    public RabbitFacade(AmqpAdmin amqpAdmin, RabbitTemplate template, ConnectionFactory connectionFactory,
             TopicExchange queriesExchange, GenericApplicationContext ctx) {
 
-        this.admin = admin;
+        this.admin = amqpAdmin;
         this.template = template;
         this.connectionFactory = connectionFactory;
         this.queriesExchange = queriesExchange;

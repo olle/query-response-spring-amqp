@@ -9,14 +9,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
@@ -34,9 +32,9 @@ import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.ui.QueryResponseUIApp;
 import com.studiomediatech.queryresponse.ui.api.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandler;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
-public class QueryPublisher implements Logging, RestApiAdapter {
+public class QueryPublisher implements Loggable, RestApiAdapter {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -119,7 +117,7 @@ public class QueryPublisher implements Logging, RestApiAdapter {
     @EventListener
     void on(QueryRecordedEvent event) {
 
-        log().info("HANDLING {}", event);
+        logger().info("HANDLING {}", event);
 
         String query = event.getQuery();
         long timeout = event.getTimeout();
@@ -146,13 +144,13 @@ public class QueryPublisher implements Logging, RestApiAdapter {
         try {
             handle(MAPPER.readValue(message.getBody(), Stats.class).elements);
         } catch (RuntimeException | IOException ex) {
-            log().error("Failed to consumed stats", ex);
+            logger().error("Failed to consumed stats", ex);
         }
     }
 
     protected void handle(Collection<Stat> stats) {
 
-        stats.forEach(stat -> log().debug("GOT STAT: {}", stat));
+        stats.forEach(stat -> logger().debug("GOT STAT: {}", stat));
 
         handleCounts(stats);
         handleLatencies(stats);

@@ -1,18 +1,19 @@
 JAVA_HOME=$(shell unset JAVA_HOME; /usr/libexec/java_home -v 21)
+MVN := ../mvnw
 
-.PHONY: run build test verify clean tidy
+.PHONY: run build test verify v clean tidy
 
 run:
-	mvn spring-boot:run
+	${MVN} spring-boot:run
 
-test verify:
-	mvn clean verify
+test verify v:
+	${MVN} clean verify
 
 build:
-	mvn clean package
+	${MVN} clean package
 
 clean:
 	rm -rf target/
 
 tidy:
-	mvn formatter:format
+	${MVN} formatter:format
