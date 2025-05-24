@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.Stat;
 import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.events.QueryRecordedEvent;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
-public class WebSocketApiHandler extends TextWebSocketHandler implements Logging {
+public class WebSocketApiHandler extends TextWebSocketHandler implements Loggable {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
     private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;
@@ -43,7 +43,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-        log().info("CONNECTED {}", session);
+        logger().info("CONNECTED {}", session);
 
         sessionsById.put(session.getId(),
                 new ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, SEND_BUFFER_SIZE_LIMIT));
@@ -112,7 +112,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
 
             publishTextMessageWithPayload(sb.toString());
         } catch (JsonProcessingException e) {
-            log().error("Failed to create nodes payload", e);
+            logger().error("Failed to create nodes payload", e);
         }
     }
 
@@ -124,7 +124,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
             try {
                 s.sendMessage(message);
             } catch (IOException e) {
-                log().error("Could not publish text message to websocket", e);
+                logger().error("Could not publish text message to websocket", e);
             }
         }
     }
@@ -151,7 +151,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
         WebSocketSession s = sessionsById.get(id);
 
         if (s == null) {
-            log().warn("Could not find websocket session for {} in {}", id, sessionsById);
+            logger().warn("Could not find websocket session for {} in {}", id, sessionsById);
 
             return;
         }
@@ -159,7 +159,7 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Logging
         try {
             s.sendMessage(message);
         } catch (IOException e) {
-            log().error("Could not publish text message to websocket", e);
+            logger().error("Could not publish text message to websocket", e);
         }
     }
 }

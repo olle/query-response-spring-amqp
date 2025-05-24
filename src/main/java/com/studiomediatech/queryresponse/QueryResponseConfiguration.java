@@ -59,12 +59,12 @@ class QueryResponseConfiguration implements Loggable {
     }
 
     @Bean
-    RabbitFacade rabbitFacade(RabbitAdmin rabbitAdmin, ConnectionFactory connectionFactory,
-            TopicExchange queriesExchange, GenericApplicationContext ctx) {
+    RabbitFacade rabbitFacade(AmqpAdmin amqpAdmin, ConnectionFactory connectionFactory, TopicExchange queriesExchange,
+            GenericApplicationContext ctx) {
 
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 
-        return new RabbitFacade(rabbitAdmin, rabbitTemplate, connectionFactory, queriesExchange, ctx);
+        return new RabbitFacade(amqpAdmin, rabbitTemplate, connectionFactory, queriesExchange, ctx);
     }
 
     @Bean
