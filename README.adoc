@@ -138,6 +138,27 @@ Spring Boot can find the code in the `zzz/` branches, and use it as a
 reference for their own projects. The code in these branches will not be
 actively maintained, but will remain available for reference.
 
+== Demo Setup &amp; Development
+
+Prerequisites for development include a working Java 21+ environment, docker
+and docker-compose as well as node and npm for building the frontend UI.
+
+To get a local development environment up and running, you can use the provided
+`docker-compose.yml` file to start a RabbitMQ container. This will allow you to
+test and develop Query/Response functionality locally.
+
+We've also prepared a quick and easy way to build, install and start a demo
+setup of Query/Response locally. Just simply run:
+
+```shell
+> make demo
+```
+
+This will build the project, install the dependencies, and start a demo setup
+with a querying service and a responding service. As well a the UI for
+monitoring and exploring the system. The UI will be available at
+http://localhost:8080.
+
 Happy coding!
 
 ---
