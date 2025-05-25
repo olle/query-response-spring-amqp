@@ -3,9 +3,9 @@ package com.studiomediatech.queryresponse.ui.app.adapter;
 import java.util.Collection;
 
 import com.studiomediatech.queryresponse.ui.app.telemetry.Node;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
-public interface WebSocketApiAdapter extends Logging {
+public interface WebSocketApiAdapter extends Loggable {
 
     static WebSocketApiAdapter empty() {
         return new WebSocketApiAdapter() {
@@ -14,6 +14,6 @@ public interface WebSocketApiAdapter extends Logging {
     }
 
     default void publishNodes(Collection<Node> nodes) {
-        log().warn("NOT PUBLISHING NODES! {}", nodes);
+        logger().warn("NOT PUBLISHING NODES! {}", nodes);
     }
 }

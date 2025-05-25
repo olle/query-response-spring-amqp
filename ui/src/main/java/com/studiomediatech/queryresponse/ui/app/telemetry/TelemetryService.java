@@ -6,15 +6,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.studiomediatech.queryresponse.ui.app.adapter.TelemetryHandlerAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.QueryPublisherAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.RestApiAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.TelemetryHandlerAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
 import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.ui.messaging.Stats;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
-public class TelemetryService implements Logging, TelemetryHandlerAdapter, RestApiAdapter {
+public class TelemetryService implements Loggable, TelemetryHandlerAdapter, RestApiAdapter {
 
     private final WebSocketApiAdapter webSocketApiAdapter;
     private final NodeRepository nodeRepository;
@@ -40,7 +40,7 @@ public class TelemetryService implements Logging, TelemetryHandlerAdapter, RestA
     @Override
     public void handleConsumed(Stats stats) {
 
-        log().info("Consumed stats with {} elements", stats.elements().size());
+        logger().info("Consumed stats with {} elements", stats.elements().size());
 
         Collection<Node> nodes = parseToNodesCollection(stats);
         updateNodes(nodes);

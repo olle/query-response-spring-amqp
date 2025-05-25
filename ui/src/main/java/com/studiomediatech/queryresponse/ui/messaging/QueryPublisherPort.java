@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.ui.app.adapter.QueryPublisherAdapter;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 @Component
-public class QueryPublisherPort implements Logging, QueryPublisherAdapter {
+public class QueryPublisherPort implements Loggable, QueryPublisherAdapter {
 
     private static final int DEFAULT_QUERY_TIMEOUT = 1500;
 

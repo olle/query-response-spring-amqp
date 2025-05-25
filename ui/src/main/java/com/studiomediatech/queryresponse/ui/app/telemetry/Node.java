@@ -5,9 +5,9 @@ import java.util.UUID;
 
 import org.springframework.util.Assert;
 
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
-public class Node implements Logging {
+public class Node implements Loggable {
 
     public static final Comparator<Node> SORT = Comparator.comparing(Node::getName).thenComparing(Node::getUUID);
 
@@ -37,7 +37,7 @@ public class Node implements Logging {
 
         Assert.isTrue(other.uuid.equals(this.uuid), "Must be same node.");
 
-        log().info("Updating {} with {}", this, other);
+        logger().info("Updating {} with {}", this, other);
 
         this.host = other.host;
         this.name = other.name;

@@ -24,7 +24,7 @@ class RestApiControllerPortTest {
 
     @Test
     void ensureHandlesQueryRequest() throws Exception {
-        mockMvc.perform(get("/api/v1/").param("q", "hello")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1").param("q", "hello")).andExpect(status().isOk());
     }
 
     @Test

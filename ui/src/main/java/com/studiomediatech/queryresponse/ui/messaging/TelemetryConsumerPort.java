@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.queryresponse.ui.app.adapter.TelemetryHandlerAdapter;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 /**
  * Consumes Query/Response telemetry messages from the internal topics, and directly delegates for handling via the
  * abstract adapter.
  */
 @Component
-class TelemetryConsumerPort implements Logging {
+class TelemetryConsumerPort implements Loggable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -42,7 +42,7 @@ class TelemetryConsumerPort implements Logging {
             Stats stats = MAPPER.readValue(message.getBody(), Stats.class);
             adapter.handleConsumed(stats);
         } catch (RuntimeException | IOException ex) {
-            log().error("Failed to consumed telemetry message", ex);
+            logger().error("Failed to consumed telemetry message", ex);
         }
     }
 }
