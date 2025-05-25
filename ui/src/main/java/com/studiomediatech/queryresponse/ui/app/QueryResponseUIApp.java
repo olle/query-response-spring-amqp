@@ -14,6 +14,8 @@ import com.studiomediatech.queryresponse.ui.messaging.MessagingConfig;
 @SpringBootApplication
 public class QueryResponseUIApp {
 
+    public static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsBean";
+
     public static void main(String[] args) {
         SpringApplication.run(QueryResponseUIApp.class);
     }

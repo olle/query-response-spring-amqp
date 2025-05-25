@@ -19,15 +19,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
-import com.studiomediatech.queryresponse.stats.Stat;
-import com.studiomediatech.queryresponse.util.Loggable;
 import com.studiomediatech.queryresponse.ui.app.adapter.EventEmitterAdapter;
 import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
 import com.studiomediatech.queryresponse.ui.messaging.Stat;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 @Component
-public class WebSocketApiHandlerPort extends TextWebSocketHandler implements WebSocketApiAdapter, Logging {
+public class WebSocketApiHandlerPort extends TextWebSocketHandler implements WebSocketApiAdapter, Loggable {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
     private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;

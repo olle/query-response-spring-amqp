@@ -1,12 +1,12 @@
 package com.studiomediatech.queryresponse.ui.app.adapter;
 
 import com.studiomediatech.queryresponse.ui.messaging.Stats;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 /**
  * Declares the capabilities of the incoming side for statistics to aggregate.
  */
-public interface TelemetryHandlerAdapter extends Logging {
+public interface TelemetryHandlerAdapter extends Loggable {
 
     static TelemetryHandlerAdapter empty() {
         return new TelemetryHandlerAdapter() {
@@ -15,6 +15,6 @@ public interface TelemetryHandlerAdapter extends Logging {
     }
 
     default void handleConsumed(Stats stats) {
-        log().warn("NOT YET HANDLING {}", stats);
+        logger().warn("NOT YET HANDLING {}", stats);
     }
 }

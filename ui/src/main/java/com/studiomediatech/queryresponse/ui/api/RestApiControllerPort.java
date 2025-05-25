@@ -36,12 +36,6 @@ public class RestApiControllerPort {
         return adapter.nodes();
     }
 
-    @GetMapping("/api/v1")
-    public Map<String, Object> v1() {
-        return Response.from(Map.of("version", "v1", "now", Instant.now())).withLinks("query-response",
-                "/api/v1?q=query");
-    }
-
     @GetMapping(path = "/api/v1", params = "q")
     public Map<String, Object> query(String q, // NOSONAR
             @RequestParam(name = "timeout", required = false, defaultValue = "0") int timeout,
@@ -53,6 +47,12 @@ public class RestApiControllerPort {
         int normalizedLimit = Math.max(0, Math.max(limit, l));
 
         return adapter.query(q, normalizedTimeout, normalizedLimit);
+    }
+
+    @GetMapping(path = "/api/v1", params = "!q")
+    public Map<String, Object> v1() {
+        return Response.from(Map.of("version", "v1", "now", Instant.now())).withLinks("query-response",
+                "/api/v1?q=query");
     }
 
     protected interface Response {

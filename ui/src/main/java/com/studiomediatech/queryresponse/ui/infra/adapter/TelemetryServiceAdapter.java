@@ -4,10 +4,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.studiomediatech.queryresponse.ui.app.telemetry.TelemetryService;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 @Component
-public class TelemetryServiceAdapter implements Logging {
+public class TelemetryServiceAdapter implements Loggable {
 
     private final TelemetryService service;
 
@@ -17,7 +17,7 @@ public class TelemetryServiceAdapter implements Logging {
 
     @Scheduled(fixedDelayString = "PT3S")
     public void aFewSecondsHasPassed() {
-        log().info("TIC TOC!");
+        logger().info("TIC TOC!");
         service.publishNodes();
     }
 

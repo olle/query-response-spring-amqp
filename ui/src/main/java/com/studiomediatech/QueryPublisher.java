@@ -1,5 +1,6 @@
 package com.studiomediatech;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,21 +17,28 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.ui.api.WebSocketApiHandlerPort;
+import com.studiomediatech.queryresponse.ui.app.QueryResponseUIApp;
 import com.studiomediatech.queryresponse.ui.app.adapter.RestApiAdapter;
 import com.studiomediatech.queryresponse.ui.messaging.Stat;
-import com.studiomediatech.queryresponse.util.Logging;
+import com.studiomediatech.queryresponse.ui.messaging.Stats;
+import com.studiomediatech.queryresponse.util.Loggable;
 
 public class QueryPublisher implements Loggable, RestApiAdapter {
 
     // This is a Fib!
     private static final int MAX_SIZE = 2584;
     private static final int SLIDING_WINDOW = 40;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static ToLongFunction<Stat> statToLong = s -> ((Number) s.value()).longValue();
 
