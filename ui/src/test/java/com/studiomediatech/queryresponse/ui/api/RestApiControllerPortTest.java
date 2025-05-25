@@ -13,23 +13,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
-class RestApiControllerTest {
+class RestApiControllerPortTest {
 
     MockMvc mockMvc;
 
     @BeforeEach
     void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new RestApiController(Optional.empty())).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new RestApiControllerPort(Optional.empty())).build();
     }
 
     @Test
     void ensureHandlesQueryRequest() throws Exception {
-        mockMvc.perform(get("/api/v1/").param("q", "hello")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1").param("q", "hello")).andExpect(status().isOk());
     }
 
     @Test
     void ensureHandlesNodesRequest() throws Exception {
-        mockMvc.perform(get("/api/v1/nodes")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v0/nodes")).andExpect(status().isOk());
     }
 
 }

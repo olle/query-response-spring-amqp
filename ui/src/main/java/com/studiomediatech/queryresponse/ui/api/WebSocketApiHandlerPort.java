@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,22 +18,24 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studiomediatech.Stat;
-import com.studiomediatech.events.EventEmitter;
 import com.studiomediatech.events.QueryRecordedEvent;
+import com.studiomediatech.queryresponse.ui.app.adapter.EventEmitterAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
+import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.util.Loggable;
 
-public class WebSocketApiHandler extends TextWebSocketHandler implements Loggable {
+@Component
+public class WebSocketApiHandlerPort extends TextWebSocketHandler implements WebSocketApiAdapter, Loggable {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
     private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;
 
     private final Map<String, WebSocketSession> sessionsById = new ConcurrentHashMap<>();
 
-    private final EventEmitter emitter;
+    private final EventEmitterAdapter emitter;
     private final ObjectMapper objectMapper;
 
-    public WebSocketApiHandler(EventEmitter emitter) {
+    public WebSocketApiHandlerPort(EventEmitterAdapter emitter) {
 
         this.emitter = emitter;
 
