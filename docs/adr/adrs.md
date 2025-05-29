@@ -23,10 +23,10 @@ decision, and consequences.
    `adr/XXX-title`, where `XXX` is the next available number and `title` is a
    very short description of the decision.
 
-2. Add a new ADR file in the `xdocs/adr` directory using the available template.
+2. Add a new ADR file in the `docs/adr` directory using the available template.
    Ensure that the file follows the naming convention `ADR-XXX-title.md`, using
    the same number as the branch name.
 
-3. Update the `xdocs/adr/adrs.md` file to include a link to the new ADR file.
+3. Update the `docs/adr/adrs.md` file to include a link to the new ADR file.
 
 4. Submit the PR for review.

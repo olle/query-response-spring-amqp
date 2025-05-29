@@ -98,9 +98,9 @@ started quickly with Query/Response.
 
 === Request For Discussion (RFD) &amp; Architectural Design Records (ADR)
 
-Under the link:./xdocs[docs] folder there are link:./xdocs/rfds[RFD] documents,
+Under the link:./docs[docs] folder there are link:./docs/rfd[RFD] documents,
 which provide a way for anyone to introduce ideas and trigger a discussion, as
-well as link:./xdocs/adrs[ADR] documents that describe which important decisions
+well as link:./docs/adr[ADR] documents that describe which important decisions
 were made, and why. Read more in the
 https://olle.github.io/query-response-spring-amqp/[online documentation].
 
