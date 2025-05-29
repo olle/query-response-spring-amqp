@@ -43,12 +43,17 @@ down:
 repo-clean:
 	rm -rf ~/.m2/repository/com/studiomediatech/query-response-spring-amqp
 
-.PHONY: demo run-demo
+.PHONY: demo demo-s run-demo run-demo-s
 demo: install up
 	${MAKE} -j3 run-demo
 
-.PHONY: run-demo run-query run-response run-ui
+demo-s: install up
+	${MAKE} -j2 run-demo-s
+
+.PHONY: run-demo run-demo-s run-query run-response run-ui
 run-demo: run-ui run-query run-response
+
+run-demo-s: run-query run-response
 
 run-query:
 	sleep 10
