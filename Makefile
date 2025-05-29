@@ -22,7 +22,7 @@ tidy pretty format f:
 docs:
 	npm run docs:build
 	mvn javadoc:javadoc
-	cp -R target/site/apidocs xdocs/.vitepress/dist/
+	cp -R target/site/apidocs docs/.vitepress/dist/
 	npm run deploy-docs
 
 docs-dev:

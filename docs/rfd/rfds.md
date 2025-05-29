@@ -22,10 +22,10 @@ proposal, and consequences.
    `rfd/XXX-title`, where `XXX` is the next available number and `title` is a
    very short description of the proposal.
 
-2. Add a new RFD file in the `xdocs/rfd` directory using the available template.
+2. Add a new RFD file in the `docs/rfd` directory using the available template.
    Ensure that the file follows the naming convention `RFD-XXX-title.md`, using
    the same number as the branch name.
 
-3. Update the `xdocs/rfd/rfds.md` file to include a link to the new RFD file.
+3. Update the `docs/rfd/rfds.md` file to include a link to the new RFD file.
 
 4. Submit the PR for review.

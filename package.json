@@ -6,9 +6,9 @@
     "vitepress": "^1.2.3"
   },
   "scripts": {
-    "deploy-docs": "gh-pages -d xdocs/.vitepress/dist",
-    "docs:dev": "vitepress dev xdocs",
-    "docs:build": "vitepress build xdocs",
-    "docs:preview": "vitepress preview xdocs"
+    "deploy-docs": "gh-pages -d docs/.vitepress/dist",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   }
 }
