@@ -16,6 +16,7 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Guide", link: "/guide/what-is-query-response" },
       { text: "Reference", link: "/reference/developers-reference" },
+      { text: "ADR", link: "/adr/adrs"}
     ],
     sidebar: [
       {

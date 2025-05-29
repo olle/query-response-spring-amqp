@@ -12,15 +12,21 @@ install i:
 tidy pretty format f:
 	./mvnw formatter:format
 
-.PHONY: docs watch-docs
+##
+## Build the documentation and deploy it to the gh-pages branch. The
+## documentation is built using VitePress for the main site and Maven Javadoc
+## for the API documentation. Local development of the documentation can be done
+## using `make docs-dev`, which will start a local VitePress server.
+##
+.PHONY: docs docs-dev
 docs:
 	npm run docs:build
 	mvn javadoc:javadoc
 	cp -R target/site/apidocs xdocs/.vitepress/dist/
 	npm run deploy-docs
 
-watch-docs:
-	mvn asciidoctor:http
+docs-dev:
+	npm run docs:dev
 
 .PHONY: ui
 ui: ui/query-response-ui.jar
