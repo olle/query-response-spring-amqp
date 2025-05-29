@@ -46,6 +46,10 @@ export default defineConfig({
             text: "Maturity Model",
             link: "/reference/query-response-maturity-model",
           },
+          {
+            text: "Events",
+            link: "/reference/events",
+          }
         ],
       },
     ],
