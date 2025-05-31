@@ -8,6 +8,10 @@ verify v:
 install i:
 	./mvnw install
 
+.PHONY: all a
+all a: verify install
+	$(MAKE) -C ui build
+	
 .PHONY: tidy format pretty f
 tidy pretty format f:
 	./mvnw formatter:format
