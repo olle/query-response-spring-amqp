@@ -44,7 +44,7 @@ ghcr.io/olle/query-response-spring-amqp/query-response-ui:latest
 
 And browse to `http://localhost:8080`.
 
-  [ghrc.io]: https://github.com/users/olle/packages/container/package/query-response-spring-amqp%2Fquery-response-ui
+  [ghcr.io]: https://github.com/users/olle/packages/container/package/query-response-spring-amqp%2Fquery-response-ui
 
 ### Running locally
 
