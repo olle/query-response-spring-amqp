@@ -11,9 +11,9 @@ and wrapped it in a developer friendly library.
 
 ## System Requirements
 
-{{attr.BRAND}} requires at least **Spring Boot 2.x** and **Java 11**, and should work
+{{attr.BRAND}} requires at least **Spring Boot 4.1.x** and **Java 25**, and should work
 for later releases too. We are building and running it successfully with
-**Java 11** and the **Spring Boot 3.0.3** version.
+**Java 25** and the **Spring Boot 4.1.2** version.
 
 ## Installation &amp; Configuration
 

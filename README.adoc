@@ -114,7 +114,7 @@ We will build and tag an initial version `0.9.x` as a _preliminary_ working
 version of Query/Response. This version will only support the current and latest
 version of Spring Boot, in our `main` branch.
 
-* `main` -> Spring Boot 3.5.x
+* `main` -> Spring Boot 4.1.x
 
 There will be no other minor version increment under the initial major version
 `0.x.x`. The `0.9.x` version will be used to iron out bugs and gather feedback
@@ -142,7 +142,7 @@ actively maintained, but will remain available for reference.
 
 == Demo Setup &amp; Development
 
-Prerequisites for development include a working Java 21+ environment, docker
+Prerequisites for development include a working Java 25+ environment, docker
 and docker-compose as well as node and npm for building the frontend UI.
 
 To get a local development environment up and running, you can use the provided

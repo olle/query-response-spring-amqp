@@ -39,8 +39,7 @@ class RabbitFacadeLoggerTest {
         LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
 
         Message message = MessageBuilder.withBody("{\"foo\": 1337}".getBytes())
-                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                .build();
+                .setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
 
         sut.logPublished("type", "routingKey", message);
 
@@ -55,8 +54,7 @@ class RabbitFacadeLoggerTest {
         LogMockingRabbitFacade sut = new LogMockingRabbitFacade(log);
 
         Message message = MessageBuilder.withBody("{\"foo\": 1337}".getBytes())
-                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                .build();
+                .setContentType(MessageProperties.CONTENT_TYPE_JSON).build();
 
         sut.logPublished("type", "routingKey", message);
 

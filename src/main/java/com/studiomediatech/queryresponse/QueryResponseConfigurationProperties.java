@@ -104,10 +104,9 @@ public class QueryResponseConfigurationProperties {
         }
 
         /**
-         * Sets the globally shared Query/Response topic exchange name.
-         *
-         * NOTE: Changing this name will create a new distinct Query/Response network, where any other participating
-         * modules will have to provide the same name configuration.
+         * Sets the globally shared Query/Response topic exchange name. NOTE: Changing this name will create a new
+         * distinct Query/Response network, where any other participating modules will have to provide the same name
+         * configuration.
          *
          * @param name
          *            to use for the topic-exchange resource, never empty or {@code null}

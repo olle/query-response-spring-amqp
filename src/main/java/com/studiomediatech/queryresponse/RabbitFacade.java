@@ -173,7 +173,6 @@ class RabbitFacade implements Loggable {
 
     /**
      * Publishes a response to the given exchange and routing key, with the provided response message.
-     *
      * <p>
      * Any {@link RuntimeException} failures are caught, logged and ignored.
      * </p>

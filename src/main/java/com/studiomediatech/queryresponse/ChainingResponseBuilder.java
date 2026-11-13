@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 /**
  * Providing the entry-point to the fluid builder for responses, through the {@link #respondTo(String, Class)} method.
- *
  * <p>
  * Building a response instance will start a long running query consumer which will respond to any matching queries, for
  * as long as the service is running.
@@ -45,7 +44,6 @@ public class ChainingResponseBuilder<T> {
 
     /**
      * Constructs a response builder, with the given term to respond to.
-     *
      * <p>
      * NOTE: This is the only available constructor for a response builder. It is desirable to only provide the builder
      * API, also for use in testing. Developers can use the {@link #withSink(Consumer)} method, to capture the builder,
@@ -132,13 +130,11 @@ public class ChainingResponseBuilder<T> {
 
     /**
      * Sets the supplier for an iterator, that can provide elements to be used in published responses.
-     *
      * <p>
      * The supplied iterator will be used with respect to the contract of {@link Iterator#hasNext()} and
      * {@link Iterator#next()}, typically only to ensure that batches can be produced, and that the end of the supplied
      * elements can be reached.
      * </p>
-     *
      * <p>
      * Please note that memory or resource use, is not specifically covered by this interface. At run-time, a request to
      * supply the iterator, may cause great stress on resource use.
@@ -156,7 +152,6 @@ public class ChainingResponseBuilder<T> {
 
     /**
      * Sets the supplier for a collection, that can provide elements to be used in published responses.
-     *
      * <p>
      * Please note that memory or resource use, is not at all covered by this interface. At run-time, a request to
      * supply the elements collection, could potentially cause great stress on resource use.
@@ -203,7 +198,6 @@ public class ChainingResponseBuilder<T> {
      *
      * assertThat(capture.get()).isNotNull();
      * </pre>
-     *
      * <p>
      * This method is protected, in order to reduce visibility and only make it available to tests.
      * </p>

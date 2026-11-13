@@ -29,11 +29,9 @@ public class QueryBuilder {
      * mapped to. The query {@code term} string, can use any pattern or structure, as defined by the system design. It
      * expresses some <em>need</em> or interest in information. The given {@code type}, provide the target data type,
      * that is used to coerce any response elements that are consumed.
-     *
      * <p>
      * The type, of the eventually resulting {@link Collection} is also inferred by the {@code type} argument.
      * </p>
-     *
      * <p>
      * For example:
      * </p>
