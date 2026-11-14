@@ -1,8 +1,10 @@
 package com.studiomediatech.queryresponse.ui.app.adapter;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-import com.studiomediatech.queryresponse.ui.app.telemetry.Node;
+import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.util.Loggable;
 
 public interface WebSocketApiAdapter extends Loggable {
@@ -13,7 +15,15 @@ public interface WebSocketApiAdapter extends Loggable {
         };
     }
 
-    default void publishNodes(Collection<Node> nodes) {
+    default void publishNodes(Map<String, List<Stat>> nodes) {
         logger().warn("NOT PUBLISHING NODES! {}", nodes);
+    }
+
+    default void publishMetrics(Map<String, Object> metrics) {
+        logger().warn("NOT PUBLISHING METRICS! {}", metrics);
+    }
+
+    default void publishResponse(Collection<Object> response, String id) {
+        logger().warn("NOT PUBLISHING RESPONSE! {} to {}", response, id);
     }
 }

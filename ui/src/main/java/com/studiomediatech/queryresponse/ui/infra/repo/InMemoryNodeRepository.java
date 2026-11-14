@@ -25,6 +25,11 @@ public class InMemoryNodeRepository implements NodeRepository {
     }
 
     @Override
+    public void remove(UUID uuid) {
+        nodes.remove(uuid);
+    }
+
+    @Override
     public Collection<Node> findAll() {
         return nodes.values().stream().sorted(Node.SORT).toList();
     }

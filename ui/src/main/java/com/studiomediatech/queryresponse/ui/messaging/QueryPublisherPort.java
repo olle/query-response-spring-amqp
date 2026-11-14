@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import com.studiomediatech.events.QueryRecordedEvent;
 import com.studiomediatech.queryresponse.QueryBuilder;
 import com.studiomediatech.queryresponse.ui.app.adapter.QueryPublisherAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
 import com.studiomediatech.queryresponse.util.Loggable;
 
 @Component
@@ -19,9 +21,25 @@ public class QueryPublisherPort implements Loggable, QueryPublisherAdapter {
     private static final int DEFAULT_QUERY_TIMEOUT = 1500;
 
     private final QueryBuilder queryBuilder;
+    private final WebSocketApiAdapter webSocketApiAdapter;
 
-    public QueryPublisherPort(QueryBuilder queryBuilder) {
+    public QueryPublisherPort(QueryBuilder queryBuilder, Optional<WebSocketApiAdapter> maybeWebSocketApiAdapter) {
         this.queryBuilder = queryBuilder;
+        this.webSocketApiAdapter = maybeWebSocketApiAdapter.orElse(WebSocketApiAdapter.empty());
+    }
+
+    @EventListener
+    void on(QueryRecordedEvent event) {
+
+        logger().info("HANDLING {}", event);
+
+        int timeout = (int) event.getTimeout();
+        int limit = event.getLimit().orElse(0);
+
+        @SuppressWarnings("unchecked")
+        Collection<Object> response = (Collection<Object>) query(event.getQuery(), timeout, limit).get("response");
+
+        webSocketApiAdapter.publishResponse(response, event.getPublisherId());
     }
 
     @Override

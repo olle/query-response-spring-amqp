@@ -22,7 +22,6 @@ import com.studiomediatech.queryresponse.QueryResponseTopicExchange;
 public class MessagingConfig {
 
     static final String QUERY_RESPONSE_STATS_QUEUE_BEAN = "queryResponseStatsQueue";
-    static final String QUERY_RESPONSE_QUERIES_QUEUE_BEAN = "queryResponseQueriesQueue";
 
     protected static final String QUERY_RESPONSE_STATS_BINDING = "queryResponseStatsBinding";
     protected static final String QUERY_RESPONSE_TELEMETRY_BINDING = "queryResponseTelemetryBinding";

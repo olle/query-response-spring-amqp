@@ -10,5 +10,7 @@ public interface NodeRepository {
 
     void save(Node node);
 
+    void remove(UUID uuid);
+
     Collection<Node> findAll();
 }

@@ -1,5 +1,7 @@
 package com.studiomediatech.queryresponse.ui.infra;
 
+import java.util.Optional;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -36,25 +38,14 @@ public class InfraConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    WebSocketApiAdapter emptyWebSocketApiAdapter() {
-        return WebSocketApiAdapter.empty();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
     NodeRepository inMemoryNodeRepository() {
         return new InMemoryNodeRepository();
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    QueryPublisherAdapter emptyQueryPublisherAdapter() {
-        return QueryPublisherAdapter.empty();
-    }
-
-    @Bean
-    public TelemetryService telemetryService(WebSocketApiAdapter webSocketApiAdapter, NodeRepository nodeRepository,
-            QueryPublisherAdapter queryPublisherAdapter) {
-        return new TelemetryService(webSocketApiAdapter, nodeRepository, queryPublisherAdapter);
+    public TelemetryService telemetryService(Optional<WebSocketApiAdapter> webSocketApiAdapter,
+            NodeRepository nodeRepository, Optional<QueryPublisherAdapter> queryPublisherAdapter) {
+        return new TelemetryService(webSocketApiAdapter.orElse(WebSocketApiAdapter.empty()), nodeRepository,
+                queryPublisherAdapter.orElse(QueryPublisherAdapter.empty()));
     }
 }

@@ -17,8 +17,8 @@ public class TelemetryServiceAdapter implements Loggable {
 
     @Scheduled(fixedDelayString = "PT3S")
     public void aFewSecondsHasPassed() {
-        logger().info("TIC TOC!");
-        service.publishNodes();
+        logger().debug("Publishing current telemetry status");
+        service.publish();
     }
 
 }
