@@ -35,6 +35,10 @@ NOTE: This annotation will do nothing more but to import the
 That's it! There is no more infrastructure code, wiring or setup that needs to
 be done. **It's just that easy.**
 
+The defaults work well for a single Query/Response network sharing one broker.
+See the [configuration reference](../reference/configuration.md) if you need to
+change the exchange name, the queue prefix, or the telemetry settings.
+
 ### Connecting to an AMQP broker
 
 Before you can run your application you need to make sure there is an AMQP
