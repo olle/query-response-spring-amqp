@@ -3,13 +3,20 @@
 </template>
 
 <script setup>
-import Chartist from "chartist";
+import { BarChart, LineChart, PieChart } from "chartist";
+import "chartist/styles.css";
 import { ref, onMounted } from "vue";
+
+const chartTypes = {
+  Line: LineChart,
+  Bar: BarChart,
+  Pie: PieChart,
+};
 
 const chart = ref(null);
 
 const draw = function () {
-  chart.value = new Chartist[props.type](
+  chart.value = new chartTypes[props.type](
     chart.value,
     props.data,
     props.options,
