@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 
 /**
  * Provides the entry to the fluid builder for queries, with the {@link #queryFor} method.
- *
  * <p>
  * You begin building a query by calling the static method like this:
  * </p>
@@ -20,7 +19,6 @@ import java.util.function.Supplier;
  * <pre>
        QueryBuilder.queryFor("some-query", SomeType.class)...
  * </pre>
- *
  * <p>
  * A {@link ChainingQueryBuilder queryBuilder-instance} is a container for a composed or configured query. It is is much
  * like a command-pattern object, providing all the properties required in order to publish the query, await responses
@@ -97,12 +95,10 @@ public final class ChainingQueryBuilder<T> {
 
     /**
      * Set the approximate duration, in milliseconds, that the query will block for when being executed.
-     *
      * <p>
      * The actual blocking time is not exact. The current contract will ensure blocking for <em>at least</em> the amount
      * of time specified.
      * </p>
-     *
      * <p>
      * Queries are always bound to a blocking timeout, and will return after at most the given duration. Combined with
      * the <em>taking...</em> conditionals ({@link #takingAtLeast(int)} or {@link #takingAtMost(int)}), this can be used
@@ -170,7 +166,6 @@ public final class ChainingQueryBuilder<T> {
 
     /**
      * Sets the maximum number of elements to consume from responses, effectively limiting the returned results.
-     *
      * <p>
      * Queries always block for a specified {@link #waitingFor(long) duration}.Combined with this specified amount of
      * maximum elements to consume, the query can be made to return earlier.
@@ -283,9 +278,8 @@ public final class ChainingQueryBuilder<T> {
 
     /*
      * NOTE: Callers of this method are explicit, and not wrapped or overload in calls to themselves, in order to show
-     * developers which methods represent terminal-state in the fluid builder API.
-     *
-     * See for yourself. Lookup calling methods.
+     * developers which methods represent terminal-state in the fluid builder API. See for yourself. Lookup calling
+     * methods.
      */
     private Collection<T> register() {
 
@@ -365,7 +359,6 @@ public final class ChainingQueryBuilder<T> {
      *
      * assertThat(capture.get()).isNotNull();
      * </pre>
-     *
      * <p>
      * This method is protected, in order to reduce visibility and only make it available to tests.
      * </p>

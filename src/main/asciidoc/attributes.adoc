@@ -14,15 +14,15 @@
 :test-src: ../../test/java/com/studiomediatech/queryresponse
 :examples-src: ../../../examples
 
-:java-required-version: 11
+:java-required-version: 25
 :java-name: Java
 :java-name-and-version: {java-name} {java-required-version}
 :java-name-and-latest-version: {java-name} {java-version}
 
 :spring-name: Spring
 :spring-amqp-name: Spring AMQP
-:spring-boot-version: 2.x
-:spring-boot-verified-version: 3.0.3
+:spring-boot-version: 4.x
+:spring-boot-verified-version: 4.1.2
 :spring-boot-name: Spring Boot
 :spring-boot-name-and-version: {spring-boot-name} {spring-boot-version}
 :spring-boot-name-and-verified-version: {spring-boot-name} {spring-boot-verified-version}
