@@ -9,7 +9,7 @@
         <th class="h3">Pid</th>
         <th class="h3">Address</th>
         <th class="h3">Uptime</th>
-        <th class="h3">Success Rate</th>
+        <th class="h3">Quality</th>
         <th class="h3">Queries</th>
         <th class="h3">Responses</th>
         <th class="h3">Latency</th>
@@ -26,8 +26,8 @@
         </td>
         <td v-if="node.only_responses"><data>–</data></td>
         <td v-else>
-          <data v-bind:class="node.successRateRank">
-            {{ node.successRate }}
+          <data v-bind:class="node.qualityRank">
+            {{ node.quality }}
           </data>
           <small>
             <data data-abbr="Q" title="Queries">{{ node.countQueries }}</data>
@@ -70,8 +70,8 @@
 
 <script setup>
 import {
-  toPercent,
-  toRateRank,
+  toQuality,
+  toQualityRank,
   toNumberWithUnit,
   toThroughputPerSecond,
   toMillis,
@@ -89,12 +89,14 @@ const nodes = computed(() => {
     for (let i in entry) {
       node[entry[i].key] = entry[i].value;
     }
-    node.successRate = toPercent(
+    node.quality = toQuality(
       node.count_consumed_responses,
+      node.count_fallbacks,
       node.count_queries
     );
-    node.successRateRank = toRateRank(
+    node.qualityRank = toQualityRank(
       node.count_consumed_responses,
+      node.count_fallbacks,
       node.count_queries
     );
     node.countQueries = toNumberWithUnit(node.count_queries);

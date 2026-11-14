@@ -41,7 +41,7 @@ public class TelemetryService implements Loggable, TelemetryHandlerAdapter, Rest
 
     private final List<Stat> queryThroughputs = new LinkedList<>();
     private final List<Stat> responseThroughputs = new LinkedList<>();
-    private final List<Double> successRates = new LinkedList<>();
+    private final List<Double> qualityHistory = new LinkedList<>();
     private final List<Double> latencies = new LinkedList<>();
     private final List<Double> avgThroughputs = new LinkedList<>();
     private final List<Double> throughputSamples = new LinkedList<>();
@@ -125,7 +125,8 @@ public class TelemetryService implements Loggable, TelemetryHandlerAdapter, Rest
         long countQueries = sum(latest, Stat.COUNT_QUERIES);
         long countResponses = sum(latest, Stat.COUNT_CONSUMED_RESPONSES);
         long countFallbacks = sum(latest, Stat.COUNT_FALLBACKS);
-        double successRate = calculateAndAggregateSuccessRate(countQueries, countResponses);
+        double quality = calculateAndAggregateQuality(countQueries, countResponses, countFallbacks);
+        double coverage = calculateCoverage(countQueries, countResponses);
 
         long minLatency = latest.stream().filter(isKey(Stat.MIN_LATENCY)).mapToLong(STAT_TO_LONG).min().orElse(0);
         long maxLatency = latest.stream().filter(isKey(Stat.MAX_LATENCY)).mapToLong(STAT_TO_LONG).max().orElse(0);
@@ -134,11 +135,13 @@ public class TelemetryService implements Loggable, TelemetryHandlerAdapter, Rest
         aggregateLatency(avgLatency);
 
         Map<String, Object> metrics = new LinkedHashMap<>();
+        metrics.put("telemetry_at", Instant.now().toEpochMilli());
         metrics.put("count_queries", countQueries);
         metrics.put("count_responses", countResponses);
         metrics.put("count_fallbacks", countFallbacks);
-        metrics.put("success_rate", successRate);
-        metrics.put("success_rates", List.copyOf(successRates));
+        metrics.put("quality", quality);
+        metrics.put("quality_history", List.copyOf(qualityHistory));
+        metrics.put("coverage", coverage);
         metrics.put("min_latency", minLatency);
         metrics.put("max_latency", maxLatency);
         metrics.put("avg_latency", avgLatency);
@@ -274,16 +277,31 @@ public class TelemetryService implements Loggable, TelemetryHandlerAdapter, Rest
         return Math.round((sum / duration) * 1000000.0) / 1000000.0;
     }
 
-    private double calculateAndAggregateSuccessRate(long countQueries, long countResponses) {
+    private double calculateAndAggregateQuality(long countQueries, long countResponses, long countFallbacks) {
+
+        double n = 1.0 * (countResponses - countFallbacks);
+        double d = 1.0 * Math.max(1.0, countQueries);
+
+        double quality = toPercent(n, d);
+
+        appendBounded(qualityHistory, quality);
+
+        return quality;
+    }
+
+    private static double calculateCoverage(long countQueries, long countResponses) {
 
         double n = 1.0 * countResponses;
         double d = 1.0 * Math.max(1.0, countQueries);
 
-        double rate = Math.round((n / d) * 100.0 * 10.0) / 10.0;
+        return toPercent(n, d);
+    }
 
-        appendBounded(successRates, rate);
+    private static double toPercent(double n, double d) {
 
-        return rate;
+        double ratio = Math.min(1.0, Math.max(0.0, n / d));
+
+        return Math.round(ratio * 100.0 * 10.0) / 10.0;
     }
 
     private void aggregateLatency(double avgLatency) {

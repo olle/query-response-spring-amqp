@@ -38,8 +38,9 @@ class TelemetryServiceTest {
 
         Map<String, Object> metrics = webSocket.metrics.getLast();
         assertThat(metrics).containsEntry("count_queries", 21L).containsEntry("count_responses", 0L)
-                .containsEntry("count_fallbacks", 21L).containsEntry("success_rate", 0.0);
-        assertThat((List<?>) metrics.get("success_rates")).hasSize(3);
+                .containsEntry("count_fallbacks", 21L).containsEntry("quality", 0.0).containsEntry("coverage", 0.0)
+                .containsKey("telemetry_at");
+        assertThat((List<?>) metrics.get("quality_history")).hasSize(3);
         assertThat((List<?>) metrics.get("avg_latencies")).hasSize(3);
 
         assertThat(webSocket.nodes).hasSize(1);
@@ -50,6 +51,25 @@ class TelemetryServiceTest {
 
         assertThat(repository.findAll()).hasSize(1);
         assertThat(repository.findAll().iterator().next().getName()).isEqualTo("querying-example");
+    }
+
+    @Test
+    void shouldCalculateQualityFromResponsesFallbacksAndQueries() {
+
+        var webSocket = new CapturingWebSocketApiAdapter();
+        var repository = new InMemoryNodeRepository();
+        var service = new TelemetryService(webSocket, repository, QueryPublisherAdapter.empty());
+
+        service.handleConsumed(new Stats(List.of(new Stat(Stat.COUNT_QUERIES, 10L, null, NODE_UUID),
+                new Stat(Stat.COUNT_CONSUMED_RESPONSES, 8L, null, NODE_UUID),
+                new Stat(Stat.COUNT_FALLBACKS, 3L, null, NODE_UUID))));
+
+        service.publish();
+
+        Map<String, Object> metrics = webSocket.metrics.getLast();
+        assertThat(metrics).containsEntry("count_queries", 10L).containsEntry("count_responses", 8L)
+                .containsEntry("count_fallbacks", 3L).containsEntry("quality", 50.0).containsEntry("coverage", 80.0);
+        assertThat(metrics.get("quality_history")).isEqualTo(List.of(50.0));
     }
 
     private Stats read(String name) throws Exception {
