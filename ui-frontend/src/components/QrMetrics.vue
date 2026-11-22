@@ -231,6 +231,16 @@ time {
   color: var(--success);
 }
 
+data.warning,
+time.warning {
+  color: var(--warning);
+}
+
+data.failure,
+time.failure {
+  color: var(--error);
+}
+
 data.big,
 time.big {
   font-size: 2.1rem;
