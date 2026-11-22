@@ -72,6 +72,14 @@ class TelemetryServiceTest {
         assertThat(metrics.get("quality_history")).isEqualTo(List.of(50.0));
     }
 
+    @Test
+    void shouldIgnoreUnknownTelemetryProperties() throws Exception {
+
+        Stats stats = mapper.readValue("{\"elements\":[],\"future\":true}", Stats.class);
+
+        assertThat(stats.elements()).isEmpty();
+    }
+
     private Stats read(String name) throws Exception {
 
         try (var in = getClass().getResourceAsStream("/" + name)) {

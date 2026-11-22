@@ -33,7 +33,7 @@ public class QueryPublisherPort implements Loggable, QueryPublisherAdapter {
 
         logger().info("HANDLING {}", event);
 
-        int timeout = (int) event.getTimeout();
+        int timeout = Math.toIntExact(Math.clamp(event.getTimeout(), 0, Integer.MAX_VALUE));
         int limit = event.getLimit().orElse(0);
 
         @SuppressWarnings("unchecked")

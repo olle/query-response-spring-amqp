@@ -36,6 +36,11 @@ public class RestApiControllerPort {
         return adapter.nodes();
     }
 
+    @GetMapping("/api/v1/nodes")
+    public Map<String, Object> nodesV1() {
+        return adapter.nodesV1();
+    }
+
     @GetMapping(path = "/api/v1", params = "q")
     public Map<String, Object> query(String q, // NOSONAR
             @RequestParam(name = "timeout", required = false, defaultValue = "0") int timeout,

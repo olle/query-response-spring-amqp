@@ -1,6 +1,7 @@
 package com.studiomediatech.queryresponse.ui.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Optional;
@@ -29,7 +30,13 @@ class RestApiControllerPortTest {
 
     @Test
     void ensureHandlesNodesRequest() throws Exception {
-        mockMvc.perform(get("/api/v0/nodes")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v0/nodes")).andExpect(status().isOk()).andExpect(jsonPath("$.elements").exists());
+    }
+
+    @Test
+    void ensureHandlesLegacyNodesRequest() throws Exception {
+        mockMvc.perform(get("/api/v1/nodes")).andExpect(status().isOk()).andExpect(jsonPath("$.nodes").exists())
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
 }

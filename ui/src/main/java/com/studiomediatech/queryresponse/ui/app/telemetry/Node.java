@@ -9,7 +9,8 @@ import com.studiomediatech.queryresponse.util.Loggable;
 
 public class Node implements Loggable {
 
-    public static final Comparator<Node> SORT = Comparator.comparing(Node::getName).thenComparing(Node::getUUID);
+    public static final Comparator<Node> SORT = Comparator
+            .comparing(Node::getName, Comparator.nullsFirst(String::compareTo)).thenComparing(Node::getUUID);
 
     protected final UUID uuid;
     protected String name;

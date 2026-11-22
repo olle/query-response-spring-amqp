@@ -1,5 +1,6 @@
 package com.studiomediatech.queryresponse.ui.app.adapter;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 
@@ -16,6 +17,10 @@ public interface RestApiAdapter {
     }
 
     default Map<String, Object> nodes() {
-        return Collections.emptyMap();
+        return Map.of("elements", Collections.emptyList());
+    }
+
+    default Map<String, Object> nodesV1() {
+        return Map.of("nodes", Collections.emptyMap(), "timestamp", Instant.now());
     }
 }

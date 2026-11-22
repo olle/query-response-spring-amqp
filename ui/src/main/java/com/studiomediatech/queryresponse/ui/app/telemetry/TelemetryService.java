@@ -69,6 +69,13 @@ public class TelemetryService implements Loggable, TelemetryHandlerAdapter, Rest
     }
 
     @Override
+    public synchronized Map<String, Object> nodesV1() {
+        evictStaleNodes();
+
+        return Map.of("nodes", Map.copyOf(lastSeenByNode), "timestamp", Instant.now());
+    }
+
+    @Override
     public synchronized void handleConsumed(Stats stats) {
 
         logger().debug("Consumed stats with {} elements", stats.elements().size());
