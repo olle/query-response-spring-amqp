@@ -113,14 +113,21 @@ onBeforeUnmount(destroy);
 <style>
 .chart {
   font-size: 11px;
+  /* Chartist 2.x resolves its series color through this variable. Setting it
+     here beats the library's red default without fighting its selectors. */
+  --ct-series-a: var(--success);
+}
+.chart.warning {
+  --ct-series-a: var(--warning);
+}
+.chart.failure {
+  --ct-series-a: var(--error);
 }
 .ct-line {
   stroke-width: 4;
-  stroke: var(--success);
   fill: none;
 }
 .ct-area {
-  fill: var(--success);
   stroke: none;
   fill-opacity: 0.15;
 }
@@ -136,18 +143,5 @@ onBeforeUnmount(destroy);
 .ct-label,
 .ct-horizontal {
   color: var(--fg-light);
-}
-
-.failure .ct-line {
-  stroke: var(--error);
-}
-.failure .ct-area {
-  fill: var(--error);
-}
-.warning .ct-line {
-  stroke: var(--warning);
-}
-.warning .ct-area {
-  fill: var(--warning);
 }
 </style>
