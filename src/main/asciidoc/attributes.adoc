@@ -22,7 +22,7 @@
 :spring-name: Spring
 :spring-amqp-name: Spring AMQP
 :spring-boot-version: 4.x
-:spring-boot-verified-version: 4.1.2
+:spring-boot-verified-version: 4.2.0
 :spring-boot-name: Spring Boot
 :spring-boot-name-and-version: {spring-boot-name} {spring-boot-version}
 :spring-boot-name-and-verified-version: {spring-boot-name} {spring-boot-verified-version}
