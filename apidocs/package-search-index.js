@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.studiomediatech.queryresponse"},{"l":"com.studiomediatech.queryresponse.util"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"com.studiomediatech.queryresponse"},{"l":"com.studiomediatech.queryresponse.util"}];updateSearchResults();
