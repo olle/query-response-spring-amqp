@@ -13,6 +13,7 @@ work well for a single Query/Response network sharing one AMQP broker.
 | `queryresponse.stats.topic`        | `query-response/internal/stats` | Routing key used when publishing telemetry                                  |
 | `queryresponse.stats.initial-delay`| `7000`                          | Milliseconds before the first telemetry message is published, after startup |
 | `queryresponse.stats.delay`        | `11000`                         | Milliseconds between subsequent telemetry messages                          |
+| `queryresponse.telemetry.topic`    | `query-response/internal/telemetry` | Reserved routing key also bound by the Query/Response UI (UI only)       |
 
 NOTE: The prefix is `queryresponse`, without a trailing dot. Normal Spring Boot
 relaxed binding applies, so `queryresponse.stats.initial-delay`,
@@ -33,6 +34,8 @@ queryresponse:
     topic: query-response/internal/stats
     initial-delay: 7000
     delay: 11000
+  telemetry:
+    topic: query-response/internal/telemetry
 ```
 
 Or using properties:
@@ -43,6 +46,7 @@ queryresponse.queue.prefix=query-response-
 queryresponse.stats.topic=query-response/internal/stats
 queryresponse.stats.initial-delay=7000
 queryresponse.stats.delay=11000
+queryresponse.telemetry.topic=query-response/internal/telemetry
 ```
 
 Both examples show the default values, and are only needed when you want to
@@ -68,8 +72,10 @@ both expressed in milliseconds. See [Events & Telemetry](./events.md) for the
 payload format and the published keys.
 
 A monitoring application—such as the Query/Response UI—binds its own queue to
-the stats topic to receive the telemetry. Producers and consumers must agree on
-both the exchange name and the stats topic.
+the stats topic to receive the telemetry. The UI reads `queryresponse.stats.topic`
+for that binding, so producers and consumers must agree on both the exchange
+name and the stats topic. It also binds the reserved `queryresponse.telemetry.topic`
+for future telemetry; no library component publishes to that topic today.
 
 ## Caveats
 

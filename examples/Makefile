@@ -3,13 +3,12 @@ export JAVA_HOME
 
 .PHONY: start
 start:
-	docker-compose up
+	docker compose up
 
 .PHONY: up
 up:
-	docker-compose up -d
+	docker compose up -d
 
 .PHONY: down
 down:
-	docker-compose down -v --remove-orphans
-
+	docker compose down -v --remove-orphans

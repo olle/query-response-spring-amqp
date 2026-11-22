@@ -28,7 +28,7 @@ is accessible by the container.
 
 ```
 docker network create --driver bridge qr-net
-docker run -dit -p 15672:15672 --network qr-net --hostname broker rabbitmq:3-management
+docker run -dit -p 15672:15672 --network qr-net --hostname broker rabbitmq:4-management
 ```
 
 Check that the RabbitMQ broker is running, by visiting the management UI at
@@ -48,9 +48,10 @@ And browse to `http://localhost:8080`.
 
 ### Running locally
 
-The simplest way to start the UI is to run it locally by issuing `make`. This
-will start the Spring Boot® application. The Query/Response UI application is
-served at http://localhost:8080 by default.
+Install the library dependencies from the repository root with `make install`.
+Then run `make -C ui demo` to build the single-page application and start the
+Spring Boot® application. The Query/Response UI is served at
+http://localhost:8080 by default.
 
 #### AMQP Broker Configuration
 
@@ -71,13 +72,14 @@ Or set the environment variables:
 ## Development
 
 The Query/Response UI is intended to be a rather _thick client_ or _Single Page
-Application (SPA)_. It is built with the [Vue] framework. It is easy to start
-in development mode, using the `make dev` target. The Vue application is
-available at http://localhost:3000.
+Application (SPA)_. It is built with the [Vue] framework. Start it in
+development mode with `make -C ui-frontend run` (from the repository root). The
+Vue application is available at http://localhost:5173 and proxies `/api` and
+`/ws` to the backend on port 8080.
 
 [vue]: https://vuejs.org
 
-The SPA source files and modules can all be found under `src/main/web`.
+The SPA source files and modules can all be found under `ui-frontend/src`.
 
 ### Spring Boot Backend
 

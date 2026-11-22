@@ -32,6 +32,7 @@ Telemetry is published on the shared topic exchange, `query-response` by default
 |------------------|--------------------------------|-------------------------------------|
 | Exchange         | `query-response`               | `queryresponse.exchange.name`       |
 | Routing key      | `query-response/internal/stats`| `queryresponse.stats.topic`         |
+| Reserved key     | `query-response/internal/telemetry` | `queryresponse.telemetry.topic` (UI only) |
 | Initial delay    | `7000` ms                      | `queryresponse.stats.initial-delay` |
 | Publish interval | `11000` ms                     | `queryresponse.stats.delay`         |
 
@@ -58,7 +59,7 @@ The routing key, the payload keys and the `queryresponse.stats.*` properties all
 | `min_latency`             | number  | -         | ✓      | Smallest recorded time between query and response, in milliseconds          |
 | `avg_latency`             | number  | -         | ✓      | Average time between query and response, in milliseconds                    |
 | `throughput_queries`      | number  | ✓         | ✓      | Number of queries published, since last notification                        |
-| `throughput_responses`    | number  | ✓         | ✓      | Number of responses consumed, since last notification                       |
+| `throughput_responses`    | number  | ✓         | ✓      | Number of responses published, since last notification                      |
 | `avg_throughput`          | number  | ✓         | ✓      | Average throughput, derived by the UI from the throughput samples—**not** published by the library |
 
 The `min_latency` and `max_latency` entries are omitted until at least one latency measurement has been recorded.
@@ -67,12 +68,10 @@ The two throughput samples are raw counts since the previous message, that is pe
 
 ### Consuming telemetry
 
-The Query/Response UI binds a single anonymous queue to both `query-response/internal/stats` and `query-response/internal/telemetry`, and consumes the messages without acknowledgements. Any other monitoring application can bind its own queue to the stats routing key to receive the same telemetry.
+The Query/Response UI binds a single anonymous queue to the configured stats topic and to the reserved `queryresponse.telemetry.topic`, and consumes the messages without acknowledgements. Any other monitoring application can bind its own queue to the stats routing key to receive the same telemetry.
 
 NOTE: `query-response/internal/telemetry` is reserved for future use. The UI binds it, but the library does not publish any messages to it yet.
 
 ## Current status
 
-::: warning Work in progress
-Telemetry publishing is in place, but the UI consumption side is still under active development. Today the working surfaces are the REST endpoints—`GET /api/v1?q=…` for publishing a query and `GET /api/v0/nodes` for node snapshots. Broadcasting metrics and node updates over the WebSocket at `/ws`, as well as publishing queries over it, is in progress. Treat those parts as intent rather than a stable contract.
-:::
+The UI consumes telemetry and broadcasts `metrics` and `nodes` updates over the WebSocket at `/ws`. REST is available for querying (`GET /api/v1?q=…`) and for node snapshots (`GET /api/v0/nodes`). The legacy `GET /api/v1/nodes` endpoint remains available as a last-seen view for existing consumers. Query publishing over the WebSocket is wired in the backend, but the CLI page in the UI is still disabled while its interface is being finished.

@@ -1,6 +1,6 @@
 = Query/Response for Spring® AMQP
 
-image:https://github.com/olle/spring-query-response-amqp/workflows/Java%20CI/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions?query=workflow%3A%22Java+CI%22"]
+image:https://github.com/olle/query-response-spring-amqp/actions/workflows/maven.yml/badge.svg[title="Java CI", link="https://github.com/olle/query-response-spring-amqp/actions/workflows/maven.yml"]
 
 **WIP: Driving the initial version from this README, please feel free to
        provide feedback through issues.**
@@ -142,8 +142,9 @@ actively maintained, but will remain available for reference.
 
 == Demo Setup &amp; Development
 
-Prerequisites for development include a working Java 25+ environment, docker
-and docker-compose as well as node and npm for building the frontend UI.
+Prerequisites for development include a working Java 25+ environment, Docker
+with Compose (`docker compose` or `docker-compose`), and node and npm for
+building the frontend UI.
 
 To get a local development environment up and running, you can use the provided
 `docker-compose.yml` file to start a RabbitMQ container. This will allow you to
