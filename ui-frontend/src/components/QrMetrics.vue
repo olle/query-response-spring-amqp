@@ -99,7 +99,9 @@ const percentChart = {
 
 const store = useMetricsStore();
 
-const history = (values) => (values && values.length ? [...values] : [0]);
+const HISTORY_LENGTH = 10;
+const history = (values) =>
+  values && values.length ? [...values.slice(-HISTORY_LENGTH)] : [0];
 
 const qualityHistory = computed(() => ({
   series: [history(store.metrics.quality_history)],

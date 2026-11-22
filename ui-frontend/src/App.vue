@@ -18,7 +18,6 @@ import QrNavigation from "./components/QrNavigation.vue";
 import QrFooter from "./components/QrFooter.vue";
 import QrColors from "./components/QrColors.vue";
 import { useWebSocket } from "@vueuse/core";
-import { watch } from "vue";
 
 import { useMetricsStore } from "./stores/useMetricsStore.js";
 import { useLiveNodesStore } from "./stores/useLiveNodesStore.js";
@@ -26,39 +25,35 @@ import { useLiveNodesStore } from "./stores/useLiveNodesStore.js";
 const metricsStore = useMetricsStore();
 const liveNodesStore = useLiveNodesStore();
 
-// Web socket URL, resolved from current location
-var protocol = window.location.protocol === "https:" ? "wss" : "ws";
-var hostname = window.location.host;
-//var url = `${protocol}://${hostname}/ws`;
-var url = "ws://localhost:8080/ws";
+// Resolve the web socket URL from the current location, so the same build works
+// locally, in containers and behind a reverse proxy.
+const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+const url = `${protocol}://${window.location.host}/ws`;
 
-const { status, data, close } = useWebSocket(url, {
-  autoReconnect: true,
-  heartbeat: true,
-});
-
-watch(data, (msg) => {
-  if (msg === "pong") {
+function handleMessage(raw) {
+  if (raw === "pong") {
     return;
   }
   try {
-    var message = JSON.parse(msg);
+    const message = JSON.parse(raw);
     if (message.metrics) {
-      console.log("GOT METRICS", message.metrics);
       metricsStore.update(message.metrics);
     }
     if (message.nodes) {
-      console.log("GOT NODES", message.nodes);
       liveNodesStore.update(message.nodes);
     }
   } catch (err) {
-    console.error("unexpected payload", msg);
+    console.error("unexpected payload", raw);
   }
-});
+}
 
-// import { addListener } from "./ws";
-// addListener((msg) => {
-// });
+useWebSocket(url, {
+  autoReconnect: true,
+  heartbeat: true,
+  onMessage(_socket, event) {
+    handleMessage(event.data);
+  },
+});
 </script>
 
 <style scoped>
