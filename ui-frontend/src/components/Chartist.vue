@@ -1,25 +1,20 @@
 <template>
-  <div ref="chart" :class="props.ratio"></div>
+  <div ref="chartElement" :class="props.ratio"></div>
 </template>
 
 <script setup>
-import Chartist from "chartist";
-import { ref, onMounted } from "vue";
+import { BarChart, LineChart, PieChart } from "chartist";
+import "chartist/styles.css";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-const chart = ref(null);
-
-const draw = function () {
-  chart.value = new Chartist[props.type](
-    chart.value,
-    props.data,
-    props.options,
-    props.responsiveOptions
-  );
+const chartTypes = {
+  Line: LineChart,
+  Bar: BarChart,
+  Pie: PieChart,
 };
 
-onMounted(() => {
-  draw();
-});
+const chartElement = ref(null);
+let chart = null;
 
 const props = defineProps({
   ratio: {
@@ -70,6 +65,49 @@ const props = defineProps({
     },
   },
 });
+
+function destroy() {
+  if (!chart) {
+    return;
+  }
+  chart.detach();
+  chart = null;
+}
+
+function draw() {
+  destroy();
+
+  if (!chartElement.value) {
+    return;
+  }
+
+  chart = new chartTypes[props.type](
+    chartElement.value,
+    props.data,
+    props.options,
+    props.responsiveOptions
+  );
+
+  for (const { event, fn } of props.eventHandlers) {
+    chart.on(event, fn);
+  }
+}
+
+function update() {
+  if (!chart) {
+    draw();
+    return;
+  }
+  chart.update(props.data, props.options);
+}
+
+onMounted(draw);
+
+watch(() => props.type, draw);
+watch(() => props.responsiveOptions, draw, { deep: true });
+watch(() => [props.data, props.options], update, { deep: true });
+
+onBeforeUnmount(destroy);
 </script>
 
 <style>

@@ -9,6 +9,17 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      rabbitmq:
+        image: rabbitmq:4-management
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v7
     - name: Set up JDK 25
@@ -17,5 +28,15 @@ jobs:
         distribution: temurin
         java-version: '25'
         cache: maven
-    - name: Build with Maven
-      run: make
+    - name: Set up Node
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: ui-frontend/.nvmrc
+        cache: npm
+        cache-dependency-path: ui-frontend/package-lock.json
+    - name: Install library
+      run: make install
+    - name: Verify UI
+      run: make -C ui verify
+    - name: Build UI distribution
+      run: make -C ui build

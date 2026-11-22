@@ -35,6 +35,10 @@ NOTE: This annotation will do nothing more but to import the
 That's it! There is no more infrastructure code, wiring or setup that needs to
 be done. **It's just that easy.**
 
+The defaults work well for a single Query/Response network sharing one broker.
+See the [configuration reference](../reference/configuration.md) if you need to
+change the exchange name, the queue prefix, or the telemetry settings.
+
 ### Connecting to an AMQP broker
 
 Before you can run your application you need to make sure there is an AMQP
@@ -44,10 +48,10 @@ https://www.rabbitmq.com[RabbitMQ], running locally on port `5672`.
 Start an and run RabbitMQ using `docker`:
 
 ```sh
-$ docker run -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+$ docker run -p 5672:5672 -p 15672:15672 rabbitmq:4-management
 ```
 
-NOTE: The `3-management` tag will enable the RabbitMQ Management UI. When the
+NOTE: The `4-management` tag will enable the RabbitMQ Management UI. When the
 broker is running, it can be accessed at http://localhost:15672 with
 username and password `guest/guest`.
 

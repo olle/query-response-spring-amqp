@@ -1,52 +1,68 @@
 <template>
-  <section class="overview">
-    <h2>Success Rate</h2>
-    <chartist
-      v-bind:class="successRateRank()"
-      class="chart one"
-      type="Line"
-      :data="successRates()"
-      :options="percentChart"
-    ></chartist>
-    <data class="big one" v-bind:class="successRateRank()">
-      {{ successRate() }}
-    </data>
-    <h3>Queries</h3>
-    <data>{{ countQueries() }}</data>
-    <h3>Responses</h3>
-    <data>{{ countResponses() }}</data>
-    <h3>Fallbacks</h3>
-    <data>{{ countFallbacks() }}</data>
+  <section
+    class="overview"
+    :class="{ stale: store.isStale, empty: !store.hasTelemetry }"
+  >
+    <p v-if="!store.hasTelemetry" class="empty-state">
+      Waiting for telemetry…
+    </p>
+    <template v-else>
+      <h2>
+        Quality
+        <span v-if="store.isStale" class="stale-badge">
+          Stale · {{ telemetryAgeLabel }}
+        </span>
+        <small class="coverage" title="Responses divided by queries">
+          Coverage {{ coverage }}
+        </small>
+      </h2>
+      <chartist
+        v-bind:class="qualityRank"
+        class="chart one"
+        type="Line"
+        :data="qualityHistory"
+        :options="percentChart"
+      ></chartist>
+      <data class="big one" v-bind:class="qualityRank">{{ quality }}</data>
+      <h3>Queries</h3>
+      <data>{{ countQueries }}</data>
+      <h3>Responses</h3>
+      <data>{{ countResponses }}</data>
+      <h3>Fallbacks</h3>
+      <data>{{ countFallbacks }}</data>
 
-    <h2>Latency</h2>
-    <chartist
-      class="chart two"
-      type="Line"
-      :data="latencies()"
-      :options="normalChart"
-    ></chartist>
-    <time class="big two">{{ avgLatency() }}</time>
-    <h3>Min</h3>
-    <time>{{ minLatency() }}</time>
-    <h3>Max</h3>
-    <time>{{ maxLatency() }}</time>
+      <h2>Latency</h2>
+      <chartist
+        class="chart two"
+        type="Line"
+        :data="latencies"
+        :options="normalChart"
+      ></chartist>
+      <time class="big two">{{ avgLatency }}</time>
+      <h3>Min</h3>
+      <time>{{ minLatency }}</time>
+      <h3>Max</h3>
+      <time>{{ maxLatency }}</time>
 
-    <h2>Throughput</h2>
-    <chartist
-      class="chart three"
-      type="Line"
-      :data="throughputs()"
-      :options="normalChart"
-    ></chartist>
-    <data class="big three">{{ avgThroughput() }}</data>
-    <h3>Queries</h3>
-    <data>{{ throughputQueries() }}</data>
-    <h3>Responses</h3>
-    <data>{{ throughputResponses() }}</data>
+      <h2>Throughput</h2>
+      <chartist
+        class="chart three"
+        type="Line"
+        :data="throughputs"
+        :options="normalChart"
+      ></chartist>
+      <data class="big three">{{ avgThroughput }}</data>
+      <h3>Queries</h3>
+      <data>{{ throughputQueries }}</data>
+      <h3>Responses</h3>
+      <data>{{ throughputResponses }}</data>
+    </template>
   </section>
 </template>
 
 <script setup>
+import { FixedScaleAxis } from "chartist";
+import { computed } from "vue";
 import Chartist from "./Chartist.vue";
 import { useMetricsStore } from "../stores/useMetricsStore.js";
 import {
@@ -75,7 +91,7 @@ const normalChart = {
 const percentChart = {
   ...normalChart,
   axisY: {
-    type: Chartist.FixedScaleAxis,
+    type: FixedScaleAxis,
     high: 100,
     low: 0,
   },
@@ -83,56 +99,63 @@ const percentChart = {
 
 const store = useMetricsStore();
 
-function successRates() {
-  return { series: [[...Object.values(store.metrics.success_rates || [0])]] };
-}
-function successRate() {
-  return `${store.metrics.success_rate}%`;
-}
-function successRateRank() {
-  var rate = store.metrics.success_rate;
-  if (rate < 20.0) {
+const HISTORY_LENGTH = 10;
+const history = (values) =>
+  values && values.length ? [...values.slice(-HISTORY_LENGTH)] : [0];
+
+const qualityHistory = computed(() => ({
+  series: [history(store.metrics.quality_history)],
+}));
+const latencies = computed(() => ({
+  series: [history(store.metrics.avg_latencies)],
+}));
+const throughputs = computed(() => ({
+  series: [history(store.metrics.avg_throughputs)],
+}));
+
+const quality = computed(() => `${store.metrics.quality ?? 0}%`);
+const qualityRank = computed(() => {
+  const value = store.metrics.quality ?? 0;
+  if (value < 20.0) {
     return "failure";
-  } else if (rate < 60.0) {
+  } else if (value < 60.0) {
     return "warning";
   }
-}
+  return "";
+});
+const coverage = computed(() => `${store.metrics.coverage ?? 0}%`);
 
-function countQueries() {
-  return toNumberWithUnit(store.metrics.count_queries);
-}
-function countResponses() {
-  return toNumberWithUnit(store.metrics.count_responses);
-}
-function countFallbacks() {
-  return toNumberWithUnit(store.metrics.count_fallbacks);
-}
+const telemetryAgeLabel = computed(() => {
+  if (store.telemetryAge == null) {
+    return "";
+  }
+  const seconds = Math.max(0, Math.round(store.telemetryAge / 1000));
+  return seconds < 60 ? `${seconds}s ago` : `${Math.round(seconds / 60)}m ago`;
+});
 
-function latencies() {
-  return { series: [[...Object.values(store.metrics.avg_latencies || [0])]] };
-}
-function avgLatency() {
-  return toMillis(store.metrics.avg_latency);
-}
-function minLatency() {
-  return toMillis(store.metrics.min_latency);
-}
-function maxLatency() {
-  return toMillis(store.metrics.max_latency);
-}
+const countQueries = computed(() =>
+  toNumberWithUnit(store.metrics.count_queries)
+);
+const countResponses = computed(() =>
+  toNumberWithUnit(store.metrics.count_responses)
+);
+const countFallbacks = computed(() =>
+  toNumberWithUnit(store.metrics.count_fallbacks)
+);
 
-function throughputs() {
-  return { series: [[...Object.values(store.metrics.avg_throughputs || [0])]] };
-}
-function avgThroughput() {
-  return toThroughputPerSecond(store.metrics.avg_throughput);
-}
-function throughputQueries() {
-  return toThroughputPerSecond(store.metrics.throughput_queries);
-}
-function throughputResponses() {
-  return toThroughputPerSecond(store.metrics.throughput_responses);
-}
+const avgLatency = computed(() => toMillis(store.metrics.avg_latency));
+const minLatency = computed(() => toMillis(store.metrics.min_latency));
+const maxLatency = computed(() => toMillis(store.metrics.max_latency));
+
+const avgThroughput = computed(() =>
+  toThroughputPerSecond(store.metrics.avg_throughput)
+);
+const throughputQueries = computed(() =>
+  toThroughputPerSecond(store.metrics.throughput_queries)
+);
+const throughputResponses = computed(() =>
+  toThroughputPerSecond(store.metrics.throughput_responses)
+);
 </script>
 
 <style scoped>
@@ -142,6 +165,46 @@ function throughputResponses() {
   padding: 0.8rem 1rem;
   border-radius: var(--border-radius);
   text-align: left;
+}
+
+.overview.empty {
+  display: block;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.empty-state {
+  margin: 0;
+  color: var(--fg-light);
+}
+
+.coverage {
+  margin-left: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: var(--thin);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-light);
+}
+
+.stale-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: var(--warning);
+  color: var(--color-black);
+  font-size: 0.6rem;
+  font-weight: var(--bold);
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.overview.stale .chart,
+.overview.stale data.big,
+.overview.stale time.big {
+  opacity: 0.45;
 }
 
 .overview > .chart {

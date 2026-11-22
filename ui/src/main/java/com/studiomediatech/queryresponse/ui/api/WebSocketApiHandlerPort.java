@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,27 +17,29 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studiomediatech.Stat;
-import com.studiomediatech.events.EventEmitter;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.studiomediatech.events.QueryRecordedEvent;
+import com.studiomediatech.queryresponse.ui.app.adapter.EventEmitterAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
+import com.studiomediatech.queryresponse.ui.messaging.Stat;
 import com.studiomediatech.queryresponse.util.Loggable;
 
-public class WebSocketApiHandler extends TextWebSocketHandler implements Loggable {
+@Component
+public class WebSocketApiHandlerPort extends TextWebSocketHandler implements WebSocketApiAdapter, Loggable {
 
     private static final int SEND_TIME_LIMIT = 6 * 1000;
     private static final int SEND_BUFFER_SIZE_LIMIT = 512 * 1024;
 
     private final Map<String, WebSocketSession> sessionsById = new ConcurrentHashMap<>();
 
-    private final EventEmitter emitter;
+    private final EventEmitterAdapter emitter;
     private final ObjectMapper objectMapper;
 
-    public WebSocketApiHandler(EventEmitter emitter) {
+    public WebSocketApiHandlerPort(EventEmitterAdapter emitter) {
 
         this.emitter = emitter;
 
-        objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Include.NON_NULL);
+        objectMapper = JsonMapper.builder().serializationInclusion(Include.NON_NULL).build();
     }
 
     @Override
@@ -66,53 +68,22 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Loggabl
         emitter.emitEvent(QueryRecordedEvent.valueOf(message.getPayload(), session.getId()));
     }
 
-    public void handleCountQueriesAndResponses(long countQueriesSum, long countResponsesSum, long countFallbacksSum,
-            double successRate, List<Double> successRates) {
-
-        String json = String.format(Locale.US,
-                "{\"metrics\": {" + "\"count_queries\": %d," + "\"count_responses\": %d," + "\"count_fallbacks\": %d,"
-                        + "\"success_rate\": %f," + "\"success_rates\": %s" + "}}",
-                countQueriesSum, countResponsesSum, countFallbacksSum, successRate, successRates);
-
-        publishTextMessageWithPayload(json);
+    @Override
+    public void publishMetrics(Map<String, Object> metrics) {
+        publish("metrics", metrics);
     }
 
-    public void handleLatency(long minLatency, long maxLatency, double avgLatency, List<Double> latencies) {
-
-        if (minLatency != -1 && maxLatency != -1) {
-            publishTextMessageWithPayload(String.format(
-                    Locale.US, "{\"metrics\": {" + "\"min_latency\": %d," + "\"max_latency\": %d,"
-                            + "\"avg_latency\": %f," + "\"avg_latencies\": %s" + "}}",
-                    minLatency, maxLatency, avgLatency, latencies));
-        } else {
-            publishTextMessageWithPayload(String.format(Locale.US,
-                    "{\"metrics\": {" + "\"avg_latency\": %f," + "\"avg_latencies\": %s" + "}}", avgLatency,
-                    latencies));
-        }
+    @Override
+    public void publishNodes(Map<String, List<Stat>> nodes) {
+        publish("nodes", nodes);
     }
 
-    public void handleThroughput(double queries, double responses, double avg, List<Double> throughputs) {
-
-        String json = String.format(Locale.US,
-                "{\"metrics\": {" + "\"throughput_queries\": %f," + "\"throughput_responses\": %f,"
-                        + "\"avg_throughput\": %f," + "\"avg_throughputs\": %s" + "}}",
-                queries, responses, avg, throughputs);
-
-        publishTextMessageWithPayload(json);
-    }
-
-    public void handleNodes(Map<String, List<Stat>> nodes) {
+    private void publish(String key, Object payload) {
 
         try {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("{\"nodes\": ");
-            sb.append(objectMapper.writeValueAsString(nodes));
-            sb.append("}");
-
-            publishTextMessageWithPayload(sb.toString());
+            publishTextMessageWithPayload(objectMapper.writeValueAsString(Map.of(key, payload)));
         } catch (JsonProcessingException e) {
-            logger().error("Failed to create nodes payload", e);
+            logger().error("Failed to create " + key + " payload", e);
         }
     }
 
@@ -129,18 +100,13 @@ public class WebSocketApiHandler extends TextWebSocketHandler implements Loggabl
         }
     }
 
-    public void handleResponse(Collection<Object> response, String id) {
+    @Override
+    public void publishResponse(Collection<Object> response, String id) {
 
         try {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("{\"response\": ");
-            sb.append(objectMapper.writeValueAsString(response));
-            sb.append("}");
-
-            publishTextMessageWithPayloadToSession(id, sb.toString());
+            publishTextMessageWithPayloadToSession(id, objectMapper.writeValueAsString(Map.of("response", response)));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger().error("Failed to create response payload", e);
         }
     }
 

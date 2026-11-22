@@ -23,17 +23,25 @@ export const toThroughputPerSecond = (d) => {
   return `${ps}/s`;
 };
 
-export const toPercent = (n, d) => {
-  return `${
-    Math.round((n / Math.max(1, d)) * 100 * 10 + Number.EPSILON) / 10
-  }%`;
+const qualityRatio = (responses, fallbacks, queries) => {
+  const ratio =
+    ((responses ?? 0) - (fallbacks ?? 0)) / Math.max(1, queries ?? 0);
+  return Math.min(1, Math.max(0, ratio));
 };
 
-export const toRateRank = (n, d) => {
-  let rate = n / Math.max(1, d);
-  if (rate < 0.2) {
+export const toQuality = (responses, fallbacks, queries) => {
+  const percent =
+    Math.round(qualityRatio(responses, fallbacks, queries) * 100 * 10 + Number.EPSILON) /
+    10;
+  return `${percent}%`;
+};
+
+export const toQualityRank = (responses, fallbacks, queries) => {
+  const ratio = qualityRatio(responses, fallbacks, queries);
+  if (ratio < 0.2) {
     return "failure";
-  } else if (rate < 0.6) {
+  } else if (ratio < 0.6) {
     return "warning";
   }
+  return "";
 };

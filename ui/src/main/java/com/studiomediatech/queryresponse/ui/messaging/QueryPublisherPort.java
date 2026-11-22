@@ -1,0 +1,96 @@
+package com.studiomediatech.queryresponse.ui.messaging;
+
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+import com.studiomediatech.events.QueryRecordedEvent;
+import com.studiomediatech.queryresponse.QueryBuilder;
+import com.studiomediatech.queryresponse.ui.app.adapter.QueryPublisherAdapter;
+import com.studiomediatech.queryresponse.ui.app.adapter.WebSocketApiAdapter;
+import com.studiomediatech.queryresponse.util.Loggable;
+
+@Component
+public class QueryPublisherPort implements Loggable, QueryPublisherAdapter {
+
+    private static final int DEFAULT_QUERY_TIMEOUT = 1500;
+
+    private final QueryBuilder queryBuilder;
+    private final WebSocketApiAdapter webSocketApiAdapter;
+
+    public QueryPublisherPort(QueryBuilder queryBuilder, Optional<WebSocketApiAdapter> maybeWebSocketApiAdapter) {
+        this.queryBuilder = queryBuilder;
+        this.webSocketApiAdapter = maybeWebSocketApiAdapter.orElse(WebSocketApiAdapter.empty());
+    }
+
+    @EventListener
+    void on(QueryRecordedEvent event) {
+
+        logger().info("HANDLING {}", event);
+
+        int timeout = Math.toIntExact(Math.clamp(event.getTimeout(), 0, Integer.MAX_VALUE));
+        int limit = event.getLimit().orElse(0);
+
+        @SuppressWarnings("unchecked")
+        Collection<Object> response = (Collection<Object>) query(event.getQuery(), timeout, limit).get("response");
+
+        webSocketApiAdapter.publishResponse(response, event.getPublisherId());
+    }
+
+    @Override
+    public Map<String, Object> query(String q, int timeout, int limit) {
+
+        List<Object> defaults = List.of("No responses");
+
+        final Collection<Object> responses;
+
+        long start = System.nanoTime();
+
+        if (q.contains(" ")) {
+            responses = queryParsed(q, defaults);
+        } else {
+            responses = queryStrict(q, timeout, limit, defaults);
+        }
+
+        return Map.of("response", responses, "duration", Duration.ofNanos(System.nanoTime() - start));
+    }
+
+    private Collection<Object> queryParsed(String q, List<Object> defaults) {
+
+        var query = QueryRecordedEvent.valueOf(q, "none");
+
+        query.getQuery();
+        query.getTimeout();
+
+        Optional<Integer> maybe = query.getLimit();
+
+        if (maybe.isPresent()) {
+
+            return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
+                    .takingAtMost(maybe.get()).orDefaults(defaults);
+
+        }
+
+        return queryBuilder.queryFor(query.getQuery(), Object.class).waitingFor(query.getTimeout())
+                .orDefaults(defaults);
+
+    }
+
+    private Collection<Object> queryStrict(String q, int timeout, int limit, List<Object> defaults) {
+        long queryTimeout = timeout > 0 ? timeout : DEFAULT_QUERY_TIMEOUT;
+
+        if (limit > 0) {
+            return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).takingAtMost(limit)
+                    .orDefaults(defaults);
+        }
+
+        return queryBuilder.queryFor(q, Object.class).waitingFor(queryTimeout).orDefaults(defaults);
+
+    }
+
+}
